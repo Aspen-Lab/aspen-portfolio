@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# aspen-portfolio
 
-## Getting Started
+Personal portfolio for Aspen W. — Product Designer at Axel (Gordian Software, YC W19).
 
-First, run the development server:
+Built with Next.js 16 (App Router), TypeScript, Tailwind 4, and Motion (formerly Framer Motion). Deployed to Vercel.
+
+## Stack
+
+- **Framework**: Next.js 16 · React 19 · TypeScript
+- **Styling**: Tailwind CSS 4 (CSS-first theme tokens in `src/app/globals.css`)
+- **Motion**: `motion` (v12) via `motion/react`
+- **Fonts**: Fraunces (display) + Plus Jakarta Sans (body), via `next/font/google`
+
+## Develop
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Edit
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Case studies** live in `src/lib/work.ts`. Add, reorder, or rewrite there — the home grid and `/work/[slug]` route both read from this file.
+- **Theme tokens** (colors, fonts, spacing) live in `src/app/globals.css` under `@theme`.
+- **Sections**: `Hero`, `SelectedWork`, `About`, `Footer` in `src/components/`.
+- **Cover images**: drop into `public/work/<slug>.jpg` and replace the placeholder block in `SelectedWork.tsx` and the case-study page with a `<Image>` component.
 
-## Learn More
+## Deploy
 
-To learn more about Next.js, take a look at the following resources:
+Push the repo to GitHub, then on [vercel.com/new](https://vercel.com/new) import the repo. No env vars needed; defaults are correct.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## TODO before going live
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [ ] Set real social URLs in `src/components/Footer.tsx` (currently `#`)
+- [ ] Add cover images for each case study
+- [ ] Replace placeholder hero text if you want a different angle
+- [ ] Add a real domain in `metadataBase` inside `layout.tsx` (for OG)
