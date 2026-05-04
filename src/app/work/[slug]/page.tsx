@@ -25,6 +25,36 @@ export async function generateMetadata({
   };
 }
 
+const layoutClass = (l?: string) => {
+  switch (l) {
+    case "grid-2":
+      return "grid-cols-1 sm:grid-cols-2";
+    case "grid-3":
+      return "grid-cols-1 sm:grid-cols-3";
+    case "grid-4":
+      return "grid-cols-2 sm:grid-cols-4";
+    case "single":
+    default:
+      return "grid-cols-1";
+  }
+};
+
+const ratioClass = (r?: string) => {
+  switch (r) {
+    case "16/9":
+      return "aspect-[16/9]";
+    case "16/10":
+      return "aspect-[16/10]";
+    case "4/3":
+      return "aspect-[4/3]";
+    case "1/1":
+      return "aspect-square";
+    case "auto":
+    default:
+      return "";
+  }
+};
+
 export default async function CaseStudy({
   params,
 }: {
@@ -62,6 +92,19 @@ export default async function CaseStudy({
           <p className="mt-8 text-[18px] leading-[1.6] text-mute max-w-2xl">
             {project.summary}
           </p>
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-6 inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.2em] text-ink underline underline-offset-[6px] decoration-1 hover:decoration-soft"
+            >
+              Visit live →{" "}
+              <span className="text-mute">
+                {project.liveUrl.replace(/^https?:\/\//, "")}
+              </span>
+            </a>
+          )}
         </header>
       </Reveal>
 
@@ -100,7 +143,17 @@ export default async function CaseStudy({
 
       <Reveal delay={0.14}>
         <div className="mt-16 aspect-[16/9] rounded-[8px] overflow-hidden bg-cream relative">
-          {project.cover ? (
+          {project.heroVideo ? (
+            <video
+              src={project.heroVideo}
+              poster={project.cover}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : project.cover ? (
             <Image
               src={project.cover}
               alt={project.title}
@@ -161,8 +214,55 @@ export default async function CaseStudy({
             <h3 className="lg:col-span-3 font-mono uppercase tracking-[0.2em] text-[11px] text-soft pt-1">
               {s.heading}
             </h3>
-            <div className="lg:col-span-9 text-[17px] leading-[1.65] text-ink/85 max-w-2xl">
-              {s.body}
+            <div className="lg:col-span-9">
+              <p className="text-[17px] leading-[1.65] text-ink/85 max-w-2xl">
+                {s.body}
+              </p>
+              {s.images && s.images.length > 0 && (
+                <div
+                  className={`mt-8 grid gap-3 ${layoutClass(s.imageLayout)}`}
+                >
+                  {s.images.map((src, idx) => {
+                    const ratio = ratioClass(s.imageRatio);
+                    const sizes =
+                      s.imageLayout === "grid-4"
+                        ? "(max-width: 640px) 50vw, 25vw"
+                        : s.imageLayout === "grid-3"
+                          ? "(max-width: 640px) 100vw, 33vw"
+                          : s.imageLayout === "grid-2"
+                            ? "(max-width: 640px) 100vw, 50vw"
+                            : "(max-width: 1280px) 100vw, 900px";
+                    return (
+                      <div
+                        key={`${src}-${idx}`}
+                        className={`overflow-hidden rounded-[6px] bg-cream ${
+                          ratio ? `relative ${ratio}` : ""
+                        }`}
+                      >
+                        {ratio ? (
+                          <Image
+                            src={src}
+                            alt={`${s.heading} ${idx + 1}`}
+                            fill
+                            sizes={sizes}
+                            className="object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src={src}
+                            alt={`${s.heading} ${idx + 1}`}
+                            width={2400}
+                            height={1500}
+                            sizes={sizes}
+                            className="block w-full h-auto"
+                            style={{ width: "100%", height: "auto" }}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </section>
         </Reveal>

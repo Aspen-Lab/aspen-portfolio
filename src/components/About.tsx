@@ -27,37 +27,52 @@ export function About() {
             <p>
               I&apos;m a dual-degree student at{" "}
               <span className="text-ink">Georgia Tech</span> — BS Industrial
-              Design (2021–2024) and BS Psychology (2023–2026). Design and
-              psychology stuck together because the questions overlap: small
-              frictions, hidden expectations, the gap between what someone says
-              and what they do.
+              Design (2021–2024) and BS Psychology / Cognitive Science
+              (2023–2026), currently on academic leave to ship Axel full-time.
+              Industrial Design and Cog Sci stuck together because the
+              questions overlap: small frictions, hidden expectations, the gap
+              between what someone says and what they do.
             </p>
           </Reveal>
 
           <Reveal delay={0.14}>
             <p>
               I&apos;ve designed multi-country KYC for{" "}
-              <span className="text-ink">TikTok Pay</span>, semi-autonomous HMI
-              for <span className="text-ink">Hyundai</span>, a packaging system
-              for the <span className="text-ink">CDC</span>, and co-founded{" "}
-              <span className="text-ink">XING Art</span> with a $300K pre-seed
-              from MiraclePlus and 1K+ real users. I&apos;m now designing flight
-              & hotel repricing at <span className="text-ink">Axel</span>{" "}
-              (Gordian Software, YC&nbsp;W19).
+              <span className="text-ink">TikTok Pay</span> (Vietnam new-user
+              completion 70 → 90%), semi-autonomous HMI for{" "}
+              <span className="text-ink">Hyundai</span> (+10% confidence with
+              Green UI), a packaging system for the{" "}
+              <span className="text-ink">CDC</span> (CryoSave / IDEA Award), and{" "}
+              <span className="text-ink">Field of Vision</span> — a
+              visually-impaired navigation aid that won iF + Red Dot in 2025. I
+              co-founded <span className="text-ink">XING Art</span> with a
+              $300K pre-seed from MiraclePlus and 1K+ real users.
             </p>
           </Reveal>
 
           <Reveal delay={0.18}>
             <p>
-              Off the clock — film washing by hand, B&amp;W sketching, cooking
-              for me and my partner, building wireless illuminating dice with
-              roommates. I move fast, hold strong opinions on type and motion,
-              and like the part of design where research, growth, and craft
-              intersect.
+              Now I&apos;m a Design Engineer at{" "}
+              <span className="text-ink">Axel</span> (Gordian Software,
+              YC&nbsp;W19) — reporting directly to the CEO, shipping
+              helloaxel.com end-to-end, the conversational UI, a lightweight
+              design system, the email system on Customer.io, and the
+              hotel/flight repricing UX.
             </p>
           </Reveal>
 
-          <Reveal delay={0.24}>
+          <Reveal delay={0.22}>
+            <p>
+              Off the clock — a 2D Metroidvania built with my partner Skyler
+              (Unity, Hollow-Knight stack), the{" "}
+              <span className="text-ink">Hermes</span> agent in my Obsidian
+              vault, film washing by hand, B&amp;W sketching, cooking. I move
+              fast, hold strong opinions on type and motion, and my career
+              shape is horizontal — wider tool radius, not a vertical climb.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.28}>
             <div className="pt-8 mt-4 border-t border-line">
               <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft mb-5">
                 Awards & recognition
@@ -83,7 +98,7 @@ export function About() {
             </div>
           </Reveal>
 
-          <Reveal delay={0.3}>
+          <Reveal delay={0.34}>
             <div className="pt-8 mt-4 border-t border-line">
               <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft mb-5">
                 Selected past work

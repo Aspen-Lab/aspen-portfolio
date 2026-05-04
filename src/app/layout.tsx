@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
@@ -17,6 +19,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://aspen-portfolio.vercel.app"),
   title: "Aspen W. — Product Designer",
   description:
     "Product designer who blends creativity with technical expertise. 4+ years across TikTok, Hyundai, Slashy (YC25), CDC, and XING Art. iF Design Award & IDEA Student Award winner. Currently designing flight & hotel repricing at Axel (Gordian, YC W19).",
@@ -33,6 +36,8 @@ export default function RootLayout({
         <Nav />
         <main className="flex-1">{children}</main>
         <Footer />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

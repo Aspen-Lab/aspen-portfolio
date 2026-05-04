@@ -10,9 +10,17 @@ export type Project = {
   summary: string;
   tags: string[];
   cover?: string;
+  heroVideo?: string;
   metrics?: { label: string; value: string }[];
-  sections?: { heading: string; body: string }[];
+  sections?: {
+    heading: string;
+    body: string;
+    images?: string[];
+    imageLayout?: "single" | "grid-2" | "grid-3" | "grid-4";
+    imageRatio?: "16/10" | "16/9" | "4/3" | "1/1" | "auto";
+  }[];
   status?: "live" | "coming-soon";
+  liveUrl?: string;
 };
 
 export const projects: Project[] = [
@@ -20,24 +28,45 @@ export const projects: Project[] = [
     slug: "axel",
     title: "Axel — get paid back when prices drop",
     client: "Axel · Gordian Software (YC W19)",
-    role: "Product Designer",
+    role: "Design Engineer · reports to CEO",
     period: "Dec 2025 — Present",
     year: "Now",
     date: "ongoing",
     category: "Travel · Fintech",
     summary:
-      "Designing end-to-end UX for hotel and flight repricing at a YC W19 travel-money startup — onboarding through claim, growth-flavored, fast iteration.",
-    tags: ["End-to-end UX", "Growth", "Travel · Fintech"],
-    status: "coming-soon",
-    metrics: [],
+      "Designer-engineer at a YC W19 travel-money startup. helloaxel.com is 100% mine — landing through claim. Plus the conversational UI, design system, and the entire transactional email system on Customer.io.",
+    tags: ["Design Engineer", "Production React", "Email", "Conv UI"],
+    status: "live",
+    liveUrl: "https://helloaxel.com",
+    metrics: [
+      { label: "helloaxel.com shipped", value: "100% me" },
+      { label: "Customer.io email templates", value: "28" },
+      { label: "Reports to", value: "CEO direct" },
+    ],
     sections: [
       {
-        heading: "Currently shipping",
-        body: "Hotel & flight repricing flow. Onboarding & landing-page conversion. WhatsApp engagement. Referral programs. Early design-system components for faster shipping.",
+        heading: "What I'm shipping",
+        body: "Hotel + flight repricing flow, end to end. Onboarding & landing-page conversion at helloaxel.com. WhatsApp engagement (reminder / nudge / templates). Referral programs. A lightweight design system (蓝绿粉 token palette, white/85 → 55 → 35 → 25 opacity ladder, rounded-xl, tabular-nums). Conversational UI with a three-region layout. The full transactional email system on Customer.io.",
       },
       {
-        heading: "Case study coming",
-        body: "We're still in the middle of it — I'll publish a deeper write-up once a few flows have hit ship velocity. Reach out and I'll walk you through what I'm working on.",
+        heading: "Design Engineer, not just designer",
+        body: "I write production React. helloaxel.com is 100% me — Figma → design tokens → Tailwind components → Vercel preview, no translation loss. The deliverable is commits in a working repo, not a static export.",
+      },
+      {
+        heading: "Email engineering",
+        body: "28 transactional templates on Customer.io covering onboarding through cancellation. Variable contracts aligned with backend so messages and data stay in sync. \"No-fake-defaults\" pattern: every variable behind a {% if trigger.var != blank %} guard so users never see hollow placeholders. Pay-later cancellations show an explicit \"not charged\" callout to reduce cognitive noise.",
+      },
+      {
+        heading: "Behavioral defaults",
+        body: "Cog-Sci shows up in product calls. Axel One ($35/year) is positioned value-led, not pressure-led. Cancellation messages reduce noise by stating what didn't happen, not just what did. The KYC instinct from TikTok — progress visualization, logic-first flows — carries straight over to repricing onboarding.",
+      },
+      {
+        heading: "Stack",
+        body: "Next.js App Router · Tailwind · Motion · Customer.io · PptxGenJS for internal decks (dark + #0BE09B + Lato). Tools: Cursor + Claude Code + Figma MCP + Customer.io MCP, glued so the design-to-production loop stays tight enough that a Vercel preview is the handoff.",
+      },
+      {
+        heading: "Trajectory inside Axel",
+        body: "Started Nov 2025 on contract for the hotel repricing UX flow. Converted to full-time in Dec when the work compounded. Now reporting directly to the CEO, with Lumen (the AI-component design system) on the horizon as the publicly visible artifact of the work.",
       },
     ],
   },
@@ -53,7 +82,8 @@ export const projects: Project[] = [
     summary:
       "A budgeting app for the rest of us. Gamified, friendly, built for people who want to save but can't sustain it. 85% of testers reported higher motivation; 90% loved the play of it.",
     tags: ["Fintech", "Gamification", "UX research"],
-    cover: "/work/nutra.png",
+    cover: "/work/nutra/images/008_t02qRbWuUJkOIYC2YDfQ3quy8.png",
+    heroVideo: "/work/nutra/hero.mp4",
     status: "live",
     metrics: [
       { label: "Self-reported motivation lift", value: "+85%" },
@@ -64,22 +94,150 @@ export const projects: Project[] = [
       {
         heading: "Problem",
         body: "Budgeting matters but it's hard, especially for new learners. Most apps are overwhelming because they're built for the highly disciplined. The people who most need help — the ones who want to save but can't stay consistent — are the ones who quietly drop out first.",
+        images: [
+          "/work/nutra/images/009_9NtIdXzvPDMQtfJa6o3TV2E3LVw.png",
+          "/work/nutra/images/010_p03fMvdXv9qlkuEGy2e1IsxVCY.png",
+          "/work/nutra/images/011_NBye5onWmCPLKvqzCwSnykmGtY.png",
+        ],
+        imageLayout: "grid-3",
       },
       {
         heading: "Research",
         body: "Surveys and in-depth interviews with self-identified low-motivation, low-discipline users surfaced three insights: simple intuitive interactions reduce overwhelm; gamification mechanics significantly boost engagement; and small, personalized nudges drive consistency. We were looking at a large, underserved group whose biggest enemy was friction.",
+        images: [
+          "/work/nutra/images/012_9yomB4v1D5EZIdYAWpTMgLBZbV0.png",
+          "/work/nutra/images/013_ZCyxgLvUHehqpd44CK8aWKk6kPI.png",
+          "/work/nutra/images/014_Vb7Gz3n9VxLlxy1PFYuaaHuSj0.png",
+          "/work/nutra/images/015_BdOp2AWzf5aVaLvyrrQYj3ONl2Q.png",
+        ],
+        imageLayout: "grid-2",
+      },
+      {
+        heading: "Mental model & journey",
+        body: "We mapped how target users think about money — separating the cognitive cost of saving from the emotional cost of being told they aren't saving enough. The journey map made the friction points visible.",
+        images: [
+          "/work/nutra/images/016_gSg4pXbkYOCUbkkrN7YHezfzUc.png",
+          "/work/nutra/images/017_4KcO8ZQt1kH5izQWlTG0zFskSE.png",
+        ],
+        imageLayout: "single",
+      },
+      {
+        heading: "Market opportunity",
+        body: "Mainstream budgeting apps over-index on the disciplined power user. Nutra targets the much larger unmotivated middle — people who already want to save but can't sustain attention without a feedback loop.",
+        images: ["/work/nutra/images/018_e2pNzrOBQ8PFD86DXCmr0vvaN0A.png"],
+        imageLayout: "single",
       },
       {
         heading: "Design objectives",
         body: "Lower the entry barrier — minimize cognitive load, frictionless onboarding. Boost engagement through daily saving challenges, interactive rewards, playful rituals. Personalize tasks and suggestions based on individual spending patterns and goals.",
       },
       {
+        heading: "Why gamification",
+        body: "Budgeting fails when it feels like a chore. Gamification makes the loop short, visible, and rewarding — turning discipline into habit and improving long-term retention by orders of magnitude.",
+        images: ["/work/nutra/images/019_dDi2qK1thaNyf7zJYwyeaBPcjE.png"],
+        imageLayout: "single",
+      },
+      {
         heading: "Why \"Nut\"",
         body: "We chose Nut as the virtual assistant because it symbolizes growth, saving, and potential — a small thing that becomes something bigger. The metaphor makes financial progress feel tangible, approachable, and friendly.",
+        images: ["/work/nutra/images/020_YXLh1dAU7VEtFw5m1ymMEBw8WRg.png"],
+        imageLayout: "single",
+      },
+      {
+        heading: "Ideation",
+        body: "Two parallel flows: dashboard discovery (where money is going right now) and goal setting (where it should be going). Sketched dozens of variations to find the smallest viable interaction loop.",
+        images: [
+          "/work/nutra/images/021_TgcWfVt04AqnX9GWQJU498XfxW0.png",
+          "/work/nutra/images/022_ZW4XL91heR9aEEAAqxlQzGxo8U.png",
+          "/work/nutra/images/023_0KX9JJDrKf4MOV5AJNJ7c3N5g1E.png",
+          "/work/nutra/images/024_ozU3om54jWs3CcbkYNsa7CS2k4Y.png",
+          "/work/nutra/images/025_JiZ8IL59qsd64kS5EG1QUcVpB0.png",
+          "/work/nutra/images/026_CBULa0micCCsY9eS8lcwJEoABE.png",
+          "/work/nutra/images/027_DDGCerpoBV6cOO8VOxDIyAQK2g.png",
+          "/work/nutra/images/028_zm6mTpY4u7XDyhmwA5knnxEiP7c.png",
+          "/work/nutra/images/029_AbUxZ2ZiXDoxvEElWVg7XflNU.png",
+        ],
+        imageLayout: "grid-3",
+      },
+      {
+        heading: "First user test",
+        body: "A low-fi clickable prototype, run with target users to validate the underlying UX bones before any visual investment.",
+        images: ["/work/nutra/images/030_Xuclgz5r0pjEVynKwvs8GtQxqU.png"],
+        imageLayout: "single",
+      },
+      {
+        heading: "Refinement",
+        body: "First-test friction points: the goal flow asked for too much upfront, the dashboard buried the next action. We rewrote the onboarding sequence and gave the daily challenge top billing.",
+        images: [
+          "/work/nutra/images/031_TCBVvtth2bVy6tOdtviscAGYxwg.png",
+          "/work/nutra/images/032_KtFeT1n8GKPuFhG4n7yLT6XO5c.png",
+          "/work/nutra/images/033_jqQj1TvmimI7MCDeM23h52ZUHjA.png",
+          "/work/nutra/images/034_RhDJCQEcj1jiRTc5Ab773B3G060.png",
+        ],
+        imageLayout: "grid-2",
+      },
+      {
+        heading: "Lo-fi summary",
+        body: "Final lo-fi structure: dashboard, daily challenge, goal setter, Nut assistant, financial overview. Once this held, the brand layer could go on top.",
+        images: ["/work/nutra/images/035_JevRW6DPyVFAzcYOT94FnNVJKjk.png"],
+        imageLayout: "single",
+      },
+      {
+        heading: "User journey, after",
+        body: "Post-test, the journey collapsed: fewer screens between intent and feedback, fewer dead ends, a clear path from open-app to saved-money.",
+        images: ["/work/nutra/images/036_LGa2Jxxa3wti4K35rPTIvjF8k.png"],
+        imageLayout: "single",
+      },
+      {
+        heading: "Mid-fi & branding",
+        body: "Layered the brand voice on once the structure held. Nut got a personality. Color and motion stayed restrained so the play felt warm, not loud.",
+        images: ["/work/nutra/images/037_iSj6b1ENv3TQ41cy3g9IGtahbvE.png"],
+        imageLayout: "single",
+      },
+      {
+        heading: "Mockup",
+        body: "Hero composition for the launch page — Nut, dashboard, daily challenge, all visible in a single read.",
+        images: [
+          "/work/nutra/images/038_U1IP9FWWdtoZ1YniN5wmod3Wk.png",
+          "/work/nutra/images/039_NWqD05VZVBpOgqCJ6nLqIta7c2o.png",
+          "/work/nutra/images/040_ZNNvF1x53nHJo2s5cdZmlZL1zA.png",
+        ],
+        imageLayout: "single",
+      },
+      {
+        heading: "Branding 2.0",
+        body: "Second pass on visual identity. Tightened the mascot proportions, locked the color system, and built out a small expressive set of emotional states for Nut.",
+        images: [
+          "/work/nutra/images/041_KKamaeoBojXtMJdnULz0XK99H0.png",
+          "/work/nutra/images/042_HccGSSckUFus5nCuC6IlhjgqM.png",
+          "/work/nutra/images/043_Ps4zyaEEnRGOxDBw7h2mG6hooU.png",
+        ],
+        imageLayout: "grid-3",
+      },
+      {
+        heading: "Hi-fi user flow",
+        body: "End-to-end flow for the hi-fi prototype, covering onboarding, goal setting, daily check-in, and the financial overview.",
+        images: ["/work/nutra/images/044_qBXtfF9RaHuFnN0Y9RqbNuG5WQk.png"],
+        imageLayout: "single",
       },
       {
         heading: "What shipped",
         body: "Goal Setting (personalized, manageable steps). Daily challenges based on the user's spending pattern. The Nut assistant for visual reward and emotional feedback. A clear financial overview as honest data viz of habits, budgets, and progress. A full design system to keep it coherent across surfaces.",
+        images: [
+          "/work/nutra/images/045_CUMADf13Hswh07v9fzADNWsAmJE.png",
+          "/work/nutra/images/046_x6YgdjgHlSnrM4Ub4omotROYM.png",
+          "/work/nutra/images/047_GgNve27me3IEChDkzin6eqykQU.png",
+        ],
+        imageLayout: "grid-3",
+      },
+      {
+        heading: "Design system",
+        body: "Comprehensive guidelines to keep visual and interactive consistency across surfaces — color, type, components, motion tokens, and the rules for Nut as a system primitive.",
+        images: [
+          "/work/nutra/images/048_WmV727HxTIiMFthlQokx4f0bnFQ.png",
+          "/work/nutra/images/049_4wITjb4UkY4GW37W40aUKngM.png",
+        ],
+        imageLayout: "single",
       },
       {
         heading: "Validation",
@@ -193,23 +351,26 @@ export const projects: Project[] = [
   },
   {
     slug: "cone",
-    title: "Cone Walk Safe",
-    client: "Aspen Lab · iF Design Award 2025",
+    title: "Field of Vision — wearable for visually impaired pedestrians",
+    client: "Aspen Lab · iF + Red Dot 2025",
     role: "Product Designer & Researcher",
-    period: "Jun 2024",
+    period: "2024 — 2025",
     year: "2024",
     date: "6/20/24",
     category: "Design for Disabled",
     summary:
-      "A wearable + interface system designed for visually impaired pedestrians. iF Design Award 2025 winner.",
+      "A wearable + interface system designed for visually impaired pedestrians. Winner of both iF Design Award and Red Dot Design Award in 2025.",
     tags: ["Accessibility", "Wearable", "Service design"],
     cover: "/work/cone.png",
     status: "coming-soon",
-    metrics: [{ label: "Recognition", value: "iF Design 2025" }],
+    metrics: [
+      { label: "iF Design Award", value: "2025" },
+      { label: "Red Dot Design Award", value: "2025" },
+    ],
     sections: [
       {
         heading: "Status",
-        body: "Detailed case study coming soon. Cone Walk Safe is a navigation aid system for visually impaired pedestrians — recognized with the iF Design Award in 2025 for its approach to accessibility. Reach out if you'd like to dig into the design and research now.",
+        body: "Detailed case study coming soon. Field of Vision (working title: Cone Walk Safe) is a navigation aid system for visually impaired pedestrians — recognized with both the iF Design Award and Red Dot Design Award in 2025. Reach out if you'd like to dig into the design and research now.",
       },
     ],
   },
@@ -271,7 +432,8 @@ export const moreWork = [
 ];
 
 export const awards = [
-  { title: "iF Design Award", project: "Cone Walk Safe", year: "2025" },
+  { title: "iF Design Award", project: "Field of Vision", year: "2025" },
+  { title: "Red Dot Design Award", project: "Field of Vision", year: "2025" },
   { title: "IDEA Student Award", project: "CryoSave for CDC NWSS", year: "2025" },
   { title: "Bredendieck Award", project: "Georgia Tech (×2)", year: "" },
   { title: "Humanitarian Award", project: "", year: "" },
@@ -281,33 +443,53 @@ export const awards = [
 export type StackCategory = {
   label: string;
   items: string[];
+  note?: string;
 };
 
 export const stack: StackCategory[] = [
   {
-    label: "Frontend",
-    items: ["Next.js", "React", "TypeScript", "Tailwind"],
+    label: "Frontend · daily driver",
+    items: ["Next.js App Router", "React · TypeScript", "Tailwind", "Motion", "Shiki + Lucide"],
+    note: "Lumen, helloaxel.com, internal dashboards.",
   },
   {
-    label: "Motion",
-    items: ["Motion (Framer)", "CSS-first", "Reduced-motion respected"],
+    label: "Email engineering",
+    items: ["Customer.io", "Liquid templating", "No-fake-defaults pattern", "MJML thinking"],
+    note: "28 templates, onboarding through cancellation.",
   },
   {
     label: "Backend & data",
-    items: ["Python 3.11+", "Supabase", "Postgres", "Vercel"],
+    items: ["Python 3.10+ asyncio", "SQLite + YAML", "Docker Compose", "Postgres / Supabase"],
+    note: "Hermes, pawsense, internal services.",
   },
   {
-    label: "AI",
-    items: ["Anthropic SDK", "Google GenAI", "Local TF-IDF"],
+    label: "AI · 3 tiers",
+    items: ["Anthropic SDK", "Google GenAI", "Ollama (local)", "TF-IDF (rules)"],
+    note: "Tier 0 / 1 / 2 — match cost and capability to the task.",
+  },
+  {
+    label: "Game",
+    items: ["Unity + C#", "PlayMaker FSM", "Hollow-Knight stack"],
+    note: "2D Metroidvania w/ Skyler, 1–2h/day.",
   },
   {
     label: "Design",
-    items: ["Figma", "Framer", "Rhino + Keyshot", "Adobe CS"],
+    items: ["Figma + Figma MCP", "Framer", "Rhino + Keyshot", "Adobe CS"],
+    note: "Where the form starts.",
   },
   {
-    label: "Tooling",
-    items: ["Cursor", "Claude Code", "Git", "Obsidian"],
+    label: "Tooling · the glue",
+    items: ["Cursor", "Claude Code", "unity-mcp · Ludo MCP", "Customer.io MCP", "PptxGenJS"],
+    note: "CLAUDE.md auto-loads project-specific design system rules per repo.",
   },
+];
+
+export const spectrum = [
+  "Design",
+  "Frontend",
+  "Templating",
+  "Backend",
+  "Game",
 ];
 
 export type SideProject = {
@@ -322,18 +504,26 @@ export const sideProjects: SideProject[] = [
   {
     name: "Hermes",
     blurb:
-      "Self-hosted information agent. Turns the RSS / HN / arXiv / Reddit firehose into ten items I actually care about, written to my Obsidian vault.",
-    tech: "Python 3.11+ · MIT · TF-IDF",
+      "Self-hosted information agent. Five-stage pipeline (ingest → score → dedup → distill → output) turns RSS / HN / arXiv / Reddit into ten things I actually care about, written to my Obsidian vault. Tier 0 (rules) → Tier 1 (Ollama local) → Tier 2 (BYOK cloud).",
+    tech: "Python 3.10+ · asyncio · SQLite · YAML · Docker · MIT",
     href: "https://github.com/Aspen-Lab/Hermes",
     status: "v0 MVP",
   },
   {
     name: "Lumen",
     blurb:
-      "Interactive UI components for AI-native products — reasoning visualization, decision presentation, action confirmation. Live tunable controls + copy-paste TSX.",
+      "Interactive UI components for AI-native products — reasoning visualization, decision presentation, action confirmation. Two-layer parameters (visual + product semantic) and copyable code.",
     tech: "TypeScript · Next.js · Motion",
     href: "https://github.com/Aspen-Lab/lumen",
     status: "Active",
+  },
+  {
+    name: "Metroidvania",
+    blurb:
+      "Untitled 2D Metroidvania, Hollow-Knight stack. Engineering full-stack solo; Skyler on art and music. Working in 1–2 hour daily blocks: 2 weeks of greybox, 6 weeks for the first area, 3-month MVP target.",
+    tech: "Unity · C# · PlayMaker · Claude Code + unity-mcp",
+    href: "",
+    status: "WIP",
   },
   {
     name: "CardFlow",
@@ -350,5 +540,34 @@ export const sideProjects: SideProject[] = [
     tech: "HTML · PWA",
     href: "https://github.com/Aspen-Lab/Itinerary",
     status: "Shipped",
+  },
+];
+
+export type Combo = {
+  index: string;
+  label: string;
+  body: string;
+};
+
+export const combos: Combo[] = [
+  {
+    index: "01",
+    label: "Design × Production code",
+    body: "I designed and shipped 100% of helloaxel.com. Figma → tokens → Tailwind components → Vercel preview, no translation loss. The deliverable is commits, not a PDF.",
+  },
+  {
+    index: "02",
+    label: "Founder × Designer",
+    body: "XING Art: co-founded, raised $300K pre-seed, ran the product, transitioned to shareholder + advisor. I read GMV / MRR / funnels — I find the problem before someone hands me a brief.",
+  },
+  {
+    index: "03",
+    label: "Cog Sci × Visual craft",
+    body: "iF + Red Dot 2025 for Field of Vision — and the underlying training is HCI / behavioral science. I can explain why a flow works, not just claim that it does.",
+  },
+  {
+    index: "04",
+    label: "AI × Cross-domain width",
+    body: "Cursor + Claude Code + Figma MCP + unity-mcp + Customer.io MCP. I don't use AI for one-shot acceleration; I use it to fuse design, frontend, email, backend, and game dev into a single delivery chain.",
   },
 ];

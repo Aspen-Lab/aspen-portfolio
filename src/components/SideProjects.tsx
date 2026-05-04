@@ -32,36 +32,58 @@ export function SideProjects() {
       </Reveal>
 
       <ul className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10 border-t border-line pt-10">
-        {sideProjects.map((p, i) => (
-          <Reveal key={p.name} delay={0.04 * i}>
-            <li>
-              <a
-                href={p.href}
-                target="_blank"
-                rel="noreferrer"
-                className="group block"
-              >
-                <div className="flex items-baseline justify-between gap-4 mb-3">
-                  <h3 className="font-display text-[24px] leading-[1.1] tracking-[-0.01em] text-ink group-hover:opacity-80 transition-opacity">
-                    {p.name}
-                  </h3>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft px-2 py-0.5 border border-line rounded-full">
-                    {p.status}
-                  </span>
-                </div>
-                <p className="text-[15px] text-ink/85 leading-[1.55] mb-3 max-w-[52ch]">
-                  {p.blurb}
-                </p>
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-soft">
-                  {p.tech} <span className="ml-2 text-line">→</span>{" "}
-                  <span className="link link-rev group-hover:text-ink">
-                    GitHub
-                  </span>
-                </p>
-              </a>
-            </li>
-          </Reveal>
-        ))}
+        {sideProjects.map((p, i) => {
+          const linked = Boolean(p.href && p.href !== "#");
+          const card = (
+            <>
+              <div className="flex items-baseline justify-between gap-4 mb-3">
+                <h3 className="font-display text-[24px] leading-[1.1] tracking-[-0.01em] text-ink group-hover:opacity-80 transition-opacity">
+                  {p.name}
+                </h3>
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft px-2 py-0.5 border border-line rounded-full shrink-0">
+                  {p.status}
+                </span>
+              </div>
+              <p className="text-[15px] text-ink/85 leading-[1.6] mb-3 max-w-[54ch]">
+                {p.blurb}
+              </p>
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-soft">
+                {p.tech}
+                {linked ? (
+                  <>
+                    <span className="mx-2 text-line">→</span>
+                    <span className="link link-rev group-hover:text-ink">
+                      GitHub
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="mx-2 text-line">·</span>
+                    <span>Private</span>
+                  </>
+                )}
+              </p>
+            </>
+          );
+          return (
+            <Reveal key={p.name} delay={0.04 * i}>
+              <li>
+                {linked ? (
+                  <a
+                    href={p.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group block"
+                  >
+                    {card}
+                  </a>
+                ) : (
+                  <div className="block">{card}</div>
+                )}
+              </li>
+            </Reveal>
+          );
+        })}
       </ul>
     </section>
   );

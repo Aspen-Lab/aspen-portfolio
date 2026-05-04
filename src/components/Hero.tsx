@@ -5,7 +5,7 @@ export function Hero() {
     <section className="container-fluid pt-24 pb-32 sm:pt-36 sm:pb-44">
       <Reveal>
         <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-          Product Designer · Georgia Tech · Design since 2021
+          Design Engineer · Bellevue, WA · Open to ATL · Bilingual EN / 中文
         </p>
       </Reveal>
 
@@ -16,40 +16,39 @@ export function Hero() {
         >
           Hi! I&apos;m Aspen.
           <br />
-          A product designer
+          A Design Engineer
           <br />
           who blends{" "}
           <span className="italic font-normal">creativity</span>
           <br />
-          with technical expertise.
+          with code that ships.
         </h1>
       </Reveal>
 
       <Reveal delay={0.12}>
         <p className="mt-12 max-w-2xl text-[18px] leading-[1.6] text-mute">
-          4+ years across <span className="text-ink">TikTok</span>,{" "}
+          5+ years across <span className="text-ink">TikTok</span>,{" "}
           <span className="text-ink">Hyundai</span>,{" "}
-          <span className="text-ink">Slashy</span> (YC25),{" "}
           <span className="text-ink">CDC</span>, and{" "}
-          <span className="text-ink">XING Art</span> (1K+ users). Currently
-          designing flight & hotel repricing at{" "}
-          <span className="text-ink">Axel</span> (Gordian, YC&nbsp;W19). iF
-          Design &amp; IDEA Student Award winner. Permanent Resident — no
-          sponsorship needed.
+          <span className="text-ink">XING Art</span> ($300K pre-seed, 1K+
+          users). Currently a Design Engineer at{" "}
+          <span className="text-ink">Axel</span> (Gordian Software, YC&nbsp;W19),
+          reporting directly to the CEO. iF + Red Dot 2025 winner. Permanent
+          Resident — no sponsorship needed.
         </p>
       </Reveal>
 
       <Reveal delay={0.18}>
         <ul className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono uppercase tracking-[0.16em] text-[11px] text-soft">
-          <li>UIUX</li>
+          <li>Production React</li>
           <li className="text-line">·</li>
-          <li>Design System</li>
+          <li>Design tokens</li>
           <li className="text-line">·</li>
-          <li>User Research</li>
+          <li>Customer.io · Liquid</li>
           <li className="text-line">·</li>
-          <li>A/B Testing</li>
+          <li>Conversational UI</li>
           <li className="text-line">·</li>
-          <li>AI Tools</li>
+          <li>AI tooling</li>
         </ul>
       </Reveal>
 
@@ -57,6 +56,10 @@ export function Hero() {
         <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px] text-mute">
           <a href="#work" className="link link-rev text-ink">
             See selected work
+          </a>
+          <span className="text-line">·</span>
+          <a href="#stack" className="link link-rev hover:text-ink">
+            Stack
           </a>
           <span className="text-line">·</span>
           <a

@@ -45,15 +45,10 @@ export function Footer() {
           >
             Aspen Lab (Framer) →
           </a>
-          {/* TODO: drop in your real LinkedIn / GitHub URLs */}
           <a
-            href="#"
-            className="block link link-rev text-mute hover:text-ink"
-          >
-            LinkedIn
-          </a>
-          <a
-            href="#"
+            href="https://github.com/Aspen-Lab"
+            target="_blank"
+            rel="noreferrer"
             className="block link link-rev text-mute hover:text-ink"
           >
             GitHub
