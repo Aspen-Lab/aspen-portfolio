@@ -90,6 +90,15 @@ button {
   transform: translateY(-1px);
 }
 
+/* Hide scrollbar on horizontally-scrollable elements (e.g. tab bar on mobile). */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Faint dot-grid texture for hero / section backgrounds. */
 .grid-texture {
   background-image: radial-gradient(

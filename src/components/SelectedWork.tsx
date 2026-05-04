@@ -5,21 +5,7 @@ import { Reveal } from "./Reveal";
 
 export function SelectedWork() {
   return (
-    <section id="work" className="container-fluid pb-32">
-      <Reveal>
-        <div className="flex items-baseline justify-between mb-14 border-t border-line pt-8">
-          <h2 className="font-display text-[28px] sm:text-[34px] tracking-[-0.01em]">
-            <span className="font-mono text-soft text-[14px] tracking-[0.2em] uppercase mr-3">
-              {"{ 01 }"}
-            </span>
-            Featured projects
-          </h2>
-          <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hidden sm:block">
-            2024 — Now
-          </p>
-        </div>
-      </Reveal>
-
+    <section id="work" className="container-fluid pt-14 pb-32">
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-20">
         {projects.map((p, i) => (
           <Reveal key={p.slug} delay={i * 0.05}>

@@ -3,32 +3,23 @@ import { Reveal } from "./Reveal";
 
 export function SideProjects() {
   return (
-    <section id="side" className="container-fluid pb-32">
+    <section id="side" className="container-fluid pt-14 pb-32">
       <Reveal>
-        <div className="flex items-baseline justify-between mb-10 border-t border-line pt-8">
-          <h2 className="font-display text-[28px] sm:text-[34px] tracking-[-0.01em]">
-            <span className="font-mono text-soft text-[14px] tracking-[0.2em] uppercase mr-3">
-              {"{ 03 }"}
-            </span>
-            Side projects
-          </h2>
+        <div className="flex items-start justify-between gap-6 mb-12">
+          <p className="text-[18px] text-mute leading-[1.6] max-w-2xl">
+            Things I build between design jobs — usually to scratch a personal
+            itch, sometimes to test a tool I&apos;m thinking about adopting at
+            work.
+          </p>
           <a
             href="https://github.com/Aspen-Lab"
             target="_blank"
             rel="noreferrer"
-            className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hover:text-ink link link-rev hidden sm:inline"
+            className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hover:text-ink link link-rev hidden sm:inline shrink-0 pt-2"
           >
             github.com/Aspen-Lab →
           </a>
         </div>
-      </Reveal>
-
-      <Reveal delay={0.06}>
-        <p className="text-[18px] text-mute leading-[1.6] max-w-2xl mb-12">
-          Things I build between design jobs — usually to scratch a personal
-          itch, sometimes to test a tool I&apos;m thinking about adopting at
-          work.
-        </p>
       </Reveal>
 
       <ul className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10 border-t border-line pt-10">
