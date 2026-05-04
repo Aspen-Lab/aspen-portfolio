@@ -15,7 +15,7 @@ export function SelectedWork() {
             Featured projects
           </h2>
           <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hidden sm:block">
-            2024 — 2025
+            2024 — Now
           </p>
         </div>
       </Reveal>
@@ -26,13 +26,21 @@ export function SelectedWork() {
             <li>
               <Link href={`/work/${p.slug}`} className="group block">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[6px] bg-cream">
-                  <Image
-                    src={p.cover}
-                    alt={p.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 600px"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                  />
+                  {p.cover ? (
+                    <Image
+                      src={p.cover}
+                      alt={p.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 600px"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-soft/70">
+                        cover · {p.year}
+                      </span>
+                    </div>
+                  )}
                   {p.status === "coming-soon" && (
                     <span className="absolute top-3 right-3 font-mono text-[10px] uppercase tracking-[0.18em] bg-paper/90 text-soft px-2.5 py-1 rounded-full">
                       In progress

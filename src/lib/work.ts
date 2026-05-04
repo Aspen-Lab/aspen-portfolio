@@ -9,13 +9,38 @@ export type Project = {
   category: string;
   summary: string;
   tags: string[];
-  cover: string;
+  cover?: string;
   metrics?: { label: string; value: string }[];
   sections?: { heading: string; body: string }[];
   status?: "live" | "coming-soon";
 };
 
 export const projects: Project[] = [
+  {
+    slug: "axel",
+    title: "Axel — get paid back when prices drop",
+    client: "Axel · Gordian Software (YC W19)",
+    role: "Product Designer",
+    period: "Dec 2025 — Present",
+    year: "Now",
+    date: "ongoing",
+    category: "Travel · Fintech",
+    summary:
+      "Designing end-to-end UX for hotel and flight repricing at a YC W19 travel-money startup — onboarding through claim, growth-flavored, fast iteration.",
+    tags: ["End-to-end UX", "Growth", "Travel · Fintech"],
+    status: "coming-soon",
+    metrics: [],
+    sections: [
+      {
+        heading: "Currently shipping",
+        body: "Hotel & flight repricing flow. Onboarding & landing-page conversion. WhatsApp engagement. Referral programs. Early design-system components for faster shipping.",
+      },
+      {
+        heading: "Case study coming",
+        body: "We're still in the middle of it — I'll publish a deeper write-up once a few flows have hit ship velocity. Reach out and I'll walk you through what I'm working on.",
+      },
+    ],
+  },
   {
     slug: "nutra",
     title: "Nutra — fintech for everyone",
@@ -180,9 +205,7 @@ export const projects: Project[] = [
     tags: ["Accessibility", "Wearable", "Service design"],
     cover: "/work/cone.png",
     status: "coming-soon",
-    metrics: [
-      { label: "Recognition", value: "iF Design 2025" },
-    ],
+    metrics: [{ label: "Recognition", value: "iF Design 2025" }],
     sections: [
       {
         heading: "Status",
@@ -253,4 +276,79 @@ export const awards = [
   { title: "Bredendieck Award", project: "Georgia Tech (×2)", year: "" },
   { title: "Humanitarian Award", project: "", year: "" },
   { title: "Atlanta Design Festival", project: "Recognition", year: "" },
+];
+
+export type StackCategory = {
+  label: string;
+  items: string[];
+};
+
+export const stack: StackCategory[] = [
+  {
+    label: "Frontend",
+    items: ["Next.js", "React", "TypeScript", "Tailwind"],
+  },
+  {
+    label: "Motion",
+    items: ["Motion (Framer)", "CSS-first", "Reduced-motion respected"],
+  },
+  {
+    label: "Backend & data",
+    items: ["Python 3.11+", "Supabase", "Postgres", "Vercel"],
+  },
+  {
+    label: "AI",
+    items: ["Anthropic SDK", "Google GenAI", "Local TF-IDF"],
+  },
+  {
+    label: "Design",
+    items: ["Figma", "Framer", "Rhino + Keyshot", "Adobe CS"],
+  },
+  {
+    label: "Tooling",
+    items: ["Cursor", "Claude Code", "Git", "Obsidian"],
+  },
+];
+
+export type SideProject = {
+  name: string;
+  blurb: string;
+  tech: string;
+  href: string;
+  status: string;
+};
+
+export const sideProjects: SideProject[] = [
+  {
+    name: "Hermes",
+    blurb:
+      "Self-hosted information agent. Turns the RSS / HN / arXiv / Reddit firehose into ten items I actually care about, written to my Obsidian vault.",
+    tech: "Python 3.11+ · MIT · TF-IDF",
+    href: "https://github.com/Aspen-Lab/Hermes",
+    status: "v0 MVP",
+  },
+  {
+    name: "Lumen",
+    blurb:
+      "Interactive UI components for AI-native products — reasoning visualization, decision presentation, action confirmation. Live tunable controls + copy-paste TSX.",
+    tech: "TypeScript · Next.js · Motion",
+    href: "https://github.com/Aspen-Lab/lumen",
+    status: "Active",
+  },
+  {
+    name: "CardFlow",
+    blurb:
+      "Notion-like editor that auto-generates 小红书-style swipeable cards. Five themes, real-time preview, swipe / keyboard / scroll paging.",
+    tech: "TypeScript · CN audience",
+    href: "https://github.com/Aspen-Lab/cardflow",
+    status: "Shipped",
+  },
+  {
+    name: "Itinerary",
+    blurb:
+      "A lightweight trip itinerary PWA — for the kind of trip you want to remember a year later.",
+    tech: "HTML · PWA",
+    href: "https://github.com/Aspen-Lab/Itinerary",
+    status: "Shipped",
+  },
 ];

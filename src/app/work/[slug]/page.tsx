@@ -100,14 +100,22 @@ export default async function CaseStudy({
 
       <Reveal delay={0.14}>
         <div className="mt-16 aspect-[16/9] rounded-[8px] overflow-hidden bg-cream relative">
-          <Image
-            src={project.cover}
-            alt={project.title}
-            fill
-            sizes="(max-width: 1280px) 100vw, 1280px"
-            className="object-cover"
-            priority
-          />
+          {project.cover ? (
+            <Image
+              src={project.cover}
+              alt={project.title}
+              fill
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-soft">
+                cover · drop your hero shot here
+              </span>
+            </div>
+          )}
         </div>
       </Reveal>
 

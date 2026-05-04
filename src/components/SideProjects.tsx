@@ -1,0 +1,68 @@
+import { sideProjects } from "@/lib/work";
+import { Reveal } from "./Reveal";
+
+export function SideProjects() {
+  return (
+    <section id="side" className="container-fluid pb-32">
+      <Reveal>
+        <div className="flex items-baseline justify-between mb-10 border-t border-line pt-8">
+          <h2 className="font-display text-[28px] sm:text-[34px] tracking-[-0.01em]">
+            <span className="font-mono text-soft text-[14px] tracking-[0.2em] uppercase mr-3">
+              {"{ 03 }"}
+            </span>
+            Side projects
+          </h2>
+          <a
+            href="https://github.com/Aspen-Lab"
+            target="_blank"
+            rel="noreferrer"
+            className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hover:text-ink link link-rev hidden sm:inline"
+          >
+            github.com/Aspen-Lab →
+          </a>
+        </div>
+      </Reveal>
+
+      <Reveal delay={0.06}>
+        <p className="text-[18px] text-mute leading-[1.6] max-w-2xl mb-12">
+          Things I build between design jobs — usually to scratch a personal
+          itch, sometimes to test a tool I&apos;m thinking about adopting at
+          work.
+        </p>
+      </Reveal>
+
+      <ul className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10 border-t border-line pt-10">
+        {sideProjects.map((p, i) => (
+          <Reveal key={p.name} delay={0.04 * i}>
+            <li>
+              <a
+                href={p.href}
+                target="_blank"
+                rel="noreferrer"
+                className="group block"
+              >
+                <div className="flex items-baseline justify-between gap-4 mb-3">
+                  <h3 className="font-display text-[24px] leading-[1.1] tracking-[-0.01em] text-ink group-hover:opacity-80 transition-opacity">
+                    {p.name}
+                  </h3>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft px-2 py-0.5 border border-line rounded-full">
+                    {p.status}
+                  </span>
+                </div>
+                <p className="text-[15px] text-ink/85 leading-[1.55] mb-3 max-w-[52ch]">
+                  {p.blurb}
+                </p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-soft">
+                  {p.tech} <span className="ml-2 text-line">→</span>{" "}
+                  <span className="link link-rev group-hover:text-ink">
+                    GitHub
+                  </span>
+                </p>
+              </a>
+            </li>
+          </Reveal>
+        ))}
+      </ul>
+    </section>
+  );
+}
