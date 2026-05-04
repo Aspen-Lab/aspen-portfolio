@@ -18,6 +18,8 @@ export type Project = {
     images?: string[];
     imageLayout?: "single" | "grid-2" | "grid-3" | "grid-4";
     imageRatio?: "16/10" | "16/9" | "4/3" | "1/1" | "auto";
+    chapter?: string;
+    carouselAspect?: "16/9" | "16/10" | "4/3" | "1/1";
   }[];
   status?: "live" | "coming-soon";
   liveUrl?: string;
@@ -82,7 +84,7 @@ export const projects: Project[] = [
     summary:
       "A budgeting app for the rest of us. Gamified, friendly, built for people who want to save but can't sustain it. 85% of testers reported higher motivation; 90% loved the play of it.",
     tags: ["Fintech", "Gamification", "UX research"],
-    cover: "/work/nutra/images/008_t02qRbWuUJkOIYC2YDfQ3quy8.png",
+    cover: "/work/nutra.png",
     heroVideo: "/work/nutra/hero.mp4",
     status: "live",
     metrics: [
@@ -92,6 +94,7 @@ export const projects: Project[] = [
     ],
     sections: [
       {
+        chapter: "Discovery",
         heading: "Problem",
         body: "Budgeting matters but it's hard, especially for new learners. Most apps are overwhelming because they're built for the highly disciplined. The people who most need help — the ones who want to save but can't stay consistent — are the ones who quietly drop out first.",
         images: [
@@ -99,9 +102,9 @@ export const projects: Project[] = [
           "/work/nutra/images/010_p03fMvdXv9qlkuEGy2e1IsxVCY.png",
           "/work/nutra/images/011_NBye5onWmCPLKvqzCwSnykmGtY.png",
         ],
-        imageLayout: "grid-3",
       },
       {
+        chapter: "Discovery",
         heading: "Research",
         body: "Surveys and in-depth interviews with self-identified low-motivation, low-discipline users surfaced three insights: simple intuitive interactions reduce overwhelm; gamification mechanics significantly boost engagement; and small, personalized nudges drive consistency. We were looking at a large, underserved group whose biggest enemy was friction.",
         images: [
@@ -110,40 +113,42 @@ export const projects: Project[] = [
           "/work/nutra/images/014_Vb7Gz3n9VxLlxy1PFYuaaHuSj0.png",
           "/work/nutra/images/015_BdOp2AWzf5aVaLvyrrQYj3ONl2Q.png",
         ],
-        imageLayout: "grid-2",
       },
       {
+        chapter: "Discovery",
         heading: "Mental model & journey",
         body: "We mapped how target users think about money — separating the cognitive cost of saving from the emotional cost of being told they aren't saving enough. The journey map made the friction points visible.",
         images: [
           "/work/nutra/images/016_gSg4pXbkYOCUbkkrN7YHezfzUc.png",
           "/work/nutra/images/017_4KcO8ZQt1kH5izQWlTG0zFskSE.png",
         ],
-        imageLayout: "single",
       },
       {
+        chapter: "Discovery",
         heading: "Market opportunity",
         body: "Mainstream budgeting apps over-index on the disciplined power user. Nutra targets the much larger unmotivated middle — people who already want to save but can't sustain attention without a feedback loop.",
         images: ["/work/nutra/images/018_e2pNzrOBQ8PFD86DXCmr0vvaN0A.png"],
-        imageLayout: "single",
       },
       {
+        chapter: "Strategy",
         heading: "Design objectives",
         body: "Lower the entry barrier — minimize cognitive load, frictionless onboarding. Boost engagement through daily saving challenges, interactive rewards, playful rituals. Personalize tasks and suggestions based on individual spending patterns and goals.",
       },
       {
+        chapter: "Strategy",
         heading: "Why gamification",
         body: "Budgeting fails when it feels like a chore. Gamification makes the loop short, visible, and rewarding — turning discipline into habit and improving long-term retention by orders of magnitude.",
         images: ["/work/nutra/images/019_dDi2qK1thaNyf7zJYwyeaBPcjE.png"],
-        imageLayout: "single",
       },
       {
+        chapter: "Strategy",
         heading: "Why \"Nut\"",
         body: "We chose Nut as the virtual assistant because it symbolizes growth, saving, and potential — a small thing that becomes something bigger. The metaphor makes financial progress feel tangible, approachable, and friendly.",
         images: ["/work/nutra/images/020_YXLh1dAU7VEtFw5m1ymMEBw8WRg.png"],
-        imageLayout: "single",
+        carouselAspect: "16/10",
       },
       {
+        chapter: "Process",
         heading: "Ideation",
         body: "Two parallel flows: dashboard discovery (where money is going right now) and goal setting (where it should be going). Sketched dozens of variations to find the smallest viable interaction loop.",
         images: [
@@ -157,15 +162,15 @@ export const projects: Project[] = [
           "/work/nutra/images/028_zm6mTpY4u7XDyhmwA5knnxEiP7c.png",
           "/work/nutra/images/029_AbUxZ2ZiXDoxvEElWVg7XflNU.png",
         ],
-        imageLayout: "grid-3",
       },
       {
+        chapter: "Process",
         heading: "First user test",
         body: "A low-fi clickable prototype, run with target users to validate the underlying UX bones before any visual investment.",
         images: ["/work/nutra/images/030_Xuclgz5r0pjEVynKwvs8GtQxqU.png"],
-        imageLayout: "single",
       },
       {
+        chapter: "Process",
         heading: "Refinement",
         body: "First-test friction points: the goal flow asked for too much upfront, the dashboard buried the next action. We rewrote the onboarding sequence and gave the daily challenge top billing.",
         images: [
@@ -174,27 +179,27 @@ export const projects: Project[] = [
           "/work/nutra/images/033_jqQj1TvmimI7MCDeM23h52ZUHjA.png",
           "/work/nutra/images/034_RhDJCQEcj1jiRTc5Ab773B3G060.png",
         ],
-        imageLayout: "grid-2",
       },
       {
+        chapter: "Process",
         heading: "Lo-fi summary",
         body: "Final lo-fi structure: dashboard, daily challenge, goal setter, Nut assistant, financial overview. Once this held, the brand layer could go on top.",
         images: ["/work/nutra/images/035_JevRW6DPyVFAzcYOT94FnNVJKjk.png"],
-        imageLayout: "single",
       },
       {
+        chapter: "Process",
         heading: "User journey, after",
         body: "Post-test, the journey collapsed: fewer screens between intent and feedback, fewer dead ends, a clear path from open-app to saved-money.",
         images: ["/work/nutra/images/036_LGa2Jxxa3wti4K35rPTIvjF8k.png"],
-        imageLayout: "single",
       },
       {
+        chapter: "Execution",
         heading: "Mid-fi & branding",
         body: "Layered the brand voice on once the structure held. Nut got a personality. Color and motion stayed restrained so the play felt warm, not loud.",
         images: ["/work/nutra/images/037_iSj6b1ENv3TQ41cy3g9IGtahbvE.png"],
-        imageLayout: "single",
       },
       {
+        chapter: "Execution",
         heading: "Mockup",
         body: "Hero composition for the launch page — Nut, dashboard, daily challenge, all visible in a single read.",
         images: [
@@ -202,9 +207,9 @@ export const projects: Project[] = [
           "/work/nutra/images/039_NWqD05VZVBpOgqCJ6nLqIta7c2o.png",
           "/work/nutra/images/040_ZNNvF1x53nHJo2s5cdZmlZL1zA.png",
         ],
-        imageLayout: "single",
       },
       {
+        chapter: "Execution",
         heading: "Branding 2.0",
         body: "Second pass on visual identity. Tightened the mascot proportions, locked the color system, and built out a small expressive set of emotional states for Nut.",
         images: [
@@ -212,15 +217,16 @@ export const projects: Project[] = [
           "/work/nutra/images/042_HccGSSckUFus5nCuC6IlhjgqM.png",
           "/work/nutra/images/043_Ps4zyaEEnRGOxDBw7h2mG6hooU.png",
         ],
-        imageLayout: "grid-3",
+        carouselAspect: "16/10",
       },
       {
+        chapter: "Execution",
         heading: "Hi-fi user flow",
         body: "End-to-end flow for the hi-fi prototype, covering onboarding, goal setting, daily check-in, and the financial overview.",
         images: ["/work/nutra/images/044_qBXtfF9RaHuFnN0Y9RqbNuG5WQk.png"],
-        imageLayout: "single",
       },
       {
+        chapter: "Execution",
         heading: "What shipped",
         body: "Goal Setting (personalized, manageable steps). Daily challenges based on the user's spending pattern. The Nut assistant for visual reward and emotional feedback. A clear financial overview as honest data viz of habits, budgets, and progress. A full design system to keep it coherent across surfaces.",
         images: [
@@ -228,22 +234,23 @@ export const projects: Project[] = [
           "/work/nutra/images/046_x6YgdjgHlSnrM4Ub4omotROYM.png",
           "/work/nutra/images/047_GgNve27me3IEChDkzin6eqykQU.png",
         ],
-        imageLayout: "grid-3",
       },
       {
+        chapter: "Execution",
         heading: "Design system",
         body: "Comprehensive guidelines to keep visual and interactive consistency across surfaces — color, type, components, motion tokens, and the rules for Nut as a system primitive.",
         images: [
           "/work/nutra/images/048_WmV727HxTIiMFthlQokx4f0bnFQ.png",
           "/work/nutra/images/049_4wITjb4UkY4GW37W40aUKngM.png",
         ],
-        imageLayout: "single",
       },
       {
+        chapter: "Outcome",
         heading: "Validation",
         body: "Multiple rounds of usability testing with target users refined the interactions. The result: stronger retention through play, observable improvements in saving behavior among users who'd previously bounced off discipline-heavy apps, and overwhelmingly positive feedback.",
       },
       {
+        chapter: "Outcome",
         heading: "Reflection",
         body: "Designing Nutra deepened my understanding of behavioral psychology and how gamification really works in motivation. It strengthened my UX research, iterative prototyping, and visual-system muscles — and showed how care plus play can ship something both effective and joyful.",
       },

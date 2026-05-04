@@ -3,7 +3,6 @@ import { SelectedWork } from "@/components/SelectedWork";
 import { TechStack } from "@/components/TechStack";
 import { SideProjects } from "@/components/SideProjects";
 import { Moat } from "@/components/Moat";
-import { About } from "@/components/About";
 
 export default function Home() {
   return (
@@ -13,7 +12,6 @@ export default function Home() {
       <TechStack />
       <SideProjects />
       <Moat />
-      <About />
     </>
   );
 }

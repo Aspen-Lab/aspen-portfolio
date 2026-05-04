@@ -14,7 +14,7 @@ export function Nav() {
           <Link href="/#work" className="link link-rev hover:text-ink">
             Work
           </Link>
-          <Link href="/#about" className="link link-rev hover:text-ink">
+          <Link href="/about" className="link link-rev hover:text-ink">
             About
           </Link>
           <a

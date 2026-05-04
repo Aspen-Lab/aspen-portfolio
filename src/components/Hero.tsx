@@ -1,23 +1,24 @@
 import { Reveal } from "./Reveal";
-import { BilingualName } from "./BilingualName";
-import { NowStatus } from "./NowStatus";
-import { SkillChips } from "./SkillChips";
+import { NowPanel } from "./NowPanel";
 
 export function Hero() {
   return (
-    <section className="container-fluid pt-24 pb-28 sm:pt-28 sm:pb-36">
+    <section className="container-fluid relative pt-24 pb-28 sm:pt-28 sm:pb-32">
+      {/* Faint dot-grid texture */}
+      <div className="grid-texture pointer-events-none absolute inset-0 -z-10" />
+
       <Reveal>
         <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-          Design Engineer · Bellevue, WA · Open to ATL · EN / 中文
+          Design Engineer · Bellevue, WA · Open to ATL
         </p>
       </Reveal>
 
       <Reveal delay={0.05}>
         <h1
-          className="mt-12 font-display font-light tracking-[-0.02em] text-ink leading-[1.0]"
+          className="mt-10 font-display font-light tracking-[-0.02em] text-ink leading-[1.0]"
           style={{ fontSize: "clamp(40px, 6.4vw, 88px)" }}
         >
-          Hi! I&apos;m <BilingualName />.
+          Hi! I&apos;m Aspen.
           <br />A Design Engineer who blends{" "}
           <span className="italic font-normal">creativity</span>
           <br />
@@ -39,14 +40,10 @@ export function Hero() {
       </Reveal>
 
       <Reveal delay={0.18}>
-        <NowStatus />
+        <NowPanel />
       </Reveal>
 
-      <Reveal delay={0.24}>
-        <SkillChips />
-      </Reveal>
-
-      <Reveal delay={0.3}>
+      <Reveal delay={0.28}>
         <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px] text-mute">
           <a href="#work" className="link link-rev text-ink">
             See selected work

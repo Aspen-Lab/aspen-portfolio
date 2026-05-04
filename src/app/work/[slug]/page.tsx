@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { projects } from "@/lib/work";
 import { Reveal } from "@/components/Reveal";
+import { Carousel } from "@/components/Carousel";
 
 type Params = { slug: string };
 
@@ -25,36 +26,6 @@ export async function generateMetadata({
   };
 }
 
-const layoutClass = (l?: string) => {
-  switch (l) {
-    case "grid-2":
-      return "grid-cols-1 sm:grid-cols-2";
-    case "grid-3":
-      return "grid-cols-1 sm:grid-cols-3";
-    case "grid-4":
-      return "grid-cols-2 sm:grid-cols-4";
-    case "single":
-    default:
-      return "grid-cols-1";
-  }
-};
-
-const ratioClass = (r?: string) => {
-  switch (r) {
-    case "16/9":
-      return "aspect-[16/9]";
-    case "16/10":
-      return "aspect-[16/10]";
-    case "4/3":
-      return "aspect-[4/3]";
-    case "1/1":
-      return "aspect-square";
-    case "auto":
-    default:
-      return "";
-  }
-};
-
 export default async function CaseStudy({
   params,
 }: {
@@ -66,6 +37,17 @@ export default async function CaseStudy({
 
   const idx = projects.findIndex((p) => p.slug === slug);
   const next = projects[(idx + 1) % projects.length];
+  const sections = project.sections ?? [];
+
+  const chapters: string[] = [];
+  for (const s of sections) {
+    if (
+      s.chapter &&
+      (chapters.length === 0 || chapters[chapters.length - 1] !== s.chapter)
+    ) {
+      chapters.push(s.chapter);
+    }
+  }
 
   return (
     <article className="container-fluid pt-12 pb-24">
@@ -208,68 +190,78 @@ export default async function CaseStudy({
         </Reveal>
       )}
 
-      {project.sections?.map((s, i) => (
-        <Reveal key={s.heading} delay={0.06 + i * 0.04}>
-          <section className="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-8 border-t border-line pt-8 max-w-5xl">
-            <h3 className="lg:col-span-3 font-mono uppercase tracking-[0.2em] text-[11px] text-soft pt-1">
-              {s.heading}
-            </h3>
-            <div className="lg:col-span-9">
-              <p className="text-[17px] leading-[1.65] text-ink/85 max-w-2xl">
-                {s.body}
-              </p>
-              {s.images && s.images.length > 0 && (
-                <div
-                  className={`mt-8 grid gap-3 ${layoutClass(s.imageLayout)}`}
-                >
-                  {s.images.map((src, idx) => {
-                    const ratio = ratioClass(s.imageRatio);
-                    const sizes =
-                      s.imageLayout === "grid-4"
-                        ? "(max-width: 640px) 50vw, 25vw"
-                        : s.imageLayout === "grid-3"
-                          ? "(max-width: 640px) 100vw, 33vw"
-                          : s.imageLayout === "grid-2"
-                            ? "(max-width: 640px) 100vw, 50vw"
-                            : "(max-width: 1280px) 100vw, 900px";
-                    return (
-                      <div
-                        key={`${src}-${idx}`}
-                        className={`overflow-hidden rounded-[6px] bg-cream ${
-                          ratio ? `relative ${ratio}` : ""
-                        }`}
-                      >
-                        {ratio ? (
-                          <Image
-                            src={src}
-                            alt={`${s.heading} ${idx + 1}`}
-                            fill
-                            sizes={sizes}
-                            className="object-cover"
-                          />
-                        ) : (
-                          <Image
-                            src={src}
-                            alt={`${s.heading} ${idx + 1}`}
-                            width={2400}
-                            height={1500}
-                            sizes={sizes}
-                            className="block w-full h-auto"
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+      <div className="mt-24">
+        {sections.map((s, i) => {
+          const prevChapter = i > 0 ? sections[i - 1].chapter : undefined;
+          const isFirstInChapter = s.chapter && s.chapter !== prevChapter;
+          const chapterIndex = s.chapter ? chapters.indexOf(s.chapter) : -1;
+          const sectionNumber = String(i + 1).padStart(2, "0");
+
+          return (
+            <div key={`${s.heading}-${i}`}>
+              {isFirstInChapter && (
+                <Reveal>
+                  <div className="mt-32 mb-12 max-w-5xl flex items-baseline gap-6">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-soft tabular-nums whitespace-nowrap">
+                      Chapter {String(chapterIndex + 1).padStart(2, "0")}
+                    </span>
+                    <span className="h-px flex-1 bg-line" />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink whitespace-nowrap">
+                      {s.chapter}
+                    </span>
+                  </div>
+                </Reveal>
               )}
+
+              <Reveal delay={0.04}>
+                <section
+                  className={`max-w-5xl ${isFirstInChapter ? "mt-0" : "mt-24"}`}
+                >
+                  <header className="mb-10 max-w-3xl">
+                    <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-soft tabular-nums mb-4">
+                      {sectionNumber}
+                    </p>
+                    <h2
+                      className="font-display font-light leading-[1.05] tracking-[-0.02em] text-ink"
+                      style={{ fontSize: "clamp(28px, 3.6vw, 44px)" }}
+                    >
+                      {s.heading}
+                    </h2>
+                  </header>
+                  <p className="text-[17px] leading-[1.7] text-ink/85 max-w-2xl">
+                    {s.body}
+                  </p>
+                  {s.images && s.images.length === 1 && (
+                    <div className="mt-12 overflow-hidden rounded-[8px] bg-cream">
+                      <Image
+                        src={s.images[0]}
+                        alt={`${s.heading} — figure`}
+                        width={2400}
+                        height={1500}
+                        sizes="(max-width: 1280px) 100vw, 1024px"
+                        className="block w-full h-auto"
+                        style={{ width: "100%", height: "auto" }}
+                      />
+                    </div>
+                  )}
+                  {s.images && s.images.length > 1 && (
+                    <div className="mt-12">
+                      <Carousel
+                        images={s.images}
+                        alt={s.heading}
+                        aspect={s.carouselAspect}
+                      />
+                    </div>
+                  )}
+                </section>
+              </Reveal>
             </div>
-          </section>
-        </Reveal>
-      ))}
+          );
+        })}
+      </div>
 
       <Reveal delay={0.1}>
-        <div className="mt-32 border-t border-line pt-10 flex items-end justify-between gap-8">
+        <div className="mt-40 border-t border-line pt-10 flex items-end justify-between gap-8">
           <div>
             <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
               Up next
