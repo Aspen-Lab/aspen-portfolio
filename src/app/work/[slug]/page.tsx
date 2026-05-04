@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import { projects } from "@/lib/work";
 import { Reveal } from "@/components/Reveal";
 import { Carousel } from "@/components/Carousel";
+import { AnimatedMetric } from "@/components/AnimatedMetric";
+import { LayerStack } from "@/components/LayerStack";
 
 type Params = { slug: string };
 
@@ -156,12 +158,15 @@ export default async function CaseStudy({
 
       {project.metrics && project.metrics.length > 0 && (
         <Reveal delay={0.18}>
-          <ul className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 border-t border-line pt-8 max-w-4xl">
+          <ul
+            className={`mt-16 grid grid-cols-1 ${project.metrics.length >= 4 ? "sm:grid-cols-4" : "sm:grid-cols-3"} gap-8 border-t border-line pt-8 max-w-4xl`}
+          >
             {project.metrics.map((m) => (
               <li key={m.label}>
-                <p className="font-display font-light text-[40px] leading-none tracking-[-0.02em] text-ink">
-                  {m.value}
-                </p>
+                <AnimatedMetric
+                  value={m.value}
+                  className="font-display font-light text-[40px] leading-none tracking-[-0.02em] text-ink block"
+                />
                 <p className="mt-3 text-[13px] text-mute">{m.label}</p>
               </li>
             ))}
@@ -231,6 +236,73 @@ export default async function CaseStudy({
                   <p className="text-[17px] leading-[1.7] text-ink/85 max-w-2xl">
                     {s.body}
                   </p>
+                  {s.pullQuote && (
+                    <figure className="mt-12 max-w-4xl">
+                      <blockquote className="border-l-2 border-ink pl-8">
+                        <p
+                          className="font-display font-light leading-[1.15] tracking-[-0.02em] text-ink"
+                          style={{ fontSize: "clamp(24px, 2.6vw, 36px)" }}
+                        >
+                          “{s.pullQuote.text}”
+                        </p>
+                      </blockquote>
+                      {s.pullQuote.attribution && (
+                        <figcaption className="mt-5 pl-8 font-mono text-[11px] uppercase tracking-[0.2em] text-soft">
+                          — {s.pullQuote.attribution}
+                        </figcaption>
+                      )}
+                    </figure>
+                  )}
+                  {s.layers && s.layers.length > 0 && (
+                    <div className="mt-12 max-w-4xl">
+                      <LayerStack layers={s.layers} />
+                    </div>
+                  )}
+                  {s.table && (
+                    <div className="mt-12 max-w-4xl overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-y border-line">
+                            {s.table.headers.map((h) => (
+                              <th
+                                key={h}
+                                scope="col"
+                                className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft py-4 pr-6 align-top font-medium"
+                              >
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {s.table.rows.map((row, ri) => (
+                            <tr
+                              key={ri}
+                              className="border-b border-line/60"
+                            >
+                              {row.map((cell, ci) => (
+                                <td
+                                  key={ci}
+                                  className={`text-[15px] leading-[1.55] py-5 pr-6 align-top ${
+                                    ci === 0
+                                      ? "text-ink font-medium"
+                                      : "text-ink/80"
+                                  }`}
+                                >
+                                  {cell}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {s.table.caption && (
+                        <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-soft">
+                          {s.table.caption}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   {s.images && s.images.length === 1 && (
                     <div className="mt-12 overflow-hidden rounded-[8px] bg-cream">
                       <Image
