@@ -123,13 +123,14 @@ export default function About() {
         </div>
       </section>
 
+      {/* 01 — Life Style */}
       <section className="container-fluid mt-8">
         <SectionTitle number="01" title="Life Style" />
 
         <Reveal>
           <p className="font-mono uppercase tracking-[0.18em] text-[11px] text-soft mb-12 max-w-md">
             Got my car at 18 · Freshman at Georgia Tech · Dreaming about my
-            future · Love photograph
+            future
           </p>
         </Reveal>
 
@@ -138,7 +139,7 @@ export default function About() {
             <Reveal>
               <Figure
                 src="/about/car-georgia-tech.jpg"
-                alt="Aspen with her first car at 18, freshman year at Georgia Tech"
+                alt="Aspen with her first car at 18, downtown Atlanta at night"
                 aspect="3/4"
                 caption="Got my car at 18 — freshman at GT, dreaming about my future"
                 priority
@@ -150,9 +151,20 @@ export default function About() {
             <Reveal delay={0.05}>
               <Figure
                 src="/about/drawing-1.jpg"
-                alt="A pencil drawing"
+                alt="Black-and-white photograph of a parking garage alley with trees"
                 aspect="3/4"
-                caption="Love photograph — inspires me through daily life"
+                caption="Love photograph — daily life through a lens"
+              />
+            </Reveal>
+          </div>
+
+          <div className="sm:col-span-12">
+            <Reveal>
+              <Figure
+                src="/about/sketching-bw.png"
+                alt="Black-and-white photograph of a brutalist tower against cloudy sky"
+                aspect="16/10"
+                caption="The everyday, framed in black &amp; white"
               />
             </Reveal>
           </div>
@@ -160,8 +172,8 @@ export default function About() {
           <div className="sm:col-span-6">
             <Reveal>
               <Figure
-                src="/about/sketching-bw.png"
-                alt="A black-and-white sketch in progress"
+                src="/about/sketching-2.png"
+                alt="Charcoal sketch of an eye in progress"
                 aspect="3/4"
                 caption="Somehow good at drawing"
               />
@@ -171,9 +183,9 @@ export default function About() {
           <div className="sm:col-span-6">
             <Reveal delay={0.05}>
               <Figure
-                src="/about/sketching-2.png"
-                alt="Another B&W sketch"
-                aspect="3/4"
+                src="/about/cool-stuff-roommate.png"
+                alt="Multiple charcoal sketches of faces and hands on cream paper"
+                aspect="4/3"
                 caption="Enjoy B&amp;W sketching"
               />
             </Reveal>
@@ -182,8 +194,8 @@ export default function About() {
           <div className="sm:col-span-12">
             <Reveal>
               <Figure
-                src="/about/cool-stuff-roommate.png"
-                alt="Making cool stuff with roommates"
+                src="/about/illuminated-dice-1.png"
+                alt="Electronics workbench with soldering iron, microphone, mixed cups and wires"
                 aspect="16/10"
                 caption="Making cool stuff with my roommate"
               />
@@ -193,18 +205,18 @@ export default function About() {
           <div className="sm:col-span-6">
             <Reveal>
               <Figure
-                src="/about/illuminated-dice-1.png"
-                alt="Wireless illuminated dice prototype"
-                aspect="3/4"
+                src="/about/illuminated-dice-2.png"
+                alt="Two glowing dice on a red dice tray"
+                aspect="1/1"
               />
             </Reveal>
           </div>
           <div className="sm:col-span-6">
             <Reveal delay={0.05}>
               <Figure
-                src="/about/illuminated-dice-2.png"
-                alt="Wireless illuminated dice in action on the table"
-                aspect="3/4"
+                src="/about/workspace-1.png"
+                alt="LiPo battery and circuit board feeding a glowing die in a red tray, next to a Polaroid"
+                aspect="1/1"
                 caption="Wireless illuminated dice for our table game"
               />
             </Reveal>
@@ -212,126 +224,121 @@ export default function About() {
         </div>
       </section>
 
+      {/* 02 — My Workspace */}
       <section className="container-fluid mt-32">
         <SectionTitle number="02" title="My Workspace" />
 
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
-          <div className="sm:col-span-7">
+          <div className="sm:col-span-12">
             <Reveal>
               <Figure
-                src="/about/workspace-1.png"
-                alt="Aspen's workspace"
-                aspect="3/4"
-                caption="My workspace — built to enrich creativity"
-              />
-            </Reveal>
-          </div>
-          <div className="sm:col-span-5 sm:pt-32">
-            <Reveal delay={0.05}>
-              <Figure
                 src="/about/workspace-2.png"
-                alt="Workspace details"
-                aspect="3/4"
+                alt="Aspen's desk with dual monitors showing a flip clock and solar system"
+                aspect="16/10"
+                caption="My workspace — built to enrich creativity. Less is more."
               />
             </Reveal>
           </div>
 
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-5">
             <Reveal>
               <Figure
-                src="/about/film-washing-1.png"
-                alt="Film developing setup"
+                src="/about/bronze-studio-2.png"
+                alt="A friend at home holding a Sony camera, taking a photo"
                 aspect="3/4"
+                caption="Always someone with a camera in the room"
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-3">
-            <Reveal delay={0.04}>
+          <div className="sm:col-span-7 sm:pt-16">
+            <Reveal delay={0.05}>
+              <Figure
+                src="/about/film-washing-1.png"
+                alt="Close-up black-and-white photo of someone holding a vintage Edixa Reflex 1000 film camera"
+                aspect="4/3"
+                caption="Film cameras — the slower kind of seeing"
+              />
+            </Reveal>
+          </div>
+
+          <div className="sm:col-span-12">
+            <Reveal>
               <Figure
                 src="/about/film-washing-2.png"
-                alt="Hand-developing film"
-                aspect="3/4"
+                alt="Drawing class with laptop and projector showing arm sketch references on the wall"
+                aspect="16/10"
+                caption="Sketching nights — references on the wall, sketchbooks on the table"
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-3">
-            <Reveal delay={0.08}>
+
+          <div className="sm:col-span-5">
+            <Reveal>
               <Figure
                 src="/about/film-washing-3.png"
-                alt="Film washing with PH14 liquid"
+                alt="Purple-gloved hand holding a film reel under sink water during developing"
                 aspect="3/4"
+                caption="Film washing by hand — PH14 in the basin"
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-3">
-            <Reveal delay={0.12}>
+          <div className="sm:col-span-7 sm:pt-12">
+            <Reveal delay={0.05}>
               <Figure
                 src="/about/film-washing-4.png"
-                alt="Hand-developed prints"
+                alt="Black-and-white film print of a silver SUV parked in front of an old brick building"
                 aspect="3/4"
-                caption="Film washing by hand with PH14 — love photograph and sketching"
+                caption="The print, after"
               />
             </Reveal>
           </div>
         </div>
       </section>
 
+      {/* 03 — Love Music */}
       <section className="container-fluid mt-32">
         <SectionTitle number="03" title="Love Music" />
 
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
-          <div className="sm:col-span-6">
+          <div className="sm:col-span-5">
             <Reveal>
               <Figure
                 src="/about/bronze-studio-1.png"
-                alt="At the Bronze Studio"
+                alt="A sunburst acoustic guitar resting on a grey carpet"
                 aspect="3/4"
+                caption="Love music"
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-6">
+
+          <div className="sm:col-span-7 sm:pt-24">
             <Reveal delay={0.05}>
               <Figure
-                src="/about/bronze-studio-2.png"
-                alt="Bronze Studio with friends"
+                src="/about/designing-pals-2.png"
+                alt="Three bronze-and-clay monk sculptures in a workshop with pegboard wall"
                 aspect="3/4"
                 caption="Working at a Bronze Studio"
               />
             </Reveal>
           </div>
 
-          <div className="sm:col-span-6">
+          <div className="sm:col-span-12">
             <Reveal>
               <Figure
                 src="/about/designing-pals-1.png"
-                alt="Designing with friends"
-                aspect="4/3"
+                alt="Wooden desk with iPad of horse-anatomy refs, sketchbook drawings, red sculpted clay animals"
+                aspect="16/10"
+                caption="Designing with reference — desk, sketchbook, and the clay it ends up as"
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-6">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/designing-pals-2.png"
-                alt="Last day with friends before they head to PhDs"
-                aspect="4/3"
-                caption="Designing with my pals — last day before they headed to their PhDs"
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
 
-      <section className="container-fluid mt-32">
-        <SectionTitle number="04" title="Enjoy Cooking" />
-
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
           <div className="sm:col-span-6">
             <Reveal>
               <Figure
                 src="/about/neuroscience-1.png"
-                alt="Neuroscience studies"
-                aspect="3/4"
+                alt="Three friends in silhouette jumping against a sunset sky"
+                aspect="3/2"
               />
             </Reveal>
           </div>
@@ -339,108 +346,38 @@ export default function About() {
             <Reveal delay={0.05}>
               <Figure
                 src="/about/neuroscience-2.png"
-                alt="Cognitive science classes"
-                aspect="3/4"
-                caption="I love neuro-sci — happy in the cog sci dual degree"
-              />
-            </Reveal>
-          </div>
-
-          <div className="sm:col-span-12">
-            <Reveal>
-              <Figure
-                src="/about/cooking.png"
-                alt="Cooking dinner at home"
-                aspect="16/9"
-                caption="Cooking for me and my girlfriend"
-              />
-            </Reveal>
-          </div>
-
-          <div className="sm:col-span-6">
-            <Reveal>
-              <Figure
-                src="/about/rat-apartment.png"
-                alt="A small visitor in the apartment"
-                aspect="4/3"
-                caption="Caught a rat in my apartment — it&apos;s cute, but I made it leave eventually"
-              />
-            </Reveal>
-          </div>
-          <div className="sm:col-span-6">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/miku-switch.png"
-                alt="DIY Miku Switch Lite Xmas gift"
-                aspect="3/4"
-                caption="DIY Miku Switch Lite — Xmas gift for my girl"
-              />
-            </Reveal>
-          </div>
-
-          <div className="sm:col-span-6">
-            <Reveal>
-              <Figure
-                src="/about/drawing-app.png"
-                alt="Drawing using the app I designed"
-                aspect="3/4"
-                caption="Drawing with the app I designed"
-              />
-            </Reveal>
-          </div>
-          <div className="sm:col-span-6">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/xing-art-cat.png"
-                alt="My cat during XING Art alpha"
-                aspect="3/4"
-                caption="XING Art alpha test — and my cat, who I love sooooo much"
+                alt="Portrait of three young men in golden-hour light with mountains behind"
+                aspect="3/2"
+                caption="With my pals — last day before they head to their PhDs"
               />
             </Reveal>
           </div>
         </div>
       </section>
 
+      {/* 04 — Enjoy Cooking */}
       <section className="container-fluid mt-32">
-        <SectionTitle number="05" title="Unforgettable Summer" />
+        <SectionTitle number="04" title="Enjoy Cooking" />
 
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
           <div className="sm:col-span-12">
             <Reveal>
               <Figure
-                src="/about/if-award-miracleplus.png"
-                alt="iF Design Award & MiraclePlus funding"
-                aspect="3/2"
-                caption="Awarded iF Design &amp; funded by MiraclePlus — $300K"
+                src="/about/cooking.png"
+                alt="Jupyter notebook with PSYC 3803 brain-science course materials and downsampling visualization"
+                aspect="16/9"
+                caption="I love neuro-sci — happy in the cog sci dual degree. Yes I am happy."
               />
             </Reveal>
           </div>
 
-          <div className="sm:col-span-4">
+          <div className="sm:col-span-12">
             <Reveal>
               <Figure
-                src="/about/nvidia-line.png"
-                alt="In line at 4 AM for an RTX 5090"
-                aspect="3/4"
-              />
-            </Reveal>
-          </div>
-          <div className="sm:col-span-4">
-            <Reveal delay={0.04}>
-              <Figure
-                src="/about/gtc-1.png"
-                alt="At NVIDIA GTC 2025"
-                aspect="3/4"
-              />
-            </Reveal>
-          </div>
-          <div className="sm:col-span-4">
-            <Reveal delay={0.08}>
-              <Figure
-                src="/about/jensen-sign.png"
-                alt="Jensen signed my PC"
-                aspect="3/4"
-                caption="Lined up at 4 AM for a 5090 — 2025 GTC. Jensen signed my PC."
+                src="/about/rat-apartment.png"
+                alt="Two plates of steak with asparagus, potatoes, and sauce"
+                aspect="4/3"
+                caption="Cooking for me and my girlfriend"
               />
             </Reveal>
           </div>
@@ -448,19 +385,101 @@ export default function About() {
           <div className="sm:col-span-7">
             <Reveal>
               <Figure
-                src="/about/pitching-1.png"
-                alt="Pitching to investors"
+                src="/about/miku-switch.png"
+                alt="A small mouse inside a clear plastic terrarium with moss, near a window screen"
                 aspect="4/3"
+                caption="Caught a rat in my apartment — it&apos;s cute, but I made it leave eventually"
               />
             </Reveal>
           </div>
           <div className="sm:col-span-5 sm:pt-12">
             <Reveal delay={0.05}>
               <Figure
+                src="/about/drawing-app.png"
+                alt="Teal Nintendo Switch Lite with hand-drawn Hatsune Miku in marker on the back"
+                aspect="3/4"
+                caption="DIY Miku Switch Lite — Xmas gift for my girl"
+              />
+            </Reveal>
+          </div>
+
+          <div className="sm:col-span-7">
+            <Reveal>
+              <Figure
+                src="/about/xing-art-cat.png"
+                alt="iPad screen showing a stylized anime elf girl in progress in a drawing app"
+                aspect="16/10"
+                caption="Drawing with the app I designed"
+              />
+            </Reveal>
+          </div>
+          <div className="sm:col-span-5 sm:pt-12">
+            <Reveal delay={0.05}>
+              <Figure
+                src="/about/nvidia-line.png"
+                alt="A tabby cat with white belly, looking up at the camera"
+                aspect="3/4"
+                caption="My cat — I love him sooooo much"
+              />
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* 05 — Unforgettable Summer */}
+      <section className="container-fluid mt-32">
+        <SectionTitle number="05" title="Unforgettable Summer" />
+
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
+          <div className="sm:col-span-6">
+            <Reveal>
+              <Figure
+                src="/about/gtc-1.png"
+                alt="Crowd of attendees in winter coats lined up at night outside a convention center"
+                aspect="1/1"
+                caption="Lined up at 4 AM for a 5090"
+              />
+            </Reveal>
+          </div>
+          <div className="sm:col-span-6">
+            <Reveal delay={0.05}>
+              <Figure
+                src="/about/jensen-sign.png"
+                alt="Young man at NVIDIA GTC with conference lanyard, holding a tablet"
+                aspect="1/1"
+                caption="At NVIDIA GTC 2025"
+              />
+            </Reveal>
+          </div>
+
+          <div className="sm:col-span-12">
+            <Reveal>
+              <Figure
+                src="/about/if-award-miracleplus.png"
+                alt="A PC tower at NVIDIA GTC 2025 signed Jensen was here by Jensen Huang"
+                aspect="16/10"
+                caption="Jensen signed my PC!"
+              />
+            </Reveal>
+          </div>
+
+          <div className="sm:col-span-5">
+            <Reveal>
+              <Figure
                 src="/about/pitching-2.png"
-                alt="Onstage pitching"
+                alt="iF Design Award page for Field of Vision — cane for the blind"
+                aspect="3/4"
+                caption="Awarded iF Design — Field of Vision, cane for the blind"
+              />
+            </Reveal>
+          </div>
+          <div className="sm:col-span-7 sm:pt-16">
+            <Reveal delay={0.05}>
+              <Figure
+                src="/about/pitching-1.png"
+                alt="MiraclePlus 2025 Spring closing ceremony group photo on stage"
                 aspect="4/3"
-                caption="Pitching to 1000 investors — so tired, so excited"
+                caption="Funded by MiraclePlus — $300K · 2025 Spring closing ceremony"
               />
             </Reveal>
           </div>
@@ -469,28 +488,30 @@ export default function About() {
             <Reveal>
               <Figure
                 src="/about/tiktok-intern.png"
-                alt="TikTok internship"
-                aspect="16/9"
-                caption="Intern at TikTok — GOAT"
+                alt="XING Art booth at trade show — three young men with iPad showing in-progress anime drawing"
+                aspect="16/10"
+                caption="XING Art alpha test — first time on the floor"
               />
             </Reveal>
           </div>
 
-          <div className="sm:col-span-6">
+          <div className="sm:col-span-7">
             <Reveal>
               <Figure
                 src="/about/closing-1.png"
-                alt="Closing photo"
-                aspect="3/4"
+                alt="Group of friends at a restaurant table with burgers, salsa decorations on the wall"
+                aspect="4/3"
+                caption="Intern at TikTok — best summer crew. GOAT."
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-6">
+          <div className="sm:col-span-5 sm:pt-12">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/closing-2.png"
-                alt="Closing photo"
+                alt="Holding ID badge in front of tall modern office buildings, ByteDance / Volcano Engine"
                 aspect="3/4"
+                caption="First day on campus — ByteDance Shanghai"
               />
             </Reveal>
           </div>
