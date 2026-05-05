@@ -3,14 +3,24 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Cursor-aware dot grid background.
- * Static dots over a CSS mask that brightens around the cursor.
- * One DOM node, one rAF loop, two CSS variable writes per frame —
- * effectively free even on weak hardware.
+ * Monochrome dot grid with a cursor-aware spotlight.
  *
- * Mobile / no pointer: a slow drifting "phantom cursor" keeps the page alive.
- * Reduced-motion users get a static centered glow.
+ * Layer 1 (always on): solid black dots over the entire hero, clearly visible.
+ * Layer 2 (cursor): a darker overlay masked to a soft circle that follows
+ *   the cursor — emphasizes dots near the pointer without ever hiding the base.
+ *
+ * One DOM tree, one rAF loop, two CSS-var writes per frame.
+ *
+ * Mobile / no pointer: spotlight drifts in a slow Lissajous curve.
+ * Reduced-motion users: spotlight pinned, no animation.
  */
+const DOT_COLOR = "rgba(10, 10, 10, 1)";
+const DOT_RADIUS = "1.4px";
+const DOT_FALLOFF = "2px";
+const DOT_SPACING = "28px";
+const DOT_PATTERN = `radial-gradient(circle, ${DOT_COLOR} ${DOT_RADIUS}, transparent ${DOT_FALLOFF})`;
+const DOT_SIZE = `${DOT_SPACING} ${DOT_SPACING}`;
+
 export function CursorDotGrid() {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -37,7 +47,6 @@ export function CursorDotGrid() {
     let targetY = 30;
     let currentX = 50;
     let currentY = 30;
-
     let driftT = 0;
 
     const onMove = (e: MouseEvent) => {
@@ -48,7 +57,6 @@ export function CursorDotGrid() {
 
     const tick = () => {
       if (!finePointer) {
-        // No mouse — slow Lissajous drift across the area
         driftT += 0.004;
         targetX = 50 + 35 * Math.sin(driftT);
         targetY = 35 + 22 * Math.cos(driftT * 0.7);
@@ -75,17 +83,22 @@ export function CursorDotGrid() {
     <div
       ref={ref}
       aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle, rgba(10,10,10,0.22) 1px, transparent 1.6px)",
-        backgroundSize: "22px 22px",
-        backgroundPosition: "0 0",
-        WebkitMaskImage:
-          "radial-gradient(circle 320px at var(--cx, 50%) var(--cy, 30%), black 0%, rgba(0,0,0,0.18) 55%, transparent 100%)",
-        maskImage:
-          "radial-gradient(circle 320px at var(--cx, 50%) var(--cy, 30%), black 0%, rgba(0,0,0,0.18) 55%, transparent 100%)",
-      }}
-    />
+      className="pointer-events-none absolute inset-0"
+    >
+      {/* Single masked layer — dots are faint, weakest fade fully to invisible */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: DOT_PATTERN,
+          backgroundSize: DOT_SIZE,
+          backgroundPosition: "0 0",
+          opacity: 0.22,
+          WebkitMaskImage:
+            "radial-gradient(circle 360px at var(--cx, 50%) var(--cy, 30%), black 0%, black 4%, transparent 100%)",
+          maskImage:
+            "radial-gradient(circle 360px at var(--cx, 50%) var(--cy, 30%), black 0%, black 4%, transparent 100%)",
+        }}
+      />
+    </div>
   );
 }

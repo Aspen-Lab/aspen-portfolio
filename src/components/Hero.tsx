@@ -1,7 +1,7 @@
 import { Reveal } from "./Reveal";
 import { NowPanel } from "./NowPanel";
 import { CursorDotGrid } from "./CursorDotGrid";
-import { FactGrid } from "./FactGrid";
+import { WorkLine } from "./WorkLine";
 
 export function Hero() {
   return (
@@ -27,8 +27,8 @@ export function Hero() {
       </Reveal>
 
       <Reveal delay={0.12}>
-        <div className="mt-12">
-          <FactGrid />
+        <div className="mt-16">
+          <WorkLine />
         </div>
       </Reveal>
 

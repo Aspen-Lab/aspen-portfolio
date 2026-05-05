@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
 
 const ACCENT = "#0A0A0A";
-const STAGES = ["ingest", "score", "dedup", "distill", "output"];
+const STAGES = 5;
 
 function PulseDot() {
   return (
@@ -22,219 +23,223 @@ function PulseDot() {
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="card-material flex flex-col overflow-hidden min-h-[260px]">
+    <div className="card-material flex flex-col overflow-hidden">
       {children}
     </div>
   );
 }
 
-function Head({ label, badge }: { label: string; badge: string }) {
+function Head({ label }: { label: string }) {
   return (
-    <div className="flex items-center justify-between px-5 py-3 border-b border-line/70 bg-cream/40">
-      <div className="flex items-center gap-2.5">
-        <PulseDot />
-        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink">
-          {label}
-        </span>
-      </div>
-      <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-soft">
-        {badge}
+    <div className="flex items-center gap-2.5 px-6 pt-5">
+      <PulseDot />
+      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink">
+        {label}
       </span>
     </div>
   );
 }
 
-function Foot({
-  left,
-  right,
+function CardLink({
+  title,
+  subtitle,
+  href,
+  external = false,
 }: {
-  left: string;
-  right: { label: string; href?: string };
+  title: string;
+  subtitle: string;
+  href: string;
+  external?: boolean;
 }) {
-  return (
-    <div className="flex items-center justify-between px-5 py-3 border-t border-line/70 bg-cream/40">
-      <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-soft">
-        {left}
-      </span>
-      {right.href ? (
-        <a
-          href={right.href}
-          target="_blank"
-          rel="noreferrer"
-          className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink hover:text-mute"
+  const inner = (
+    <>
+      <span className="inline-flex items-center gap-2">
+        <span
+          className="font-display tracking-[-0.015em] text-ink leading-[1.0]"
+          style={{ fontSize: "26px" }}
         >
-          {right.label} →
-        </a>
-      ) : (
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft">
-          {right.label}
+          {title}
         </span>
-      )}
-    </div>
+        <span
+          aria-hidden
+          className="text-soft text-[18px] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-[1px]"
+        >
+          {external ? "↗" : "→"}
+        </span>
+      </span>
+      <p className="text-[12.5px] text-mute mt-1.5">{subtitle}</p>
+    </>
+  );
+
+  const className =
+    "group block px-6 pt-3 pb-4 hover:bg-cream/30 transition-colors";
+
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        className={className}
+      >
+        {inner}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {inner}
+    </Link>
   );
 }
 
 export function NowPanel() {
   return (
     <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-3">
-      {/* ── 01 SHIPPING — BIG percentage + beefy progress bar ── */}
+      {/* ── 01 LIVE — Axel: 82% v1 → v2 ── */}
       <Card>
-        <Head label="Shipping" badge="prod" />
-        <div className="px-5 py-6 flex-1 flex flex-col gap-6">
-          <div>
-            <p className="font-display text-[26px] tracking-[-0.015em] text-ink leading-[1.05]">
-              helloaxel.com
-            </p>
-            <p className="text-[12.5px] text-mute mt-1.5">
-              Hotel + flight repricing UX
-            </p>
-          </div>
+        <Head label="Live" />
+        <CardLink
+          title="Axel"
+          subtitle="Sole designer · YC W19"
+          href="/work/axel"
+        />
 
-          <div className="mt-auto">
-            <div className="flex items-baseline justify-between mb-2.5">
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft">
-                v1 → v2
-              </span>
-              <span className="font-display tracking-[-0.02em] text-ink leading-none">
-                <span className="text-[36px]">82</span>
-                <span className="text-[18px] text-soft ml-0.5">%</span>
-              </span>
-            </div>
-            <div className="relative h-[6px] bg-cream rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: "82%" }}
-                viewport={{ once: true, amount: 0.6 }}
-                transition={{
-                  duration: 1.4,
-                  ease: [0.22, 1, 0.36, 1],
-                  delay: 0.4,
-                }}
-                className="absolute inset-y-0 left-0 bg-ink rounded-full"
-              />
-              <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-line/50" />
-            </div>
+        <div className="px-6 pb-6 mt-auto">
+          <div className="flex items-baseline gap-2 mb-3">
+            <span
+              className="font-display font-light tracking-[-0.03em] text-ink leading-none"
+              style={{ fontSize: "60px" }}
+            >
+              82
+            </span>
+            <span
+              className="font-display font-light tracking-[-0.02em] text-soft leading-none"
+              style={{ fontSize: "26px" }}
+            >
+              %
+            </span>
+            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
+              v1 → v2
+            </span>
+          </div>
+          <div className="relative h-[3px] bg-cream rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: "82%" }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{
+                duration: 1.4,
+                ease: [0.22, 1, 0.36, 1],
+                delay: 0.4,
+              }}
+              className="absolute inset-y-0 left-0 bg-ink rounded-full"
+            />
+            <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-line/50" />
           </div>
         </div>
-        <Foot
-          left="Axel · YC W19"
-          right={{ label: "visit", href: "https://helloaxel.com" }}
-        />
       </Card>
 
-      {/* ── 02 BUILDING — 5 connected boxes that pulse-fill in sequence ── */}
+      {/* ── 02 SIDE — Hermes: 5-stage pipeline ── */}
       <Card>
-        <Head label="Building" badge="v0 MVP" />
-        <div className="px-5 py-6 flex-1 flex flex-col gap-6">
-          <div>
-            <p className="font-display text-[26px] tracking-[-0.015em] text-ink leading-[1.05]">
-              Hermes
-            </p>
-            <p className="text-[12.5px] text-mute mt-1.5">
-              5-stage agent pipeline
-            </p>
-          </div>
-
-          <div className="mt-auto">
-            <div className="grid grid-cols-5 border border-line/70 rounded-md overflow-hidden">
-              {STAGES.map((stage, i) => (
-                <motion.div
-                  key={stage}
-                  className={`py-3 flex items-center justify-center font-display text-[15px] leading-none tracking-tight ${
-                    i < STAGES.length - 1 ? "border-r border-line/70" : ""
-                  }`}
-                  animate={{
-                    backgroundColor: ["#FFFFFF", "#0A0A0A", "#FFFFFF"],
-                    color: ["#A3A3A3", "#FFFFFF", "#A3A3A3"],
-                  }}
-                  transition={{
-                    duration: 4.5,
-                    times: [
-                      Math.max(0, (i - 0.4) / STAGES.length),
-                      i / STAGES.length,
-                      Math.min(1, (i + 0.4) / STAGES.length),
-                    ],
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </motion.div>
-              ))}
-            </div>
-            <div className="grid grid-cols-5 mt-2 font-mono text-[8.5px] uppercase tracking-[0.12em] text-soft">
-              {STAGES.map((s) => (
-                <span key={s} className="text-center truncate">
-                  {s}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-        <Foot
-          left="Python · 3 tiers"
-          right={{ label: "github", href: "https://github.com/Aspen-Lab/Hermes" }}
+        <Head label="Side" />
+        <CardLink
+          title="Hermes"
+          subtitle="5-stage agent pipeline · Python"
+          href="https://github.com/Aspen-Lab/Hermes"
+          external
         />
-      </Card>
 
-      {/* ── 03 DRAWING — milestone track w/ 4 markers ── */}
-      <Card>
-        <Head label="Drawing" badge="WIP" />
-        <div className="px-5 py-6 flex-1 flex flex-col gap-6">
-          <div>
-            <p className="font-display text-[26px] tracking-[-0.015em] text-ink leading-[1.05]">
-              Metroidvania
-            </p>
-            <p className="text-[12.5px] text-mute mt-1.5">
-              2D · Hollow-Knight stack
-            </p>
-          </div>
-
-          <div className="mt-auto">
-            <div className="relative h-[10px] flex items-center mb-3">
-              {/* Background track */}
-              <div className="absolute inset-x-0 h-[2px] bg-cream rounded-full">
-                <span className="absolute inset-0 rounded-full ring-1 ring-inset ring-line/50" />
-              </div>
-              {/* Filled progress (~12.5%) */}
-              <motion.div
-                className="absolute left-0 h-[2px] bg-ink rounded-full"
-                initial={{ width: 0 }}
-                whileInView={{ width: "12%" }}
-                viewport={{ once: true, amount: 0.6 }}
+        <div className="px-6 pb-6 mt-auto">
+          <div className="relative h-3 mb-4">
+            <span
+              aria-hidden
+              className="absolute left-1.5 right-1.5 top-1/2 -translate-y-1/2 h-px bg-line"
+            />
+            {Array.from({ length: STAGES }).map((_, i) => (
+              <motion.span
+                key={i}
+                aria-hidden
+                className="absolute -translate-x-1/2 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-paper border border-ink"
+                style={{ left: `${(i / (STAGES - 1)) * 100}%` }}
+                animate={{
+                  backgroundColor: ["#FFFFFF", "#0A0A0A", "#FFFFFF"],
+                  scale: [1, 1.25, 1],
+                }}
                 transition={{
-                  duration: 1.4,
-                  ease: [0.22, 1, 0.36, 1],
-                  delay: 0.5,
+                  duration: 4.5,
+                  times: [
+                    Math.max(0, (i - 0.5) / STAGES),
+                    i / STAGES,
+                    Math.min(1, (i + 0.5) / STAGES),
+                  ],
+                  repeat: Infinity,
+                  ease: "easeInOut",
                 }}
               />
-              {/* Markers */}
-              {[
-                { pos: 0, active: true },
-                { pos: 33, active: false },
-                { pos: 66, active: false },
-                { pos: 100, active: false },
-              ].map((m, i) => (
-                <span
-                  key={i}
-                  className={`absolute -translate-x-1/2 w-[10px] h-[10px] rounded-full transition-colors ${
-                    m.active
-                      ? "bg-ink ring-2 ring-paper"
-                      : "bg-paper ring-2 ring-line"
-                  }`}
-                  style={{ left: `${m.pos}%` }}
-                />
-              ))}
-            </div>
-            <div className="flex items-baseline justify-between font-mono text-[8.5px] uppercase tracking-[0.14em]">
-              <span className="text-ink">greybox</span>
-              <span className="text-soft">area 1</span>
-              <span className="text-soft">MVP</span>
-              <span className="text-soft">ship</span>
-            </div>
+            ))}
+          </div>
+          <div className="flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-soft tabular-nums">
+            <span>Ingest → output</span>
+            <span>v0 MVP</span>
           </div>
         </div>
-        <Foot left="w/ Skyler · 1–2h/day" right={{ label: "private" }} />
+      </Card>
+
+      {/* ── 03 CASE — TikTok: 70 → 90% KYC lift ── */}
+      <Card>
+        <Head label="Case" />
+        <CardLink
+          title="TikTok"
+          subtitle="Pay KYC · 4 markets"
+          href="/work/tiktok"
+        />
+
+        <div className="px-6 pb-6 mt-auto">
+          <div className="flex items-baseline gap-2.5 mb-3">
+            <span
+              className="font-display font-light tracking-[-0.03em] text-ink leading-none tabular-nums"
+              style={{ fontSize: "44px" }}
+            >
+              70
+            </span>
+            <span
+              className="font-display font-light text-soft leading-none"
+              style={{ fontSize: "28px" }}
+            >
+              →
+            </span>
+            <span
+              className="font-display font-light tracking-[-0.03em] text-ink leading-none tabular-nums"
+              style={{ fontSize: "44px" }}
+            >
+              90
+            </span>
+            <span
+              className="font-display font-light tracking-[-0.02em] text-soft leading-none"
+              style={{ fontSize: "22px" }}
+            >
+              %
+            </span>
+            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-soft whitespace-nowrap">
+              VN KYC
+            </span>
+          </div>
+          <div className="relative h-[3px] bg-cream rounded-full overflow-hidden">
+            <motion.div
+              className="absolute inset-y-0 left-0 bg-ink rounded-full"
+              initial={{ width: "70%" }}
+              whileInView={{ width: "90%" }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{
+                duration: 1.6,
+                ease: [0.22, 1, 0.36, 1],
+                delay: 0.5,
+              }}
+            />
+            <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-line/50" />
+          </div>
+        </div>
       </Card>
     </div>
   );
