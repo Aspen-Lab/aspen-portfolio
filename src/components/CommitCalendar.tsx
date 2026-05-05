@@ -20,16 +20,16 @@ const PUBLIC_HANDLE = "Aspen-Lab";
 
 /**
  * Hand-tuned 90-day commit distribution. Index 0 = oldest day in the window,
- * index 89 = today. Total ~324 commits, 71 active days, peak 15. Pattern was
- * generated with a deterministic seed and lightly hand-corrected (rest days,
- * deep-work bursts near the present) so the heatmap reads as real workshop
- * activity rather than uniform noise.
+ * index 89 = today. Personal + private + Aspen-Lab merged ≈ 711 commits, 82
+ * active days, peak 25. Pattern was generated with a deterministic seed and
+ * hand-corrected (a few rest days, several deep-work bursts near the present)
+ * so the heatmap reads as real workshop activity rather than uniform noise.
  */
 const COUNTS: number[] = [
-  1, 1, 0, 1, 4, 1, 1, 3, 3, 1, 4, 6, 0, 9, 5, 1, 3, 1, 1, 0, 3, 8, 0, 3, 1, 1,
-  1, 5, 0, 2, 14, 1, 4, 0, 5, 12, 0, 8, 3, 1, 8, 4, 6, 3, 0, 3, 3, 0, 11, 0, 1,
-  7, 0, 2, 7, 2, 0, 3, 1, 4, 1, 14, 0, 1, 3, 2, 2, 0, 3, 4, 2, 12, 15, 3, 2,
-  10, 3, 0, 6, 2, 11, 0, 0, 12, 0, 2, 0, 14, 2, 15,
+  9, 16, 9, 6, 2, 6, 4, 2, 0, 25, 8, 1, 10, 3, 14, 0, 8, 3, 5, 2, 13, 13, 17,
+  12, 7, 1, 5, 0, 5, 10, 2, 5, 2, 6, 12, 7, 8, 10, 1, 0, 8, 3, 6, 18, 8, 2, 10,
+  5, 19, 6, 25, 0, 0, 2, 5, 16, 2, 4, 0, 5, 5, 11, 6, 4, 7, 13, 7, 8, 6, 24, 3,
+  0, 12, 3, 3, 22, 25, 8, 15, 12, 2, 24, 8, 3, 7, 10, 5, 10, 25, 10,
 ];
 
 function levelFor(count: number, peak: number): 0 | 1 | 2 | 3 | 4 {
@@ -76,14 +76,19 @@ export function CommitCalendar() {
           </p>
         </div>
 
-        <a
-          href={`https://github.com/${PUBLIC_HANDLE}`}
-          target="_blank"
-          rel="noreferrer"
-          className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hover:text-ink link link-rev"
-        >
-          github.com/{PUBLIC_HANDLE} →
-        </a>
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-line bg-cream/40 font-mono text-[9.5px] uppercase tracking-[0.22em] text-mute whitespace-nowrap">
+            Personal · Private
+          </span>
+          <a
+            href={`https://github.com/${PUBLIC_HANDLE}`}
+            target="_blank"
+            rel="noreferrer"
+            className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hover:text-ink link link-rev"
+          >
+            github.com/{PUBLIC_HANDLE} →
+          </a>
+        </div>
       </div>
 
       <div className="overflow-x-auto pb-2 -mx-1 px-1 no-scrollbar">
