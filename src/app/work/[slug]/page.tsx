@@ -7,6 +7,8 @@ import { Reveal } from "@/components/Reveal";
 import { Carousel } from "@/components/Carousel";
 import { AnimatedMetric } from "@/components/AnimatedMetric";
 import { LayerStack } from "@/components/LayerStack";
+import { ChapterNav } from "@/components/ChapterNav";
+import { LoopDiagram } from "@/components/LoopDiagram";
 
 type Params = { slug: string };
 
@@ -195,7 +197,13 @@ export default async function CaseStudy({
         </Reveal>
       )}
 
-      <div className="mt-24">
+      {chapters.length > 1 && (
+        <div className="mt-16">
+          <ChapterNav chapters={chapters} />
+        </div>
+      )}
+
+      <div className={chapters.length > 1 ? "mt-12" : "mt-24"}>
         {sections.map((s, i) => {
           const prevChapter = i > 0 ? sections[i - 1].chapter : undefined;
           const isFirstInChapter = s.chapter && s.chapter !== prevChapter;
@@ -206,7 +214,10 @@ export default async function CaseStudy({
             <div key={`${s.heading}-${i}`}>
               {isFirstInChapter && (
                 <Reveal>
-                  <div className="mt-32 mb-12 max-w-5xl flex items-baseline gap-6">
+                  <div
+                    data-chapter={chapterIndex}
+                    className="mt-32 mb-12 max-w-5xl flex items-baseline gap-6 scroll-mt-32"
+                  >
                     <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-soft tabular-nums whitespace-nowrap">
                       Chapter {String(chapterIndex + 1).padStart(2, "0")}
                     </span>
@@ -236,6 +247,11 @@ export default async function CaseStudy({
                   <p className="text-[17px] leading-[1.7] text-ink/85 max-w-2xl">
                     {s.body}
                   </p>
+                  {s.visual === "loop-diagram" && (
+                    <div className="mt-12 max-w-4xl">
+                      <LoopDiagram />
+                    </div>
+                  )}
                   {s.pullQuote && (
                     <figure className="mt-12 max-w-4xl">
                       <blockquote className="border-l-2 border-ink pl-8">

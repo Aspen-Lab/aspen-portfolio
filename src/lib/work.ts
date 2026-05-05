@@ -34,6 +34,7 @@ export type Project = {
       text: string;
       attribution?: string;
     };
+    visual?: "loop-diagram";
   }[];
   status?: "live" | "coming-soon";
   liveUrl?: string;
@@ -116,6 +117,7 @@ export const projects: Project[] = [
         chapter: "The protocol",
         heading: "The Loop · symmetric, not asymmetric",
         body: "Most Design ⇌ FE handoffs are asymmetric — design throws specs over the wall, engineering implements, friction lives in the gap. Jesus (the lead engineer) and I built a symmetric protocol instead. I wrote the proposal: three zones, two paths, a weekly rhythm. Jesus wrote the response: a designer-fe-architect-review skill, an /audit-changes command, a four-tier classification. Both directions are now AI-protocolized; translation loss approaches zero. In 2026, most design × FE relationships still don't protocolize each other's work. This one does.",
+        visual: "loop-diagram",
       },
       {
         chapter: "The protocol",
