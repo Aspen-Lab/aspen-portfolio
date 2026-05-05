@@ -53,6 +53,7 @@ export const projects: Project[] = [
     summary:
       "Sole designer at a YC W19 travel-money startup, reporting directly to the CEO. Built a symmetric Design ⇌ FE delivery protocol with the lead engineer that turns handoff into convergence — three zones, four review tiers, a weekly cadence. Every pixel in Axel goes through one person.",
     tags: ["Sole designer", "Design × FE protocol", "Production React"],
+    cover: "/work/axel.webp",
     status: "live",
     liveUrl: "https://helloaxel.com",
     metrics: [
@@ -591,47 +592,98 @@ export const awards = [
   { title: "Atlanta Design Festival", project: "Recognition", year: "" },
 ];
 
+export type StackIcon =
+  | "frontend"
+  | "email"
+  | "backend"
+  | "ai"
+  | "game"
+  | "design"
+  | "tooling";
+
 export type StackCategory = {
   label: string;
   items: string[];
   note?: string;
+  icon?: StackIcon;
+  link?: { label: string; href: string };
 };
 
 export const stack: StackCategory[] = [
   {
+    icon: "frontend",
     label: "Frontend · daily driver",
-    items: ["Next.js App Router", "React · TypeScript", "Tailwind", "Motion", "Shiki + Lucide"],
-    note: "Lumen, helloaxel.com, internal dashboards.",
+    items: [
+      "Next.js App Router",
+      "React · TypeScript",
+      "Tailwind",
+      "Motion",
+      "Shiki + Lucide",
+    ],
+    note: "helloaxel.com · Lumen · this portfolio · pawsense",
+    link: { label: "See Lumen", href: "https://github.com/Aspen-Lab/lumen" },
   },
   {
+    icon: "email",
     label: "Email engineering",
-    items: ["Customer.io", "Liquid templating", "No-fake-defaults pattern", "MJML thinking"],
-    note: "28 templates, onboarding through cancellation.",
+    items: [
+      "Customer.io",
+      "Liquid templating",
+      "No-fake-defaults pattern",
+      "MJML thinking",
+    ],
+    note: "28 transactional templates at Axel — onboarding to cancellation",
   },
   {
+    icon: "backend",
     label: "Backend & data",
-    items: ["Python 3.10+ asyncio", "SQLite + YAML", "Docker Compose", "Postgres / Supabase"],
-    note: "Hermes, pawsense, internal services.",
+    items: [
+      "Python 3.10+ asyncio",
+      "SQLite + YAML",
+      "Docker Compose",
+      "Postgres / Supabase",
+    ],
+    note: "Hermes (self-hosted information agent) · pawsense",
+    link: { label: "See Hermes", href: "https://github.com/Aspen-Lab/Hermes" },
   },
   {
+    icon: "ai",
     label: "AI · 3 tiers",
-    items: ["Anthropic SDK", "Google GenAI", "Ollama (local)", "TF-IDF (rules)"],
-    note: "Tier 0 / 1 / 2 — match cost and capability to the task.",
+    items: [
+      "Anthropic SDK",
+      "Google GenAI",
+      "Ollama (local)",
+      "TF-IDF (rules)",
+    ],
+    note: "Tier 0 / 1 / 2 — match cost and capability to the task",
+    link: {
+      label: "Hermes pipeline",
+      href: "https://github.com/Aspen-Lab/Hermes",
+    },
   },
   {
+    icon: "game",
     label: "Game",
     items: ["Unity + C#", "PlayMaker FSM", "Hollow-Knight stack"],
-    note: "2D Metroidvania w/ Skyler, 1–2h/day.",
+    note: "2D Metroidvania w/ Skyler · 1–2h/day, Hollow-Knight stack",
   },
   {
+    icon: "design",
     label: "Design",
     items: ["Figma + Figma MCP", "Framer", "Rhino + Keyshot", "Adobe CS"],
-    note: "Where the form starts.",
+    note: "Where every project starts — Figma is the desk",
   },
   {
+    icon: "tooling",
     label: "Tooling · the glue",
-    items: ["Cursor", "Claude Code", "unity-mcp · Ludo MCP", "Customer.io MCP", "PptxGenJS"],
-    note: "CLAUDE.md auto-loads project-specific design system rules per repo.",
+    items: [
+      "Cursor",
+      "Claude Code",
+      "unity-mcp · Ludo MCP",
+      "Customer.io MCP",
+      "PptxGenJS",
+    ],
+    note: "CLAUDE.md per repo · MCP chain · Vercel preview as handoff",
   },
 ];
 
@@ -696,29 +748,46 @@ export const sideProjects: SideProject[] = [
 
 export type Combo = {
   index: string;
-  label: string;
+  title: string;
+  proof: string;
   body: string;
 };
 
 export const combos: Combo[] = [
   {
     index: "01",
-    label: "Design × Production code",
-    body: "I designed and shipped 100% of helloaxel.com. Figma → tokens → Tailwind components → Vercel preview, no translation loss. The deliverable is commits, not a PDF.",
+    title: "World-class Figma",
+    proof: "40% faster integration",
+    body: "The vendor docking SOP I wrote at TikTok Pay PIPO UED became the cross-market standard — integration cycles cut ~40% across VN / MY / ID. Tokens, components, error states, edge cases, all in.",
   },
   {
     index: "02",
-    label: "Founder × Designer",
-    body: "XING Art: co-founded, raised $300K pre-seed, ran the product, transitioned to shareholder + advisor. I read GMV / MRR / funnels — I find the problem before someone hands me a brief.",
+    title: "Endorsed by TikTok",
+    proof: "70 → 90% completion",
+    body: "Vietnam KYC new-user completion lifted 20 points. The system outlasted my internship and became the team's default playbook. When your design ships as policy, that's the endorsement.",
   },
   {
     index: "03",
-    label: "Cog Sci × Visual craft",
-    body: "iF + Red Dot 2025 for Field of Vision — and the underlying training is HCI / behavioral science. I can explain why a flow works, not just claim that it does.",
+    title: "Frontend, shipped as PRs",
+    proof: "100% of helloaxel.com",
+    body: "Figma → tokens → Tailwind components → Vercel pull requests, no translation loss. Plus 28 transactional templates on Customer.io. The deliverable is commits, not a PDF.",
   },
   {
     index: "04",
-    label: "AI × Cross-domain width",
-    body: "Cursor + Claude Code + Figma MCP + unity-mcp + Customer.io MCP. I don't use AI for one-shot acceleration; I use it to fuse design, frontend, email, backend, and game dev into a single delivery chain.",
+    title: "iF + Red Dot + IDEA",
+    proof: "Three awards, one year",
+    body: "iF Design + Red Dot + IDEA Student Award, all 2025 — for Field of Vision (cane for the blind) and CryoSave (CDC NWSS packaging). HCI + behavioral training underwrite the craft.",
+  },
+  {
+    index: "05",
+    title: "Founder's product judgment",
+    proof: "$300K · 1K+ users",
+    body: "XING Art: co-founded, raised $300K pre-seed at MiraclePlus '25, ran the product to scale, transitioned to shareholder + advisor. I read GMV / MRR / funnels — I find the problem before someone writes the brief.",
+  },
+  {
+    index: "06",
+    title: "Market taste, proven by P&L",
+    proof: "200%+ annualized",
+    body: "Personal portfolio, 200%+ annualized return. Products and markets are the same problem — what compounds, what's noise, what's mispriced. The instinct that finds alpha finds the concept worth shipping.",
   },
 ];
