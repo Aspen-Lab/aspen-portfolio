@@ -1,13 +1,13 @@
 import { Reveal } from "./Reveal";
 import { NowPanel } from "./NowPanel";
-import { CursorDotGrid } from "./CursorDotGrid";
+import { PaperBackground } from "./PaperBackground";
 import { CapabilityModules } from "./CapabilityModules";
 import { AvatarAscii } from "./AvatarAscii";
 
 export function Hero() {
   return (
     <section className="container-fluid relative pt-24 pb-28 sm:pt-28 sm:pb-32 overflow-hidden">
-      <CursorDotGrid />
+      <PaperBackground />
       <AvatarAscii />
 
       <Reveal>
