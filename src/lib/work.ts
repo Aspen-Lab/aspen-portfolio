@@ -35,6 +35,61 @@ export type Project = {
       attribution?: string;
     };
     visual?: "loop-diagram";
+    statGrid?: {
+      items: {
+        value: string;
+        label: string;
+        icon?: string;
+        hint?: string;
+      }[];
+      cols?: 2 | 3 | 4;
+    };
+    markets?: {
+      code: string;
+      name: string;
+      regulator: string;
+      scope?: string;
+    }[];
+    iconList?: {
+      items: {
+        icon?: string;
+        label: string;
+        text?: string;
+      }[];
+      columns?: 1 | 2 | 3;
+    };
+    callout?: {
+      variant?: "info" | "warn" | "tip" | "note" | "insight";
+      label?: string;
+      title?: string;
+      text: string;
+    };
+    chart?: {
+      type: "bar" | "funnel";
+      title?: string;
+      max?: number;
+      data: {
+        label: string;
+        value: number;
+        display?: string;
+        caption?: string;
+      }[];
+    };
+    userFlow?: {
+      title?: string;
+      steps: {
+        id: string;
+        label: string;
+        caption?: string;
+        kind?: "start" | "step" | "decision" | "end";
+      }[];
+      branches?: {
+        fromId: string;
+        label: string;
+        destination: string;
+        caption?: string;
+      }[];
+    };
   }[];
   status?: "live" | "coming-soon";
   liveUrl?: string;
@@ -67,12 +122,26 @@ export const projects: Project[] = [
       {
         chapter: "Ownership",
         heading: "Designer of record",
-        body: "Every pixel in Axel goes through one person. I'm the sole designer delivering production design — the entire product comes from me with team discussion, but only I deliver. Reports directly to the CEO. The design and the code are the same artifact: Figma → tokens → Tailwind → Vercel preview, no translation loss. helloaxel.com is 100% me; the conversational UI is mine; the design system is mine; the 28 transactional templates on Customer.io are mine.",
+        body: "**Every pixel in Axel goes through one person.** Sole designer delivering production — the product comes from me with team discussion, but only I deliver. Reports directly to the CEO. Design and code are the *same artifact*: `Figma → tokens → Tailwind → Vercel preview`, no translation loss.",
+        iconList: {
+          items: [
+            { icon: "globe", label: "helloaxel.com", text: "100% mine — landing, conversational UI, motion." },
+            { icon: "layers", label: "Design system", text: "蓝绿粉 tokens · opacity ladder · rounded-xl · tabular-nums." },
+            { icon: "spark", label: "28 email templates", text: "Customer.io · Liquid · \"no-fake-defaults\" pattern." },
+            { icon: "code", label: "Production React", text: "Same repo as eng. Vercel preview is the handoff." },
+          ],
+          columns: 2,
+        },
+        callout: {
+          variant: "insight",
+          label: "Why this shape works pre-20",
+          text: "A normal design layer **needs translation** to reach production — Figma → spec → tickets → eng → review → ship. Each translation drops fidelity and adds days. When the designer ships the React, the *handoff is the deploy*. Org chart can stay flat because there's nothing to mediate.",
+        },
       },
       {
         chapter: "Ownership",
         heading: "Why a YC CEO would hire this shape",
-        body: "Before 20 people, you can't afford a design layer that needs translation. You need one person who can take an ambiguous CEO ask, ship a working prototype against real data by Friday, and have the engineering side trust the output. That's the slot I fill. No PMs to mediate, no design-eng meetings to schedule, no specs to write twice. The work moves at the speed of one person plus an AI loop — and the org chart never has to grow to compensate for handoff loss.",
+        body: "Before 20 people you can't afford a design layer that needs translation. You need one person who can take an *ambiguous CEO ask*, ship a working prototype against real data by **Friday**, and have engineering trust the output. That's the slot. **No PMs to mediate.** No design-eng meetings to schedule. No specs to write twice.",
         pullQuote: {
           text: "The handoff is the deploy. There is no separate design environment to maintain.",
         },
@@ -80,36 +149,18 @@ export const projects: Project[] = [
       {
         chapter: "Ownership",
         heading: "The stack I actually run",
-        body: "The design and the production share a stack. Same fonts, same tokens, same components. Below is what's running today — adding a new tool here usually means I've already evaluated three.",
+        body: "Design and production *share* a stack. Same fonts, same tokens, same components. Adding a tool means I've already evaluated three.",
         table: {
           headers: ["Layer", "What's running"],
           rows: [
-            [
-              "Frontend",
-              "Next.js 16 App Router · React 19 · TypeScript · Tailwind 4 · Motion",
-            ],
-            [
-              "Email engineering",
-              "Customer.io · Liquid templating · \"no-fake-defaults\" pattern · MJML thinking",
-            ],
-            [
-              "Internal decks",
-              "PptxGenJS — dark theme + #0BE09B accent + Lato",
-            ],
-            [
-              "AI tooling",
-              "Cursor · Claude Code · Figma MCP · Customer.io MCP · CLAUDE.md per repo",
-            ],
-            [
-              "Design tokens",
-              "蓝绿粉 palette · white/85 → 55 → 35 → 25 opacity ladder · rounded-xl · tabular-nums",
-            ],
-            [
-              "Workflow glue",
-              "Vercel preview as handoff · git as design history · Loom for walkthroughs",
-            ],
+            ["Frontend", "Next.js 16 · React 19 · TypeScript · Tailwind 4 · Motion"],
+            ["Email", "Customer.io · Liquid · \"no-fake-defaults\" guards · MJML thinking"],
+            ["Decks", "PptxGenJS — dark + #0BE09B + Lato"],
+            ["AI tooling", "Cursor · Claude Code · Figma MCP · Customer.io MCP · CLAUDE.md/repo"],
+            ["Tokens", "蓝绿粉 palette · white/85 → 55 → 35 → 25 · rounded-xl · tabular-nums"],
+            ["Glue", "Vercel preview as handoff · git as design history · Loom"],
           ],
-          caption: "Same toolchain on both sides of the handoff — there is no \"design environment\" separate from production.",
+          caption: "Same toolchain both sides — there is no \"design environment\" separate from production.",
         },
       },
 
@@ -117,53 +168,66 @@ export const projects: Project[] = [
       {
         chapter: "The protocol",
         heading: "The Loop · symmetric, not asymmetric",
-        body: "Most Design ⇌ FE handoffs are asymmetric — design throws specs over the wall, engineering implements, friction lives in the gap. Jesus (the lead engineer) and I built a symmetric protocol instead. I wrote the proposal: three zones, two paths, a weekly rhythm. Jesus wrote the response: a designer-fe-architect-review skill, an /audit-changes command, a four-tier classification. Both directions are now AI-protocolized; translation loss approaches zero. In 2026, most design × FE relationships still don't protocolize each other's work. This one does.",
+        body: "Most Design ⇌ FE handoffs are *asymmetric* — design throws specs over the wall, eng implements, friction lives in the gap. **Jesus** (lead engineer) and I built a *symmetric* protocol. I wrote the forward — three zones, two paths, a weekly rhythm. Jesus wrote the reverse — a `designer-fe-architect-review` skill, an `/audit-changes` command, four-tier safety routing. Both directions AI-protocolized. Translation loss → ~0.",
         visual: "loop-diagram",
+        callout: {
+          variant: "insight",
+          label: "Asymmetric vs symmetric",
+          text: "In **2026**, most design × FE relationships still don't protocolize *each other's* work — only their own. Symmetric means: I model how my work lands on Jesus, Jesus models how his work lands on me. The interface is the deliverable.",
+        },
       },
       {
         chapter: "The protocol",
         heading: "Forward · Aspen → Jesus",
-        body: "Three zones, two paths. Playground = source of truth — design lives, evolves, never merges; replaces Figma's role. PR Branch = transit station — themed, short-lived, born to die. Master = production. Path A flows Playground → PR → Master for design-led features (\"what if X\" hi-fi prototypes before spec). Path B flows Master → branch → PR for real-data wiring and bugs that only exist on real data. Branches stay 1–3 days, 5–10 changes per themed PR.",
+        body: "Three zones, two paths. **Playground** is source of truth — design lives, evolves, never merges; replaces Figma's role. **PR Branch** is transit — themed, short-lived, born to die. **Master** is production. Branches stay `1–3 days`, `5–10 changes` per themed PR.",
+        userFlow: {
+          title: "3 zones × 2 paths · the forward protocol",
+          steps: [
+            { id: "play", label: "Playground", caption: "source of truth · design lives, never merges", kind: "start" },
+            { id: "choose", label: "Choose path", caption: "design-led or data-led trigger?", kind: "decision" },
+            { id: "pr", label: "PR Branch", caption: "transit · themed · 1–3 days · 5–10 changes", kind: "step" },
+            { id: "master", label: "Master", caption: "production · users see it", kind: "end" },
+          ],
+          branches: [
+            {
+              fromId: "choose",
+              label: "Path A · design-led",
+              destination: "Playground → PR → Master",
+              caption: "\"What if X\" hi-fi prototypes before spec.",
+            },
+            {
+              fromId: "choose",
+              label: "Path B · data-led",
+              destination: "Master → branch → PR",
+              caption: "Real-data wiring + bugs only on real data.",
+            },
+          ],
+        },
       },
       {
         chapter: "The protocol",
-        heading: "Reverse · Jesus → Aspen — /audit-changes",
-        body: "Four tiers, one command. /audit-changes classifies every PR by safety so I move fast on safe things and the right work gets eyes from the right person. Halts — \"I'd need to change state shape / a test fails / I need a new dep\" — are the system working, not bugs. They don't get overridden; they get escalated.",
+        heading: "Reverse · Jesus → Aspen — `/audit-changes`",
+        body: "Four tiers, one command. **`/audit-changes`** classifies every PR by safety so I move fast on safe things and the right work gets eyes from the right person.",
         table: {
           headers: ["Tier", "Type", "Examples", "Action"],
           rows: [
-            [
-              "01",
-              "Visual",
-              "color · spacing · type · motion",
-              "Claude self-audit → ship it",
-            ],
-            [
-              "02",
-              "Markup",
-              "DOM · component splits · props",
-              "Light review",
-            ],
-            [
-              "03",
-              "Behavior",
-              "state · effects · API · interaction",
-              "Review with Jesus",
-            ],
-            [
-              "04",
-              "Out-of-bounds",
-              "money · auth · type changes",
-              "Pull from PR — Jesus owns",
-            ],
+            ["01", "Visual", "color · spacing · type · motion", "Claude self-audit → ship it"],
+            ["02", "Markup", "DOM · component splits · props", "Light review"],
+            ["03", "Behavior", "state · effects · API · interaction", "Review with Jesus"],
+            ["04", "Out-of-bounds", "money · auth · type changes", "Pull from PR — Jesus owns"],
           ],
           caption: "Default safety routing. Designer never has to ask \"can I ship this?\" — the tier tells me.",
+        },
+        callout: {
+          variant: "tip",
+          label: "Halts are the system working",
+          text: "When `/audit-changes` says *\"I'd need to change state shape / a test fails / I need a new dep\"*, that's the system **working**, not breaking. Halts don't get overridden — they get **escalated**. Designer trust comes from this.",
         },
       },
       {
         chapter: "The protocol",
         heading: "Weekly cadence · Hotel V1 trial",
-        body: "The rhythm is the point. Making it visible means the team can compound on it instead of rebuilding habits each sprint.",
+        body: "The *rhythm* is the point. Make it visible so the team compounds on it instead of rebuilding habits each sprint.",
         table: {
           headers: ["Day", "Action"],
           rows: [
@@ -173,7 +237,7 @@ export const projects: Project[] = [
             ["Thu", "Merge → master → users · rebase playground"],
             ["Fri", "Debrief — where PRs got too big, where the loop broke"],
           ],
-          caption: "Hotel V1 is this week's trial. The goal isn't perfection — it's testability.",
+          caption: "Hotel V1 is this week's trial. Goal isn't perfection — it's *testability*.",
         },
       },
 
@@ -181,17 +245,56 @@ export const projects: Project[] = [
       {
         chapter: "State & moat",
         heading: "Where we are today",
-        body: "Structurally we're at ~10% of the TikTok / Duolingo tier. ~40+ approved improvements are stuck in the playground waiting on the loop to mature. Structurally we may settle around 40% — that's not a goal, it's a constraint we work inside. TikTok and Duolingo run 700+ A/B tests per quarter with 1000+ designers; we can't win that race and we shouldn't try.",
+        body: "Structurally **~10%** of the TikTok / Duolingo tier. ~40+ approved improvements stuck in the playground waiting on the loop to mature. We may settle around `40%` — *not a goal, a constraint*. TikTok and Duolingo run 700+ A/B per quarter with 1000+ designers. We can't win that race; we shouldn't try.",
+        chart: {
+          type: "bar",
+          title: "Structural completeness · today vs ceiling",
+          max: 100,
+          data: [
+            { label: "TikTok", value: 100, display: "100%", caption: "~1000 designers · 700+ A/B per quarter" },
+            { label: "Duolingo", value: 95, display: "95%", caption: "Mature org · structural maturity ceiling" },
+            { label: "Axel · target", value: 40, display: "40%", caption: "Realistic ceiling for our shape" },
+            { label: "Axel · today", value: 10, display: "10%", caption: "~40 approved changes queued in playground" },
+          ],
+        },
       },
       {
         chapter: "State & moat",
         heading: "What we have that they can't replicate",
-        body: "Zero-friction handoff. AI-accelerated iteration. Hi-fi prototypes that ARE the production code. The flexibility of a small team where every keystroke matters and every decision routes to someone who owns it. In a vertical like travel, that delta is enough — experience parity or better, even at structural underdog. Big tech can't undo their org chart fast enough to catch us.",
+        body: "We can't outscale TikTok. We *can* out-iterate them on the per-decision quality of every keystroke.",
+        iconList: {
+          items: [
+            { icon: "loop", label: "Zero-friction handoff", text: "Vercel preview = the deliverable. No translation, no spec, no tickets." },
+            { icon: "spark", label: "AI-accelerated iteration", text: "Same repo, same prompt history, same `/audit-changes` skill across designer and engineer." },
+            { icon: "code", label: "Hi-fi prototypes ARE production", text: "What I build in playground is what users get — same React, same tokens." },
+            { icon: "compass", label: "Tight ownership routing", text: "Every decision has one named owner. No \"who decides this?\" cycles." },
+          ],
+          columns: 2,
+        },
+        callout: {
+          variant: "note",
+          label: "Why structural underdog still wins in travel",
+          text: "Travel is a vertical where **experience density** beats **A/B volume**. A traveler interacts with a booking flow once; the moment has to be right. Big tech wins on volume tests; we win on every-detail-considered.",
+        },
       },
       {
         chapter: "State & moat",
         heading: "What I leave behind",
-        body: "The process is documenting itself — turning into a transferable artifact. The 3-zone × 2-path framework, the 4-tier /audit-changes skill, the weekly cadence — these outlive the current collaboration. The deepest output isn't shipping helloaxel.com; it's turning the way I work with engineering into something a future team can pick up and keep running. For a YC CEO: this is what you want a senior designer-engineer to leave behind — repeatable structure, not just artifacts.",
+        body: "The process is documenting itself — *turning into a transferable artifact*. These outlive the current collaboration.",
+        iconList: {
+          items: [
+            { icon: "split", label: "3-zone × 2-path framework", text: "Playground · PR · Master with design-led / data-led triggers." },
+            { icon: "shield", label: "4-tier `/audit-changes` skill", text: "Default safety routing baked into the command. Tier tells me what to do." },
+            { icon: "loop", label: "Weekly cadence template", text: "Mon decisions · Tue PRs · Wed review · Thu merge · Fri debrief." },
+            { icon: "workflow", label: "AI prompt library", text: "Per-repo `CLAUDE.md` + Figma MCP + Customer.io MCP wired together." },
+          ],
+          columns: 2,
+        },
+        callout: {
+          variant: "insight",
+          label: "What a YC CEO actually wants",
+          text: "Not just `helloaxel.com` shipped — **repeatable structure**. The deepest output is turning the way I work with engineering into something a future team can pick up and keep running.",
+        },
       },
     ],
   },
@@ -401,8 +504,21 @@ export const projects: Project[] = [
     sections: [
       {
         chapter: "Background",
-        heading: "What KYC is, and why it's the design problem",
-        body: "KYC — Know Your Customer — is the regulatory gate that decides whether a fintech product can let a user transact at all. Identity verification under each market's financial regulator is required before any payment, transfer, or merchant flow can run. For TikTok Pay scaling across Southeast Asia and entering the US, KYC was the design surface with the most leverage.",
+        heading: "What KYC is",
+        body: "**Regulatory gate** before any payment can run. Break it, users drop off. Loosen it, the *regulator* does.",
+        iconList: {
+          items: [
+            { icon: "id", label: "Identity verification", text: "Local ID + selfie + liveness check, per market." },
+            { icon: "lock", label: "Compliance contract", text: "Each regulator audits the flow, the data, the SDK." },
+            { icon: "globe", label: "4 frameworks", text: "SBV · BNM · OJK · FinCEN — same gate, different rulebooks." },
+          ],
+          columns: 3,
+        },
+        callout: {
+          variant: "insight",
+          label: "Why design has leverage here",
+          text: "KYC sits at the **front of the funnel**. A 10-point completion lift across 4 markets compounds into hundreds of millions of payment volume. That's the slot where one designer × one engineer can move the entire business curve.",
+        },
         pullQuote: {
           text: "When KYC breaks, users drop off. When it's loose, the regulator does.",
           attribution: "the design constraint, in one sentence",
@@ -411,55 +527,111 @@ export const projects: Project[] = [
       {
         chapter: "Background",
         heading: "Where the work landed",
-        body: "TikTok Pay, Shop, and Live needed a unified KYC layer across markets with different ID document types, regulatory regimes, vendor SDKs, and trust expectations. I led the UX, compliance flow, and SDK alignment work across four markets.",
-        table: {
-          headers: ["Market", "Region", "Regulator framework", "TikTok products"],
-          rows: [
-            ["Vietnam", "Southeast Asia", "SBV — State Bank of Vietnam", "Pay · Shop · Live"],
-            ["Malaysia", "Southeast Asia", "BNM — Bank Negara Malaysia", "Pay · Shop"],
-            ["Indonesia", "Southeast Asia", "OJK — Financial Services Authority", "Pay · Shop"],
-            ["United States", "North America", "BSA · FinCEN · CIP", "Pay · Shop · Live"],
-          ],
-          caption: "Four markets, four regulatory frameworks, one design system",
-        },
+        body: "Four markets. One design system. TikTok Pay · Shop · Live across all.",
+        markets: [
+          { code: "VN", name: "Vietnam", regulator: "SBV", scope: "Pay · Shop · Live" },
+          { code: "MY", name: "Malaysia", regulator: "BNM", scope: "Pay · Shop" },
+          { code: "ID", name: "Indonesia", regulator: "OJK", scope: "Pay · Shop" },
+          { code: "US", name: "United States", regulator: "BSA · FinCEN · CIP", scope: "Pay · Shop · Live" },
+        ],
       },
       {
         chapter: "Strategy",
         heading: "Three layers of the problem",
-        body: "The KYC failure surface had three distinct layers — UX, Compliance, and UI — and each needed its own answer. None of them could be solved alone. Click through to see how each one broke and what we did about it.",
+        body: "**UX · Compliance · UI** — three distinct failures, three distinct fixes. None solvable alone.",
         layers: [
           {
             label: "UX",
             problem:
-              "Users reusing historical identity data had no fallback when their ID couldn't be found — the flow forked into silent drop-offs and a long tail of support tickets.",
+              "Users reusing historical identity data had no fallback when their ID couldn't be found — flow forked into silent drop-offs.",
             approach:
-              "Surfaced the alternative path explicitly with a \"Not My ID\" flow, plus progress visibility informed by the Goal Gradient Hypothesis — the user always knew where they were and why one more step was worth it.",
+              "\"Not My ID\" escape path + Goal Gradient progress visibility — the user always knows where they are.",
           },
           {
             label: "Compliance",
             problem:
-              "Vendors returned inconsistent OCR fields between Malaysia and Vietnam — same identity document, different field names, different validation rules. Users re-entered manually and the inconsistency itself was a regulatory risk.",
+              "OCR fields inconsistent MY ↔ VN. Manual re-entry. Regulatory risk in the inconsistency itself.",
             approach:
-              "Standardized OCR field mappings into a single internal schema; co-authored the taxonomy with Legal and Risk; ensured every flow stayed regulator-aligned across all four markets.",
+              "Standardized field schema, co-authored with Legal + Risk, regulator-aligned across all four markets.",
           },
           {
             label: "UI",
             problem:
-              "Vendor SDKs shipped with inconsistent typography, corner radius, iconography, and error states. The handoff from native TikTok UI to vendor SDK UI cratered trust precisely where it mattered most.",
+              "Vendor SDK type, radius, icons, errors fragmented. Trust collapsed at the handoff to vendor UI.",
             approach:
-              "Built an SDK-AAI Design Style Alignment, unified components, delivered reusable UI templates, and pushed SDK teams to support secondary UI encapsulation so country variants differed cleanly.",
+              "SDK-AAI Style Alignment + reusable templates + secondary UI encapsulation for clean country variants.",
           },
         ],
       },
       {
         chapter: "Strategy",
-        heading: "Goals across three audiences",
-        body: "Business → reach cross-market compliance and lift KYC completion to unlock payment volume. User → make onboarding feel simpler, clearer, more trustworthy. Design → ship a scalable framework that absorbs multiple SDK vendors and country requirements without falling apart.",
+        heading: "Three audiences, one flow",
+        body: "Each KYC change had to satisfy *all three* at once.",
+        iconList: {
+          items: [
+            { icon: "briefcase", label: "Business", text: "Lift completion to unlock payment volume across markets." },
+            { icon: "user", label: "User", text: "Onboarding that feels simpler, clearer, more trustworthy." },
+            { icon: "layers", label: "Design", text: "Framework that absorbs many SDKs without falling apart." },
+          ],
+          columns: 3,
+        },
+      },
+      {
+        chapter: "Execution",
+        heading: "The flow, with the escape path",
+        body: "Most flows assume the happy path. KYC's failure mode is the **silent fork** — a user who can't proceed but doesn't know why. We surfaced the alternate route as a first-class step.",
+        userFlow: {
+          title: "Vietnam KYC · v2 · with \"Not My ID\" escape",
+          steps: [
+            { id: "s1", label: "Open TikTok Pay", caption: "Entry · prefilled identity from history", kind: "start" },
+            { id: "s2", label: "Choose ID type", caption: "Citizen ID · passport · DL", kind: "step" },
+            { id: "s3", label: "Verify identity", caption: "OCR + liveness", kind: "decision" },
+            { id: "s4", label: "Confirm match", caption: "Goal Gradient progress · 3 of 4 done", kind: "step" },
+            { id: "s5", label: "KYC approved", caption: "Pay unlocked", kind: "end" },
+          ],
+          branches: [
+            {
+              fromId: "s3",
+              label: "Not My ID",
+              destination: "Re-enter manually",
+              caption: "Surfaces the alternate route — drop-offs collapse from 30% to ~10%.",
+            },
+          ],
+        },
+        callout: {
+          variant: "tip",
+          label: "Goal Gradient Hypothesis",
+          text: "When users see *how close they are to done*, completion goes up. We show progress as **3 of 4** explicitly, and the last step always reads as the smallest one.",
+        },
+      },
+      {
+        chapter: "Execution",
+        heading: "Completion across markets",
+        body: "Vietnam was the trial — once it landed, the same pattern (escape path + Goal Gradient + standardized OCR) ported to MY · ID · US.",
+        chart: {
+          type: "funnel",
+          title: "KYC funnel · Vietnam · v1 → v2",
+          data: [
+            { label: "Open KYC", value: 100, display: "100%" },
+            { label: "Upload ID", value: 92, display: "92%" },
+            { label: "Pass OCR", value: 88, display: "88%", caption: "OCR taxonomy standardized · MY/VN aligned" },
+            { label: "Liveness", value: 90, display: "90%" },
+            { label: "Approved", value: 90, display: "90%", caption: "Up from 70% in v1 — \"Not My ID\" + progress." },
+          ],
+        },
       },
       {
         chapter: "Execution",
         heading: "Vendor Docking SOP",
-        body: "I authored TikTok PIPO's first standardized Vendor Docking SOP — workflows, acceptance criteria, UI delivery priorities. Onboarding new SDKs went ~40% faster, and cross-market scalability stopped being a function of who was on shift. The SOP outlived my internship; it's the artifact I'm proudest of.",
+        body: "First standardized SOP for TikTok PIPO — workflows, acceptance criteria, UI delivery priorities. The artifact I'm proudest of.",
+        iconList: {
+          items: [
+            { icon: "workflow", label: "Workflow", text: "Stages, owners, acceptance gates per SDK vendor." },
+            { icon: "check", label: "Acceptance", text: "Checklist tied to OCR mapping + UI templates + halts." },
+            { icon: "spark", label: "Delivery", text: "UI tokens, component library, country-variant rules." },
+          ],
+          columns: 3,
+        },
         pullQuote: {
           text: "Cross-market scalability stopped being a function of who was on shift.",
           attribution: "what the SOP changed",
@@ -468,12 +640,21 @@ export const projects: Project[] = [
       {
         chapter: "Outcome",
         heading: "Results",
-        body: "Vietnam new-user KYC completion lifted from 70% to 90%. Vendor integration cycles cut by ~40%. Cross-market consistency for the SDK UI; a reusable component library; an OCR taxonomy that Legal and Risk could trust.",
+        body: "What shipped, what stuck.",
+        statGrid: {
+          items: [
+            { value: "70 → 90%", label: "VN new-user KYC", icon: "gauge", hint: "Vietnam completion lift." },
+            { value: "−40%", label: "Vendor cycle", icon: "arrow-up-right", hint: "Onboarding new SDKs, faster." },
+            { value: "4", label: "Markets shipped", icon: "globe", hint: "VN · MY · ID · US." },
+            { value: "1", label: "OCR taxonomy", icon: "shield", hint: "Co-authored with Legal + Risk." },
+          ],
+          cols: 4,
+        },
       },
       {
         chapter: "Outcome",
         heading: "Reflection",
-        body: "Compliance-first UX is its own discipline — you're balancing regulator language with human language, and neither one wants to budge. The right answer was less about fixing one flow and more about making the underlying SDK system modular, configurable, and data-driven. Future me wants to push further on configurable SDK frameworks, data-driven UX enhancements, and the question of whether KYC can ever feel less adversarial without compromising the gate it's meant to be.",
+        body: "Compliance-first UX is its **own discipline** — regulator language and human language don't compromise. The right answer was less about fixing one flow, more about making the SDK system *modular, configurable, data-driven*.",
       },
     ],
   },

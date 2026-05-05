@@ -10,6 +10,13 @@ import { LayerStack } from "@/components/LayerStack";
 import { ChapterNav } from "@/components/ChapterNav";
 import { LoopDiagram } from "@/components/LoopDiagram";
 import { Tag } from "@/components/Tag";
+import { StatGrid } from "@/components/StatGrid";
+import { MarketsRow } from "@/components/MarketsRow";
+import { IconList } from "@/components/IconList";
+import { RichText } from "@/components/RichText";
+import { Callout } from "@/components/Callout";
+import { Chart } from "@/components/Chart";
+import { UserFlow } from "@/components/UserFlow";
 
 type Params = { slug: string };
 
@@ -246,12 +253,69 @@ export default async function CaseStudy({
                       {s.heading}
                     </h2>
                   </header>
-                  <p className="text-[17px] leading-[1.7] text-ink/85 max-w-2xl">
+                  <RichText className="text-[17px] leading-[1.7] text-ink/85 max-w-2xl">
                     {s.body}
-                  </p>
+                  </RichText>
+                  {s.callout && (
+                    <div className="mt-10">
+                      <Callout
+                        variant={s.callout.variant}
+                        label={s.callout.label}
+                        title={s.callout.title}
+                      >
+                        {s.callout.text}
+                      </Callout>
+                    </div>
+                  )}
+                  {s.chart && (
+                    <div className="mt-10">
+                      <Chart
+                        type={s.chart.type}
+                        data={s.chart.data}
+                        max={s.chart.max}
+                        title={s.chart.title}
+                      />
+                    </div>
+                  )}
+                  {s.userFlow && (
+                    <div className="mt-10">
+                      <UserFlow
+                        steps={s.userFlow.steps}
+                        branches={s.userFlow.branches}
+                        title={s.userFlow.title}
+                      />
+                    </div>
+                  )}
                   {s.visual === "loop-diagram" && (
                     <div className="mt-12 max-w-4xl">
                       <LoopDiagram />
+                    </div>
+                  )}
+                  {s.statGrid && (
+                    <div className="mt-12">
+                      <StatGrid
+                        items={s.statGrid.items.map((it) => ({
+                          ...it,
+                          icon: it.icon as Parameters<typeof StatGrid>[0]["items"][number]["icon"],
+                        }))}
+                        cols={s.statGrid.cols}
+                      />
+                    </div>
+                  )}
+                  {s.markets && s.markets.length > 0 && (
+                    <div className="mt-12">
+                      <MarketsRow items={s.markets} />
+                    </div>
+                  )}
+                  {s.iconList && (
+                    <div className="mt-10">
+                      <IconList
+                        items={s.iconList.items.map((it) => ({
+                          ...it,
+                          icon: it.icon as Parameters<typeof IconList>[0]["items"][number]["icon"],
+                        }))}
+                        columns={s.iconList.columns}
+                      />
                     </div>
                   )}
                   {s.pullQuote && (
