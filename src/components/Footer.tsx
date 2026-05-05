@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 export function Footer() {
   return (
-    <footer id="contact" className="mt-auto border-t border-line">
+    <footer className="mt-auto border-t border-line">
       <div className="container-fluid py-20 grid grid-cols-1 md:grid-cols-12 gap-12">
         <div className="md:col-span-7">
           <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft mb-4">
@@ -14,15 +16,12 @@ export function Footer() {
             <br />
             <span className="italic font-normal">in motion?</span>
           </h2>
-          <a
-            href="mailto:xiaoyangw.design@gmail.com"
-            className="mt-8 inline-block font-display text-[22px] tracking-tight text-ink underline decoration-1 underline-offset-[6px] hover:decoration-soft"
+          <Link
+            href="/contact"
+            className="mt-8 inline-flex items-center gap-2 font-mono uppercase tracking-[0.2em] text-[12px] text-paper bg-ink rounded-full px-7 py-3.5 hover:opacity-90 transition-opacity"
           >
-            xiaoyangw.design@gmail.com
-          </a>
-          <p className="mt-3 font-mono text-[12px] text-soft uppercase tracking-[0.16em]">
-            +1 404-663-4284 · Available for freelance
-          </p>
+            Open contact <span aria-hidden>→</span>
+          </Link>
         </div>
 
         <div className="md:col-span-3 space-y-3 text-[14px]">
@@ -60,9 +59,8 @@ export function Footer() {
             Now
           </p>
           <p className="text-mute leading-[1.55]">
-            Designing flight &amp; hotel repricing at{" "}
-            <span className="text-ink">Axel</span> (Gordian, YC&nbsp;W19) in
-            Bellevue.
+            Design Engineer at <span className="text-ink">Axel</span> (Gordian,
+            YC&nbsp;W19) in Bellevue.
           </p>
         </div>
       </div>
