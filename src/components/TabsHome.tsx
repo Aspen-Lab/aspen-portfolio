@@ -6,7 +6,6 @@ import { SelectedWork } from "./SelectedWork";
 import { TechStack } from "./TechStack";
 import { SideProjects } from "./SideProjects";
 import { Moat } from "./Moat";
-import { NumIndex } from "./NumIndex";
 
 const tabs = [
   { id: "work", num: "01", label: "Featured work" },
@@ -55,15 +54,18 @@ export function TabsHome() {
               <button
                 key={tab.id}
                 onClick={() => handleChange(tab.id)}
-                className={`relative flex items-baseline gap-3 py-5 sm:py-6 mr-10 last:mr-0 whitespace-nowrap cursor-pointer transition-colors duration-200 ${
+                className={`relative flex items-baseline gap-2.5 py-5 sm:py-6 mr-10 last:mr-0 whitespace-nowrap cursor-pointer transition-colors duration-200 ${
                   isActive ? "text-ink" : "text-mute hover:text-ink"
                 }`}
               >
-                <NumIndex
-                  value={tab.num}
-                  variant={isActive ? "filled" : "outline"}
-                />
-                <span className="font-display text-[19px] sm:text-[20px] tracking-[-0.01em] leading-none">
+                <span
+                  className={`font-mono text-[11px] tracking-[0.2em] tabular-nums leading-none transition-opacity duration-200 ${
+                    isActive ? "opacity-90" : "opacity-45"
+                  }`}
+                >
+                  {tab.num}
+                </span>
+                <span className="font-display text-[20px] sm:text-[22px] tracking-[-0.01em] leading-none">
                   {tab.label}
                 </span>
                 {isActive && (
