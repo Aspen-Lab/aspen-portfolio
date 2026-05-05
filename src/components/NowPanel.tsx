@@ -3,39 +3,12 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 
-const ACCENT = "#0A0A0A";
 const STAGES = 5;
-
-function PulseDot() {
-  return (
-    <span className="relative flex w-2 h-2">
-      <span
-        className="absolute inset-0 rounded-full opacity-40 animate-ping"
-        style={{ backgroundColor: ACCENT }}
-      />
-      <span
-        className="relative rounded-full w-2 h-2"
-        style={{ backgroundColor: ACCENT }}
-      />
-    </span>
-  );
-}
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
     <div className="card-material flex flex-col overflow-hidden">
       {children}
-    </div>
-  );
-}
-
-function Head({ label }: { label: string }) {
-  return (
-    <div className="flex items-center gap-2.5 px-6 pt-5">
-      <PulseDot />
-      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink">
-        {label}
-      </span>
     </div>
   );
 }
@@ -53,10 +26,10 @@ function CardLink({
 }) {
   const inner = (
     <>
-      <span className="inline-flex items-center gap-2">
+      <span className="inline-flex items-baseline gap-2">
         <span
           className="font-display tracking-[-0.015em] text-ink leading-[1.0]"
-          style={{ fontSize: "26px" }}
+          style={{ fontSize: "28px" }}
         >
           {title}
         </span>
@@ -67,21 +40,16 @@ function CardLink({
           {external ? "↗" : "→"}
         </span>
       </span>
-      <p className="text-[12.5px] text-mute mt-1.5">{subtitle}</p>
+      <p className="text-[12.5px] text-mute mt-2">{subtitle}</p>
     </>
   );
 
   const className =
-    "group block px-6 pt-3 pb-4 hover:bg-cream/30 transition-colors";
+    "group block px-6 pt-7 pb-3 hover:bg-cream/30 transition-colors";
 
   if (external) {
     return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noreferrer"
-        className={className}
-      >
+      <a href={href} target="_blank" rel="noreferrer" className={className}>
         {inner}
       </a>
     );
@@ -96,9 +64,8 @@ function CardLink({
 export function NowPanel() {
   return (
     <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-3">
-      {/* ── 01 LIVE — Axel: 82% v1 → v2 ── */}
+      {/* ── Axel: 82% v1 → v2 ── */}
       <Card>
-        <Head label="Live" />
         <CardLink
           title="Axel"
           subtitle="Sole designer · YC W19"
@@ -109,13 +76,13 @@ export function NowPanel() {
           <div className="flex items-baseline gap-2 mb-3">
             <span
               className="font-display font-light tracking-[-0.03em] text-ink leading-none"
-              style={{ fontSize: "60px" }}
+              style={{ fontSize: "clamp(44px, 9vw, 60px)" }}
             >
               82
             </span>
             <span
               className="font-display font-light tracking-[-0.02em] text-soft leading-none"
-              style={{ fontSize: "26px" }}
+              style={{ fontSize: "clamp(20px, 4vw, 26px)" }}
             >
               %
             </span>
@@ -140,9 +107,8 @@ export function NowPanel() {
         </div>
       </Card>
 
-      {/* ── 02 SIDE — Hermes: 5-stage pipeline ── */}
+      {/* ── Hermes: 5-stage pipeline ── */}
       <Card>
-        <Head label="Side" />
         <CardLink
           title="Hermes"
           subtitle="5-stage agent pipeline · Python"
@@ -186,9 +152,8 @@ export function NowPanel() {
         </div>
       </Card>
 
-      {/* ── 03 CASE — TikTok: 70 → 90% KYC lift ── */}
+      {/* ── TikTok: 70 → 90% KYC lift ── */}
       <Card>
-        <Head label="Case" />
         <CardLink
           title="TikTok"
           subtitle="Pay KYC · 4 markets"
@@ -196,28 +161,28 @@ export function NowPanel() {
         />
 
         <div className="px-6 pb-6 mt-auto">
-          <div className="flex items-baseline gap-2.5 mb-3">
+          <div className="flex items-baseline gap-2 sm:gap-2.5 mb-3">
             <span
               className="font-display font-light tracking-[-0.03em] text-ink leading-none tabular-nums"
-              style={{ fontSize: "44px" }}
+              style={{ fontSize: "clamp(34px, 7vw, 44px)" }}
             >
               70
             </span>
             <span
               className="font-display font-light text-soft leading-none"
-              style={{ fontSize: "28px" }}
+              style={{ fontSize: "clamp(22px, 4.4vw, 28px)" }}
             >
               →
             </span>
             <span
               className="font-display font-light tracking-[-0.03em] text-ink leading-none tabular-nums"
-              style={{ fontSize: "44px" }}
+              style={{ fontSize: "clamp(34px, 7vw, 44px)" }}
             >
               90
             </span>
             <span
               className="font-display font-light tracking-[-0.02em] text-soft leading-none"
-              style={{ fontSize: "22px" }}
+              style={{ fontSize: "clamp(18px, 3.4vw, 22px)" }}
             >
               %
             </span>
