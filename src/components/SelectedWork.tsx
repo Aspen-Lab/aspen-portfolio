@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { projects } from "@/lib/work";
 import { Reveal } from "./Reveal";
+import { Tag } from "./Tag";
 
 export function SelectedWork() {
   return (
@@ -43,11 +44,12 @@ export function SelectedWork() {
                   </span>
                 </div>
 
-                <p className="mt-2 text-[13px] font-mono uppercase tracking-[0.16em] text-soft">
-                  {"{ "}
-                  {p.category}
-                  {" }"} · {p.role}
-                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+                  <Tag variant="outline">{p.category}</Tag>
+                  <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-soft">
+                    {p.role}
+                  </span>
+                </div>
                 <p className="mt-3 text-[15px] text-ink/85 leading-[1.55] max-w-[46ch]">
                   {p.summary}
                 </p>

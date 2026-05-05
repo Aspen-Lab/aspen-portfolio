@@ -6,6 +6,7 @@ import { SelectedWork } from "./SelectedWork";
 import { TechStack } from "./TechStack";
 import { SideProjects } from "./SideProjects";
 import { Moat } from "./Moat";
+import { NumIndex } from "./NumIndex";
 
 const tabs = [
   { id: "work", num: "01", label: "Featured work" },
@@ -46,7 +47,7 @@ export function TabsHome() {
   return (
     <>
       {/* Sticky tab bar — lives just below the Nav (Nav is h-16, top-0). */}
-      <div className="sticky top-16 z-30 bg-paper/85 backdrop-blur-md border-b border-line/80">
+      <div className="sticky top-16 z-30 bg-paper/95 backdrop-blur-md border-y border-line">
         <div className="container-fluid flex items-stretch gap-0 overflow-x-auto no-scrollbar">
           {tabs.map((tab) => {
             const isActive = active === tab.id;
@@ -54,24 +55,21 @@ export function TabsHome() {
               <button
                 key={tab.id}
                 onClick={() => handleChange(tab.id)}
-                className={`relative flex items-baseline gap-2.5 py-4 mr-9 last:mr-0 whitespace-nowrap cursor-pointer transition-colors duration-200 ${
-                  isActive ? "text-ink" : "text-soft hover:text-mute"
+                className={`relative flex items-baseline gap-3 py-5 sm:py-6 mr-10 last:mr-0 whitespace-nowrap cursor-pointer transition-colors duration-200 ${
+                  isActive ? "text-ink" : "text-mute hover:text-ink"
                 }`}
               >
-                <span
-                  className={`font-mono text-[10px] uppercase tracking-[0.22em] transition-opacity ${
-                    isActive ? "opacity-80" : "opacity-50"
-                  }`}
-                >
-                  {`{ ${tab.num} }`}
-                </span>
-                <span className="font-display text-[15px] tracking-[-0.005em]">
+                <NumIndex
+                  value={tab.num}
+                  variant={isActive ? "filled" : "outline"}
+                />
+                <span className="font-display text-[19px] sm:text-[20px] tracking-[-0.01em] leading-none">
                   {tab.label}
                 </span>
                 {isActive && (
                   <motion.span
                     layoutId="tabs-home-indicator"
-                    className="absolute bottom-[-1px] left-0 right-0 h-[1.5px] bg-ink"
+                    className="absolute bottom-[-1.5px] left-0 right-0 h-[2.5px] bg-ink rounded-full"
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}

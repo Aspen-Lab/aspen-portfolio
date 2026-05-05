@@ -9,6 +9,7 @@ import { AnimatedMetric } from "@/components/AnimatedMetric";
 import { LayerStack } from "@/components/LayerStack";
 import { ChapterNav } from "@/components/ChapterNav";
 import { LoopDiagram } from "@/components/LoopDiagram";
+import { Tag } from "@/components/Tag";
 
 type Params = { slug: string };
 
@@ -64,11 +65,12 @@ export default async function CaseStudy({
 
       <Reveal>
         <header className="mt-12 max-w-4xl">
-          <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-            {"{ "}
-            {project.category}
-            {" }"} · {project.client}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <Tag variant="outline">{project.category}</Tag>
+            <span className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
+              {project.client}
+            </span>
+          </div>
           <h1
             className="mt-6 font-display font-light leading-[1.0] tracking-[-0.025em] text-ink"
             style={{ fontSize: "clamp(40px, 6vw, 84px)" }}
