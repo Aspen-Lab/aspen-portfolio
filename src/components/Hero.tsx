@@ -1,7 +1,7 @@
 import { Reveal } from "./Reveal";
 import { NowPanel } from "./NowPanel";
 import { CursorDotGrid } from "./CursorDotGrid";
-import { WorkLine } from "./WorkLine";
+import { CapabilityModules } from "./CapabilityModules";
 
 export function Hero() {
   return (
@@ -28,7 +28,7 @@ export function Hero() {
 
       <Reveal delay={0.12}>
         <div className="mt-16">
-          <WorkLine />
+          <CapabilityModules />
         </div>
       </Reveal>
 
