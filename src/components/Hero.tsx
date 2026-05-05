@@ -1,15 +1,16 @@
 import { Reveal } from "./Reveal";
 import { NowPanel } from "./NowPanel";
+import { CursorDotGrid } from "./CursorDotGrid";
+import { FactGrid } from "./FactGrid";
 
 export function Hero() {
   return (
     <section className="container-fluid relative pt-24 pb-28 sm:pt-28 sm:pb-32">
-      {/* Faint dot-grid texture */}
-      <div className="grid-texture pointer-events-none absolute inset-0 -z-10" />
+      <CursorDotGrid />
 
       <Reveal>
         <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-          Design Engineer · Bellevue, WA · Open to ATL
+          Sole Designer at Axel (YC&nbsp;W19) · Bellevue, WA
         </p>
       </Reveal>
 
@@ -19,24 +20,16 @@ export function Hero() {
           style={{ fontSize: "clamp(40px, 6.4vw, 88px)" }}
         >
           Hi! I&apos;m Aspen.
-          <br />A Design Engineer who blends{" "}
-          <span className="italic font-normal">creativity</span>
+          <br />I design and ship
           <br />
-          with code that ships.
+          the <span className="italic font-normal">production</span> code.
         </h1>
       </Reveal>
 
       <Reveal delay={0.12}>
-        <p className="mt-10 max-w-2xl text-[16.5px] leading-[1.65] text-mute">
-          5+ years across <span className="text-ink">TikTok</span>,{" "}
-          <span className="text-ink">Hyundai</span>,{" "}
-          <span className="text-ink">CDC</span>, and{" "}
-          <span className="text-ink">XING Art</span> ($300K pre-seed, 1K+
-          users). Currently a Design Engineer at{" "}
-          <span className="text-ink">Axel</span> (Gordian, YC&nbsp;W19),
-          reporting directly to the CEO. iF + Red Dot 2025 winner. Permanent
-          Resident — no sponsorship needed.
-        </p>
+        <div className="mt-12">
+          <FactGrid />
+        </div>
       </Reveal>
 
       <Reveal delay={0.18}>
