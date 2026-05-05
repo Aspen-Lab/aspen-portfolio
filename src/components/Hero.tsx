@@ -2,11 +2,13 @@ import { Reveal } from "./Reveal";
 import { NowPanel } from "./NowPanel";
 import { CursorDotGrid } from "./CursorDotGrid";
 import { CapabilityModules } from "./CapabilityModules";
+import { AvatarAscii } from "./AvatarAscii";
 
 export function Hero() {
   return (
-    <section className="container-fluid relative pt-24 pb-28 sm:pt-28 sm:pb-32">
+    <section className="container-fluid relative pt-24 pb-28 sm:pt-28 sm:pb-32 overflow-hidden">
       <CursorDotGrid />
+      <AvatarAscii />
 
       <Reveal>
         <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
