@@ -12,10 +12,10 @@ export function AvatarAscii() {
       className="pointer-events-none select-none absolute top-12 right-0 hidden lg:block -z-0"
     >
       <pre
-        className="font-mono text-ink/[0.09] whitespace-pre"
+        className="font-mono text-ink/[0.11] whitespace-pre"
         style={{
-          fontSize: "11px",
-          lineHeight: "1.18",
+          fontSize: "7px",
+          lineHeight: "1.15",
           letterSpacing: "0",
         }}
       >
