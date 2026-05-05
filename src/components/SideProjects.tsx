@@ -16,7 +16,7 @@ export function SideProjects() {
       </Reveal>
 
       <Reveal delay={0.04}>
-        <CommitCalendar usernames={["aspen-wang", "Aspen-Lab"]} />
+        <CommitCalendar />
       </Reveal>
 
       <Reveal delay={0.08}>
