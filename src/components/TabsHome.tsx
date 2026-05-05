@@ -1,47 +1,113 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 import { SelectedWork } from "./SelectedWork";
 import { TechStack } from "./TechStack";
 import { SideProjects } from "./SideProjects";
 import { Moat } from "./Moat";
 
 const tabs = [
-  { id: "work", num: "01", label: "Featured work" },
-  { id: "stack", num: "02", label: "Tech stack" },
-  { id: "side", num: "03", label: "Side projects" },
-  { id: "combo", num: "04", label: "The combo" },
+  { id: "work", num: "01", label: "Featured work", Component: SelectedWork },
+  { id: "stack", num: "02", label: "Tech stack", Component: TechStack },
+  { id: "side", num: "03", label: "Side projects", Component: SideProjects },
+  { id: "combo", num: "04", label: "The combo", Component: Moat },
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
 
-const isTabId = (s: string): s is TabId =>
-  tabs.some((t) => t.id === s);
+const isTabId = (s: string): s is TabId => tabs.some((t) => t.id === s);
+
+// Offset to clear before a section's top: Nav (h-16 = 64px) + sticky tab bar (~68px)
+const SCROLL_OFFSET = 132;
 
 export function TabsHome() {
   const [active, setActive] = useState<TabId>("work");
+  const lockRef = useRef(false); // Pauses observer during programmatic scroll
 
-  // Sync URL hash → active tab on mount + hashchange events
-  useEffect(() => {
-    const sync = () => {
-      const hash = window.location.hash.slice(1);
-      if (hash && isTabId(hash)) {
-        setActive(hash);
-      }
-    };
-    sync();
-    window.addEventListener("hashchange", sync);
-    return () => window.removeEventListener("hashchange", sync);
+  const updateHash = useCallback((id: TabId) => {
+    const newHash = id === "work" ? "" : `#${id}`;
+    if (typeof window !== "undefined") {
+      history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${newHash}${window.location.search}`,
+      );
+    }
   }, []);
 
-  const handleChange = (id: TabId) => {
-    setActive(id);
-    if (typeof window !== "undefined") {
-      const newHash = id === "work" ? "" : `#${id}`;
-      history.replaceState(null, "", `${window.location.pathname}${newHash}`);
+  // Track which section is in viewport, drive `active` accordingly
+  useEffect(() => {
+    const ratios = new Map<TabId, number>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.id;
+          if (isTabId(id)) {
+            ratios.set(id, entry.isIntersecting ? entry.intersectionRatio : 0);
+          }
+        }
+        if (lockRef.current) return;
+        let bestId: TabId | null = null;
+        let bestRatio = 0;
+        for (const t of tabs) {
+          const r = ratios.get(t.id) ?? 0;
+          if (r > bestRatio) {
+            bestRatio = r;
+            bestId = t.id;
+          }
+        }
+        if (bestId) setActive((prev) => (prev === bestId ? prev : bestId!));
+      },
+      {
+        rootMargin: `-${SCROLL_OFFSET}px 0px -50% 0px`,
+        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+      },
+    );
+
+    for (const t of tabs) {
+      const el = document.getElementById(t.id);
+      if (el) observer.observe(el);
     }
-  };
+    return () => observer.disconnect();
+  }, []);
+
+  // Mirror active state → URL hash
+  useEffect(() => {
+    if (lockRef.current) return;
+    updateHash(active);
+  }, [active, updateHash]);
+
+  // Honor an initial hash deep-link (e.g. /#combo)
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (!hash || !isTabId(hash)) return;
+    requestAnimationFrame(() => {
+      const el = document.getElementById(hash);
+      if (!el) return;
+      const top =
+        el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+      window.scrollTo({ top, behavior: "instant" });
+      setActive(hash);
+    });
+  }, []);
+
+  const handleClick = useCallback(
+    (id: TabId) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      lockRef.current = true;
+      setActive(id);
+      updateHash(id);
+      const top =
+        el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+      window.scrollTo({ top, behavior: "smooth" });
+      window.setTimeout(() => {
+        lockRef.current = false;
+      }, 900);
+    },
+    [updateHash],
+  );
 
   return (
     <>
@@ -53,7 +119,7 @@ export function TabsHome() {
             return (
               <button
                 key={tab.id}
-                onClick={() => handleChange(tab.id)}
+                onClick={() => handleClick(tab.id)}
                 className={`relative flex items-baseline gap-2.5 py-5 sm:py-6 mr-10 last:mr-0 whitespace-nowrap cursor-pointer transition-colors duration-200 ${
                   isActive ? "text-ink" : "text-mute hover:text-ink"
                 }`}
@@ -81,21 +147,12 @@ export function TabsHome() {
         </div>
       </div>
 
-      {/* Tab content with crossfade */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {active === "work" && <SelectedWork />}
-          {active === "stack" && <TechStack />}
-          {active === "side" && <SideProjects />}
-          {active === "combo" && <Moat />}
-        </motion.div>
-      </AnimatePresence>
+      {/* All sections rendered sequentially. Each section already exposes its
+          own #id anchor (work / stack / side / combo) inside its component,
+          so IntersectionObserver above can find them by id. */}
+      {tabs.map(({ id, Component }) => (
+        <Component key={id} />
+      ))}
     </>
   );
 }
