@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "motion/react";
+import { useRef, useState } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+} from "motion/react";
 
 // ───── Module 01 · Design ─────
 const palette = [
@@ -182,12 +187,84 @@ function ShipModule() {
   );
 }
 
+// ───── Carousel orchestration ─────
+const MODULE_COUNT = 3;
+
+const Modules = [DesignModule, EngineerModule, ShipModule] as const;
+
 export function CapabilityModules() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-      <DesignModule />
-      <EngineerModule />
-      <ShipModule />
+    <>
+      {/* Mobile (<lg): vertical stack — natural scroll, no scrolljack */}
+      <div className="lg:hidden grid grid-cols-1 gap-3">
+        {Modules.map((Mod, i) => (
+          <Mod key={i} />
+        ))}
+      </div>
+
+      {/* Desktop (lg+): horizontal page-flip driven by vertical scroll */}
+      <DesktopCarousel />
+    </>
+  );
+}
+
+function DesktopCarousel() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end end"],
+  });
+
+  // Translate the inner track horizontally as the user scrolls vertically
+  // through the container. With MODULE_COUNT children each at width:100% of
+  // the visible cell, the track is MODULE_COUNT × 100% wide; we shift it by
+  // (MODULE_COUNT-1)/MODULE_COUNT to land on the last module.
+  const x = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["0%", `-${((MODULE_COUNT - 1) / MODULE_COUNT) * 100}%`]
+  );
+
+  const [activeIdx, setActiveIdx] = useState(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const idx = Math.min(
+      MODULE_COUNT - 1,
+      Math.max(0, Math.round(v * (MODULE_COUNT - 1)))
+    );
+    setActiveIdx(idx);
+  });
+
+  return (
+    <div
+      ref={ref}
+      className="hidden lg:block relative"
+      style={{ height: `${MODULE_COUNT * 70}vh` }}
+    >
+      <div className="sticky top-28">
+        <div className="overflow-hidden">
+          <motion.div className="flex" style={{ x }}>
+            {Modules.map((Mod, i) => (
+              <div key={i} className="w-full shrink-0 px-1.5">
+                <div className="max-w-3xl mx-auto">
+                  <Mod />
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Page indicator pills — active one stretches, others stay short */}
+        <div className="flex items-center justify-center gap-2 mt-7">
+          {Array.from({ length: MODULE_COUNT }).map((_, i) => (
+            <span
+              key={i}
+              className={`h-[2px] rounded-full transition-all duration-500 ease-out ${
+                activeIdx === i ? "w-10 bg-ink" : "w-2 bg-soft/40"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
