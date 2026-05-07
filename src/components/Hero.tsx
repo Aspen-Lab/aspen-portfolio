@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Reveal } from "./Reveal";
 import { NowPanel } from "./NowPanel";
-import { CapabilityModules } from "./CapabilityModules";
 import { AvatarAscii } from "./AvatarAscii";
 
 export function Hero() {
@@ -30,12 +29,6 @@ export function Hero() {
           <span className="italic font-normal">{t("headlineLine3Italic")}</span>
           {t("headlineLine3b")}
         </h1>
-      </Reveal>
-
-      <Reveal delay={0.12}>
-        <div className="mt-16">
-          <CapabilityModules />
-        </div>
       </Reveal>
 
       <Reveal delay={0.18}>
