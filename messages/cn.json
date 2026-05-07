@@ -1,0 +1,129 @@
+{
+  "Nav": {
+    "available": "可入职",
+    "work": "作品",
+    "about": "关于",
+    "studies": "研习",
+    "contact": "联系"
+  },
+  "Hero": {
+    "eyebrow": "Axel(YC W19)首位设计师 · 西雅图 Bellevue",
+    "headlineLine1": "你好,我是 Aspen。",
+    "headlineLine2": "我做设计,也写",
+    "headlineLine3a": "进入",
+    "headlineLine3Italic": "生产环境",
+    "headlineLine3b": "的代码。",
+    "ctaWork": "看精选作品",
+    "ctaStack": "技术栈",
+    "ctaEmail": "xiaoyangw.design@gmail.com"
+  },
+  "Tabs": {
+    "work": "精选作品",
+    "stack": "技术栈",
+    "side": "Side Project",
+    "combo": "组合拳"
+  },
+  "TechStack": {
+    "intro": "会写代码的设计师。我的 Side Project 几乎都跑在生产环境 —— 主要在 <ink>Cursor</ink> 和 <ink>Claude Code</ink> 里写,通过一串 MCP 把 Figma / Unity / Customer.io 串进同一个工作流。",
+    "spectrumTitle": "能力光谱",
+    "spectrumNote": "五条全亮。横向覆盖才是关键 —— 真正的护城河是那条把设计 / 前端 / 邮件 / 后端 / 游戏开发拧成一条链路的 AI loop。"
+  },
+  "SideProjects": {
+    "intro": "设计工作之外的玩意儿 —— 多半为了挠痒痒,偶尔是为了试试某个想引入工作的工具。",
+    "githubLink": "github.com/Aspen-Lab →",
+    "featuredEyebrow": "{ 精选 }",
+    "viewOnGithub": "查看 GitHub →",
+    "github": "GitHub →",
+    "private": "私有",
+    "calendar": {
+      "commitsLabel": "次提交 · 近 90 天",
+      "activeDays": "{count} 天活跃 · 单日峰值 {peak}",
+      "personalPrivate": "个人 · 私有仓库",
+      "less": "少",
+      "more": "多"
+    }
+  },
+  "Moat": {
+    "intro": "我卖的不是一项技能 —— 是一种 <i>形状</i>。六张可被验证的牌 —— <ink>有据可查,不是说说</ink>。"
+  },
+  "About": {
+    "eyebrow": "{ 关于 } · 我的故事",
+    "headline1": "一半是设计师,",
+    "headline2": "一半是心理学者,",
+    "headline3Italic": "永远在交付。",
+    "bio1": "我在 <ink>Georgia Tech</ink> 念双学位 —— 工业设计 BS(2021–2024)+ 心理学 BS(2023–2026)。设计和心理之所以咬合,是因为问题面是同一个:微小的摩擦、隐藏的预期、嘴上说的和实际做的之间那道缝。",
+    "bio2": "我做过 <ink>TikTok Pay</ink> 多国 KYC、<ink>Hyundai</ink> 半自动驾驶 HMI、<ink>CDC</ink> 公共卫生包装系统,联合创办了 <ink>XING Art</ink>(MiraclePlus $300K 种子,1K+ 真实用户)。现在是 <ink>Axel</ink>(Gordian Software, YC W19)的 Design Engineer —— helloaxel.com 的生产 React 由我交付,Customer.io 上的整套交易类邮件系统也由我维护,直接向 CEO 汇报。",
+    "bio3": "下班之后 —— 自己冲胶卷、用炭笔画黑白人体、给我和伴侣做饭、和室友焊无线发光骰子。节奏快,对字体和动效有强偏好,最迷恋研究 / 增长 / 工艺三者交叉的那块。",
+    "closingQuote": "我在等你看见我的潜力。",
+    "closingAttribution": "—— Aspen,21 岁",
+    "awardsTitle": "奖项与认可",
+    "moreWorkTitle": "更多过往作品"
+  },
+  "Contact": {
+    "eyebrow": "{ 联系 } · 找我聊聊",
+    "headline1": "有什么",
+    "headline2Italic": "在路上?",
+    "intro": "选你顺手的渠道 —— 直接邮件 / 预约通话 / 下方快速留言。{reply}。",
+    "replyExpectation": "通常 48 小时内回复",
+    "directTitle": "直接联系",
+    "elsewhereTitle": "其他地方",
+    "quickMessageTitle": "快速留言",
+    "quickMessageNote": "直接进我邮箱",
+    "methodEmail": "邮箱",
+    "methodPhone": "电话",
+    "methodSchedule": "约一通话",
+    "methodScheduleValue": "预约 15 分钟",
+    "methodLinkedIn": "LinkedIn",
+    "methodLinkedInValue": "在 LinkedIn 加好友",
+    "methodResume": "简历",
+    "methodResumeValue": "下载 PDF",
+    "elsewhereDesignStudies": "设计研习",
+    "elsewhereDesignStudiesPlatform": "Notion",
+    "elsewhereAspenLab": "Aspen Lab",
+    "elsewhereAspenLabPlatform": "Framer",
+    "elsewhereCode": "代码",
+    "elsewhereCodePlatform": "GitHub",
+    "form": {
+      "name": "姓名",
+      "email": "邮箱",
+      "message": "留言",
+      "send": "发送",
+      "sending": "发送中…",
+      "idleHint": "也可以直接发邮件 —— 链接就在上面。",
+      "successDev": "已收到 —— 开发环境只记录到日志(配置 RESEND_API_KEY 后才真发邮件)。",
+      "success": "已收到 —— 48 小时内回你。",
+      "errorGeneric": "发送失败,请直接发邮件。",
+      "errorFields": "请检查下方字段。",
+      "errorName": "名字写一下吧。",
+      "errorEmail": "邮箱格式好像不对。",
+      "errorMessage": "再多写几句更好回。"
+    }
+  },
+  "Footer": {
+    "getInTouch": "联系方式",
+    "headline1": "有什么",
+    "headline2Italic": "在路上?",
+    "openContact": "打开联系页",
+    "elsewhere": "其他",
+    "designStudies": "设计研习(Notion)→",
+    "aspenLab": "Aspen Lab(Framer)→",
+    "github": "GitHub",
+    "now": "现在",
+    "nowText": "在 <ink>Axel</ink>(Gordian, YC W19)做 Design Engineer · 西雅图 Bellevue。",
+    "copyright": "© {year} Aspen W. — 王晓阳",
+    "permanentResident": "永久居民 · 无需 Sponsor"
+  },
+  "NotFound": {
+    "eyebrow": "{ 404 } · 没找到这个页面",
+    "headline1": "这个页面",
+    "headline2a": "不知道",
+    "headline2Italic": "拐去了",
+    "headline3": "哪儿。",
+    "body": "可能从来没上线,可能我搬走了。无论哪种 —— 一键回头。",
+    "backHome": "回首页",
+    "seeWork": "看精选作品"
+  },
+  "LocaleToggle": {
+    "switchTo": "切换到 {locale}"
+  }
+}

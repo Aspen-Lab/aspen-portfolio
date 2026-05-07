@@ -15,7 +15,7 @@
 
 html,
 body {
-  background: var(--color-paper);
+  background-color: var(--color-paper);
   color: var(--color-ink);
 }
 
@@ -24,6 +24,12 @@ body {
   font-feature-settings: "ss01", "tnum";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Paper-grain texture · monochrome SVG turbulence, tiled.
+     Sits below all content automatically — body bg paints first.
+     Two stacked tiles: high-frequency grain (fine) + low-frequency fiber. */
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.18'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 320px 320px;
 }
 
 ::selection {
@@ -105,23 +111,3 @@ html.custom-cursor-active * {
   display: none;
 }
 
-/* Faint dot-grid texture for hero / section backgrounds. */
-.grid-texture {
-  background-image: radial-gradient(
-    circle,
-    rgba(14, 14, 16, 0.05) 1px,
-    transparent 1px
-  );
-  background-size: 24px 24px;
-  background-position: 0 0;
-  -webkit-mask-image: radial-gradient(
-    ellipse 80% 60% at 50% 30%,
-    black 0%,
-    transparent 90%
-  );
-  mask-image: radial-gradient(
-    ellipse 80% 60% at 50% 30%,
-    black 0%,
-    transparent 90%
-  );
-}

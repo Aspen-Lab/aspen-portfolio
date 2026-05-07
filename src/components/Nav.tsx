@@ -1,41 +1,43 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
+import { LocaleToggle } from "./LocaleToggle";
 
 type Item = {
-  label: string;
+  key: "work" | "about" | "studies" | "contact";
   href: string;
-  /** When the current path satisfies this matcher, the item shows as active. */
+  /** When the current locale-relative path satisfies this matcher, the item shows as active. */
   match: (path: string) => boolean;
   external?: boolean;
 };
 
 const ITEMS: Item[] = [
   {
-    label: "Work",
+    key: "work",
     href: "/#work",
     match: (p) => p === "/" || p.startsWith("/work"),
   },
   {
-    label: "About",
+    key: "about",
     href: "/about",
     match: (p) => p.startsWith("/about"),
   },
   {
-    label: "Studies",
+    key: "studies",
     href: "https://www.notion.so/Aspen-Design-Lab-29106c193aa980b3b791d7d7fe378e89?source=copy_link",
     match: () => false,
     external: true,
   },
   {
-    label: "Contact",
+    key: "contact",
     href: "/contact",
     match: (p) => p.startsWith("/contact"),
   },
 ];
 
 export function Nav() {
+  const t = useTranslations("Nav");
   const pathname = usePathname() ?? "/";
 
   return (
@@ -47,30 +49,31 @@ export function Nav() {
         >
           <span>Aspen Lab</span>
           <span
-            aria-label="Available for work"
+            aria-label={t("available")}
             className="hidden sm:flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-soft"
           >
             <span className="relative flex w-1.5 h-1.5">
               <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
               <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
             </span>
-            <span className="hidden md:inline">Available</span>
+            <span className="hidden md:inline">{t("available")}</span>
           </span>
         </Link>
 
         <nav className="flex items-center gap-1 sm:gap-2 text-[13.5px]">
           {ITEMS.map((item) => {
             const active = item.match(pathname);
+            const label = t(item.key);
             const className = `relative px-3 py-1.5 rounded-md transition-colors ${
               active ? "text-ink" : "text-mute hover:text-ink"
             } ${
-              item.label === "Studies" ? "hidden sm:inline-block" : ""
+              item.key === "studies" ? "hidden sm:inline-block" : ""
             }`;
 
             const inner = (
               <>
                 <span className="relative">
-                  {item.label}
+                  {label}
                   {item.external && (
                     <span
                       aria-hidden
@@ -98,7 +101,7 @@ export function Nav() {
             if (item.external) {
               return (
                 <a
-                  key={item.label}
+                  key={item.key}
                   href={item.href}
                   target="_blank"
                   rel="noreferrer"
@@ -110,7 +113,7 @@ export function Nav() {
             }
             return (
               <Link
-                key={item.label}
+                key={item.key}
                 href={item.href}
                 className={`group ${className}`}
               >
@@ -118,6 +121,7 @@ export function Nav() {
               </Link>
             );
           })}
+          <LocaleToggle />
         </nav>
       </div>
     </header>

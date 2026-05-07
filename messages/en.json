@@ -1,0 +1,129 @@
+{
+  "Nav": {
+    "available": "Available",
+    "work": "Work",
+    "about": "About",
+    "studies": "Studies",
+    "contact": "Contact"
+  },
+  "Hero": {
+    "eyebrow": "Sole Designer at Axel (YC W19) · Bellevue, WA",
+    "headlineLine1": "Hi! I'm Aspen.",
+    "headlineLine2": "I design and ship",
+    "headlineLine3a": "the ",
+    "headlineLine3Italic": "production",
+    "headlineLine3b": " code.",
+    "ctaWork": "See selected work",
+    "ctaStack": "Stack",
+    "ctaEmail": "xiaoyangw.design@gmail.com"
+  },
+  "Tabs": {
+    "work": "Featured work",
+    "stack": "Tech stack",
+    "side": "Side projects",
+    "combo": "The combo"
+  },
+  "TechStack": {
+    "intro": "Designer who codes. Most of my side projects ship to production — mostly written out of <ink>Cursor</ink> and <ink>Claude Code</ink>, with a chain of MCPs gluing Figma, Unity, and Customer.io into the same loop.",
+    "spectrumTitle": "Capability spectrum",
+    "spectrumNote": "All five lit. The width is the point — the moat is the AI loop that fuses design, frontend, email, backend, and game dev into a single delivery chain."
+  },
+  "SideProjects": {
+    "intro": "Things I build between design jobs — usually to scratch a personal itch, sometimes to test a tool I'm thinking about adopting at work.",
+    "githubLink": "github.com/Aspen-Lab →",
+    "featuredEyebrow": "{ Featured }",
+    "viewOnGithub": "View on GitHub →",
+    "github": "GitHub →",
+    "private": "Private",
+    "calendar": {
+      "commitsLabel": "commits · last 90 days",
+      "activeDays": "{count} active days · peak {peak} in a day",
+      "personalPrivate": "Personal · Private",
+      "less": "Less",
+      "more": "More"
+    }
+  },
+  "Moat": {
+    "intro": "I'm not selling a skill — I'm selling a <i>shape</i>. Six credentials — <ink>proven, not asserted</ink>."
+  },
+  "About": {
+    "eyebrow": "{ About } · My Story",
+    "headline1": "Half designer,",
+    "headline2": "half psychologist,",
+    "headline3Italic": "always shipping.",
+    "bio1": "I'm a dual-degree student at <ink>Georgia Tech</ink> — BS Industrial Design (2021–2024) and BS Psychology (2023–2026). Design and psychology stuck together because the questions overlap: small frictions, hidden expectations, the gap between what someone says and what they do.",
+    "bio2": "I've designed multi-country KYC for <ink>TikTok Pay</ink>, semi-autonomous HMI for <ink>Hyundai</ink>, a packaging system for the <ink>CDC</ink>, and co-founded <ink>XING Art</ink> with a $300K pre-seed from MiraclePlus and 1K+ real users. I'm now a Design Engineer at <ink>Axel</ink> (Gordian Software, YC W19) — shipping production React on helloaxel.com, building the transactional email system on Customer.io, and reporting directly to the CEO.",
+    "bio3": "Off the clock — film washing by hand, B&W sketching, cooking for me and my partner, building wireless illuminated dice with roommates. I move fast, hold strong opinions on type and motion, and like the part of design where research, growth, and craft intersect.",
+    "closingQuote": "I'm waiting for you to find my potential.",
+    "closingAttribution": "— Aspen, 21 yrs",
+    "awardsTitle": "Awards & recognition",
+    "moreWorkTitle": "Selected past work"
+  },
+  "Contact": {
+    "eyebrow": "{ Contact } · Get in touch",
+    "headline1": "Have something",
+    "headline2Italic": "in motion?",
+    "intro": "Pick the channel that suits you — direct line, scheduled chat, or the quick form below. {reply}.",
+    "replyExpectation": "Usually within 48h",
+    "directTitle": "Direct",
+    "elsewhereTitle": "Elsewhere",
+    "quickMessageTitle": "Quick message",
+    "quickMessageNote": "Goes straight to my inbox",
+    "methodEmail": "Email",
+    "methodPhone": "Phone",
+    "methodSchedule": "Schedule",
+    "methodScheduleValue": "Book a 15-minute chat",
+    "methodLinkedIn": "LinkedIn",
+    "methodLinkedInValue": "Connect on LinkedIn",
+    "methodResume": "Resume",
+    "methodResumeValue": "Download PDF",
+    "elsewhereDesignStudies": "Design Studies",
+    "elsewhereDesignStudiesPlatform": "Notion",
+    "elsewhereAspenLab": "Aspen Lab",
+    "elsewhereAspenLabPlatform": "Framer",
+    "elsewhereCode": "Code",
+    "elsewhereCodePlatform": "GitHub",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "send": "Send message",
+      "sending": "Sending…",
+      "idleHint": "Or email directly — link is right above.",
+      "successDev": "Thanks — message logged in dev. (Set RESEND_API_KEY to enable email.)",
+      "success": "Thanks — I'll reply within 48h.",
+      "errorGeneric": "Couldn't send. Please email directly instead.",
+      "errorFields": "Please check the fields below.",
+      "errorName": "Tell me your name.",
+      "errorEmail": "That doesn't look like an email.",
+      "errorMessage": "A few more words help me reply well."
+    }
+  },
+  "Footer": {
+    "getInTouch": "Get in touch",
+    "headline1": "Have something",
+    "headline2Italic": "in motion?",
+    "openContact": "Open contact",
+    "elsewhere": "Elsewhere",
+    "designStudies": "Design Studies (Notion) →",
+    "aspenLab": "Aspen Lab (Framer) →",
+    "github": "GitHub",
+    "now": "Now",
+    "nowText": "Design Engineer at <ink>Axel</ink> (Gordian, YC W19) in Bellevue.",
+    "copyright": "© {year} Aspen W. — Xiaoyang Wang",
+    "permanentResident": "Permanent Resident · No Sponsorship"
+  },
+  "NotFound": {
+    "eyebrow": "{ 404 } · Page not found",
+    "headline1": "This page",
+    "headline2a": "took a ",
+    "headline2Italic": "detour",
+    "headline3": "somewhere.",
+    "body": "Maybe it never shipped, maybe I moved it. Either way — the way back is one click.",
+    "backHome": "Back to home",
+    "seeWork": "See selected work"
+  },
+  "LocaleToggle": {
+    "switchTo": "Switch to {locale}"
+  }
+}
