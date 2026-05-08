@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import { Reveal } from "./Reveal";
-import { NowPanel } from "./NowPanel";
 import { AvatarAscii } from "./AvatarAscii";
 
 export function Hero() {
@@ -29,29 +28,6 @@ export function Hero() {
           <span className="italic font-normal">{t("headlineLine3Italic")}</span>
           {t("headlineLine3b")}
         </h1>
-      </Reveal>
-
-      <Reveal delay={0.18}>
-        <NowPanel />
-      </Reveal>
-
-      <Reveal delay={0.28}>
-        <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px] text-mute">
-          <a href="#work" className="link link-rev text-ink">
-            {t("ctaWork")}
-          </a>
-          <span className="text-line">·</span>
-          <a href="#stack" className="link link-rev hover:text-ink">
-            {t("ctaStack")}
-          </a>
-          <span className="text-line">·</span>
-          <a
-            href={`mailto:${t("ctaEmail")}`}
-            className="link link-rev hover:text-ink"
-          >
-            {t("ctaEmail")}
-          </a>
-        </div>
       </Reveal>
     </section>
   );
