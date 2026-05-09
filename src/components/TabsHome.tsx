@@ -8,10 +8,10 @@ import { SideProjects } from "./SideProjects";
 import { Moat } from "./Moat";
 
 const tabs = [
-  { id: "work", num: "01", label: "Featured work", Component: SelectedWork },
-  { id: "stack", num: "02", label: "Tech stack", Component: TechStack },
-  { id: "side", num: "03", label: "Side projects", Component: SideProjects },
-  { id: "combo", num: "04", label: "The combo", Component: Moat },
+  { id: "work", label: "Featured work", Component: SelectedWork },
+  { id: "stack", label: "Tech stack", Component: TechStack },
+  { id: "side", label: "Side projects", Component: SideProjects },
+  { id: "combo", label: "The combo", Component: Moat },
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
@@ -59,38 +59,33 @@ export function TabsHome() {
   return (
     <>
       {/* Sticky tab bar — sits just below the global Nav (h-16). */}
-      <div className="sticky top-16 z-30 bg-paper/95 backdrop-blur-md border-y border-line">
-        <div className="container-fluid flex items-stretch gap-0 overflow-x-auto no-scrollbar">
-          {tabs.map((tab) => {
-            const isActive = active === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => handleClick(tab.id)}
-                className={`relative flex items-baseline gap-2.5 py-5 sm:py-6 mr-10 last:mr-0 whitespace-nowrap cursor-pointer transition-colors duration-200 ${
-                  isActive ? "text-ink" : "text-mute hover:text-ink"
-                }`}
-              >
-                <span
-                  className={`font-mono text-[11px] tracking-[0.2em] tabular-nums leading-none transition-opacity duration-200 ${
-                    isActive ? "opacity-90" : "opacity-45"
+      <div className="sticky top-16 z-30 bg-paper/90 backdrop-blur-sm border-b border-line/70">
+        <div className="container-fluid">
+          <div className="flex items-center justify-start sm:justify-center gap-8 sm:gap-12 py-6 sm:py-8 overflow-x-auto no-scrollbar">
+            {tabs.map((tab) => {
+              const isActive = active === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleClick(tab.id)}
+                  className={`relative whitespace-nowrap cursor-pointer pb-1.5 transition-colors duration-300 ${
+                    isActive ? "text-ink" : "text-soft hover:text-mute"
                   }`}
                 >
-                  {tab.num}
-                </span>
-                <span className="font-display text-[20px] sm:text-[22px] tracking-[-0.01em] leading-none">
-                  {tab.label}
-                </span>
-                {isActive && (
-                  <motion.span
-                    layoutId="tabs-home-indicator"
-                    className="absolute bottom-[-1.5px] left-0 right-0 h-[2.5px] bg-ink rounded-full"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
-              </button>
-            );
-          })}
+                  <span className="font-display text-[17px] sm:text-[18px] tracking-[-0.005em] leading-none">
+                    {tab.label}
+                  </span>
+                  {isActive && (
+                    <motion.span
+                      layoutId="tabs-home-indicator"
+                      className="absolute -bottom-px left-0 right-0 h-px bg-ink"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
