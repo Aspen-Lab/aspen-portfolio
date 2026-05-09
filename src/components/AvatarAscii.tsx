@@ -34,6 +34,15 @@ export function AvatarAscii() {
     <div
       aria-hidden
       className="pointer-events-none select-none absolute top-8 right-0 -z-0"
+      style={{
+        // Radial mask: face area stays full opacity, all four edges fade to
+        // transparent so the portrait dissolves into the page bg instead of
+        // ending in a hard rectangular cut.
+        WebkitMaskImage:
+          "radial-gradient(ellipse 78% 82% at 68% 46%, black 28%, transparent 94%)",
+        maskImage:
+          "radial-gradient(ellipse 78% 82% at 68% 46%, black 28%, transparent 94%)",
+      }}
     >
       <pre
         className="font-mono whitespace-pre text-[4px] sm:text-[5px] lg:text-[6px]"
