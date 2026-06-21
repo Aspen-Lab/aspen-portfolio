@@ -7,11 +7,9 @@ type TagProps = {
 };
 
 const variantClass: Record<Variant, string> = {
-  outline:
-    "border border-line/80 text-ink bg-paper shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]",
-  filled:
-    "bg-ink text-paper border border-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]",
-  subtle: "border border-line/50 text-mute bg-cream/40",
+  outline: "border border-line text-soft",
+  filled: "bg-ink text-paper border border-ink",
+  subtle: "border border-line/60 text-mute",
   ghost: "text-soft",
 };
 

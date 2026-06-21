@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Lato } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
@@ -12,15 +12,11 @@ import { CustomCursor } from "@/components/CustomCursor";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const lato = Lato({
+  variable: "--font-lato",
   subsets: ["latin"],
-  display: "swap",
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
+  weight: ["300", "400", "700", "900"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -48,7 +44,7 @@ export default async function LocaleLayout({
 
   // The site is one bilingual experience; html lang reflects the active route.
   return (
-    <html lang={locale} className={`${fraunces.variable} ${jakarta.variable}`}>
+    <html lang={locale} className={lato.variable}>
       <body className="min-h-screen flex flex-col bg-paper text-ink antialiased">
         <NextIntlClientProvider>
           <Nav />

@@ -10,6 +10,8 @@ export type Project = {
   summary: string;
   tags: string[];
   cover?: string;
+  coverWidth?: number;
+  coverHeight?: number;
   heroVideo?: string;
   metrics?: { label: string; value: string }[];
   sections?: {
@@ -109,6 +111,8 @@ export const projects: Project[] = [
       "Sole designer at a YC W19 travel-money startup, reporting directly to the CEO. Built a symmetric Design ⇌ FE delivery protocol with the lead engineer that turns handoff into convergence — three zones, four review tiers, a weekly cadence. Every pixel in Axel goes through one person.",
     tags: ["Sole designer", "Design × FE protocol", "Production React"],
     cover: "/work/axel.webp",
+    coverWidth: 1200,
+    coverHeight: 630,
     status: "live",
     liveUrl: "https://helloaxel.com",
     metrics: [
@@ -311,6 +315,8 @@ export const projects: Project[] = [
       "A budgeting app for the rest of us. Gamified, friendly, built for people who want to save but can't sustain it. 85% of testers reported higher motivation; 90% loved the play of it.",
     tags: ["Fintech", "Gamification", "UX research"],
     cover: "/work/nutra.png",
+    coverWidth: 1024,
+    coverHeight: 768,
     heroVideo: "/work/nutra/hero.mp4",
     status: "live",
     metrics: [
@@ -495,6 +501,8 @@ export const projects: Project[] = [
       "KYC across Vietnam, Malaysia, Indonesia, and the US for TikTok Pay, Shop, and Live. Vietnam new-user completion 70% → 90%. Vendor docking SOP cut integration cycles by ~40%.",
     tags: ["Fintech", "Compliance", "Multi-region", "Design System"],
     cover: "/work/tiktok.png",
+    coverWidth: 2894,
+    coverHeight: 1628,
     status: "live",
     metrics: [
       { label: "Vietnam KYC completion", value: "70 → 90%" },
@@ -671,6 +679,8 @@ export const projects: Project[] = [
       "How might we improve driver confidence in semi-autonomous scenarios, where control transitions between human and machine? A study across 9 drivers, biometrics, and three UI directions — Green UI lifted confidence by +10% over the baseline.",
     tags: ["HMI", "Semi-autonomous", "Research"],
     cover: "/work/hyundai.png",
+    coverWidth: 2060,
+    coverHeight: 967,
     status: "live",
     metrics: [
       { label: "Confidence lift (Green UI vs baseline)", value: "+10%" },
@@ -717,6 +727,8 @@ export const projects: Project[] = [
       "A wearable + interface system designed for visually impaired pedestrians. Winner of both iF Design Award and Red Dot Design Award in 2025.",
     tags: ["Accessibility", "Wearable", "Service design"],
     cover: "/work/cone.png",
+    coverWidth: 2048,
+    coverHeight: 1328,
     status: "coming-soon",
     metrics: [
       { label: "iF Design Award", value: "2025" },

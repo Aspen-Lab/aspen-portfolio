@@ -2,12 +2,118 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { moreWork, awards } from "@/lib/work";
 import { Reveal } from "@/components/Reveal";
+import { BootSequence } from "@/components/BootSequence";
 
 export const metadata: Metadata = {
   title: "About — Aspen W.",
   description:
     "Half designer, half psychologist, always shipping. Aspen W. — dual-degree at Georgia Tech, currently a Design Engineer at Axel (Gordian, YC W19), reporting directly to the CEO.",
 };
+
+type CapIcon = "design" | "code" | "brand" | "research";
+
+const CAPABILITIES: ReadonlyArray<{
+  name: string;
+  tag: string;
+  desc: string;
+  icon: CapIcon;
+}> = [
+  {
+    name: "Product Design",
+    tag: "0→1 · end-to-end",
+    desc: "Multi-country KYC, automotive HMI, fintech flows — research through shipped UI.",
+    icon: "design",
+  },
+  {
+    name: "Design Engineering",
+    tag: "React · production",
+    desc: "I ship my own design as PRs — same tokens, components, and stack as the team.",
+    icon: "code",
+  },
+  {
+    name: "Brand & Visual",
+    tag: "identity · motion",
+    desc: "Type, systems, packaging, motion — from CDC packaging to product marks.",
+    icon: "brand",
+  },
+  {
+    name: "Research × Psychology",
+    tag: "behavior · cog-sci",
+    desc: "GT Psych dual degree — usability, trust, the gap between said and done.",
+    icon: "research",
+  },
+];
+
+function CapabilityGlyph({ icon }: { icon: CapIcon }) {
+  const common = {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.5,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    className: "w-[18px] h-[18px]",
+    "aria-hidden": true,
+  };
+  switch (icon) {
+    case "design":
+      return (
+        <svg {...common}>
+          <rect x="3" y="3" width="18" height="18" rx="1.5" />
+          <path d="M3 9h18M9 21V9" />
+        </svg>
+      );
+    case "code":
+      return (
+        <svg {...common}>
+          <path d="M9 8l-4 4 4 4M15 8l4 4-4 4M13 6l-2 12" />
+        </svg>
+      );
+    case "brand":
+      return (
+        <svg {...common}>
+          <path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z" />
+        </svg>
+      );
+    case "research":
+      return (
+        <svg {...common}>
+          <circle cx="6" cy="7" r="2" />
+          <circle cx="18" cy="6" r="2" />
+          <circle cx="11" cy="18" r="2" />
+          <path d="M7.7 8.2l2.4 8M7.9 6.7l8.2-.6" />
+        </svg>
+      );
+  }
+}
+
+const TRAJECTORY: ReadonlyArray<{ org: string; role: string; period: string }> = [
+  {
+    org: "Axel · Gordian (YC W19)",
+    role: "Sole Designer · reports to CEO",
+    period: "Dec 2025 — Now",
+  },
+  {
+    org: "TikTok · PIPO UED",
+    role: "Product Designer (Intern) · TikTok Pay KYC",
+    period: "Jun — Sep 2025",
+  },
+  {
+    org: "Hyundai · HATCI Lab",
+    role: "HMI Designer · IONIQ 6 L2+",
+    period: "Jan — May 2025",
+  },
+  {
+    org: "XING Art",
+    role: "Co-founder & Product Designer · $300K MiraclePlus",
+    period: "2022 — 2025",
+  },
+  {
+    org: "CDC · NWSS Lab",
+    role: "Product Designer · CryoSave (IDEA Award)",
+    period: "Aug — Dec 2023",
+  },
+];
 
 type FigureProps = {
   src: string;
@@ -25,9 +131,9 @@ function Figure({
   priority = false,
 }: FigureProps) {
   return (
-    <figure>
+    <figure className="group">
       <div
-        className="relative overflow-hidden rounded-[6px] bg-cream"
+        className="relative h-[clamp(240px,38vh,400px)] w-auto overflow-hidden rounded-[8px] bg-cream photo-frame"
         style={{ aspectRatio: aspect }}
       >
         <Image
@@ -35,12 +141,24 @@ function Figure({
           alt={alt}
           fill
           priority={priority}
-          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 720px"
-          className="object-cover"
+          sizes="(max-width: 640px) 80vw, 640px"
+          className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.05]"
         />
+
+        {/* Terminal viewfinder · corner ticks + inspect hint on hover. */}
+        <span className="pointer-events-none absolute inset-2.5 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <span className="absolute left-0 top-0 h-3 w-3 border-l border-t border-ink/50" />
+          <span className="absolute right-0 top-0 h-3 w-3 border-r border-t border-ink/50" />
+          <span className="absolute left-0 bottom-0 h-3 w-3 border-l border-b border-ink/50" />
+          <span className="absolute right-0 bottom-0 h-3 w-3 border-r border-b border-ink/50" />
+        </span>
+        <span className="pointer-events-none absolute right-3 bottom-3 z-10 font-mono text-[9px] uppercase tracking-[0.22em] text-ink bg-paper/70 backdrop-blur-sm px-2 py-1 rounded-full opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+          ⤢ Inspect
+        </span>
       </div>
       {caption && (
         <figcaption className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-soft leading-[1.7]">
+          <span className="text-soft/50">// </span>
           {caption}
         </figcaption>
       )}
@@ -48,16 +166,29 @@ function Figure({
   );
 }
 
-function SectionTitle({ number, title }: { number: string; title: string }) {
+function SectionTitle({
+  number,
+  title,
+  meta,
+}: {
+  number: string;
+  title: string;
+  meta?: string;
+}) {
   return (
     <Reveal>
-      <div className="border-t border-line pt-8 mb-14">
-        <h2 className="font-display text-[28px] sm:text-[34px] tracking-[-0.01em]">
-          <span className="font-mono text-soft text-[14px] tracking-[0.2em] uppercase mr-3">
-            {`{ ${number} }`}
+      <div className="border-t border-b border-line py-4 mb-14 flex items-baseline justify-between gap-4">
+        <h2 className="font-display text-[24px] sm:text-[30px] tracking-[-0.01em] flex items-baseline gap-3 sm:gap-4">
+          <span className="font-mono text-soft/70 text-[12px] tracking-[0.2em] uppercase">
+            [A-{number}]
           </span>
           {title}
         </h2>
+        {meta && (
+          <span className="font-mono text-soft/55 text-[10px] tracking-[0.2em] uppercase whitespace-nowrap shrink-0 hidden sm:block">
+            {meta}
+          </span>
+        )}
       </div>
     </Reveal>
   );
@@ -66,66 +197,172 @@ function SectionTitle({ number, title }: { number: string; title: string }) {
 export default function About() {
   return (
     <article className="pb-32">
-      <section className="container-fluid pt-12 pb-24">
+      <BootSequence />
+
+      <section className="container-fluid pt-10 pb-24">
+        {/* Framed system panel — the architectural anchor of the page. */}
         <Reveal>
-          <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-            {"{ About }"} · My Story
-          </p>
-        </Reveal>
+          <div className="border border-line rounded-[12px] overflow-hidden">
+            {/* Window title bar */}
+            <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 border-b border-line bg-cream/30 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft">
+              <span className="flex items-center gap-2.5 min-w-0">
+                <span className="flex gap-1.5 shrink-0">
+                  <span className="w-2 h-2 rounded-full border border-line" />
+                  <span className="w-2 h-2 rounded-full border border-line" />
+                  <span className="w-2 h-2 rounded-full border border-line" />
+                </span>
+                <span className="text-ink truncate">ASPEN_W</span>
+                <span className="text-soft/50 hidden sm:inline">// about.sys</span>
+              </span>
+              <span className="flex items-center gap-1.5 shrink-0">
+                <span className="relative flex w-1.5 h-1.5">
+                  <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
+                  <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
+                </span>
+                Online
+              </span>
+            </div>
 
-        <Reveal delay={0.05}>
-          <h1
-            className="mt-10 font-display font-light tracking-[-0.025em] text-ink leading-[0.96]"
-            style={{ fontSize: "clamp(48px, 8vw, 112px)" }}
-          >
-            Half designer,
-            <br />
-            half psychologist,
-            <br />
-            <span className="italic font-normal">always shipping.</span>
-          </h1>
-        </Reveal>
+            {/* Body grid — meta rail × main column */}
+            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr]">
+              {/* Left rail — diagnostic key/value index */}
+              <dl className="border-b md:border-b-0 md:border-r border-line font-mono text-[11px] uppercase tracking-[0.13em]">
+                {(
+                  [
+                    ["Role", "Design Engineer"],
+                    ["At", "Axel · YC W19"],
+                    ["Edu", "GT — ID + Psych"],
+                    ["Base", "Bellevue, WA"],
+                    ["Founded", "XING Art · $300K"],
+                    ["State", "Shipping"],
+                  ] as const
+                ).map(([k, v]) => (
+                  <div
+                    key={k}
+                    className="flex items-baseline justify-between gap-3 px-4 sm:px-5 py-3 border-b border-line/50 last:border-b-0"
+                  >
+                    <dt className="text-soft/55">{k}</dt>
+                    <dd className="text-mute text-right">{v}</dd>
+                  </div>
+                ))}
+              </dl>
 
-        <div className="mt-16 max-w-3xl space-y-6 text-[17px] leading-[1.65] text-ink/85">
-          <Reveal delay={0.1}>
-            <p>
-              I&apos;m a dual-degree student at{" "}
-              <span className="text-ink">Georgia Tech</span> — BS Industrial
-              Design (2021–2024) and BS Psychology (2023–2026). Design and
-              psychology stuck together because the questions overlap: small
-              frictions, hidden expectations, the gap between what someone says
-              and what they do.
-            </p>
-          </Reveal>
-          <Reveal delay={0.14}>
-            <p>
-              I&apos;ve designed multi-country KYC for{" "}
-              <span className="text-ink">TikTok Pay</span>, semi-autonomous HMI
-              for <span className="text-ink">Hyundai</span>, a packaging system
-              for the <span className="text-ink">CDC</span>, and co-founded{" "}
-              <span className="text-ink">XING Art</span> with a $300K pre-seed
-              from MiraclePlus and 1K+ real users. I&apos;m now a Design
-              Engineer at <span className="text-ink">Axel</span> (Gordian
-              Software, YC&nbsp;W19) — shipping production React on
-              helloaxel.com, building the transactional email system on
-              Customer.io, and reporting directly to the CEO.
-            </p>
-          </Reveal>
-          <Reveal delay={0.18}>
-            <p>
-              Off the clock — film washing by hand, B&amp;W sketching, cooking
-              for me and my partner, building wireless illuminated dice with
-              roommates. I move fast, hold strong opinions on type and motion,
-              and like the part of design where research, growth, and craft
-              intersect.
-            </p>
-          </Reveal>
-        </div>
+              {/* Main — identity headline; the facts now live in the bands below */}
+              <div className="flex items-center p-6 sm:p-9 lg:p-12">
+                <h1
+                  className="font-display font-light tracking-[-0.02em] text-ink leading-[1.02]"
+                  style={{ fontSize: "clamp(32px, 4.2vw, 58px)" }}
+                >
+                  Half designer,
+                  <br />
+                  half psychologist,
+                  <br />
+                  <span className="italic font-normal">always shipping.</span>
+                </h1>
+              </div>
+            </div>
+
+            {/* Capabilities band — what I do, in the diagnostic-rail idiom */}
+            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr] border-t border-line">
+              <div className="px-4 sm:px-5 py-4 md:py-6 border-b md:border-b-0 md:border-r border-line font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block">
+                <span className="text-soft/55">Capabilities</span>
+                <span className="text-soft/35 md:mt-1.5 md:block">[ 04 · stack ]</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2">
+                {CAPABILITIES.map((c, i) => (
+                  <div
+                    key={c.name}
+                    className={`group/cap p-5 sm:p-6 border-line/50 ${i % 2 === 0 ? "sm:border-r" : ""} ${
+                      i < CAPABILITIES.length - (CAPABILITIES.length % 2 === 0 ? 2 : 1)
+                        ? "border-b"
+                        : "border-b sm:border-b-0"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3.5">
+                      <span className="shrink-0 grid place-items-center w-9 h-9 rounded-[7px] border border-line bg-cream/50 text-mute transition-colors duration-300 group-hover/cap:text-ink group-hover/cap:border-soft">
+                        <CapabilityGlyph icon={c.icon} />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline justify-between gap-3">
+                          <h3 className="font-display text-[16px] sm:text-[17px] tracking-[-0.01em] text-ink">
+                            {c.name}
+                          </h3>
+                          <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-soft/50 whitespace-nowrap shrink-0">
+                            {c.tag}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-[13.5px] leading-[1.6] text-mute max-w-[42ch]">
+                          {c.desc}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Trajectory band — experience timeline, most recent first */}
+            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr] border-t border-line">
+              <div className="px-4 sm:px-5 py-4 md:py-6 border-b md:border-b-0 md:border-r border-line font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block">
+                <span className="text-soft/55">Trajectory</span>
+                <span className="text-soft/35 md:mt-1.5 md:block">[ 05 · log ]</span>
+              </div>
+              <ol className="relative py-1">
+                {/* Continuous timeline rail */}
+                <span
+                  aria-hidden
+                  className="absolute left-[1.55rem] sm:left-[1.85rem] top-6 bottom-6 w-px bg-line"
+                />
+                {TRAJECTORY.map((e, i) => (
+                  <li
+                    key={e.org}
+                    className={`relative flex items-baseline justify-between gap-4 pl-11 sm:pl-14 pr-5 sm:pr-6 py-3.5 ${
+                      i < TRAJECTORY.length - 1 ? "border-b border-line/50" : ""
+                    }`}
+                  >
+                    {/* Node — current role pulses like the title-bar status dot */}
+                    <span
+                      aria-hidden
+                      className="absolute left-[1.55rem] sm:left-[1.85rem] top-[1.3rem] -translate-x-1/2"
+                    >
+                      {i === 0 ? (
+                        <span className="relative flex w-[9px] h-[9px]">
+                          <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
+                          <span className="relative w-[9px] h-[9px] rounded-full bg-ink ring-[3px] ring-paper" />
+                        </span>
+                      ) : (
+                        <span className="block w-[9px] h-[9px] rounded-full bg-paper border border-soft ring-[3px] ring-paper" />
+                      )}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="text-ink text-[14.5px] tracking-[-0.005em]">
+                        {e.org}
+                      </span>
+                      <span className="block text-mute text-[13px] leading-[1.5] mt-0.5">
+                        {e.role}
+                      </span>
+                    </span>
+                    <span className="font-mono text-[10.5px] uppercase tracking-[0.15em] text-soft/55 whitespace-nowrap shrink-0 pt-0.5">
+                      {e.period}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {/* Footer coordinate strip */}
+            <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 border-t border-line font-mono text-[10px] uppercase tracking-[0.22em] text-soft/55">
+              <span>LAT 47.6101 · LON −122.2015</span>
+              <span className="hidden sm:inline">REC · 1995 — PRESENT</span>
+              <span>EOF</span>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* 01 — Life Style */}
       <section className="container-fluid mt-8">
-        <SectionTitle number="01" title="Life Style" />
+        <SectionTitle number="01" title="Life Style" meta="Module · 08 frames · loaded" />
 
         <Reveal>
           <p className="font-mono uppercase tracking-[0.18em] text-[11px] text-soft mb-12 max-w-md">
@@ -134,8 +371,8 @@ export default function About() {
           </p>
         </Reveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
-          <div className="sm:col-span-7">
+        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/car-georgia-tech.jpg"
@@ -147,7 +384,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-5 sm:pt-24">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/drawing-1.jpg"
@@ -158,7 +395,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-12">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/sketching-bw.png"
@@ -169,7 +406,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-6">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/sketching-2.png"
@@ -180,7 +417,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-6">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/cool-stuff-roommate.png"
@@ -191,7 +428,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-12">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/illuminated-dice-1.png"
@@ -202,7 +439,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-6">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/illuminated-dice-2.png"
@@ -211,7 +448,7 @@ export default function About() {
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-6">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/workspace-1.png"
@@ -226,10 +463,10 @@ export default function About() {
 
       {/* 02 — My Workspace */}
       <section className="container-fluid mt-32">
-        <SectionTitle number="02" title="My Workspace" />
+        <SectionTitle number="02" title="My Workspace" meta="Module · 06 frames · loaded" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
-          <div className="sm:col-span-12">
+        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/workspace-2.png"
@@ -240,7 +477,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-5">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/bronze-studio-2.png"
@@ -250,7 +487,7 @@ export default function About() {
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-7 sm:pt-16">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/film-washing-1.png"
@@ -261,7 +498,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-12">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/film-washing-2.png"
@@ -272,7 +509,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-5">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/film-washing-3.png"
@@ -282,7 +519,7 @@ export default function About() {
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-7 sm:pt-12">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/film-washing-4.png"
@@ -297,10 +534,10 @@ export default function About() {
 
       {/* 03 — Love Music */}
       <section className="container-fluid mt-32">
-        <SectionTitle number="03" title="Love Music" />
+        <SectionTitle number="03" title="Love Music" meta="Module · 05 frames · loaded" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
-          <div className="sm:col-span-5">
+        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/bronze-studio-1.png"
@@ -311,7 +548,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-7 sm:pt-24">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/designing-pals-2.png"
@@ -322,7 +559,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-12">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/designing-pals-1.png"
@@ -333,7 +570,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-6">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/neuroscience-1.png"
@@ -342,7 +579,7 @@ export default function About() {
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-6">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/neuroscience-2.png"
@@ -357,10 +594,10 @@ export default function About() {
 
       {/* 04 — Enjoy Cooking */}
       <section className="container-fluid mt-32">
-        <SectionTitle number="04" title="Enjoy Cooking" />
+        <SectionTitle number="04" title="Enjoy Cooking" meta="Module · 07 frames · loaded" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
-          <div className="sm:col-span-12">
+        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/cooking.png"
@@ -371,7 +608,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-12">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/rat-apartment.png"
@@ -382,7 +619,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-7">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/miku-switch.png"
@@ -392,7 +629,7 @@ export default function About() {
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-5 sm:pt-12">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/drawing-app.png"
@@ -403,7 +640,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-7">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/xing-art-cat.png"
@@ -413,7 +650,7 @@ export default function About() {
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-5 sm:pt-12">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/nvidia-line.png"
@@ -428,10 +665,10 @@ export default function About() {
 
       {/* 05 — Unforgettable Summer */}
       <section className="container-fluid mt-32">
-        <SectionTitle number="05" title="Unforgettable Summer" />
+        <SectionTitle number="05" title="Unforgettable Summer" meta="Module · 09 frames · loaded" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-8 gap-y-16">
-          <div className="sm:col-span-6">
+        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/gtc-1.png"
@@ -441,7 +678,7 @@ export default function About() {
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-6">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/jensen-sign.png"
@@ -452,7 +689,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-12">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/if-award-miracleplus.png"
@@ -463,7 +700,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-5">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/pitching-2.png"
@@ -473,7 +710,7 @@ export default function About() {
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-7 sm:pt-16">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/pitching-1.png"
@@ -484,7 +721,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-12">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/tiktok-intern.png"
@@ -495,7 +732,7 @@ export default function About() {
             </Reveal>
           </div>
 
-          <div className="sm:col-span-7">
+          <div className="shrink-0 snap-start">
             <Reveal>
               <Figure
                 src="/about/closing-1.png"
@@ -505,7 +742,7 @@ export default function About() {
               />
             </Reveal>
           </div>
-          <div className="sm:col-span-5 sm:pt-12">
+          <div className="shrink-0 snap-start">
             <Reveal delay={0.05}>
               <Figure
                 src="/about/closing-2.png"
@@ -536,8 +773,11 @@ export default function About() {
 
       <section className="container-fluid mt-32">
         <Reveal>
-          <div className="border-t border-line pt-8 mb-10">
-            <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
+          <div className="border-t border-line pt-6 mb-10">
+            <span className="font-mono text-soft/70 text-[11px] tracking-[0.24em] uppercase">
+              [A-06]
+            </span>
+            <p className="mt-2 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
               Awards & recognition
             </p>
           </div>
@@ -563,8 +803,11 @@ export default function About() {
 
       <section className="container-fluid mt-20">
         <Reveal>
-          <div className="border-t border-line pt-8 mb-10">
-            <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
+          <div className="border-t border-line pt-6 mb-10">
+            <span className="font-mono text-soft/70 text-[11px] tracking-[0.24em] uppercase">
+              [A-07]
+            </span>
+            <p className="mt-2 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
               Selected past work
             </p>
           </div>

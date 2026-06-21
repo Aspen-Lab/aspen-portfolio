@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { Hero } from "./Hero";
 import { SelectedWork } from "./SelectedWork";
 import { TechStack } from "./TechStack";
 import { SideProjects } from "./SideProjects";
@@ -58,6 +59,22 @@ export function TabsHome() {
 
   return (
     <>
+      {/* Hero only leads the "work" tab; other tabs let the sticky bar drive. */}
+      <AnimatePresence initial={false}>
+        {active === "work" && (
+          <motion.div
+            key="hero"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <Hero />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Sticky tab bar — sits just below the global Nav (h-16). */}
       <div className="sticky top-16 z-30 bg-paper/90 backdrop-blur-sm border-b border-line/70">
         <div className="container-fluid">
