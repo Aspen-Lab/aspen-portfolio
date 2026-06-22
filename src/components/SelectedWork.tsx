@@ -16,7 +16,7 @@ export function SelectedWork() {
             <Reveal delay={i * 0.05}>
               <Link
                 href={`/work/${p.slug}`}
-                className="group block border border-line rounded-[14px] p-3.5 sm:p-4 transition-colors duration-300 hover:border-soft/40"
+                className="group block card-material p-3.5 sm:p-4"
               >
                 {/* Index header strip */}
                 <div className="flex items-center justify-between gap-3 px-1 pb-3 font-mono text-[10.5px] uppercase tracking-[0.18em]">
@@ -75,7 +75,7 @@ export function SelectedWork() {
                 </p>
 
                 {/* Footer meta */}
-                <div className="mt-5 px-1 pt-3 border-t border-line/60 flex items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.16em] text-soft">
+                <div className="mt-5 px-1 pt-3 border-t border-white/[0.06] flex items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.16em] text-soft">
                   <span className="truncate">{t(`projects.${p.slug}.role`)}</span>
                   <span className="shrink-0 text-soft/60">{p.date}</span>
                 </div>
