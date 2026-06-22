@@ -4,11 +4,9 @@ import { useEffect, useRef } from "react";
 import { AVATAR_TONES } from "@/lib/avatar-ascii";
 
 /**
- * Portrait as a uniform field of 2px round dots. Density is constant; each dot
- * is the same size and brightness is expressed purely through opacity, so the
- * face emerges as a silhouette with no rectangular ground. A handful of stray
- * dots drift in the empty ring just outside the portrait. Dots sweep in on a
- * diagonal wipe, then breathe with a slow shimmer; static for reduced-motion.
+ * Portrait as a uniform field of 2px round dots — same grid as before.
+ * Hover interaction uses particle physics: dots near the cursor get an
+ * impulse velocity, spring back, and overshoot before settling.
  */
 export function AvatarDots() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -19,11 +17,8 @@ export function AvatarDots() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduce = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Full-res source tone grid.
     const src = AVATAR_TONES.map((line) => {
       const arr: number[] = [];
       for (let c = 0; c < line.length; c++) arr.push((line.charCodeAt(c) - 48) / 9);
@@ -33,7 +28,6 @@ export function AvatarDots() {
     const sw = src[0]?.length ?? 0;
     if (!sw) return;
 
-    // Resample to a uniform lattice, preserving face proportions.
     const TW = 152;
     const TH = Math.max(1, Math.round((TW * (sh * 1.15)) / (sw * 0.6)));
     const grid: number[][] = [];
@@ -56,7 +50,7 @@ export function AvatarDots() {
     }
 
     const pitch = 4.3;
-    const dot = 1; // radius → 2px dots
+    const dot = 1;
     const cssW = TW * pitch;
     const cssH = TH * pitch;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -66,18 +60,44 @@ export function AvatarDots() {
     canvas.style.height = `${cssH}px`;
     ctx.scale(dpr, dpr);
 
-    // Stray dots in the ring just outside the face silhouette.
+    // Pre-build face dots with physics state
+    type Dot = {
+      gx: number; gy: number;   // grid indices (for shimmer/reveal)
+      hx: number; hy: number;   // home pixel position
+      bb: number;               // brightness
+      ox: number; oy: number;   // physics offset from home
+      vx: number; vy: number;   // velocity
+    };
+
+    const dots: Dot[] = [];
+    for (let y = 0; y < TH; y++) {
+      for (let x = 0; x < TW; x++) {
+        const v = 1 - grid[y][x];
+        const bb = (v - 0.12) / 0.88;
+        if (bb <= 0.02) continue;
+        dots.push({
+          gx: x, gy: y,
+          hx: x * pitch + pitch / 2,
+          hy: y * pitch + pitch / 2,
+          bb,
+          ox: 0, oy: 0,
+          vx: 0, vy: 0,
+        });
+      }
+    }
+
+    // Stray dots in the ring outside the portrait (unchanged)
     const strays: { x: number; y: number; a: number; ph: number }[] = [];
     for (let tries = 0; tries < 2400 && strays.length < 34; tries++) {
       const ux = Math.random();
       const uy = Math.random();
       const gx = Math.min(TW - 1, Math.floor(ux * TW));
       const gy = Math.min(TH - 1, Math.floor(uy * TH));
-      if (grid[gy][gx] < 0.82) continue; // only in the bright ground, off the face
+      if (grid[gy][gx] < 0.82) continue;
       const ex = (ux - 0.66) / 0.64;
       const ey = (uy - 0.46) / 0.66;
       const d = Math.sqrt(ex * ex + ey * ey);
-      if (d < 0.62 || d > 1.35) continue; // ring around the portrait
+      if (d < 0.62 || d > 1.35) continue;
       strays.push({
         x: ux * cssW,
         y: uy * cssH,
@@ -90,71 +110,93 @@ export function AvatarDots() {
     const start = performance.now();
     let raf = 0;
 
-    // Cursor interaction — dots near the pointer brighten and repel.
     const mouse = { x: -9999, y: -9999 };
     const R = 96;
     const R2 = R * R;
+
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      if (rect.width === 0) return;
+      if (!rect.width) return;
       mouse.x = (e.clientX - rect.left) * (cssW / rect.width);
       mouse.y = (e.clientY - rect.top) * (cssH / rect.height);
     };
-    const onLeave = () => {
-      mouse.x = -9999;
-      mouse.y = -9999;
-    };
+    const onLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+
     if (!reduce) {
       window.addEventListener("mousemove", onMove);
       window.addEventListener("mouseout", onLeave);
     }
+
+    const SPRING = 0.07;
+    const DAMP   = 0.82;
 
     const frame = (now: number) => {
       const t = now - start;
       const globalReveal = reduce ? 1 : Math.max(0, Math.min(1, t / 900));
       ctx.clearRect(0, 0, cssW, cssH);
 
-      // Portrait — uniform 2px dots, opacity by brightness.
-      for (let y = 0; y < TH; y++) {
-        for (let x = 0; x < TW; x++) {
-          const v = 1 - grid[y][x]; // face reads darker than the bright ground
-          const bb = (v - 0.12) / 0.88; // soft threshold drops the bright bg
-          if (bb <= 0.02) continue;
+      for (const d of dots) {
+        if (!reduce) {
+          // Spring force back toward home (offset = 0)
+          d.vx += -d.ox * SPRING;
+          d.vy += -d.oy * SPRING;
 
-          let reveal = 1;
-          let shimmer = 1;
-          if (!reduce) {
-            const delay = ((x + y) / (TW + TH)) * 700;
-            reveal = Math.max(0, Math.min(1, (t - delay) / 420));
-            shimmer = 0.82 + 0.18 * Math.sin(now * 0.0015 + x * 0.16 + y * 0.12);
-          }
-          let alpha = Math.min(0.32, bb * 0.32) * reveal * shimmer;
-
-          let px = x * pitch + pitch / 2;
-          let py = y * pitch + pitch / 2;
-          if (!reduce && mouse.x > -9000) {
-            const dx = px - mouse.x;
-            const dy = py - mouse.y;
+          // Mouse repulsion — push velocity, not position
+          if (mouse.x > -9000) {
+            const cx = d.hx + d.ox;
+            const cy = d.hy + d.oy;
+            const dx = cx - mouse.x;
+            const dy = cy - mouse.y;
             const dist2 = dx * dx + dy * dy;
             if (dist2 < R2) {
               const dist = Math.sqrt(dist2) || 0.001;
               const inf = 1 - dist / R;
-              const push = inf * inf * 16;
-              px += (dx / dist) * push;
-              py += (dy / dist) * push;
-              alpha = Math.min(0.85, alpha * (1 + inf * 2.4) + inf * 0.06);
+              d.vx += (dx / dist) * inf * inf * 5;
+              d.vy += (dy / dist) * inf * inf * 5;
             }
           }
-          if (alpha <= 0.003) continue;
 
-          ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
-          ctx.beginPath();
-          ctx.arc(px, py, dot, 0, TWO_PI);
-          ctx.fill();
+          d.vx *= DAMP;
+          d.vy *= DAMP;
+          d.ox += d.vx;
+          d.oy += d.vy;
         }
+
+        const delay = ((d.gx + d.gy) / (TW + TH)) * 700;
+        const reveal = Math.max(0, Math.min(1, (t - delay) / 420));
+        const shimmer = 0.82 + 0.18 * Math.sin(now * 0.0015 + d.gx * 0.16 + d.gy * 0.12);
+
+        // Center radial spotlight — face center is ~(42%, 44%) of canvas
+        const dcx = d.hx - cssW * 0.42;
+        const dcy = d.hy - cssH * 0.44;
+        const dc  = Math.sqrt(dcx * dcx + dcy * dcy);
+        const cBoost = 1 + Math.max(0, 1 - dc / (cssW * 0.55)) * 1.3;
+
+        let alpha = Math.min(0.78, d.bb * 0.44 * cBoost) * reveal * shimmer;
+
+        // Dots brighten while displaced (particle energy)
+        const disp = Math.sqrt(d.ox * d.ox + d.oy * d.oy);
+        if (disp > 0.5) alpha = Math.min(0.92, alpha * (1 + disp * 0.06));
+
+        // Eye-region boost
+        const px = d.hx + d.ox;
+        const py = d.hy + d.oy;
+        const dL = Math.sqrt((px - cssW * 0.315) ** 2 + (py - cssH * 0.432) ** 2);
+        const dR = Math.sqrt((px - cssW * 0.535) ** 2 + (py - cssH * 0.432) ** 2);
+        const eyeInf = Math.max(
+          dL < 52 ? (1 - dL / 52) ** 2 : 0,
+          dR < 52 ? (1 - dR / 52) ** 2 : 0,
+        );
+        if (eyeInf > 0) alpha = Math.min(0.88, alpha + eyeInf * 0.45);
+
+        if (alpha <= 0.003) continue;
+
+        ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(d.hx + d.ox, d.hy + d.oy, dot, 0, TWO_PI);
+        ctx.fill();
       }
 
-      // Stray dots outside the portrait.
       for (const s of strays) {
         const tw = reduce ? 1 : 0.55 + 0.45 * Math.sin(now * 0.0012 + s.ph);
         const alpha = s.a * tw * globalReveal;
@@ -179,7 +221,7 @@ export function AvatarDots() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none select-none absolute -top-12 right-[-40px] sm:right-[-20px] -z-0 max-w-full"
+      className="pointer-events-none select-none absolute -top-8 right-[-264px] sm:right-[-40px] -z-0 opacity-[0.38] sm:opacity-100"
     >
       <canvas ref={ref} className="block max-w-full h-auto" />
     </div>

@@ -67,7 +67,7 @@ export function TechStack() {
               </span>
               <span className="text-ink">STACK.SYS</span>
               <span className="text-soft/50 hidden sm:inline">
-                // {total} modules
+                {`// ${total} modules`}
               </span>
             </span>
             <span className="flex items-center gap-1.5">

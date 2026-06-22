@@ -7,7 +7,7 @@ export function SelectedWork() {
   const total = projects.length;
 
   return (
-    <section id="work" className="container-fluid pt-14 pb-32">
+    <section id="work" className="container-fluid pt-8 sm:pt-14 pb-20 sm:pb-32">
       <ul className="columns-1 sm:columns-2 gap-x-10">
         {projects.map((p, i) => (
           <li key={p.slug} className="break-inside-avoid mb-12">

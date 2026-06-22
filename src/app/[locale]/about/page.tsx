@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { moreWork, awards } from "@/lib/work";
 import { Reveal } from "@/components/Reveal";
 import { BootSequence } from "@/components/BootSequence";
+import { PageEntrance } from "@/components/PageEntrance";
+import { BootReveal } from "@/components/BootReveal";
 
 export const metadata: Metadata = {
   title: "About — Aspen W.",
@@ -158,7 +160,7 @@ function Figure({
       </div>
       {caption && (
         <figcaption className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-soft leading-[1.7]">
-          <span className="text-soft/50">// </span>
+          <span className="text-soft/50">{"// "}</span>
           {caption}
         </figcaption>
       )}
@@ -196,12 +198,14 @@ function SectionTitle({
 
 export default function About() {
   return (
-    <article className="pb-32">
+    <>
       <BootSequence />
+      <PageEntrance>
+      <article className="pb-32">
 
+      <BootReveal delay={0}>
       <section className="container-fluid pt-10 pb-24">
         {/* Framed system panel — the architectural anchor of the page. */}
-        <Reveal>
           <div className="border border-line rounded-[12px] overflow-hidden">
             {/* Window title bar */}
             <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 border-b border-line bg-cream/30 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft">
@@ -212,7 +216,9 @@ export default function About() {
                   <span className="w-2 h-2 rounded-full border border-line" />
                 </span>
                 <span className="text-ink truncate">ASPEN_W</span>
-                <span className="text-soft/50 hidden sm:inline">// about.sys</span>
+                <span className="text-soft/50 hidden sm:inline">
+                  {"// about.sys"}
+                </span>
               </span>
               <span className="flex items-center gap-1.5 shrink-0">
                 <span className="relative flex w-1.5 h-1.5">
@@ -357,10 +363,11 @@ export default function About() {
               <span>EOF</span>
             </div>
           </div>
-        </Reveal>
       </section>
+      </BootReveal>
 
       {/* 01 — Life Style */}
+      <BootReveal delay={0.09}>
       <section className="container-fluid mt-8">
         <SectionTitle number="01" title="Life Style" meta="Module · 08 frames · loaded" />
 
@@ -460,8 +467,10 @@ export default function About() {
           </div>
         </div>
       </section>
+      </BootReveal>
 
       {/* 02 — My Workspace */}
+      <BootReveal delay={0.17}>
       <section className="container-fluid mt-32">
         <SectionTitle number="02" title="My Workspace" meta="Module · 06 frames · loaded" />
 
@@ -531,8 +540,10 @@ export default function About() {
           </div>
         </div>
       </section>
+      </BootReveal>
 
       {/* 03 — Love Music */}
+      <BootReveal delay={0.25}>
       <section className="container-fluid mt-32">
         <SectionTitle number="03" title="Love Music" meta="Module · 05 frames · loaded" />
 
@@ -591,8 +602,10 @@ export default function About() {
           </div>
         </div>
       </section>
+      </BootReveal>
 
       {/* 04 — Enjoy Cooking */}
+      <BootReveal delay={0.33}>
       <section className="container-fluid mt-32">
         <SectionTitle number="04" title="Enjoy Cooking" meta="Module · 07 frames · loaded" />
 
@@ -662,8 +675,10 @@ export default function About() {
           </div>
         </div>
       </section>
+      </BootReveal>
 
       {/* 05 — Unforgettable Summer */}
+      <BootReveal delay={0.41}>
       <section className="container-fluid mt-32">
         <SectionTitle number="05" title="Unforgettable Summer" meta="Module · 09 frames · loaded" />
 
@@ -754,9 +769,10 @@ export default function About() {
           </div>
         </div>
       </section>
+      </BootReveal>
 
+      <BootReveal delay={0.49}>
       <section className="container-fluid mt-32">
-        <Reveal>
           <div className="border-t border-line pt-12 max-w-3xl">
             <p
               className="font-display font-light italic text-ink leading-[1.05] tracking-[-0.015em]"
@@ -768,11 +784,11 @@ export default function About() {
               — Aspen, 21 yrs
             </p>
           </div>
-        </Reveal>
       </section>
+      </BootReveal>
 
+      <BootReveal delay={0.57}>
       <section className="container-fluid mt-32">
-        <Reveal>
           <div className="border-t border-line pt-6 mb-10">
             <span className="font-mono text-soft/70 text-[11px] tracking-[0.24em] uppercase">
               [A-06]
@@ -781,7 +797,6 @@ export default function About() {
               Awards & recognition
             </p>
           </div>
-        </Reveal>
         <ul className="space-y-3 text-[14px] max-w-3xl">
           {awards.map((a, i) => (
             <Reveal key={a.title + a.project} delay={i * 0.03}>
@@ -800,9 +815,10 @@ export default function About() {
           ))}
         </ul>
       </section>
+      </BootReveal>
 
+      <BootReveal delay={0.65}>
       <section className="container-fluid mt-20">
-        <Reveal>
           <div className="border-t border-line pt-6 mb-10">
             <span className="font-mono text-soft/70 text-[11px] tracking-[0.24em] uppercase">
               [A-07]
@@ -811,7 +827,6 @@ export default function About() {
               Selected past work
             </p>
           </div>
-        </Reveal>
         <ul className="space-y-3 text-[14px] max-w-3xl">
           {moreWork.map((m, i) => (
             <Reveal key={m.client} delay={i * 0.03}>
@@ -830,6 +845,9 @@ export default function About() {
           ))}
         </ul>
       </section>
+      </BootReveal>
     </article>
+    </PageEntrance>
+    </>
   );
 }

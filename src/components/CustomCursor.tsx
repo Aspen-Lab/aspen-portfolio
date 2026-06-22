@@ -19,18 +19,13 @@ const HIDE_DOT: Record<Mode, boolean> = {
 export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const [enabled, setEnabled] = useState(false);
-  const [mode, setMode] = useState<Mode>("default");
-
-  // Decide once on mount whether the cursor should run at all.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+  const [enabled] = useState(() => {
+    if (typeof window === "undefined") return false;
     const fine = window.matchMedia("(pointer: fine)").matches;
-    const reduce = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    setEnabled(fine && !reduce);
-  }, []);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return fine && !reduce;
+  });
+  const [mode, setMode] = useState<Mode>("default");
 
   // Track mouse + drive both elements.
   useEffect(() => {

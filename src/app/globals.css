@@ -134,6 +134,59 @@ html.custom-cursor-active * {
   transform: translateY(-1px);
 }
 
+/* "leverage" — static diagonal gradient, no animation */
+.leverage-gradient {
+  background: linear-gradient(
+    112deg,
+    rgba(160, 160, 165, 0.80) 0%,
+    rgba(244, 244, 242, 0.96) 48%,
+    rgba(180, 180, 186, 0.72) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Aspen name — metallic shimmer gradient */
+.aspen-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(160, 160, 165, 1) 0%,
+    rgba(244, 244, 242, 1) 35%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(244, 244, 242, 1) 65%,
+    rgba(160, 160, 165, 1) 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: aspen-shimmer 5s ease-in-out infinite;
+}
+@keyframes aspen-shimmer {
+  0%, 100% { background-position: 0% 0; }
+  50%       { background-position: 100% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aspen-shimmer { animation: none; background-position: 50% 0; }
+}
+
+/* Infinite logo ticker */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.logo-ticker {
+  animation: ticker 32s linear infinite;
+  will-change: transform;
+}
+.logo-ticker-wrap:hover .logo-ticker {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-ticker { animation: none; }
+}
+
 /* Hide scrollbar on horizontally-scrollable elements (e.g. tab bar on mobile). */
 .no-scrollbar {
   scrollbar-width: none;

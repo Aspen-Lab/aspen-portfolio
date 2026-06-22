@@ -56,7 +56,7 @@ function buildDays(): Contrib[] {
 }
 
 export function CommitCalendar() {
-  const days = useMemo(buildDays, []);
+  const days = useMemo(() => buildDays(), []);
   const total = days.reduce((s, d) => s + d.count, 0);
   const activeDays = days.filter((d) => d.count > 0).length;
   const peak = days.reduce((m, d) => Math.max(m, d.count), 0);

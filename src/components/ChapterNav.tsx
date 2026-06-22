@@ -33,7 +33,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
     });
 
     return () => observer.disconnect();
-  }, [chapters.length]);
+  }, [chapters]);
 
   if (chapters.length < 2) return null;
 

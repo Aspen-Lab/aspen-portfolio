@@ -47,16 +47,14 @@ function NumberToken({
   delay: number;
   active: boolean;
 }) {
-  const [display, setDisplay] = useState<string>(active ? "" : "0");
+  const [display, setDisplay] = useState<string>("0");
   const motion = useMotionValue(0);
   const reduce = useReducedMotion();
+  const reducedDisplay = formatNumber(target, target);
 
   useEffect(() => {
     if (!active) return;
-    if (reduce) {
-      setDisplay(formatNumber(target, target));
-      return;
-    }
+    if (reduce) return;
     const controls = animate(motion, target, {
       duration: DURATION,
       delay,
@@ -66,7 +64,11 @@ function NumberToken({
     return () => controls.stop();
   }, [active, target, delay, reduce, motion]);
 
-  return <span className="tabular-nums">{active ? display : "0"}</span>;
+  return (
+    <span className="tabular-nums">
+      {active ? (reduce ? reducedDisplay : display) : "0"}
+    </span>
+  );
 }
 
 export function AnimatedMetric({
@@ -79,7 +81,6 @@ export function AnimatedMetric({
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
   const tokens = tokenize(value);
-  let numIdx = 0;
 
   return (
     <span ref={ref} className={className}>
@@ -91,8 +92,10 @@ export function AnimatedMetric({
             </span>
           );
         }
+        const numIdx = tokens
+          .slice(0, i)
+          .filter((token) => token.kind === "num").length;
         const delay = numIdx * 0.18;
-        numIdx += 1;
         return (
           <NumberToken
             key={i}

@@ -151,7 +151,7 @@ function ShipModule() {
 
       <div className="mt-auto">
         <ul className="bg-cream/60 rounded-md border border-line/70 px-4 py-3 divide-y divide-line/50">
-          {deploys.map((d, i) => (
+          {deploys.map((d) => (
             <li
               key={d.branch}
               className="flex items-center gap-3 py-2 first:pt-0 last:pb-0"
