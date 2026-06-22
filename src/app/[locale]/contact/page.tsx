@@ -1,13 +1,25 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/Reveal";
-import { contactInfo, replyExpectation } from "@/lib/contact";
+import { contactInfo } from "@/lib/contact";
+import type { Locale } from "@/i18n/routing";
 import { ContactForm } from "./ContactForm";
 
-export const metadata: Metadata = {
-  title: "Contact — Aspen W.",
-  description:
-    "Get in touch with Aspen W. — Design Engineer at Axel (Gordian, YC W19). Email, phone, scheduled chat, or quick message. Usually replies within 48h.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const cn = locale === "cn";
+
+  return {
+    title: cn ? "联系 — Aspen W." : "Contact — Aspen W.",
+    description: cn
+      ? "联系 Aspen W.，Axel(Gordian, YC W19) Design Engineer。可通过邮件、电话或快速留言联系，通常 48 小时内回复。"
+      : "Get in touch with Aspen W. — Design Engineer at Axel (Gordian, YC W19). Email, phone, scheduled chat, or quick message. Usually replies within 48h.",
+  };
+}
 
 type Method = {
   label: string;
@@ -16,15 +28,33 @@ type Method = {
   external?: boolean;
 };
 
-function methods(): Method[] {
+type ContactText = (
+  key:
+    | "methodEmail"
+    | "methodPhone"
+    | "methodSchedule"
+    | "methodScheduleValue"
+    | "methodLinkedIn"
+    | "methodLinkedInValue"
+    | "methodResume"
+    | "methodResumeValue"
+    | "elsewhereDesignStudies"
+    | "elsewhereDesignStudiesPlatform"
+    | "elsewhereAspenLab"
+    | "elsewhereAspenLabPlatform"
+    | "elsewhereCode"
+    | "elsewhereCodePlatform",
+) => string;
+
+function methods(t: ContactText): Method[] {
   const items: Method[] = [
     {
-      label: "Email",
+      label: t("methodEmail"),
       value: contactInfo.email,
       href: `mailto:${contactInfo.email}`,
     },
     {
-      label: "Phone",
+      label: t("methodPhone"),
       value: contactInfo.phone,
       href: `tel:${contactInfo.phone.replace(/[\s+]/g, "")}`,
     },
@@ -32,24 +62,24 @@ function methods(): Method[] {
 
   if (contactInfo.calendly) {
     items.push({
-      label: "Schedule",
-      value: "Book a 15-minute chat",
+      label: t("methodSchedule"),
+      value: t("methodScheduleValue"),
       href: contactInfo.calendly,
       external: true,
     });
   }
   if (contactInfo.linkedin) {
     items.push({
-      label: "LinkedIn",
-      value: "Connect on LinkedIn",
+      label: t("methodLinkedIn"),
+      value: t("methodLinkedInValue"),
       href: contactInfo.linkedin,
       external: true,
     });
   }
   if (contactInfo.resume) {
     items.push({
-      label: "Resume",
-      value: "Download PDF",
+      label: t("methodResume"),
+      value: t("methodResumeValue"),
       href: contactInfo.resume,
       external: true,
     });
@@ -58,21 +88,30 @@ function methods(): Method[] {
   return items;
 }
 
-const elsewhere: Method[] = [
-  { label: "Design Studies", value: "Notion", href: contactInfo.notion, external: true },
-  { label: "Aspen Lab", value: "Framer", href: contactInfo.framer, external: true },
-  { label: "Code", value: "GitHub", href: contactInfo.github, external: true },
-];
+function elsewhere(t: ContactText): Method[] {
+  return [
+    { label: t("elsewhereDesignStudies"), value: t("elsewhereDesignStudiesPlatform"), href: contactInfo.notion, external: true },
+    { label: t("elsewhereAspenLab"), value: t("elsewhereAspenLabPlatform"), href: contactInfo.framer, external: true },
+    { label: t("elsewhereCode"), value: t("elsewhereCodePlatform"), href: contactInfo.github, external: true },
+  ];
+}
 
-export default function Contact() {
-  const direct = methods();
+export default async function Contact({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Contact" });
+  const direct = methods(t);
+  const elsewhereItems = elsewhere(t);
 
   return (
     <article className="pb-32">
       <section className="container-fluid pt-12 pb-20">
         <Reveal>
           <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-            {"{ Contact }"} · Get in touch
+            {t("eyebrow")}
           </p>
         </Reveal>
 
@@ -81,16 +120,15 @@ export default function Contact() {
             className="mt-10 font-display font-light tracking-[-0.025em] text-ink leading-[0.96]"
             style={{ fontSize: "clamp(48px, 8vw, 112px)" }}
           >
-            Have something
+            {t("headline1")}
             <br />
-            <span className="italic font-normal">in motion?</span>
+            <span className="italic font-normal">{t("headline2Italic")}</span>
           </h1>
         </Reveal>
 
         <Reveal delay={0.12}>
           <p className="mt-12 max-w-xl text-[18px] leading-[1.6] text-mute">
-            Pick the channel that suits you — direct line, scheduled chat, or
-            the quick form below. {replyExpectation}.
+            {t("intro", { reply: t("replyExpectation") })}
           </p>
         </Reveal>
       </section>
@@ -104,10 +142,10 @@ export default function Contact() {
                 <span className="font-mono text-soft text-[14px] tracking-[0.2em] uppercase mr-3">
                   {"{ 01 }"}
                 </span>
-                Direct
+                {t("directTitle")}
               </h2>
               <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hidden sm:block">
-                {replyExpectation}
+                {t("replyExpectation")}
               </p>
             </div>
           </div>
@@ -150,13 +188,13 @@ export default function Contact() {
               <span className="font-mono text-soft text-[14px] tracking-[0.2em] uppercase mr-3">
                 {"{ 02 }"}
               </span>
-              Elsewhere
+              {t("elsewhereTitle")}
             </h2>
           </div>
         </Reveal>
 
         <ul className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-          {elsewhere.map((m, i) => (
+          {elsewhereItems.map((m, i) => (
             <Reveal key={m.label} delay={i * 0.04}>
               <li>
                 <a
@@ -193,10 +231,10 @@ export default function Contact() {
                 <span className="font-mono text-soft text-[14px] tracking-[0.2em] uppercase mr-3">
                   {"{ 03 }"}
                 </span>
-                Quick message
+                {t("quickMessageTitle")}
               </h2>
               <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hidden sm:block">
-                Goes straight to my inbox
+                {t("quickMessageNote")}
               </p>
             </div>
           </div>

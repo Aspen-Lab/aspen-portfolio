@@ -15,7 +15,9 @@
     "headlineLine3b": " force.",
     "ctaWork": "See selected work",
     "ctaStack": "Stack",
-    "ctaEmail": "xiaoyangw.design@gmail.com"
+    "ctaEmail": "xiaoyangw.design@gmail.com",
+    "bio": "Designer who codes — shipping product design and production React at <axel>Axel (YC W19)</axel>, solo and fast.",
+    "stackLabel": "Stack"
   },
   "Tabs": {
     "work": "Featured work",
@@ -23,10 +25,51 @@
     "side": "Side projects",
     "combo": "The combo"
   },
+  "SelectedWork": {
+    "inProgress": "In progress",
+    "cover": "cover",
+    "viewAll": "View all projects on Aspen Lab →",
+    "projects": {
+      "axel": {
+        "title": "Axel — sole designer × bidirectional loop",
+        "category": "Travel · Fintech",
+        "summary": "Sole designer at a YC W19 travel-money startup, reporting directly to the CEO. Built a symmetric Design ⇌ FE delivery protocol with the lead engineer that turns handoff into convergence — three zones, four review tiers, a weekly cadence. Every pixel in Axel goes through one person.",
+        "role": "Sole designer · reports to CEO"
+      },
+      "nutra": {
+        "title": "Nutra — fintech for everyone",
+        "category": "Fintech",
+        "summary": "A budgeting app for the rest of us. Gamified, friendly, built for people who want to save but can't sustain it. 85% of testers reported higher motivation; 90% loved the play of it.",
+        "role": "UI/UX & Product Design"
+      },
+      "tiktok": {
+        "title": "TikTok Pay KYC, scaled across markets",
+        "category": "Fintech",
+        "summary": "KYC across Vietnam, Malaysia, Indonesia, and the US for TikTok Pay, Shop, and Live. Vietnam new-user completion 70% → 90%. Vendor docking SOP cut integration cycles by ~40%.",
+        "role": "Product Designer (Intern)"
+      },
+      "hyundai": {
+        "title": "Hyundai IONIQ 6 — designing for trust at L2+",
+        "category": "Sponsored Project",
+        "summary": "How might we improve driver confidence in semi-autonomous scenarios, where control transitions between human and machine? A study across 9 drivers, biometrics, and three UI directions — Green UI lifted confidence by +10% over the baseline.",
+        "role": "HMI Designer"
+      },
+      "cone": {
+        "title": "Field of Vision — wearable for visually impaired pedestrians",
+        "category": "Design for Disabled",
+        "summary": "A wearable + interface system designed for visually impaired pedestrians. Winner of both iF Design Award and Red Dot Design Award in 2025.",
+        "role": "Product Designer & Researcher"
+      }
+    }
+  },
   "TechStack": {
     "intro": "Designer who codes. Most of my side projects ship to production — mostly written out of <ink>Cursor</ink> and <ink>Claude Code</ink>, with a chain of MCPs gluing Figma, Unity, and Customer.io into the same loop.",
     "spectrumTitle": "Capability spectrum",
-    "spectrumNote": "All five lit. The width is the point — the moat is the AI loop that fuses design, frontend, email, backend, and game dev into a single delivery chain."
+    "spectrumStatus": "5 / 5 lit",
+    "spectrumNote": "All five lit. The width is the point — the moat is the AI loop that fuses design, frontend, email, backend, and game dev into a single delivery chain.",
+    "modules": "{count} modules",
+    "live": "Live",
+    "whereItLives": "Where it lives"
   },
   "SideProjects": {
     "intro": "Things I build between design jobs — usually to scratch a personal itch, sometimes to test a tool I'm thinking about adopting at work.",
@@ -35,6 +78,11 @@
     "viewOnGithub": "View on GitHub →",
     "github": "GitHub →",
     "private": "Private",
+    "projectsLabel": "{count} projects",
+    "building": "Building",
+    "replay": "↻ replay",
+    "replayIntro": "Replay intro",
+    "viewOnGithubShort": "View on GitHub",
     "calendar": {
       "commitsLabel": "commits · last 90 days",
       "activeDays": "{count} active days · peak {peak} in a day",

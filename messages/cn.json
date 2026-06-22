@@ -15,18 +15,61 @@
     "headlineLine3b": " 力量。",
     "ctaWork": "看精选作品",
     "ctaStack": "技术栈",
-    "ctaEmail": "xiaoyangw.design@gmail.com"
+    "ctaEmail": "xiaoyangw.design@gmail.com",
+    "bio": "会写代码的设计师 —— 在 <axel>Axel (YC W19)</axel> 直接交付产品设计和生产级 React，一个人也能快速推进。",
+    "stackLabel": "工具栈"
   },
   "Tabs": {
     "work": "精选作品",
     "stack": "技术栈",
-    "side": "Side Project",
-    "combo": "组合拳"
+    "side": "副业项目",
+    "combo": "组合优势"
+  },
+  "SelectedWork": {
+    "inProgress": "进行中",
+    "cover": "封面",
+    "viewAll": "在 Aspen Lab 查看全部项目 →",
+    "projects": {
+      "axel": {
+        "title": "Axel — 唯一设计师 × 双向协作闭环",
+        "category": "旅行 · 金融科技",
+        "summary": "YC W19 旅行金融创业公司的唯一设计师，直接向 CEO 汇报。与首席工程师建立对称的 Design ⇌ FE 交付协议，把交接变成收敛：三区域、四级审查、每周节奏。Axel 的每一个像素都经过我。",
+        "role": "唯一设计师 · 直接汇报 CEO"
+      },
+      "nutra": {
+        "title": "Nutra — 面向普通人的金融科技",
+        "category": "金融科技",
+        "summary": "一款给普通人用的预算 App。游戏化、友好，面向想存钱但很难长期坚持的人。85% 测试者反馈动机提升，90% 喜欢它的游戏化体验。",
+        "role": "UI/UX 与产品设计"
+      },
+      "tiktok": {
+        "title": "TikTok Pay KYC — 多市场规模化",
+        "category": "金融科技",
+        "summary": "为 TikTok Pay、Shop、Live 设计覆盖越南、马来西亚、印尼和美国的 KYC 流程。越南新用户完成率 70% → 90%，供应商对接 SOP 将集成周期缩短约 40%。",
+        "role": "产品设计实习生"
+      },
+      "hyundai": {
+        "title": "Hyundai IONIQ 6 — 为 L2+ 信任感设计",
+        "category": "企业赞助项目",
+        "summary": "在人机控制权切换的半自动驾驶场景中，如何提升驾驶者信心？基于 9 位驾驶者、生理指标和三组 UI 方向的研究，绿色 UI 相比基线将信心提升 10%。",
+        "role": "HMI 设计师"
+      },
+      "cone": {
+        "title": "Field of Vision — 面向视障行人的可穿戴系统",
+        "category": "无障碍设计",
+        "summary": "为视障行人设计的可穿戴与界面系统，获得 2025 iF Design Award 与 Red Dot Design Award。",
+        "role": "产品设计师与研究员"
+      }
+    }
   },
   "TechStack": {
     "intro": "会写代码的设计师。我的 Side Project 几乎都跑在生产环境 —— 主要在 <ink>Cursor</ink> 和 <ink>Claude Code</ink> 里写,通过一串 MCP 把 Figma / Unity / Customer.io 串进同一个工作流。",
     "spectrumTitle": "能力光谱",
-    "spectrumNote": "五条全亮。横向覆盖才是关键 —— 真正的护城河是那条把设计 / 前端 / 邮件 / 后端 / 游戏开发拧成一条链路的 AI loop。"
+    "spectrumStatus": "5 / 5 点亮",
+    "spectrumNote": "五条全亮。横向覆盖才是关键 —— 真正的护城河是那条把设计 / 前端 / 邮件 / 后端 / 游戏开发拧成一条链路的 AI loop。",
+    "modules": "{count} 个模块",
+    "live": "在线",
+    "whereItLives": "用在哪里"
   },
   "SideProjects": {
     "intro": "设计工作之外的玩意儿 —— 多半为了挠痒痒,偶尔是为了试试某个想引入工作的工具。",
@@ -35,6 +78,11 @@
     "viewOnGithub": "查看 GitHub →",
     "github": "GitHub →",
     "private": "私有",
+    "projectsLabel": "{count} 个项目",
+    "building": "构建中",
+    "replay": "↻ 重播",
+    "replayIntro": "重播介绍",
+    "viewOnGithubShort": "查看 GitHub",
     "calendar": {
       "commitsLabel": "次提交 · 近 90 天",
       "activeDays": "{count} 天活跃 · 单日峰值 {peak}",

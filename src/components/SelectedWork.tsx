@@ -1,9 +1,11 @@
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { projects } from "@/lib/work";
 import { Reveal } from "./Reveal";
 
 export function SelectedWork() {
+  const t = useTranslations("SelectedWork");
   const total = projects.length;
 
   return (
@@ -25,7 +27,9 @@ export function SelectedWork() {
                       / {String(total).padStart(2, "0")}
                     </span>
                   </span>
-                  <span className="text-soft">{p.category}</span>
+                  <span className="text-soft">
+                    {t(`projects.${p.slug}.category`)}
+                  </span>
                 </div>
 
                 {/* Framed cover */}
@@ -42,13 +46,13 @@ export function SelectedWork() {
                   ) : (
                     <div className="aspect-[4/3] flex items-center justify-center">
                       <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-soft/70">
-                        cover · {p.year}
+                        {t("cover")} · {p.year}
                       </span>
                     </div>
                   )}
                   {p.status === "coming-soon" && (
                     <span className="absolute top-3 right-3 z-10 font-mono text-[10px] uppercase tracking-[0.18em] bg-paper/90 text-soft px-2.5 py-1 rounded-full">
-                      In progress
+                      {t("inProgress")}
                     </span>
                   )}
                 </div>
@@ -56,7 +60,7 @@ export function SelectedWork() {
                 {/* Title + arrow */}
                 <div className="mt-5 px-1 flex items-start justify-between gap-4">
                   <h3 className="font-display text-[21px] leading-[1.2] tracking-[-0.01em] text-ink">
-                    {p.title}
+                    {t(`projects.${p.slug}.title`)}
                   </h3>
                   <span
                     aria-hidden
@@ -67,12 +71,12 @@ export function SelectedWork() {
                 </div>
 
                 <p className="mt-3 px-1 text-[14.5px] text-mute leading-[1.6]">
-                  {p.summary}
+                  {t(`projects.${p.slug}.summary`)}
                 </p>
 
                 {/* Footer meta */}
                 <div className="mt-5 px-1 pt-3 border-t border-line/60 flex items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.16em] text-soft">
-                  <span className="truncate">{p.role}</span>
+                  <span className="truncate">{t(`projects.${p.slug}.role`)}</span>
                   <span className="shrink-0 text-soft/60">{p.date}</span>
                 </div>
               </Link>
@@ -89,7 +93,7 @@ export function SelectedWork() {
             rel="noreferrer"
             className="font-mono text-[12px] uppercase tracking-[0.2em] text-soft link link-rev hover:text-ink"
           >
-            View all projects on Aspen Lab →
+            {t("viewAll")}
           </a>
         </div>
       </Reveal>

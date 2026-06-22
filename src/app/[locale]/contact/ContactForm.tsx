@@ -1,16 +1,21 @@
 "use client";
 
 import { useActionState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import type { Locale } from "@/i18n/routing";
 import { sendMessage, type ContactState } from "./actions";
 
 const initial: ContactState = { status: "idle" };
 
 export function ContactForm() {
+  const locale = useLocale() as Locale;
+  const t = useTranslations("Contact.form");
   const [state, formAction, pending] = useActionState(sendMessage, initial);
   const fieldErrors = state.status === "error" ? state.fields : undefined;
 
   return (
     <form action={formAction} className="space-y-8" noValidate>
+      <input type="hidden" name="locale" value={locale} />
       {/* Honeypot — invisible to humans, bots fill it */}
       <div className="absolute left-[-10000px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
         <label htmlFor="company">Company</label>
@@ -19,7 +24,7 @@ export function ContactForm() {
 
       <Field
         id="name"
-        label="Name"
+        label={t("name")}
         type="text"
         autoComplete="name"
         required
@@ -27,7 +32,7 @@ export function ContactForm() {
       />
       <Field
         id="email"
-        label="Email"
+        label={t("email")}
         type="email"
         autoComplete="email"
         required
@@ -35,7 +40,7 @@ export function ContactForm() {
       />
       <Field
         id="message"
-        label="Message"
+        label={t("message")}
         as="textarea"
         rows={5}
         required
@@ -48,7 +53,7 @@ export function ContactForm() {
           disabled={pending}
           className="font-mono uppercase tracking-[0.2em] text-[12px] text-paper bg-ink rounded-full px-7 py-3.5 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {pending ? "Sending…" : "Send message"}
+          {pending ? t("sending") : t("send")}
         </button>
 
         <p
@@ -62,7 +67,7 @@ export function ContactForm() {
           }`}
         >
           {state.status === "idle"
-            ? "Or email directly — link is right above."
+            ? t("idleHint")
             : state.message}
         </p>
       </div>

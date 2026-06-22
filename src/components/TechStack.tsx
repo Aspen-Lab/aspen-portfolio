@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
 import {
   LayoutDashboard,
@@ -14,6 +16,7 @@ import {
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 import { stack, spectrum, type StackIcon } from "@/lib/work";
+import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 
 const iconMap: Record<StackIcon, ComponentType<SVGProps<SVGSVGElement>>> = {
@@ -36,10 +39,65 @@ function splitLabel(label: string): { name: string; caption?: string } {
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+const STACK_CN: ReadonlyArray<{
+  label: string;
+  note: string;
+  linkLabel?: string;
+}> = [
+  {
+    label: "前端 · 日常主力",
+    note: "helloaxel.com · Lumen · 这个作品集 · pawsense",
+    linkLabel: "看 Lumen",
+  },
+  {
+    label: "邮件工程",
+    note: "Axel 的 28 个交易类邮件模板 —— 从 onboarding 到 cancellation",
+  },
+  {
+    label: "后端与数据",
+    note: "Hermes(自托管信息代理) · pawsense",
+    linkLabel: "看 Hermes",
+  },
+  {
+    label: "AI · 三层架构",
+    note: "Tier 0 / 1 / 2 —— 按任务匹配成本和能力",
+    linkLabel: "Hermes 管线",
+  },
+  {
+    label: "游戏",
+    note: "和 Skyler 做 2D Metroidvania · 每天 1–2 小时，Hollow-Knight stack",
+  },
+  {
+    label: "设计",
+    note: "每个项目开始的地方 —— Figma 是我的工作台",
+  },
+  {
+    label: "工具链 · 胶水",
+    note: "每个 repo 的 CLAUDE.md · MCP chain · Vercel preview as handoff",
+  },
+] as const;
+
+const SPECTRUM_CN = ["设计", "前端", "模板", "后端", "游戏"];
+
 export function TechStack() {
+  const locale = useLocale() as Locale;
+  const t = useTranslations("TechStack");
   const [active, setActive] = useState(0);
-  const total = stack.length;
-  const cat = stack[active];
+  const localizedStack = stack.map((item, i) => {
+    const copy = locale === "cn" ? STACK_CN[i] : undefined;
+    return {
+      ...item,
+      label: copy?.label ?? item.label,
+      note: copy?.note ?? item.note,
+      link:
+        item.link && copy?.linkLabel
+          ? { ...item.link, label: copy.linkLabel }
+          : item.link,
+    };
+  });
+  const localizedSpectrum = locale === "cn" ? SPECTRUM_CN : spectrum;
+  const total = localizedStack.length;
+  const cat = localizedStack[active];
   const { name, caption } = splitLabel(cat.label);
   const ActiveIcon = cat.icon ? iconMap[cat.icon] : null;
 
@@ -47,10 +105,11 @@ export function TechStack() {
     <section id="stack" className="container-fluid pt-14 pb-32">
       <Reveal>
         <p className="text-[18px] text-mute leading-[1.6] max-w-2xl mb-10">
-          Designer who codes. Most of my side projects ship to production —
-          mostly written out of <span className="text-ink">Cursor</span> and{" "}
-          <span className="text-ink">Claude Code</span>, with a chain of MCPs
-          gluing Figma, Unity, and Customer.io into the same loop.
+          {t.rich("intro", {
+            ink: (chunks: ReactNode) => (
+              <span className="text-ink">{chunks}</span>
+            ),
+          })}
         </p>
       </Reveal>
 
@@ -67,7 +126,7 @@ export function TechStack() {
               </span>
               <span className="text-ink">STACK.SYS</span>
               <span className="text-soft/50 hidden sm:inline">
-                {`// ${total} modules`}
+                {`// ${t("modules", { count: total })}`}
               </span>
             </span>
             <span className="flex items-center gap-1.5">
@@ -75,14 +134,14 @@ export function TechStack() {
                 <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
                 <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
               </span>
-              Live
+              {t("live")}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-[256px_1fr]">
             {/* Module rail */}
             <ul className="border-b md:border-b-0 md:border-r border-line">
-              {stack.map((s, i) => {
+              {localizedStack.map((s, i) => {
                 const { name: n } = splitLabel(s.label);
                 const Icon = s.icon ? iconMap[s.icon] : null;
                 const on = i === active;
@@ -183,7 +242,7 @@ export function TechStack() {
                   {cat.note && (
                     <div className="mt-7 pt-5 border-t border-line/50">
                       <p className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-soft mb-2">
-                        Where it lives
+                        {t("whereItLives")}
                       </p>
                       <p className="text-[13.5px] text-mute leading-[1.65] max-w-[52ch]">
                         {cat.note}
@@ -213,14 +272,14 @@ export function TechStack() {
         <div className="mt-14 border-t border-line pt-10">
           <div className="flex items-baseline justify-between gap-4 mb-7">
             <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              Capability spectrum
+              {t("spectrumTitle")}
             </p>
             <p className="font-mono uppercase tracking-[0.2em] text-[10px] text-soft/50">
-              5 / 5 lit
+              {t("spectrumStatus")}
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-x-4 gap-y-5">
-            {spectrum.map((label, i) => (
+            {localizedSpectrum.map((label, i) => (
               <div key={label} className="group">
                 <div className="flex items-baseline justify-between mb-2 font-mono uppercase">
                   <span className="text-[12px] tracking-[0.14em] text-ink/90 group-hover:text-ink transition-colors">
@@ -243,9 +302,7 @@ export function TechStack() {
             ))}
           </div>
           <p className="mt-7 text-[15px] text-mute leading-[1.65] max-w-2xl">
-            All five lit. The width is the point — the moat is the AI loop that
-            fuses design, frontend, email, backend, and game dev into a single
-            delivery chain.
+            {t("spectrumNote")}
           </p>
         </div>
       </Reveal>

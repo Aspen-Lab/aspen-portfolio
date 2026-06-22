@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
 import { Briefcase, Code2, Zap, Trophy } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
@@ -11,20 +12,21 @@ import { SideProjects } from "./SideProjects";
 import { Moat } from "./Moat";
 
 const tabs = [
-  { id: "work",  label: "Featured work",  Icon: Briefcase, Component: SelectedWork },
-  { id: "stack", label: "Tech stack",     Icon: Code2,     Component: TechStack    },
-  { id: "side",  label: "Side projects",  Icon: Zap,       Component: SideProjects },
-  { id: "combo", label: "The combo",      Icon: Trophy,    Component: Moat         },
+  { id: "work",  Icon: Briefcase, Component: SelectedWork },
+  { id: "stack", Icon: Code2,     Component: TechStack    },
+  { id: "side",  Icon: Zap,       Component: SideProjects },
+  { id: "combo", Icon: Trophy,    Component: Moat         },
 ] as const;
 
 // shut up TS about the icon type
-type Tab = { id: string; label: string; Icon: ComponentType<SVGProps<SVGSVGElement>>; Component: ComponentType };
+type Tab = { id: TabId; Icon: ComponentType<SVGProps<SVGSVGElement>>; Component: ComponentType };
 
 type TabId = (typeof tabs)[number]["id"];
 
 const isTabId = (s: string): s is TabId => tabs.some((t) => t.id === s);
 
 export function TabsHome() {
+  const t = useTranslations("Tabs");
   const [active, setActive] = useState<TabId>(() => {
     if (typeof window === "undefined") return "work";
     const hash = window.location.hash.slice(1);
@@ -106,7 +108,7 @@ export function TabsHome() {
                       color: isActive ? "rgba(244,244,242,0.88)" : "rgba(113,113,119,0.4)",
                     }}
                   >
-                    {tab.label}
+                    {t(tab.id)}
                   </span>
                 </button>
               );

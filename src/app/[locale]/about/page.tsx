@@ -1,16 +1,27 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { moreWork, awards } from "@/lib/work";
+import type { Locale } from "@/i18n/routing";
 import { Reveal } from "@/components/Reveal";
 import { BootSequence } from "@/components/BootSequence";
 import { PageEntrance } from "@/components/PageEntrance";
 import { BootReveal } from "@/components/BootReveal";
 
-export const metadata: Metadata = {
-  title: "About — Aspen W.",
-  description:
-    "Half designer, half psychologist, always shipping. Aspen W. — dual-degree at Georgia Tech, currently a Design Engineer at Axel (Gordian, YC W19), reporting directly to the CEO.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const cn = locale === "cn";
+
+  return {
+    title: cn ? "关于 — Aspen W." : "About — Aspen W.",
+    description: cn
+      ? "一半是设计师，一半是心理学者，永远在交付。Aspen W. 是 Georgia Tech 双学位学生，目前在 Axel(Gordian, YC W19)担任 Design Engineer，直接向 CEO 汇报。"
+      : "Half designer, half psychologist, always shipping. Aspen W. — dual-degree at Georgia Tech, currently a Design Engineer at Axel (Gordian, YC W19), reporting directly to the CEO.",
+  };
+}
 
 type CapIcon = "design" | "code" | "brand" | "research";
 
@@ -42,6 +53,33 @@ const CAPABILITIES: ReadonlyArray<{
     name: "Research × Psychology",
     tag: "behavior · cog-sci",
     desc: "GT Psych dual degree — usability, trust, the gap between said and done.",
+    icon: "research",
+  },
+];
+
+const CAPABILITIES_CN: typeof CAPABILITIES = [
+  {
+    name: "产品设计",
+    tag: "0→1 · 端到端",
+    desc: "多国 KYC、汽车 HMI、金融科技流程 —— 从研究到上线 UI。",
+    icon: "design",
+  },
+  {
+    name: "设计工程",
+    tag: "React · 生产环境",
+    desc: "我把自己的设计直接作为 PR 交付 —— token、组件、技术栈和团队保持一致。",
+    icon: "code",
+  },
+  {
+    name: "品牌与视觉",
+    tag: "identity · motion",
+    desc: "字体、系统、包装、动效 —— 从 CDC 包装到产品标识。",
+    icon: "brand",
+  },
+  {
+    name: "研究 × 心理学",
+    tag: "behavior · cog-sci",
+    desc: "Georgia Tech 心理学双学位 —— 可用性、信任，以及说出口与真实行为之间的差距。",
     icon: "research",
   },
 ];
@@ -114,6 +152,76 @@ const TRAJECTORY: ReadonlyArray<{ org: string; role: string; period: string }> =
     org: "CDC · NWSS Lab",
     role: "Product Designer · CryoSave (IDEA Award)",
     period: "Aug — Dec 2023",
+  },
+];
+
+const TRAJECTORY_CN: typeof TRAJECTORY = [
+  {
+    org: "Axel · Gordian (YC W19)",
+    role: "唯一设计师 · 直接汇报 CEO",
+    period: "2025.12 — 至今",
+  },
+  {
+    org: "TikTok · PIPO UED",
+    role: "产品设计实习生 · TikTok Pay KYC",
+    period: "2025.06 — 09",
+  },
+  {
+    org: "Hyundai · HATCI Lab",
+    role: "HMI 设计师 · IONIQ 6 L2+",
+    period: "2025.01 — 05",
+  },
+  {
+    org: "XING Art",
+    role: "联合创始人 & 产品设计师 · $300K MiraclePlus",
+    period: "2022 — 2025",
+  },
+  {
+    org: "CDC · NWSS Lab",
+    role: "产品设计师 · CryoSave(IDEA Award)",
+    period: "2023.08 — 12",
+  },
+];
+
+const AWARDS_CN = [
+  { title: "iF Design Award", project: "Field of Vision", year: "2025" },
+  { title: "Red Dot Design Award", project: "Field of Vision", year: "2025" },
+  { title: "IDEA Student Award", project: "CryoSave · CDC NWSS", year: "2025" },
+  { title: "Bredendieck Award", project: "Georgia Tech(两次)", year: "" },
+  { title: "Humanitarian Award", project: "", year: "" },
+  { title: "Atlanta Design Festival", project: "入选认可", year: "" },
+];
+
+const MORE_WORK_CN = [
+  {
+    client: "Vulcan Engineering Solutions",
+    role: "UX 设计师 · 结构工程工作流",
+    period: "2025.01 — 05",
+  },
+  {
+    client: "Edison Bike",
+    role: "产品设计师 · Piedmont Park Mammoth 电动货运车",
+    period: "2024.01 — 05",
+  },
+  {
+    client: "Refracted Lab",
+    role: "自由设计师 · Web3 界面",
+    period: "2024.06 — 08",
+  },
+  {
+    client: "上海交通大学",
+    role: "设计研究员 · AI 船舶识别",
+    period: "2024.06 — 08",
+  },
+  {
+    client: "CDC NWSS Lab",
+    role: "产品设计师 · CryoSave 包装系统(IDEA Award)",
+    period: "2023.08 — 12",
+  },
+  {
+    client: "XING Art",
+    role: "联合创始人 & 产品设计师 · MiraclePlus '25, $300K, 1K+ 用户",
+    period: "2022.12 — 2025.09",
   },
 ];
 
@@ -196,7 +304,18 @@ function SectionTitle({
   );
 }
 
-export default function About() {
+export default async function About({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  const isCn = locale === "cn";
+  const capabilities = isCn ? CAPABILITIES_CN : CAPABILITIES;
+  const trajectory = isCn ? TRAJECTORY_CN : TRAJECTORY;
+  const localizedAwards = isCn ? AWARDS_CN : awards;
+  const localizedMoreWork = isCn ? MORE_WORK_CN : moreWork;
+
   return (
     <>
       <BootSequence />
@@ -225,7 +344,7 @@ export default function About() {
                   <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
                   <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
                 </span>
-                Online
+                {isCn ? "在线" : "Online"}
               </span>
             </div>
 
@@ -235,12 +354,12 @@ export default function About() {
               <dl className="border-b md:border-b-0 md:border-r border-line font-mono text-[11px] uppercase tracking-[0.13em]">
                 {(
                   [
-                    ["Role", "Design Engineer"],
-                    ["At", "Axel · YC W19"],
-                    ["Edu", "GT — ID + Psych"],
-                    ["Base", "Bellevue, WA"],
-                    ["Founded", "XING Art · $300K"],
-                    ["State", "Shipping"],
+                    [isCn ? "角色" : "Role", isCn ? "设计工程师" : "Design Engineer"],
+                    [isCn ? "公司" : "At", "Axel · YC W19"],
+                    [isCn ? "教育" : "Edu", isCn ? "GT — 工业设计 + 心理学" : "GT — ID + Psych"],
+                    [isCn ? "所在地" : "Base", isCn ? "Bellevue, WA" : "Bellevue, WA"],
+                    [isCn ? "创办" : "Founded", "XING Art · $300K"],
+                    [isCn ? "状态" : "State", isCn ? "持续交付" : "Shipping"],
                   ] as const
                 ).map(([k, v]) => (
                   <div
@@ -259,11 +378,13 @@ export default function About() {
                   className="font-display font-light tracking-[-0.02em] text-ink leading-[1.02]"
                   style={{ fontSize: "clamp(32px, 4.2vw, 58px)" }}
                 >
-                  Half designer,
+                  {isCn ? "一半是设计师，" : "Half designer,"}
                   <br />
-                  half psychologist,
+                  {isCn ? "一半是心理学者，" : "half psychologist,"}
                   <br />
-                  <span className="italic font-normal">always shipping.</span>
+                  <span className="italic font-normal">
+                    {isCn ? "永远在交付。" : "always shipping."}
+                  </span>
                 </h1>
               </div>
             </div>
@@ -271,11 +392,13 @@ export default function About() {
             {/* Capabilities band — what I do, in the diagnostic-rail idiom */}
             <div className="grid grid-cols-1 md:grid-cols-[210px_1fr] border-t border-line">
               <div className="px-4 sm:px-5 py-4 md:py-6 border-b md:border-b-0 md:border-r border-line font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block">
-                <span className="text-soft/55">Capabilities</span>
+                <span className="text-soft/55">
+                  {isCn ? "能力" : "Capabilities"}
+                </span>
                 <span className="text-soft/35 md:mt-1.5 md:block">[ 04 · stack ]</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2">
-                {CAPABILITIES.map((c, i) => (
+                {capabilities.map((c, i) => (
                   <div
                     key={c.name}
                     className={`group/cap p-5 sm:p-6 border-line/50 ${i % 2 === 0 ? "sm:border-r" : ""} ${
@@ -310,7 +433,9 @@ export default function About() {
             {/* Trajectory band — experience timeline, most recent first */}
             <div className="grid grid-cols-1 md:grid-cols-[210px_1fr] border-t border-line">
               <div className="px-4 sm:px-5 py-4 md:py-6 border-b md:border-b-0 md:border-r border-line font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block">
-                <span className="text-soft/55">Trajectory</span>
+                <span className="text-soft/55">
+                  {isCn ? "轨迹" : "Trajectory"}
+                </span>
                 <span className="text-soft/35 md:mt-1.5 md:block">[ 05 · log ]</span>
               </div>
               <ol className="relative py-1">
@@ -319,7 +444,7 @@ export default function About() {
                   aria-hidden
                   className="absolute left-[1.55rem] sm:left-[1.85rem] top-6 bottom-6 w-px bg-line"
                 />
-                {TRAJECTORY.map((e, i) => (
+                {trajectory.map((e, i) => (
                   <li
                     key={e.org}
                     className={`relative flex items-baseline justify-between gap-4 pl-11 sm:pl-14 pr-5 sm:pr-6 py-3.5 ${
@@ -359,7 +484,9 @@ export default function About() {
             {/* Footer coordinate strip */}
             <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 border-t border-line font-mono text-[10px] uppercase tracking-[0.22em] text-soft/55">
               <span>LAT 47.6101 · LON −122.2015</span>
-              <span className="hidden sm:inline">REC · 1995 — PRESENT</span>
+              <span className="hidden sm:inline">
+                {isCn ? "REC · 1995 — 至今" : "REC · 1995 — PRESENT"}
+              </span>
               <span>EOF</span>
             </div>
           </div>
@@ -369,12 +496,17 @@ export default function About() {
       {/* 01 — Life Style */}
       <BootReveal delay={0.09}>
       <section className="container-fluid mt-8">
-        <SectionTitle number="01" title="Life Style" meta="Module · 08 frames · loaded" />
+        <SectionTitle
+          number="01"
+          title={isCn ? "生活方式" : "Life Style"}
+          meta={isCn ? "模块 · 08 张影像 · 已加载" : "Module · 08 frames · loaded"}
+        />
 
         <Reveal>
           <p className="font-mono uppercase tracking-[0.18em] text-[11px] text-soft mb-12 max-w-md">
-            Got my car at 18 · Freshman at Georgia Tech · Dreaming about my
-            future
+            {isCn
+              ? "18 岁拥有第一辆车 · Georgia Tech 大一 · 认真想象自己的未来"
+              : "Got my car at 18 · Freshman at Georgia Tech · Dreaming about my future"}
           </p>
         </Reveal>
 
@@ -385,7 +517,11 @@ export default function About() {
                 src="/about/car-georgia-tech.jpg"
                 alt="Aspen with her first car at 18, downtown Atlanta at night"
                 aspect="3/4"
-                caption="Got my car at 18 — freshman at GT, dreaming about my future"
+                caption={
+                  isCn
+                    ? "18 岁拥有第一辆车 —— GT 大一，认真想象未来"
+                    : "Got my car at 18 — freshman at GT, dreaming about my future"
+                }
                 priority
               />
             </Reveal>
@@ -397,7 +533,11 @@ export default function About() {
                 src="/about/drawing-1.jpg"
                 alt="Black-and-white photograph of a parking garage alley with trees"
                 aspect="3/4"
-                caption="Love photograph — daily life through a lens"
+                caption={
+                  isCn
+                    ? "喜欢摄影 —— 用镜头看日常"
+                    : "Love photograph — daily life through a lens"
+                }
               />
             </Reveal>
           </div>
@@ -408,7 +548,11 @@ export default function About() {
                 src="/about/sketching-bw.png"
                 alt="Black-and-white photograph of a brutalist tower against cloudy sky"
                 aspect="16/10"
-                caption="The everyday, framed in black &amp; white"
+                caption={
+                  isCn
+                    ? "把日常放进黑白画面里"
+                    : "The everyday, framed in black & white"
+                }
               />
             </Reveal>
           </div>
@@ -419,7 +563,7 @@ export default function About() {
                 src="/about/sketching-2.png"
                 alt="Charcoal sketch of an eye in progress"
                 aspect="3/4"
-                caption="Somehow good at drawing"
+                caption={isCn ? "好像还挺会画" : "Somehow good at drawing"}
               />
             </Reveal>
           </div>
@@ -430,7 +574,7 @@ export default function About() {
                 src="/about/cool-stuff-roommate.png"
                 alt="Multiple charcoal sketches of faces and hands on cream paper"
                 aspect="4/3"
-                caption="Enjoy B&amp;W sketching"
+                caption={isCn ? "喜欢黑白素描" : "Enjoy B&W sketching"}
               />
             </Reveal>
           </div>
@@ -441,7 +585,11 @@ export default function About() {
                 src="/about/illuminated-dice-1.png"
                 alt="Electronics workbench with soldering iron, microphone, mixed cups and wires"
                 aspect="16/10"
-                caption="Making cool stuff with my roommate"
+                caption={
+                  isCn
+                    ? "和室友一起做有意思的东西"
+                    : "Making cool stuff with my roommate"
+                }
               />
             </Reveal>
           </div>
@@ -461,7 +609,11 @@ export default function About() {
                 src="/about/workspace-1.png"
                 alt="LiPo battery and circuit board feeding a glowing die in a red tray, next to a Polaroid"
                 aspect="1/1"
-                caption="Wireless illuminated dice for our table game"
+                caption={
+                  isCn
+                    ? "给桌游做的无线发光骰子"
+                    : "Wireless illuminated dice for our table game"
+                }
               />
             </Reveal>
           </div>
@@ -472,7 +624,11 @@ export default function About() {
       {/* 02 — My Workspace */}
       <BootReveal delay={0.17}>
       <section className="container-fluid mt-32">
-        <SectionTitle number="02" title="My Workspace" meta="Module · 06 frames · loaded" />
+        <SectionTitle
+          number="02"
+          title={isCn ? "我的工作台" : "My Workspace"}
+          meta={isCn ? "模块 · 06 张影像 · 已加载" : "Module · 06 frames · loaded"}
+        />
 
         <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
           <div className="shrink-0 snap-start">
@@ -481,7 +637,11 @@ export default function About() {
                 src="/about/workspace-2.png"
                 alt="Aspen's desk with dual monitors showing a flip clock and solar system"
                 aspect="16/10"
-                caption="My workspace — built to enrich creativity. Less is more."
+                caption={
+                  isCn
+                    ? "我的工作台 —— 为了让创造力更顺。少即是多。"
+                    : "My workspace — built to enrich creativity. Less is more."
+                }
               />
             </Reveal>
           </div>
@@ -492,7 +652,11 @@ export default function About() {
                 src="/about/bronze-studio-2.png"
                 alt="A friend at home holding a Sony camera, taking a photo"
                 aspect="3/4"
-                caption="Always someone with a camera in the room"
+                caption={
+                  isCn
+                    ? "房间里总有人拿着相机"
+                    : "Always someone with a camera in the room"
+                }
               />
             </Reveal>
           </div>
@@ -502,7 +666,11 @@ export default function About() {
                 src="/about/film-washing-1.png"
                 alt="Close-up black-and-white photo of someone holding a vintage Edixa Reflex 1000 film camera"
                 aspect="4/3"
-                caption="Film cameras — the slower kind of seeing"
+                caption={
+                  isCn
+                    ? "胶片相机 —— 一种更慢的观看"
+                    : "Film cameras — the slower kind of seeing"
+                }
               />
             </Reveal>
           </div>
@@ -513,7 +681,11 @@ export default function About() {
                 src="/about/film-washing-2.png"
                 alt="Drawing class with laptop and projector showing arm sketch references on the wall"
                 aspect="16/10"
-                caption="Sketching nights — references on the wall, sketchbooks on the table"
+                caption={
+                  isCn
+                    ? "素描夜晚 —— 墙上是参考，桌上是本子"
+                    : "Sketching nights — references on the wall, sketchbooks on the table"
+                }
               />
             </Reveal>
           </div>
@@ -524,7 +696,11 @@ export default function About() {
                 src="/about/film-washing-3.png"
                 alt="Purple-gloved hand holding a film reel under sink water during developing"
                 aspect="3/4"
-                caption="Film washing by hand — PH14 in the basin"
+                caption={
+                  isCn
+                    ? "手洗胶片 —— 盆里的 PH14"
+                    : "Film washing by hand — PH14 in the basin"
+                }
               />
             </Reveal>
           </div>
@@ -534,7 +710,7 @@ export default function About() {
                 src="/about/film-washing-4.png"
                 alt="Black-and-white film print of a silver SUV parked in front of an old brick building"
                 aspect="3/4"
-                caption="The print, after"
+                caption={isCn ? "冲洗后的成片" : "The print, after"}
               />
             </Reveal>
           </div>
@@ -545,7 +721,11 @@ export default function About() {
       {/* 03 — Love Music */}
       <BootReveal delay={0.25}>
       <section className="container-fluid mt-32">
-        <SectionTitle number="03" title="Love Music" meta="Module · 05 frames · loaded" />
+        <SectionTitle
+          number="03"
+          title={isCn ? "热爱音乐" : "Love Music"}
+          meta={isCn ? "模块 · 05 张影像 · 已加载" : "Module · 05 frames · loaded"}
+        />
 
         <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
           <div className="shrink-0 snap-start">
@@ -554,7 +734,7 @@ export default function About() {
                 src="/about/bronze-studio-1.png"
                 alt="A sunburst acoustic guitar resting on a grey carpet"
                 aspect="3/4"
-                caption="Love music"
+                caption={isCn ? "热爱音乐" : "Love music"}
               />
             </Reveal>
           </div>
@@ -565,7 +745,7 @@ export default function About() {
                 src="/about/designing-pals-2.png"
                 alt="Three bronze-and-clay monk sculptures in a workshop with pegboard wall"
                 aspect="3/4"
-                caption="Working at a Bronze Studio"
+                caption={isCn ? "在青铜工作室工作" : "Working at a Bronze Studio"}
               />
             </Reveal>
           </div>
@@ -576,7 +756,11 @@ export default function About() {
                 src="/about/designing-pals-1.png"
                 alt="Wooden desk with iPad of horse-anatomy refs, sketchbook drawings, red sculpted clay animals"
                 aspect="16/10"
-                caption="Designing with reference — desk, sketchbook, and the clay it ends up as"
+                caption={
+                  isCn
+                    ? "带着参考做设计 —— 桌面、速写本，以及最后变成的泥稿"
+                    : "Designing with reference — desk, sketchbook, and the clay it ends up as"
+                }
               />
             </Reveal>
           </div>
@@ -596,7 +780,11 @@ export default function About() {
                 src="/about/neuroscience-2.png"
                 alt="Portrait of three young men in golden-hour light with mountains behind"
                 aspect="3/2"
-                caption="With my pals — last day before they head to their PhDs"
+                caption={
+                  isCn
+                    ? "和朋友们 —— 他们去读 PhD 前的最后一天"
+                    : "With my pals — last day before they head to their PhDs"
+                }
               />
             </Reveal>
           </div>
@@ -607,7 +795,11 @@ export default function About() {
       {/* 04 — Enjoy Cooking */}
       <BootReveal delay={0.33}>
       <section className="container-fluid mt-32">
-        <SectionTitle number="04" title="Enjoy Cooking" meta="Module · 07 frames · loaded" />
+        <SectionTitle
+          number="04"
+          title={isCn ? "喜欢做饭" : "Enjoy Cooking"}
+          meta={isCn ? "模块 · 07 张影像 · 已加载" : "Module · 07 frames · loaded"}
+        />
 
         <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
           <div className="shrink-0 snap-start">
@@ -616,7 +808,11 @@ export default function About() {
                 src="/about/cooking.png"
                 alt="Jupyter notebook with PSYC 3803 brain-science course materials and downsampling visualization"
                 aspect="16/9"
-                caption="I love neuro-sci — happy in the cog sci dual degree. Yes I am happy."
+                caption={
+                  isCn
+                    ? "我喜欢神经科学 —— 在认知科学/心理学双学位里很开心。真的开心。"
+                    : "I love neuro-sci — happy in the cog sci dual degree. Yes I am happy."
+                }
               />
             </Reveal>
           </div>
@@ -627,7 +823,11 @@ export default function About() {
                 src="/about/rat-apartment.png"
                 alt="Two plates of steak with asparagus, potatoes, and sauce"
                 aspect="4/3"
-                caption="Cooking for me and my girlfriend"
+                caption={
+                  isCn
+                    ? "给我和女朋友做饭"
+                    : "Cooking for me and my girlfriend"
+                }
               />
             </Reveal>
           </div>
@@ -638,7 +838,11 @@ export default function About() {
                 src="/about/miku-switch.png"
                 alt="A small mouse inside a clear plastic terrarium with moss, near a window screen"
                 aspect="4/3"
-                caption="Caught a rat in my apartment — it&apos;s cute, but I made it leave eventually"
+                caption={
+                  isCn
+                    ? "在公寓里抓到一只小鼠 —— 很可爱，但最后还是请它离开了"
+                    : "Caught a rat in my apartment — it's cute, but I made it leave eventually"
+                }
               />
             </Reveal>
           </div>
@@ -648,7 +852,11 @@ export default function About() {
                 src="/about/drawing-app.png"
                 alt="Teal Nintendo Switch Lite with hand-drawn Hatsune Miku in marker on the back"
                 aspect="3/4"
-                caption="DIY Miku Switch Lite — Xmas gift for my girl"
+                caption={
+                  isCn
+                    ? "手绘 Miku Switch Lite —— 给她的圣诞礼物"
+                    : "DIY Miku Switch Lite — Xmas gift for my girl"
+                }
               />
             </Reveal>
           </div>
@@ -659,7 +867,11 @@ export default function About() {
                 src="/about/xing-art-cat.png"
                 alt="iPad screen showing a stylized anime elf girl in progress in a drawing app"
                 aspect="16/10"
-                caption="Drawing with the app I designed"
+                caption={
+                  isCn
+                    ? "用我自己设计的 App 画画"
+                    : "Drawing with the app I designed"
+                }
               />
             </Reveal>
           </div>
@@ -669,7 +881,9 @@ export default function About() {
                 src="/about/nvidia-line.png"
                 alt="A tabby cat with white belly, looking up at the camera"
                 aspect="3/4"
-                caption="My cat — I love him sooooo much"
+                caption={
+                  isCn ? "我的猫 —— 超级超级喜欢他" : "My cat — I love him sooooo much"
+                }
               />
             </Reveal>
           </div>
@@ -680,7 +894,11 @@ export default function About() {
       {/* 05 — Unforgettable Summer */}
       <BootReveal delay={0.41}>
       <section className="container-fluid mt-32">
-        <SectionTitle number="05" title="Unforgettable Summer" meta="Module · 09 frames · loaded" />
+        <SectionTitle
+          number="05"
+          title={isCn ? "难忘的夏天" : "Unforgettable Summer"}
+          meta={isCn ? "模块 · 09 张影像 · 已加载" : "Module · 09 frames · loaded"}
+        />
 
         <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
           <div className="shrink-0 snap-start">
@@ -689,7 +907,7 @@ export default function About() {
                 src="/about/gtc-1.png"
                 alt="Crowd of attendees in winter coats lined up at night outside a convention center"
                 aspect="1/1"
-                caption="Lined up at 4 AM for a 5090"
+                caption={isCn ? "凌晨 4 点排队等 5090" : "Lined up at 4 AM for a 5090"}
               />
             </Reveal>
           </div>
@@ -699,7 +917,7 @@ export default function About() {
                 src="/about/jensen-sign.png"
                 alt="Young man at NVIDIA GTC with conference lanyard, holding a tablet"
                 aspect="1/1"
-                caption="At NVIDIA GTC 2025"
+                caption={isCn ? "在 NVIDIA GTC 2025" : "At NVIDIA GTC 2025"}
               />
             </Reveal>
           </div>
@@ -710,7 +928,7 @@ export default function About() {
                 src="/about/if-award-miracleplus.png"
                 alt="A PC tower at NVIDIA GTC 2025 signed Jensen was here by Jensen Huang"
                 aspect="16/10"
-                caption="Jensen signed my PC!"
+                caption={isCn ? "Jensen 在我的 PC 上签名了！" : "Jensen signed my PC!"}
               />
             </Reveal>
           </div>
@@ -721,7 +939,11 @@ export default function About() {
                 src="/about/pitching-2.png"
                 alt="iF Design Award page for Field of Vision — cane for the blind"
                 aspect="3/4"
-                caption="Awarded iF Design — Field of Vision, cane for the blind"
+                caption={
+                  isCn
+                    ? "Field of Vision 获得 iF Design Award"
+                    : "Awarded iF Design — Field of Vision, cane for the blind"
+                }
               />
             </Reveal>
           </div>
@@ -731,7 +953,11 @@ export default function About() {
                 src="/about/pitching-1.png"
                 alt="MiraclePlus 2025 Spring closing ceremony group photo on stage"
                 aspect="4/3"
-                caption="Funded by MiraclePlus — $300K · 2025 Spring closing ceremony"
+                caption={
+                  isCn
+                    ? "获得 MiraclePlus $300K 投资 · 2025 春季结营"
+                    : "Funded by MiraclePlus — $300K · 2025 Spring closing ceremony"
+                }
               />
             </Reveal>
           </div>
@@ -742,7 +968,11 @@ export default function About() {
                 src="/about/tiktok-intern.png"
                 alt="XING Art booth at trade show — three young men with iPad showing in-progress anime drawing"
                 aspect="16/10"
-                caption="XING Art alpha test — first time on the floor"
+                caption={
+                  isCn
+                    ? "XING Art alpha 测试 —— 第一次带到现场"
+                    : "XING Art alpha test — first time on the floor"
+                }
               />
             </Reveal>
           </div>
@@ -753,7 +983,11 @@ export default function About() {
                 src="/about/closing-1.png"
                 alt="Group of friends at a restaurant table with burgers, salsa decorations on the wall"
                 aspect="4/3"
-                caption="Intern at TikTok — best summer crew. GOAT."
+                caption={
+                  isCn
+                    ? "TikTok 实习 —— 最好的夏天同伴"
+                    : "Intern at TikTok — best summer crew. GOAT."
+                }
               />
             </Reveal>
           </div>
@@ -763,7 +997,11 @@ export default function About() {
                 src="/about/closing-2.png"
                 alt="Holding ID badge in front of tall modern office buildings, ByteDance / Volcano Engine"
                 aspect="3/4"
-                caption="First day on campus — ByteDance Shanghai"
+                caption={
+                  isCn
+                    ? "入职第一天 —— 字节跳动上海"
+                    : "First day on campus — ByteDance Shanghai"
+                }
               />
             </Reveal>
           </div>
@@ -778,10 +1016,12 @@ export default function About() {
               className="font-display font-light italic text-ink leading-[1.05] tracking-[-0.015em]"
               style={{ fontSize: "clamp(28px, 4.5vw, 56px)" }}
             >
-              &ldquo;I&apos;m waiting for you to find my potential.&rdquo;
+              {isCn
+                ? "“我在等你看见我的潜力。”"
+                : "“I'm waiting for you to find my potential.”"}
             </p>
             <p className="mt-6 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              — Aspen, 21 yrs
+              {isCn ? "—— Aspen, 21 岁" : "— Aspen, 21 yrs"}
             </p>
           </div>
       </section>
@@ -794,11 +1034,11 @@ export default function About() {
               [A-06]
             </span>
             <p className="mt-2 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              Awards & recognition
+              {isCn ? "奖项与认可" : "Awards & recognition"}
             </p>
           </div>
         <ul className="space-y-3 text-[14px] max-w-3xl">
-          {awards.map((a, i) => (
+          {localizedAwards.map((a, i) => (
             <Reveal key={a.title + a.project} delay={i * 0.03}>
               <li className="grid grid-cols-12 gap-3 items-baseline border-b border-line/60 pb-3">
                 <span className="col-span-12 sm:col-span-5 text-ink/90">
@@ -824,11 +1064,11 @@ export default function About() {
               [A-07]
             </span>
             <p className="mt-2 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              Selected past work
+              {isCn ? "更多过往作品" : "Selected past work"}
             </p>
           </div>
         <ul className="space-y-3 text-[14px] max-w-3xl">
-          {moreWork.map((m, i) => (
+          {localizedMoreWork.map((m, i) => (
             <Reveal key={m.client} delay={i * 0.03}>
               <li className="grid grid-cols-12 gap-3 items-baseline border-b border-line/60 pb-3">
                 <span className="col-span-12 sm:col-span-5 text-ink/90">

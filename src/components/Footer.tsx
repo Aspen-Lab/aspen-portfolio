@@ -1,5 +1,21 @@
+import { useLocale } from "next-intl";
+import type { Locale } from "@/i18n/routing";
+
 export function Footer() {
+  const locale = useLocale() as Locale;
   const year = new Date().getFullYear();
+  const copy =
+    locale === "cn"
+      ? {
+          label: "设计 · 代码 · Atlanta",
+          role: "唯一设计师 · Axel · YC W19",
+          credit: "由 Aspen 设计并构建",
+        }
+      : {
+          label: "Design · Code · Atlanta",
+          role: "Sole designer · Axel · YC W19",
+          credit: "Designed & built by Aspen",
+        };
 
   return (
     <footer className="overflow-hidden select-none" aria-hidden>
@@ -52,7 +68,7 @@ export function Footer() {
 
           {/* Label */}
           <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.55em] text-soft/30">
-            Design · Code · Atlanta
+            {copy.label}
           </p>
 
           {/* Name — hero */}
@@ -68,7 +84,7 @@ export function Footer() {
 
           {/* Role line */}
           <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.4em] text-soft/22">
-            Sole designer · Axel · YC W19
+            {copy.role}
           </p>
         </div>
 
@@ -86,7 +102,7 @@ export function Footer() {
       {/* Micro credit below frame */}
       <div className="flex items-center justify-center py-5">
         <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-soft/20">
-          Designed &amp; built by Aspen
+          {copy.credit}
         </span>
       </div>
     </footer>

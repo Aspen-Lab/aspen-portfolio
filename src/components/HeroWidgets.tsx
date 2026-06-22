@@ -1,6 +1,8 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 /* ─── Inline SVG marks — all 24×24 viewBox, currentColor ───────────────── */
@@ -143,6 +145,7 @@ const fadeUp = (delay: number, reduce: boolean | null) =>
 
 /* ─── Widget ────────────────────────────────────────────────────────────── */
 export function HeroWidgets() {
+  const t = useTranslations("Hero");
   const reduce = useReducedMotion();
   const [tip, setTip] = useState<string | null>(null);
 
@@ -155,10 +158,11 @@ export function HeroWidgets() {
         className="text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
         style={{ color: "rgba(160,160,165,0.72)" }}
       >
-        Designer who codes — shipping product design and
-        production React at{" "}
-        <span style={{ color: "rgba(244,244,242,0.52)" }}>Axel (YC W19)</span>,
-        solo and fast.
+        {t.rich("bio", {
+          axel: (chunks: ReactNode) => (
+            <span style={{ color: "rgba(244,244,242,0.52)" }}>{chunks}</span>
+          ),
+        })}
       </motion.p>
 
       {/* Rule */}
@@ -174,7 +178,7 @@ export function HeroWidgets() {
           className="font-mono text-[9px] uppercase tracking-[0.24em] mb-3.5"
           style={{ color: "rgba(113,113,119,0.40)" }}
         >
-          Stack
+          {t("stackLabel")}
         </div>
         <div
           className="inline-flex items-center gap-1.5 rounded-[9px] p-1.5"

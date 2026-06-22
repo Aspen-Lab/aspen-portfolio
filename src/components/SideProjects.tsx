@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowUpRight,
@@ -18,16 +19,17 @@ import {
   Cloud,
 } from "lucide-react";
 import { sideProjects } from "@/lib/work";
+import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 import { CommitCalendar } from "./CommitCalendar";
 
 /* ─── Intro typewriter ─────────────────────────────────────────────── */
 
 const CMD = "describe side-projects --author aspen";
-const OUT =
-  "Things I build between design jobs — usually to scratch a personal itch, sometimes to test a tool I'm thinking about adopting at work.";
 
 function SideIntro() {
+  const t = useTranslations("SideProjects");
+  const out = t("intro");
   const [cmdLen, setCmdLen] = useState(0);
   const [outLen, setOutLen] = useState(0);
   const [phase, setPhase] = useState<"cmd" | "out" | "done">("cmd");
@@ -48,21 +50,21 @@ function SideIntro() {
       return () => clearTimeout(t);
     }
     if (phase === "out") {
-      if (outLen < OUT.length) {
+      if (outLen < out.length) {
         const t = setTimeout(() => setOutLen((n) => n + 1), 11);
         return () => clearTimeout(t);
       }
       const t = setTimeout(() => setPhase("done"), 0);
       return () => clearTimeout(t);
     }
-  }, [phase, cmdLen, outLen]);
+  }, [phase, cmdLen, outLen, out]);
 
   return (
     <button
       type="button"
       onClick={replay}
       className="group text-left w-full max-w-2xl mb-10"
-      aria-label="Replay intro"
+      aria-label={t("replayIntro")}
     >
       <div className="font-mono text-[13px] sm:text-[13.5px] leading-[1.8]">
         <p className="flex items-baseline gap-2">
@@ -74,7 +76,7 @@ function SideIntro() {
         </p>
         {outLen > 0 && (
           <p className="mt-1.5 pl-3 border-l border-line/50 text-mute leading-[1.75]">
-            {OUT.slice(0, outLen)}
+            {out.slice(0, outLen)}
             {phase === "out" && (
               <span className="inline-block w-[5px] h-[12px] bg-mute/40 animate-pulse ml-0.5 align-middle" />
             )}
@@ -82,7 +84,7 @@ function SideIntro() {
         )}
         {phase === "done" && (
           <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-soft/25 group-hover:text-soft/50 transition-colors duration-200">
-            ↻ replay
+            {t("replay")}
           </p>
         )}
       </div>
@@ -146,6 +148,52 @@ const DETAILS: Record<string, Detail> = {
     features: {
       label: "Highlights",
       items: ["PWA", "mobile-first", "shareable"],
+    },
+  },
+};
+
+const DETAILS_CN: Record<string, Detail> = {
+  Hermes: {
+    lead: "自托管信息代理。五段管线、三层 AI、一个 Obsidian vault。",
+    flow: {
+      label: "管线",
+      steps: ["抓取", "评分", "去重", "提炼", "输出"],
+    },
+    grid: [
+      { label: "来源", items: ["RSS", "HN", "arXiv", "Reddit"] },
+      { label: "AI 层级", items: ["T0 · 规则", "T1 · Ollama", "T2 · BYOK cloud"] },
+    ],
+  },
+  Lumen: {
+    lead: "面向 AI-native 产品的交互组件库：可复制、可参数化、双层语义。",
+    grid: [
+      { label: "组件", items: ["推理可视化", "决策呈现", "操作确认"] },
+      { label: "参数", items: ["视觉层", "产品语义层"] },
+    ],
+  },
+  Metroidvania: {
+    lead: "未命名 2D Metroidvania。Hollow-Knight stack。每天 1–2 小时推进。",
+    flow: {
+      label: "时间线",
+      steps: ["灰盒 · 2 周", "首个区域 · 6 周", "MVP · 3 个月"],
+    },
+    roles: [
+      { name: "Aspen", role: "工程全栈" },
+      { name: "Skyler", role: "美术 + 音乐" },
+    ],
+  },
+  CardFlow: {
+    lead: "Notion-like 编辑器，自动生成小红书风格的可滑动卡片。",
+    features: {
+      label: "功能",
+      items: ["五套主题", "实时预览", "滑动 · 键盘 · 滚动"],
+    },
+  },
+  Itinerary: {
+    lead: "轻量旅行行程 PWA，给那些一年后还想记住的旅行。",
+    features: {
+      label: "亮点",
+      items: ["PWA", "移动优先", "可分享"],
     },
   },
 };
@@ -268,6 +316,14 @@ const PIPELINE = [
   { Icon: BookOpen,  label: "output",  caption: "→ Obsidian vault" },
 ] as const;
 
+const PIPELINE_CN = [
+  { Icon: Download,  label: "抓取",  caption: "RSS · HN · arXiv · Reddit" },
+  { Icon: BarChart3, label: "评分",  caption: "相关性排序" },
+  { Icon: Layers,    label: "去重",  caption: "精确 + 语义" },
+  { Icon: Sparkles,  label: "提炼",  caption: "总结 + 改写" },
+  { Icon: BookOpen,  label: "输出",  caption: "→ Obsidian vault" },
+] as const;
+
 const SOURCES = [
   { Icon: Rss,           label: "RSS" },
   { Icon: Hash,          label: "HN" },
@@ -281,7 +337,16 @@ const TIERS = [
   { tier: "T2", Icon: Cloud,   name: "BYOK cloud",  note: "best quality · on-demand" },
 ] as const;
 
-function HermesDetail() {
+const TIERS_CN = [
+  { tier: "T0", Icon: Code2,   name: "规则",       note: "TF-IDF · 即时 · 免费" },
+  { tier: "T1", Icon: Monitor, name: "Ollama",     note: "本地 · 私有 · GPU" },
+  { tier: "T2", Icon: Cloud,   name: "BYOK cloud", note: "质量最高 · 按需调用" },
+] as const;
+
+function HermesDetail({ locale }: { locale: Locale }) {
+  const pipeline = locale === "cn" ? PIPELINE_CN : PIPELINE;
+  const tiers = locale === "cn" ? TIERS_CN : TIERS;
+
   return (
     <div className="mt-5 flex flex-col gap-6">
       {/* Lead */}
@@ -291,7 +356,9 @@ function HermesDetail() {
         transition={{ delay: 0.04, duration: 0.3, ease }}
         className="text-[15px] text-ink/75 leading-[1.7] max-w-[54ch]"
       >
-        Self-hosted information agent. Five stages, three AI tiers, one Obsidian vault.
+        {locale === "cn"
+          ? "自托管信息代理。五段管线、三层 AI、一个 Obsidian vault。"
+          : "Self-hosted information agent. Five stages, three AI tiers, one Obsidian vault."}
       </motion.p>
 
       {/* Pipeline */}
@@ -300,9 +367,9 @@ function HermesDetail() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
       >
-        <SectionLabel>Pipeline</SectionLabel>
+        <SectionLabel>{locale === "cn" ? "管线" : "Pipeline"}</SectionLabel>
         <div className="flex items-start overflow-x-auto -mx-1 px-1 pb-1 no-scrollbar">
-          {PIPELINE.map(({ Icon, label, caption }, i) => (
+          {pipeline.map(({ Icon, label, caption }, i) => (
             <div key={label} className="flex items-start shrink-0">
               <motion.div
                 className="flex flex-col items-center gap-1.5 w-[78px]"
@@ -339,7 +406,7 @@ function HermesDetail() {
       >
         {/* Sources */}
         <div>
-          <SectionLabel>Sources</SectionLabel>
+          <SectionLabel>{locale === "cn" ? "来源" : "Sources"}</SectionLabel>
           <div className="flex flex-wrap gap-1.5">
             {SOURCES.map(({ Icon, label }, i) => (
               <motion.div
@@ -358,9 +425,9 @@ function HermesDetail() {
 
         {/* AI tiers */}
         <div>
-          <SectionLabel>AI tiers</SectionLabel>
+          <SectionLabel>{locale === "cn" ? "AI 层级" : "AI tiers"}</SectionLabel>
           <div className="flex flex-col gap-1.5">
-            {TIERS.map(({ tier, Icon, name, note }, i) => (
+            {tiers.map(({ tier, Icon, name, note }, i) => (
               <motion.div
                 key={tier}
                 initial={{ opacity: 0, x: 8 }}
@@ -385,9 +452,9 @@ function HermesDetail() {
   );
 }
 
-function ProjectDetail({ name }: { name: string }) {
-  if (name === "Hermes") return <HermesDetail />;
-  const d = DETAILS[name];
+function ProjectDetail({ name, locale }: { name: string; locale: Locale }) {
+  if (name === "Hermes") return <HermesDetail locale={locale} />;
+  const d = (locale === "cn" ? DETAILS_CN : DETAILS)[name];
   if (!d) return null;
   return (
     <div className="mt-5 flex flex-col gap-5">
@@ -443,6 +510,17 @@ function statusPill(status: string) {
   }
 }
 
+function statusLabel(status: string, locale: Locale) {
+  if (locale !== "cn") return status;
+  switch (status) {
+    case "Active": return "活跃";
+    case "v0 MVP": return "v0 MVP";
+    case "WIP": return "进行中";
+    case "Shipped": return "已上线";
+    default: return status;
+  }
+}
+
 /* ─── Tech chips ───────────────────────────────────────────────────── */
 
 function TechChips({ tech }: { tech: string }) {
@@ -467,6 +545,8 @@ function TechChips({ tech }: { tech: string }) {
 /* ─── Main section ─────────────────────────────────────────────────── */
 
 export function SideProjects() {
+  const locale = useLocale() as Locale;
+  const t = useTranslations("SideProjects");
   const [active, setActive] = useState(0);
   const total = sideProjects.length;
   const project = sideProjects[active];
@@ -492,7 +572,7 @@ export function SideProjects() {
               </span>
               <span className="text-ink">PROJECTS.SYS</span>
               <span className="text-soft/50 hidden sm:inline">
-                {`// ${total} projects`}
+                {`// ${t("projectsLabel", { count: total })}`}
               </span>
             </span>
             <span className="flex items-center gap-1.5">
@@ -500,7 +580,7 @@ export function SideProjects() {
                 <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
                 <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
               </span>
-              Building
+              {t("building")}
             </span>
           </div>
 
@@ -571,13 +651,13 @@ export function SideProjects() {
                       <span
                         className={`font-mono text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 rounded-full whitespace-nowrap ${statusPill(project.status)}`}
                       >
-                        {project.status}
+                        {statusLabel(project.status, locale)}
                       </span>
                     </div>
                   </div>
 
                   {/* Structured detail */}
-                  <ProjectDetail name={project.name} />
+                  <ProjectDetail name={project.name} locale={locale} />
 
                   {/* Tech chips */}
                   <div className="mt-6">
@@ -593,12 +673,12 @@ export function SideProjects() {
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-ink hover:text-mute transition-colors"
                       >
-                        View on GitHub
+                        {t("viewOnGithubShort")}
                         <ArrowUpRight className="w-3 h-3" strokeWidth={1.75} />
                       </a>
                     ) : (
                       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft/50">
-                        Private
+                        {t("private")}
                       </p>
                     )}
                   </div>

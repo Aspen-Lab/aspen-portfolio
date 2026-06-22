@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
 import {
   PencilRuler,
@@ -12,6 +14,8 @@ import {
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 import { combos } from "@/lib/work";
+import type { Combo } from "@/lib/work";
+import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -23,6 +27,45 @@ const ICONS: ComponentType<SVGProps<SVGSVGElement>>[] = [
   Award,
   Building2,
   LineChart,
+];
+
+const COMBOS_CN: Combo[] = [
+  {
+    index: "01",
+    title: "世界级 Figma 能力",
+    proof: "集成周期快 40%",
+    body: "我在 TikTok Pay PIPO UED 写的供应商对接 SOP 成为跨市场标准 —— VN / MY / ID 的集成周期缩短约 40%。Tokens、组件、错误状态、边界情况全部覆盖。",
+  },
+  {
+    index: "02",
+    title: "被 TikTok 背书",
+    proof: "完成率 70 → 90%",
+    body: "越南 KYC 新用户完成率提升 20 个百分点。系统在实习结束后继续沿用，成为团队默认 playbook。设计能变成流程制度，就是最硬的背书。",
+  },
+  {
+    index: "03",
+    title: "前端，直接以 PR 交付",
+    proof: "helloaxel.com 100%",
+    body: "Figma → tokens → Tailwind components → Vercel PR，没有翻译损耗。再加上 Customer.io 的 28 个交易类模板。交付物是 commits，不是 PDF。",
+  },
+  {
+    index: "04",
+    title: "iF + Red Dot + IDEA",
+    proof: "一年三个奖",
+    body: "2025 年同时拿到 iF Design、Red Dot 和 IDEA Student Award，项目覆盖 Field of Vision 与 CryoSave。HCI 与行为科学训练支撑的是手艺，不只是视觉。",
+  },
+  {
+    index: "05",
+    title: "创始人式产品判断",
+    proof: "$300K · 1K+ 用户",
+    body: "XING Art：联合创办、MiraclePlus '25 $300K pre-seed、产品跑到真实规模，后续转为股东 + advisor。我会读 GMV / MRR / funnels —— 在 brief 出现前先找到问题。",
+  },
+  {
+    index: "06",
+    title: "市场品味，被 P&L 验证",
+    proof: "200%+ 年化",
+    body: "个人投资组合 200%+ 年化。产品和市场本质是同一个问题：什么会复利、什么是噪音、什么被错误定价。能找到 alpha 的直觉，也能找到值得 shipping 的概念。",
+  },
 ];
 
 /* ─── Animated bar ─────────────────────────────────────────────────── */
@@ -58,16 +101,16 @@ function AnimBar({
 
 /* ─── Per-credential widgets ───────────────────────────────────────── */
 
-function Widget({ index }: { index: number }) {
+function Widget({ index, locale }: { index: number; locale: Locale }) {
   switch (index) {
     case 0:
       return (
         <div className="flex flex-col gap-3">
           <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45 mb-1">
-            Cycle comparison
+            {locale === "cn" ? "周期对比" : "Cycle comparison"}
           </p>
-          <AnimBar label="Standard" pct={100} delay={0.1} />
-          <AnimBar label="With SOP" pct={60} delay={0.22} />
+          <AnimBar label={locale === "cn" ? "标准流程" : "Standard"} pct={100} delay={0.1} />
+          <AnimBar label={locale === "cn" ? "有 SOP" : "With SOP"} pct={60} delay={0.22} />
           <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-soft/35 mt-1">
             −40% · TikTok PIPO vendor integration
           </p>
@@ -78,10 +121,10 @@ function Widget({ index }: { index: number }) {
       return (
         <div className="flex flex-col gap-3">
           <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45 mb-1">
-            KYC completion · Vietnam
+            {locale === "cn" ? "KYC 完成率 · 越南" : "KYC completion · Vietnam"}
           </p>
-          <AnimBar label="v1 · before" pct={70} delay={0.1} />
-          <AnimBar label="v2 · after" pct={90} delay={0.22} />
+          <AnimBar label={locale === "cn" ? "v1 · 之前" : "v1 · before"} pct={70} delay={0.1} />
+          <AnimBar label={locale === "cn" ? "v2 · 之后" : "v2 · after"} pct={90} delay={0.22} />
           <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-soft/35 mt-1">
             +20pp · new-user flow
           </p>
@@ -93,13 +136,13 @@ function Widget({ index }: { index: number }) {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3">
             <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45">
-              Delivery completeness
+              {locale === "cn" ? "交付完整度" : "Delivery completeness"}
             </p>
-            <AnimBar label="Shipped" pct={100} delay={0.1} />
+            <AnimBar label={locale === "cn" ? "已上线" : "Shipped"} pct={100} delay={0.1} />
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45">
-              Delivery chain
+              {locale === "cn" ? "交付链路" : "Delivery chain"}
             </p>
             <div className="flex items-center gap-1.5 flex-wrap">
               {["Figma", "tokens", "Tailwind", "Vercel"].map((s, i) => (
@@ -127,7 +170,7 @@ function Widget({ index }: { index: number }) {
       return (
         <div className="flex flex-col gap-3">
           <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45 mb-1">
-            Recognition · 2025
+            {locale === "cn" ? "认可 · 2025" : "Recognition · 2025"}
           </p>
           <div className="flex flex-col gap-2">
             {[
@@ -163,9 +206,9 @@ function Widget({ index }: { index: number }) {
           </p>
           <div className="grid grid-cols-3 gap-2">
             {[
-              { value: "$300K", label: "pre-seed" },
-              { value: "1K+", label: "users" },
-              { value: "Top %", label: "cohort" },
+              { value: "$300K", label: locale === "cn" ? "种子前轮" : "pre-seed" },
+              { value: "1K+", label: locale === "cn" ? "用户" : "users" },
+              { value: "Top %", label: locale === "cn" ? "同届" : "cohort" },
             ].map(({ value, label }, i) => (
               <motion.div
                 key={label}
@@ -190,13 +233,15 @@ function Widget({ index }: { index: number }) {
       return (
         <div className="flex flex-col gap-3">
           <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45 mb-1">
-            Personal portfolio · annualized
+            {locale === "cn" ? "个人组合 · 年化" : "Personal portfolio · annualized"}
           </p>
-          <AnimBar label="Return" pct={100} delay={0.1} />
+          <AnimBar label={locale === "cn" ? "收益" : "Return"} pct={100} delay={0.1} />
           <div className="flex items-center gap-2 mt-1">
             <TrendingUp className="w-3.5 h-3.5 text-soft/50" strokeWidth={1.5} />
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-soft/45">
-              200%+ · same instinct that ships products
+              {locale === "cn"
+                ? "200%+ · 和产品判断来自同一种直觉"
+                : "200%+ · same instinct that ships products"}
             </span>
           </div>
         </div>
@@ -210,24 +255,28 @@ function Widget({ index }: { index: number }) {
 /* ─── Main section ─────────────────────────────────────────────────── */
 
 export function Moat() {
+  const locale = useLocale() as Locale;
+  const t = useTranslations("Moat");
   const [active, setActive] = useState(0);
-  const combo = combos[active];
+  const localizedCombos = locale === "cn" ? COMBOS_CN : combos;
+  const combo = localizedCombos[active];
   const Icon = ICONS[active];
 
   return (
     <section id="combo" className="container-fluid pt-14 pb-32">
       <Reveal>
         <p className="text-[18px] text-mute leading-[1.6] max-w-2xl mb-12">
-          I&apos;m not selling a skill — I&apos;m selling a{" "}
-          <span className="italic text-ink">shape</span>. Six credentials —{" "}
-          <span className="text-ink">proven, not asserted</span>.
+          {t.rich("intro", {
+            i: (chunks: ReactNode) => <span className="italic text-ink">{chunks}</span>,
+            ink: (chunks: ReactNode) => <span className="text-ink">{chunks}</span>,
+          })}
         </p>
       </Reveal>
 
       {/* Pill nav */}
       <Reveal delay={0.05}>
         <div className="flex gap-2 overflow-x-auto no-scrollbar mb-8 -mx-1 px-1 pb-1">
-          {combos.map((c, i) => {
+          {localizedCombos.map((c, i) => {
             const on = active === i;
             return (
               <button
@@ -295,7 +344,7 @@ export function Moat() {
 
               {/* Right: widget */}
               <div className="flex flex-col justify-center lg:border-l lg:border-line/30 lg:pl-10">
-                <Widget index={active} />
+                <Widget index={active} locale={locale} />
               </div>
             </div>
           </motion.div>
