@@ -25,9 +25,8 @@ const ITEMS: Item[] = [
   },
   {
     key: "studies",
-    href: "https://www.notion.so/Aspen-Design-Lab-29106c193aa980b3b791d7d7fe378e89?source=copy_link",
-    match: () => false,
-    external: true,
+    href: "/study",
+    match: (p) => p.startsWith("/study"),
   },
   {
     key: "contact",
