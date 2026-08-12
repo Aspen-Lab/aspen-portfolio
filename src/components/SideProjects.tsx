@@ -19,6 +19,7 @@ import {
   Cloud,
 } from "lucide-react";
 import { sideProjects } from "@/lib/work";
+import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE, CAP_STYLE, DOT_WELL, STRIP_WELL } from "@/lib/tactile";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 import { CommitCalendar } from "./CommitCalendar";
@@ -223,7 +224,10 @@ function FlowRow({ label, steps }: FlowDef) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.08 + i * 0.07, duration: 0.28, ease }}
           >
-            <span className="px-2.5 py-1 rounded-md border border-line bg-cream/50 font-mono text-[11px] text-ink/80 whitespace-nowrap">
+            <span
+              className="px-2.5 py-1 rounded-[7px] font-mono text-[11px] text-ink/80 whitespace-nowrap"
+              style={CAP_STYLE}
+            >
               {step}
             </span>
             {i < steps.length - 1 && (
@@ -252,7 +256,8 @@ function MiniGrid({ blocks }: { blocks: GridBlock[] }) {
                 initial={{ opacity: 0, scale: 0.88 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 + bi * 0.06 + ii * 0.05, duration: 0.24, ease }}
-                className="inline-block px-2 py-0.5 rounded border border-line/60 bg-cream/40 font-mono text-[11px] text-mute whitespace-nowrap"
+                className="inline-block px-2 py-0.5 rounded-[6px] font-mono text-[11px] text-mute whitespace-nowrap"
+                style={STRIP_WELL}
               >
                 {item}
               </motion.span>
@@ -273,7 +278,8 @@ function RoleCards({ roles }: { roles: RoleCard[] }) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.12 + i * 0.08, duration: 0.28, ease }}
-          className="p-3 rounded-lg border border-line/50 bg-cream/20"
+          className="p-3 rounded-[9px]"
+          style={CAP_STYLE}
         >
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink/70 mb-1">
             {name}
@@ -296,7 +302,8 @@ function FeatureChips({ label, items }: { label: string; items: string[] }) {
             initial={{ opacity: 0, scale: 0.88 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.08 + i * 0.07, duration: 0.26, ease }}
-            className="inline-flex items-center px-3 py-1 rounded-full border border-line bg-cream/30 font-mono text-[11.5px] text-mute tracking-tight"
+            className="inline-flex items-center px-3 py-1 rounded-full font-mono text-[11.5px] text-mute tracking-tight"
+            style={CAP_STYLE}
           >
             {f}
           </motion.span>
@@ -377,8 +384,15 @@ function HermesDetail({ locale }: { locale: Locale }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.14 + i * 0.07, duration: 0.28, ease }}
               >
-                <div className="w-9 h-9 rounded-lg border border-line bg-cream/50 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-ink/65" strokeWidth={1.5} />
+                <div
+                  className="w-9 h-9 rounded-[9px] flex items-center justify-center"
+                  style={WELL_STYLE}
+                >
+                  <Icon
+                    className="w-4 h-4 text-ink/70"
+                    strokeWidth={1.5}
+                    style={{ filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.5))" }}
+                  />
                 </div>
                 <span className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-ink/80">
                   {label}
@@ -414,7 +428,8 @@ function HermesDetail({ locale }: { locale: Locale }) {
                 initial={{ opacity: 0, scale: 0.88 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.26 + i * 0.05, duration: 0.24, ease }}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-line bg-cream/40"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[7px]"
+                style={CAP_STYLE}
               >
                 <Icon className="w-3 h-3 text-soft/70 shrink-0" strokeWidth={1.5} />
                 <span className="font-mono text-[11px] text-mute">{label}</span>
@@ -433,7 +448,8 @@ function HermesDetail({ locale }: { locale: Locale }) {
                 initial={{ opacity: 0, x: 8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.26 + i * 0.07, duration: 0.26, ease }}
-                className="flex items-center gap-2 px-2.5 py-2 rounded-md border border-line/50 bg-cream/20"
+                className="flex items-center gap-2 px-2.5 py-2 rounded-[7px]"
+                style={STRIP_WELL}
               >
                 <span className="font-mono text-[9px] text-soft/40 w-5 shrink-0 tabular-nums">
                   {tier}
@@ -533,7 +549,8 @@ function TechChips({ tech }: { tech: string }) {
           initial={{ opacity: 0, scale: 0.95, y: 4 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ delay: 0.06 + k * 0.04, duration: 0.28, ease }}
-          className="inline-flex items-center px-2.5 py-1 rounded-md border border-line bg-cream/30 font-mono text-[11px] tracking-tight text-ink/90"
+          className="inline-flex items-center px-2.5 py-1 rounded-[7px] font-mono text-[11px] tracking-tight text-ink/90"
+          style={CAP_STYLE}
         >
           {item}
         </motion.li>
@@ -561,32 +578,50 @@ export function SideProjects() {
       </Reveal>
 
       <Reveal delay={0.1}>
-        <div className="mt-10 border border-line rounded-[14px] overflow-hidden">
+        <div className="mt-10 rounded-[16px] overflow-hidden" style={TRAY_STYLE}>
           {/* Title bar */}
-          <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 border-b border-line bg-cream/30 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft">
+          <div
+            className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft"
+            style={{
+              background: "rgba(0,0,0,0.16)",
+              boxShadow: "inset 0 -1px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)",
+            }}
+          >
             <span className="flex items-center gap-2.5">
               <span className="flex gap-1.5">
-                <span className="w-2 h-2 rounded-full border border-line" />
-                <span className="w-2 h-2 rounded-full border border-line" />
-                <span className="w-2 h-2 rounded-full border border-line" />
+                <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
+                <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
+                <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
               </span>
               <span className="text-ink">PROJECTS.SYS</span>
               <span className="text-soft/50 hidden sm:inline">
                 {`// ${t("projectsLabel", { count: total })}`}
               </span>
             </span>
-            <span className="flex items-center gap-1.5">
-              <span className="relative flex w-1.5 h-1.5">
-                <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
-                <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
+            <span className="flex items-center gap-2">
+              <span
+                className="relative flex items-center justify-center w-[11px] h-[11px] rounded-full"
+                style={DOT_WELL}
+              >
+                <span className="absolute w-1 h-1 rounded-full bg-ink opacity-40 animate-ping" />
+                <span
+                  className="relative w-1 h-1 rounded-full"
+                  style={{
+                    background: "#F4F4F2",
+                    boxShadow: "0 0 5px rgba(244,244,242,0.9), 0 0 12px rgba(244,244,242,0.3)",
+                  }}
+                />
               </span>
               {t("building")}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-[240px_1fr]">
-            {/* Project rail */}
-            <ul className="border-b md:border-b-0 md:border-r border-line">
+            {/* Project rail — active project pressed into a lit well */}
+            <ul
+              className="p-1.5 flex flex-col gap-0.5"
+              style={{ boxShadow: "inset -1px 0 0 rgba(0,0,0,0.3)" }}
+            >
               {sideProjects.map((p, i) => {
                 const on = i === active;
                 return (
@@ -596,28 +631,41 @@ export function SideProjects() {
                       onMouseEnter={() => setActive(i)}
                       onFocus={() => setActive(i)}
                       onClick={() => setActive(i)}
-                      className={`relative w-full flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left border-b border-line/50 last:border-b-0 transition-colors duration-200 ${
-                        on ? "bg-cream/50" : "hover:bg-cream/25"
-                      }`}
+                      className="group relative w-full flex items-center gap-3 px-3.5 py-3 text-left rounded-[8px] transition-colors duration-200"
                     >
-                      {on && (
+                      {on ? (
                         <motion.span
-                          layoutId="projects-active-bar"
-                          className="absolute left-0 top-0 bottom-0 w-[2px] bg-ink"
+                          layoutId="projects-active-well"
+                          aria-hidden
+                          className="absolute inset-0 rounded-[8px]"
+                          style={WELL_STYLE}
                           transition={{ type: "spring", stiffness: 420, damping: 34 }}
                         />
+                      ) : (
+                        <span
+                          aria-hidden
+                          className="absolute inset-0 rounded-[8px] opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                          style={HOVER_CAP_STYLE}
+                        />
                       )}
-                      <span className="font-mono text-[10px] text-soft/45 tabular-nums w-5 shrink-0">
+                      <span className="relative z-10 font-mono text-[10px] text-soft/45 tabular-nums w-5 shrink-0">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <span className="relative w-1.5 h-1.5 shrink-0">
+                      <span className="relative z-10 w-1.5 h-1.5 shrink-0">
                         {p.status === "Active" && (
                           <span className="absolute inset-0 rounded-full bg-ink animate-ping opacity-40" />
                         )}
-                        <span className={`absolute inset-0 rounded-full ${statusDot(p.status)}`} />
+                        <span
+                          className={`absolute inset-0 rounded-full ${statusDot(p.status)}`}
+                          style={
+                            p.status === "Active"
+                              ? { boxShadow: "0 0 5px rgba(244,244,242,0.8), 0 0 10px rgba(244,244,242,0.25)" }
+                              : undefined
+                          }
+                        />
                       </span>
                       <span
-                        className={`font-mono text-[12px] uppercase tracking-[0.1em] truncate transition-colors ${
+                        className={`relative z-10 font-mono text-[12px] uppercase tracking-[0.1em] truncate transition-colors ${
                           on ? "text-ink" : "text-mute"
                         }`}
                       >
@@ -650,6 +698,11 @@ export function SideProjects() {
                       </span>
                       <span
                         className={`font-mono text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 rounded-full whitespace-nowrap ${statusPill(project.status)}`}
+                        style={
+                          project.status === "Active"
+                            ? { boxShadow: "0 0 12px rgba(244,244,242,0.3), 0 0 3px rgba(244,244,242,0.4)" }
+                            : undefined
+                        }
                       >
                         {statusLabel(project.status, locale)}
                       </span>

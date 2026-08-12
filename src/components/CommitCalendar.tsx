@@ -12,6 +12,16 @@ const LEVEL_BG = [
   "bg-ink",
 ] as const;
 
+/* LED-wall treatment: empty cells read as unlit sockets (inset), hot
+   cells emit a faint glow — the heatmap is a matrix of tiny lamps. */
+const LEVEL_SHADOW: (string | undefined)[] = [
+  "inset 0 1px 1.5px rgba(0,0,0,0.45)",
+  undefined,
+  undefined,
+  "0 0 5px rgba(244,244,242,0.22)",
+  "0 0 7px rgba(244,244,242,0.4), 0 0 2px rgba(244,244,242,0.5)",
+];
+
 const CELL = 12;
 const GAP = 3;
 const COL = CELL + GAP;
@@ -77,7 +87,14 @@ export function CommitCalendar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-line bg-cream/40 font-mono text-[9.5px] uppercase tracking-[0.22em] text-mute whitespace-nowrap">
+          <span
+            className="inline-flex items-center px-2.5 py-1 rounded-full font-mono text-[9.5px] uppercase tracking-[0.22em] text-mute whitespace-nowrap"
+            style={{
+              background: "linear-gradient(180deg, #323234 0%, #28282A 100%)",
+              boxShadow:
+                "inset 0 1px 0 rgba(255,255,255,0.09), inset 0 0 0 1px rgba(255,255,255,0.02), 0 2px 5px rgba(0,0,0,0.45)",
+            }}
+          >
             Personal · Private
           </span>
           <a
@@ -100,7 +117,7 @@ export function CommitCalendar() {
             <div
               key={level}
               className={`rounded-[2px] ${LEVEL_BG[level]}`}
-              style={{ width: CELL, height: CELL }}
+              style={{ width: CELL, height: CELL, boxShadow: LEVEL_SHADOW[level] }}
               aria-hidden
             />
           ))}
@@ -175,7 +192,7 @@ function CalendarGrid({ days }: { days: Contrib[] }) {
                 <div
                   key={di}
                   className={`rounded-[2px] ${LEVEL_BG[d.level]}`}
-                  style={{ width: CELL, height: CELL }}
+                  style={{ width: CELL, height: CELL, boxShadow: LEVEL_SHADOW[d.level] }}
                   title={`${
                     d.count === 0
                       ? "No"

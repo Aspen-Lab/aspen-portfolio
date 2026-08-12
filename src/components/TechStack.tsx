@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 import { stack, spectrum, type StackIcon } from "@/lib/work";
+import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE, CAP_STYLE, DOT_WELL } from "@/lib/tactile";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 
@@ -113,34 +114,53 @@ export function TechStack() {
         </p>
       </Reveal>
 
-      {/* Interactive console — select a module, inspect it. */}
+      {/* Interactive console — a physical unit: raised plate shell,
+          recessed dots, pressed-well selection, keycap chips. */}
       <Reveal>
-        <div className="border border-line rounded-[14px] overflow-hidden">
+        <div className="rounded-[16px] overflow-hidden" style={TRAY_STYLE}>
           {/* Title bar */}
-          <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 border-b border-line bg-cream/30 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft">
+          <div
+            className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft"
+            style={{
+              background: "rgba(0,0,0,0.16)",
+              boxShadow: "inset 0 -1px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)",
+            }}
+          >
             <span className="flex items-center gap-2.5">
               <span className="flex gap-1.5">
-                <span className="w-2 h-2 rounded-full border border-line" />
-                <span className="w-2 h-2 rounded-full border border-line" />
-                <span className="w-2 h-2 rounded-full border border-line" />
+                <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
+                <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
+                <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
               </span>
               <span className="text-ink">STACK.SYS</span>
               <span className="text-soft/50 hidden sm:inline">
                 {`// ${t("modules", { count: total })}`}
               </span>
             </span>
-            <span className="flex items-center gap-1.5">
-              <span className="relative flex w-1.5 h-1.5">
-                <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
-                <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
+            <span className="flex items-center gap-2">
+              <span
+                className="relative flex items-center justify-center w-[11px] h-[11px] rounded-full"
+                style={DOT_WELL}
+              >
+                <span className="absolute w-1 h-1 rounded-full bg-ink opacity-40 animate-ping" />
+                <span
+                  className="relative w-1 h-1 rounded-full"
+                  style={{
+                    background: "#F4F4F2",
+                    boxShadow: "0 0 5px rgba(244,244,242,0.9), 0 0 12px rgba(244,244,242,0.3)",
+                  }}
+                />
               </span>
               {t("live")}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-[256px_1fr]">
-            {/* Module rail */}
-            <ul className="border-b md:border-b-0 md:border-r border-line">
+            {/* Module rail — active module sits pressed into a lit well */}
+            <ul
+              className="p-1.5 flex flex-col gap-0.5 md:border-none"
+              style={{ boxShadow: "inset -1px 0 0 rgba(0,0,0,0.3)" }}
+            >
               {localizedStack.map((s, i) => {
                 const { name: n } = splitLabel(s.label);
                 const Icon = s.icon ? iconMap[s.icon] : null;
@@ -152,30 +172,37 @@ export function TechStack() {
                       onMouseEnter={() => setActive(i)}
                       onFocus={() => setActive(i)}
                       onClick={() => setActive(i)}
-                      className={`relative w-full flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left border-b border-line/50 last:border-b-0 transition-colors duration-200 ${
-                        on ? "bg-cream/50" : "hover:bg-cream/25"
-                      }`}
+                      className="group relative w-full flex items-center gap-3 px-3.5 py-3 text-left rounded-[8px] transition-colors duration-200"
                     >
-                      {on && (
+                      {on ? (
                         <motion.span
-                          layoutId="stack-active-bar"
-                          className="absolute left-0 top-0 bottom-0 w-[2px] bg-ink"
+                          layoutId="stack-active-well"
+                          aria-hidden
+                          className="absolute inset-0 rounded-[8px]"
+                          style={WELL_STYLE}
                           transition={{ type: "spring", stiffness: 420, damping: 34 }}
                         />
+                      ) : (
+                        <span
+                          aria-hidden
+                          className="absolute inset-0 rounded-[8px] opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                          style={HOVER_CAP_STYLE}
+                        />
                       )}
-                      <span className="font-mono text-[10px] text-soft/45 tabular-nums w-5 shrink-0">
+                      <span className="relative z-10 font-mono text-[10px] text-soft/45 tabular-nums w-5 shrink-0">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       {Icon && (
                         <Icon
-                          className={`w-4 h-4 shrink-0 transition-colors ${
+                          className={`relative z-10 w-4 h-4 shrink-0 transition-colors ${
                             on ? "text-ink" : "text-soft"
                           }`}
                           strokeWidth={1.5}
+                          style={on ? { filter: "drop-shadow(0 0 6px rgba(244,244,242,0.35))" } : undefined}
                         />
                       )}
                       <span
-                        className={`font-mono text-[12px] uppercase tracking-[0.1em] truncate transition-colors ${
+                        className={`relative z-10 font-mono text-[12px] uppercase tracking-[0.1em] truncate transition-colors ${
                           on ? "text-ink" : "text-mute"
                         }`}
                       >
@@ -200,10 +227,14 @@ export function TechStack() {
                   {/* Header */}
                   <div className="flex items-start gap-4">
                     {ActiveIcon && (
-                      <div className="shrink-0 w-11 h-11 rounded-[10px] border border-line bg-cream/40 flex items-center justify-center">
+                      <div
+                        className="shrink-0 w-11 h-11 rounded-[10px] flex items-center justify-center"
+                        style={WELL_STYLE}
+                      >
                         <ActiveIcon
                           className="w-5 h-5 text-ink"
                           strokeWidth={1.5}
+                          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.5)) drop-shadow(0 0 6px rgba(244,244,242,0.2))" }}
                         />
                       </div>
                     )}
@@ -231,7 +262,9 @@ export function TechStack() {
                         initial={{ opacity: 0, scale: 0.96, y: 4 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ delay: 0.06 + k * 0.04, duration: 0.3, ease }}
-                        className="inline-flex items-center px-3 py-1.5 rounded-md border border-line bg-cream/30 font-mono text-[11px] tracking-tight text-ink/90"
+                        whileHover={{ y: -1 }}
+                        className="inline-flex items-center px-3 py-1.5 rounded-[7px] font-mono text-[11px] tracking-tight text-ink/90"
+                        style={CAP_STYLE}
                       >
                         {item}
                       </motion.li>
@@ -289,9 +322,22 @@ export function TechStack() {
                     {String(i + 1).padStart(2, "0")}
                   </span>
                 </div>
-                <div className="h-[3px] rounded-full bg-line/60 overflow-hidden">
+                <div
+                  className="h-[6px] rounded-full overflow-hidden"
+                  style={{
+                    background: "rgba(0,0,0,0.45)",
+                    boxShadow:
+                      "inset 0 1.5px 3px rgba(0,0,0,0.55), inset 0 -1px 0 rgba(255,255,255,0.045), 0 1px 0 rgba(255,255,255,0.04)",
+                  }}
+                >
                   <motion.div
-                    className="h-full bg-ink/80 rounded-full origin-left"
+                    className="h-full rounded-full origin-left"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(244,244,242,0.95) 0%, rgba(200,200,198,0.85) 100%)",
+                      boxShadow:
+                        "0 0 8px rgba(244,244,242,0.35), 0 0 2px rgba(244,244,242,0.5)",
+                    }}
                     initial={{ scaleX: 0 }}
                     whileInView={{ scaleX: 1 }}
                     viewport={{ once: true, amount: 0.6 }}

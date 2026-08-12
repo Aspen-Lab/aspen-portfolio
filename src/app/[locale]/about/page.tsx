@@ -6,6 +6,13 @@ import { Reveal } from "@/components/Reveal";
 import { BootSequence } from "@/components/BootSequence";
 import { PageEntrance } from "@/components/PageEntrance";
 import { BootReveal } from "@/components/BootReveal";
+import { TRAY_STYLE, WELL_STYLE, DOT_WELL } from "@/lib/tactile";
+
+/* Engraved groove — replaces flat 1px rules inside the plate. */
+const GROOVE_TOP = {
+  borderTop: "1px solid rgba(0,0,0,0.4)",
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.035)",
+} as const;
 
 export async function generateMetadata({
   params,
@@ -325,24 +332,39 @@ export default async function About({
       <BootReveal delay={0}>
       <section className="container-fluid pt-10 pb-24">
         {/* Framed system panel — the architectural anchor of the page. */}
-          <div className="border border-line rounded-[12px] overflow-hidden">
+          <div className="rounded-[16px] overflow-hidden" style={TRAY_STYLE}>
             {/* Window title bar */}
-            <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 border-b border-line bg-cream/30 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft">
+            <div
+              className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft"
+              style={{
+                background: "rgba(0,0,0,0.16)",
+                boxShadow: "inset 0 -1px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)",
+              }}
+            >
               <span className="flex items-center gap-2.5 min-w-0">
                 <span className="flex gap-1.5 shrink-0">
-                  <span className="w-2 h-2 rounded-full border border-line" />
-                  <span className="w-2 h-2 rounded-full border border-line" />
-                  <span className="w-2 h-2 rounded-full border border-line" />
+                  <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
+                  <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
+                  <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
                 </span>
                 <span className="text-ink truncate">ASPEN_W</span>
                 <span className="text-soft/50 hidden sm:inline">
                   {"// about.sys"}
                 </span>
               </span>
-              <span className="flex items-center gap-1.5 shrink-0">
-                <span className="relative flex w-1.5 h-1.5">
-                  <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
-                  <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
+              <span className="flex items-center gap-2 shrink-0">
+                <span
+                  className="relative flex items-center justify-center w-[11px] h-[11px] rounded-full"
+                  style={DOT_WELL}
+                >
+                  <span className="absolute w-1 h-1 rounded-full bg-ink opacity-40 animate-ping" />
+                  <span
+                    className="relative w-1 h-1 rounded-full"
+                    style={{
+                      background: "#F4F4F2",
+                      boxShadow: "0 0 5px rgba(244,244,242,0.9), 0 0 12px rgba(244,244,242,0.3)",
+                    }}
+                  />
                 </span>
                 {isCn ? "在线" : "Online"}
               </span>
@@ -351,7 +373,10 @@ export default async function About({
             {/* Body grid — meta rail × main column */}
             <div className="grid grid-cols-1 md:grid-cols-[210px_1fr]">
               {/* Left rail — diagnostic key/value index */}
-              <dl className="border-b md:border-b-0 md:border-r border-line font-mono text-[11px] uppercase tracking-[0.13em]">
+              <dl
+                className="font-mono text-[11px] uppercase tracking-[0.13em]"
+                style={{ boxShadow: "inset -1px 0 0 rgba(0,0,0,0.3), inset 0 -1px 0 rgba(0,0,0,0.2)" }}
+              >
                 {(
                   [
                     [isCn ? "角色" : "Role", isCn ? "设计工程师" : "Design Engineer"],
@@ -390,8 +415,11 @@ export default async function About({
             </div>
 
             {/* Capabilities band — what I do, in the diagnostic-rail idiom */}
-            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr] border-t border-line">
-              <div className="px-4 sm:px-5 py-4 md:py-6 border-b md:border-b-0 md:border-r border-line font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block">
+            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr]" style={GROOVE_TOP}>
+              <div
+                className="px-4 sm:px-5 py-4 md:py-6 font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block"
+                style={{ boxShadow: "inset -1px 0 0 rgba(0,0,0,0.3), inset 0 -1px 0 rgba(0,0,0,0.2)" }}
+              >
                 <span className="text-soft/55">
                   {isCn ? "能力" : "Capabilities"}
                 </span>
@@ -408,7 +436,10 @@ export default async function About({
                     }`}
                   >
                     <div className="flex items-start gap-3.5">
-                      <span className="shrink-0 grid place-items-center w-9 h-9 rounded-[7px] border border-line bg-cream/50 text-mute transition-colors duration-300 group-hover/cap:text-ink group-hover/cap:border-soft">
+                      <span
+                        className="shrink-0 grid place-items-center w-9 h-9 rounded-[9px] text-mute transition-colors duration-300 group-hover/cap:text-ink"
+                        style={WELL_STYLE}
+                      >
                         <CapabilityGlyph icon={c.icon} />
                       </span>
                       <div className="min-w-0 flex-1">
@@ -431,8 +462,11 @@ export default async function About({
             </div>
 
             {/* Trajectory band — experience timeline, most recent first */}
-            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr] border-t border-line">
-              <div className="px-4 sm:px-5 py-4 md:py-6 border-b md:border-b-0 md:border-r border-line font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block">
+            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr]" style={GROOVE_TOP}>
+              <div
+                className="px-4 sm:px-5 py-4 md:py-6 font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block"
+                style={{ boxShadow: "inset -1px 0 0 rgba(0,0,0,0.3), inset 0 -1px 0 rgba(0,0,0,0.2)" }}
+              >
                 <span className="text-soft/55">
                   {isCn ? "轨迹" : "Trajectory"}
                 </span>
@@ -459,10 +493,19 @@ export default async function About({
                       {i === 0 ? (
                         <span className="relative flex w-[9px] h-[9px]">
                           <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
-                          <span className="relative w-[9px] h-[9px] rounded-full bg-ink ring-[3px] ring-paper" />
+                          <span
+                            className="relative w-[9px] h-[9px] rounded-full bg-ink"
+                            style={{
+                              boxShadow:
+                                "0 0 6px rgba(244,244,242,0.85), 0 0 14px rgba(244,244,242,0.3), 0 0 0 3px #212121",
+                            }}
+                          />
                         </span>
                       ) : (
-                        <span className="block w-[9px] h-[9px] rounded-full bg-paper border border-soft ring-[3px] ring-paper" />
+                        <span
+                          className="block w-[9px] h-[9px] rounded-full"
+                          style={{ ...DOT_WELL, boxShadow: `${DOT_WELL.boxShadow}, 0 0 0 3px #212121` }}
+                        />
                       )}
                     </span>
                     <span className="min-w-0">
@@ -482,7 +525,13 @@ export default async function About({
             </div>
 
             {/* Footer coordinate strip */}
-            <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 border-t border-line font-mono text-[10px] uppercase tracking-[0.22em] text-soft/55">
+            <div
+              className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] text-soft/55"
+              style={{
+                background: "rgba(0,0,0,0.16)",
+                boxShadow: "inset 0 1px 0 rgba(0,0,0,0.35), inset 0 2px 0 rgba(255,255,255,0.03)",
+              }}
+            >
               <span>LAT 47.6101 · LON −122.2015</span>
               <span className="hidden sm:inline">
                 {isCn ? "REC · 1995 — 至今" : "REC · 1995 — PRESENT"}

@@ -15,6 +15,7 @@ import {
 import type { ComponentType, SVGProps } from "react";
 import { combos } from "@/lib/work";
 import type { Combo } from "@/lib/work";
+import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE, CAP_STYLE, STRIP_WELL } from "@/lib/tactile";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 
@@ -84,9 +85,21 @@ function AnimBar({
       <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-soft/60 w-20 shrink-0">
         {label}
       </span>
-      <div className="flex-1 h-[2px] rounded-full bg-line/50 overflow-hidden">
+      <div
+        className="flex-1 h-[5px] rounded-full overflow-hidden"
+        style={{
+          background: "rgba(0,0,0,0.45)",
+          boxShadow:
+            "inset 0 1px 2.5px rgba(0,0,0,0.55), inset 0 -1px 0 rgba(255,255,255,0.045), 0 1px 0 rgba(255,255,255,0.04)",
+        }}
+      >
         <motion.div
-          className="h-full bg-ink/65 rounded-full origin-left"
+          className="h-full rounded-full origin-left"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(244,244,242,0.92) 0%, rgba(200,200,198,0.8) 100%)",
+            boxShadow: "0 0 7px rgba(244,244,242,0.3), 0 0 2px rgba(244,244,242,0.45)",
+          }}
           initial={{ scaleX: 0 }}
           animate={{ scaleX: pct / 100 }}
           transition={{ duration: 0.75, ease, delay }}
@@ -153,7 +166,10 @@ function Widget({ index, locale }: { index: number; locale: Locale }) {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.15 + i * 0.07, duration: 0.26, ease }}
                 >
-                  <span className="px-2 py-1 rounded-md border border-line bg-paper/60 font-mono text-[11px] text-ink/75">
+                  <span
+                    className="px-2 py-1 rounded-[7px] font-mono text-[11px] text-ink/75"
+                    style={CAP_STYLE}
+                  >
                     {s}
                   </span>
                   {i < 3 && (
@@ -183,7 +199,8 @@ function Widget({ index, locale }: { index: number; locale: Locale }) {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 + i * 0.08, duration: 0.28, ease }}
-                className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg border border-line/50 bg-paper/50"
+                className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-[8px]"
+                style={STRIP_WELL}
               >
                 <div className="flex items-center gap-2">
                   <Award className="w-3.5 h-3.5 text-soft/50 shrink-0" strokeWidth={1.5} />
@@ -215,7 +232,8 @@ function Widget({ index, locale }: { index: number; locale: Locale }) {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.08 + i * 0.08, duration: 0.28, ease }}
-                className="flex flex-col gap-1 px-3 py-3 rounded-lg border border-line/50 bg-paper/50"
+                className="flex flex-col gap-1 px-3 py-3 rounded-[9px]"
+                style={CAP_STYLE}
               >
                 <span className="font-display text-[18px] tracking-[-0.01em] text-ink/85 tabular-nums">
                   {value}
@@ -273,35 +291,48 @@ export function Moat() {
         </p>
       </Reveal>
 
-      {/* Pill nav */}
+      {/* Numbered selector — a tray of six keys; the active one sits pressed */}
       <Reveal delay={0.05}>
-        <div className="flex gap-2 overflow-x-auto no-scrollbar mb-8 -mx-1 px-1 pb-1">
-          {localizedCombos.map((c, i) => {
-            const on = active === i;
-            return (
-              <button
-                key={c.index}
-                type="button"
-                onClick={() => setActive(i)}
-                className="relative shrink-0 h-8 px-3.5 rounded-full cursor-pointer"
-              >
-                {on && (
-                  <motion.span
-                    layoutId="combo-pill-bg"
-                    className="absolute inset-0 rounded-full bg-ink"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
-                <span
-                  className={`relative z-10 font-mono text-[11px] uppercase tracking-[0.18em] tabular-nums transition-colors duration-200 ${
-                    on ? "text-paper" : "text-soft hover:text-mute"
-                  }`}
+        <div className="overflow-x-auto no-scrollbar mb-8 -mx-1 px-1 pb-1">
+          <div
+            className="inline-flex items-center gap-0.5 rounded-[11px] p-1 w-max"
+            style={TRAY_STYLE}
+          >
+            {localizedCombos.map((c, i) => {
+              const on = active === i;
+              return (
+                <button
+                  key={c.index}
+                  type="button"
+                  onClick={() => setActive(i)}
+                  className="group relative shrink-0 h-8 px-3.5 rounded-[8px] cursor-pointer"
                 >
-                  {c.index}
-                </span>
-              </button>
-            );
-          })}
+                  {on ? (
+                    <motion.span
+                      layoutId="combo-pill-bg"
+                      aria-hidden
+                      className="absolute inset-0 rounded-[8px]"
+                      style={WELL_STYLE}
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 rounded-[8px] opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                      style={HOVER_CAP_STYLE}
+                    />
+                  )}
+                  <span
+                    className={`relative z-10 font-mono text-[11px] uppercase tracking-[0.18em] tabular-nums transition-colors duration-200 ${
+                      on ? "text-ink" : "text-soft group-hover:text-mute"
+                    }`}
+                  >
+                    {c.index}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </Reveal>
 
@@ -315,13 +346,23 @@ export function Moat() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.34, ease }}
           >
-            <div className="rounded-2xl bg-cream/20 p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 lg:gap-12">
+            <div
+              className="rounded-[16px] p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 lg:gap-12"
+              style={TRAY_STYLE}
+            >
               {/* Left: credential text */}
               <div className="flex flex-col gap-5 justify-center">
                 {/* Category label */}
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg border border-line/50 bg-paper/60 flex items-center justify-center">
-                    <Icon className="w-3.5 h-3.5 text-soft/65" strokeWidth={1.5} />
+                  <div
+                    className="w-7 h-7 rounded-[8px] flex items-center justify-center"
+                    style={WELL_STYLE}
+                  >
+                    <Icon
+                      className="w-3.5 h-3.5 text-soft/75"
+                      strokeWidth={1.5}
+                      style={{ filter: "drop-shadow(0 1.5px 2px rgba(0,0,0,0.5))" }}
+                    />
                   </div>
                   <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft">
                     {combo.title}
@@ -343,7 +384,15 @@ export function Moat() {
               </div>
 
               {/* Right: widget */}
-              <div className="flex flex-col justify-center lg:border-l lg:border-line/30 lg:pl-10">
+              <div className="relative flex flex-col justify-center lg:pl-10">
+                <span
+                  aria-hidden
+                  className="hidden lg:block absolute left-0 top-1 bottom-1 w-px"
+                  style={{
+                    background: "rgba(0,0,0,0.35)",
+                    boxShadow: "1px 0 0 rgba(255,255,255,0.03)",
+                  }}
+                />
                 <Widget index={active} locale={locale} />
               </div>
             </div>
