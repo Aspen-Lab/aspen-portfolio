@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
 import { Briefcase, Code2, Zap, Trophy } from "lucide-react";
+import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE } from "@/lib/tactile";
 import type { ComponentType, SVGProps } from "react";
 import { Hero } from "./Hero";
 import { SelectedWork } from "./SelectedWork";
@@ -69,10 +70,20 @@ export function TabsHome() {
     <>
       <Hero />
 
-      {/* Sticky tab bar */}
-      <div className="sticky top-16 z-30 bg-paper/85 backdrop-blur-xl border-b border-line/20">
+      {/* Sticky tab bar — same tray/well physics as the nav and inventory */}
+      <div
+        className="sticky top-16 z-30 bg-paper/85 backdrop-blur-xl"
+        style={{
+          boxShadow:
+            "inset 0 -1px 0 rgba(0,0,0,0.38), 0 1px 0 rgba(255,255,255,0.03)",
+        }}
+      >
         <div className="container-fluid">
-          <div className="flex items-center justify-start sm:justify-center gap-1 py-2.5 overflow-x-auto no-scrollbar">
+          <div className="flex items-center justify-start sm:justify-center py-2.5 overflow-x-auto no-scrollbar">
+            <div
+              className="flex items-center gap-0.5 rounded-[13px] p-1 w-max"
+              style={TRAY_STYLE}
+            >
             {(tabs as unknown as Tab[]).map((tab) => {
               const isActive = active === tab.id;
               const { Icon } = tab;
@@ -80,14 +91,21 @@ export function TabsHome() {
                 <button
                   key={tab.id}
                   onClick={() => handleClick(tab.id as typeof active)}
-                  className="relative flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl cursor-pointer group transition-colors duration-200"
+                  className="relative flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-[9px] cursor-pointer group transition-colors duration-200"
                 >
-                  {/* Sliding background */}
-                  {isActive && (
+                  {/* Active = pressed well · hover = raised keycap */}
+                  {isActive ? (
                     <motion.span
                       layoutId="tabs-bg"
-                      className="absolute inset-0 rounded-xl bg-ink/8"
+                      className="absolute inset-0 rounded-[9px]"
+                      style={WELL_STYLE}
                       transition={{ type: "spring", stiffness: 400, damping: 34 }}
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 rounded-[9px] opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                      style={HOVER_CAP_STYLE}
                     />
                   )}
 
@@ -113,6 +131,7 @@ export function TabsHome() {
                 </button>
               );
             })}
+            </div>
           </div>
         </div>
       </div>
