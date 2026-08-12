@@ -17,7 +17,51 @@
     "ctaStack": "Stack",
     "ctaEmail": "xiaoyangw.design@gmail.com",
     "bio": "Designer who codes — shipping product design and production React at <axel>Axel (YC W19)</axel>, solo and fast.",
-    "stackLabel": "Stack"
+    "stackLabel": "Stack",
+    "invLabel": "Inventory",
+    "invCount": "08 / 08",
+    "inv": {
+      "Figma": {
+        "rarity": "Epic",
+        "type": "DESIGN · MAIN HAND",
+        "flavor": "Every pixel is forged here before it ships."
+      },
+      "Claude": {
+        "rarity": "Legendary",
+        "type": "AI · COMPANION",
+        "flavor": "A second brain that argues back and ships faster."
+      },
+      "Codex": {
+        "rarity": "Rare",
+        "type": "AI · SUMMON",
+        "flavor": "Autonomous familiar — point it at a repo, walk away."
+      },
+      "Cursor": {
+        "rarity": "Epic",
+        "type": "CODE · OFF HAND",
+        "flavor": "Where design decisions become production React."
+      },
+      "GitHub": {
+        "rarity": "Rare",
+        "type": "VCS · VAULT",
+        "flavor": "Every run since day one, kept in the ledger."
+      },
+      "Vercel": {
+        "rarity": "Rare",
+        "type": "DEPLOY · PORTAL",
+        "flavor": "From merge to live before the coffee cools."
+      },
+      "Supabase": {
+        "rarity": "Uncommon",
+        "type": "DATA · REACTOR",
+        "flavor": "Auth, storage, and state — one humming core."
+      },
+      "Obsidian": {
+        "rarity": "Uncommon",
+        "type": "NOTES · GRIMOIRE",
+        "flavor": "Years of spells, cross-linked and searchable."
+      }
+    }
   },
   "Tabs": {
     "work": "Featured work",

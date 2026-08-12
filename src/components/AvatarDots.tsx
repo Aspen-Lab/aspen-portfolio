@@ -4,9 +4,11 @@ import { useEffect, useRef } from "react";
 import { AVATAR_TONES } from "@/lib/avatar-ascii";
 
 /**
- * Portrait as a uniform field of 2px round dots — same grid as before.
- * Hover interaction uses particle physics: dots near the cursor get an
- * impulse velocity, spring back, and overshoot before settling.
+ * Portrait as a dot matrix that MOVES without losing the grid.
+ * The cursor lens does three things: dots swell and brighten with
+ * proximity, and displace radially — but displacement is capped well
+ * below one grid pitch and driven by a stiff, fast spring, so rows and
+ * columns always stay legible. Mechanical, never gooey.
  */
 export function AvatarDots() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -49,7 +51,7 @@ export function AvatarDots() {
       grid.push(row);
     }
 
-    const pitch = 4.3;
+    const pitch = 3.8;
     const dot = 1;
     const cssW = TW * pitch;
     const cssH = TH * pitch;
@@ -60,12 +62,12 @@ export function AvatarDots() {
     canvas.style.height = `${cssH}px`;
     ctx.scale(dpr, dpr);
 
-    // Pre-build face dots with physics state
+    // Pre-build face dots — home is the grid cell; offset stays tiny
     type Dot = {
       gx: number; gy: number;   // grid indices (for shimmer/reveal)
       hx: number; hy: number;   // home pixel position
       bb: number;               // brightness
-      ox: number; oy: number;   // physics offset from home
+      ox: number; oy: number;   // displacement (capped below one pitch)
       vx: number; vy: number;   // velocity
     };
 
@@ -111,8 +113,13 @@ export function AvatarDots() {
     let raf = 0;
 
     const mouse = { x: -9999, y: -9999 };
-    const R = 96;
-    const R2 = R * R;
+    // Smoothed lens cursor — a touch of follow, mostly direct.
+    const cur = { x: 0, y: 0, seeded: false };
+    let lensAmt = 0; // global lens strength, eased on enter/leave
+    const R = 118;
+    const MAX_DISP = pitch * 0.45; // < half a cell — grid stays legible
+    const SPRING = 0.32;           // stiff pull toward the field target
+    const DAMP = 0.62;             // heavy damping — snaps, no wobble
 
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -127,35 +134,51 @@ export function AvatarDots() {
       window.addEventListener("mouseout", onLeave);
     }
 
-    const SPRING = 0.07;
-    const DAMP   = 0.82;
-
     const frame = (now: number) => {
       const t = now - start;
       const globalReveal = reduce ? 1 : Math.max(0, Math.min(1, t / 900));
       ctx.clearRect(0, 0, cssW, cssH);
 
+      // Advance the smoothed lens cursor + global lens strength.
+      if (!reduce) {
+        const active = mouse.x > -9000;
+        if (active && !cur.seeded) {
+          cur.x = mouse.x;
+          cur.y = mouse.y;
+          cur.seeded = true;
+        }
+        if (cur.seeded && active) {
+          cur.x += (mouse.x - cur.x) * 0.35;
+          cur.y += (mouse.y - cur.y) * 0.35;
+        }
+        lensAmt += ((active ? 1 : 0) - lensAmt) * 0.09;
+        if (!active && lensAmt < 0.01) cur.seeded = false;
+      }
+
       for (const d of dots) {
-        if (!reduce) {
-          // Spring force back toward home (offset = 0)
-          d.vx += -d.ox * SPRING;
-          d.vy += -d.oy * SPRING;
-
-          // Mouse repulsion — push velocity, not position
-          if (mouse.x > -9000) {
-            const cx = d.hx + d.ox;
-            const cy = d.hy + d.oy;
-            const dx = cx - mouse.x;
-            const dy = cy - mouse.y;
-            const dist2 = dx * dx + dy * dy;
-            if (dist2 < R2) {
-              const dist = Math.sqrt(dist2) || 0.001;
-              const inf = 1 - dist / R;
-              d.vx += (dx / dist) * inf * inf * 5;
-              d.vy += (dy / dist) * inf * inf * 5;
-            }
+        // Lens field: proximity 0..1 — drives size, light, and a small
+        // radial push (capped at MAX_DISP so the grid never smears).
+        let f = 0;
+        let tx = 0;
+        let ty = 0;
+        if (!reduce && lensAmt > 0.005 && cur.seeded) {
+          const dx = d.hx - cur.x;
+          const dy = d.hy - cur.y;
+          const dist2 = dx * dx + dy * dy;
+          if (dist2 < R * R) {
+            const dist = Math.sqrt(dist2) || 0.001;
+            const u = 1 - dist / R;
+            f = u * u * (3 - 2 * u) * lensAmt; // smoothstep falloff
+            const k = (f * MAX_DISP) / dist;
+            tx = dx * k;
+            ty = dy * k;
           }
+        }
 
+        if (!reduce) {
+          // Stiff, fast spring toward the field target — mechanical settle.
+          d.vx += (tx - d.ox) * SPRING;
+          d.vy += (ty - d.oy) * SPRING;
           d.vx *= DAMP;
           d.vy *= DAMP;
           d.ox += d.vx;
@@ -174,13 +197,12 @@ export function AvatarDots() {
 
         let alpha = Math.min(0.78, d.bb * 0.44 * cBoost) * reveal * shimmer;
 
-        // Dots brighten while displaced (particle energy)
-        const disp = Math.sqrt(d.ox * d.ox + d.oy * d.oy);
-        if (disp > 0.5) alpha = Math.min(0.92, alpha * (1 + disp * 0.06));
+        // Inside the lens: brighten with proximity (LED response)
+        if (f > 0.005) alpha = Math.min(0.92, alpha * (1 + f * 0.85));
 
         // Eye-region boost
-        const px = d.hx + d.ox;
-        const py = d.hy + d.oy;
+        const px = d.hx;
+        const py = d.hy;
         const dL = Math.sqrt((px - cssW * 0.315) ** 2 + (py - cssH * 0.432) ** 2);
         const dR = Math.sqrt((px - cssW * 0.535) ** 2 + (py - cssH * 0.432) ** 2);
         const eyeInf = Math.max(
@@ -193,7 +215,7 @@ export function AvatarDots() {
 
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(d.hx + d.ox, d.hy + d.oy, dot, 0, TWO_PI);
+        ctx.arc(d.hx + d.ox, d.hy + d.oy, dot * (1 + f * 1.1), 0, TWO_PI);
         ctx.fill();
       }
 

@@ -17,7 +17,51 @@
     "ctaStack": "技术栈",
     "ctaEmail": "xiaoyangw.design@gmail.com",
     "bio": "会写代码的设计师 —— 在 <axel>Axel (YC W19)</axel> 直接交付产品设计和生产级 React，一个人也能快速推进。",
-    "stackLabel": "工具栈"
+    "stackLabel": "工具栈",
+    "invLabel": "物品栏",
+    "invCount": "08 / 08",
+    "inv": {
+      "Figma": {
+        "rarity": "史诗",
+        "type": "设计 · 主手",
+        "flavor": "每个像素在出厂前，都在这里锻造。"
+      },
+      "Claude": {
+        "rarity": "传说",
+        "type": "AI · 随从",
+        "flavor": "第二大脑，会还嘴，出活更快。"
+      },
+      "Codex": {
+        "rarity": "稀有",
+        "type": "AI · 召唤物",
+        "flavor": "自主使魔——指个仓库，就能自己干活。"
+      },
+      "Cursor": {
+        "rarity": "史诗",
+        "type": "代码 · 副手",
+        "flavor": "设计决策在这里变成生产级 React。"
+      },
+      "GitHub": {
+        "rarity": "稀有",
+        "type": "版本 · 宝库",
+        "flavor": "第一天起的每一次出手，都记在账上。"
+      },
+      "Vercel": {
+        "rarity": "稀有",
+        "type": "部署 · 传送门",
+        "flavor": "从合并到上线，咖啡还没凉。"
+      },
+      "Supabase": {
+        "rarity": "罕见",
+        "type": "数据 · 反应堆",
+        "flavor": "鉴权、存储、状态——一颗嗡嗡作响的核心。"
+      },
+      "Obsidian": {
+        "rarity": "罕见",
+        "type": "笔记 · 魔典",
+        "flavor": "多年积累的咒语，全部互链、可检索。"
+      }
+    }
   },
   "Tabs": {
     "work": "精选作品",
