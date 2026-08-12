@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Lato } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
@@ -12,14 +13,6 @@ import { CustomCursor } from "@/components/CustomCursor";
 import { routing } from "@/i18n/routing";
 import type { Locale } from "@/i18n/routing";
 import "../globals.css";
-
-const lato = Lato({
-  variable: "--font-lato",
-  subsets: ["latin"],
-  weight: ["300", "400", "700", "900"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
 
 export async function generateMetadata({
   params,
@@ -55,7 +48,7 @@ export default async function LocaleLayout({
 
   // The site is one bilingual experience; html lang reflects the active route.
   return (
-    <html lang={locale} className={lato.variable}>
+    <html lang={locale} className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="min-h-screen flex flex-col bg-paper text-ink antialiased">
         <NextIntlClientProvider>
           <Nav />
