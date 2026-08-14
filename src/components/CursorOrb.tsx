@@ -131,13 +131,13 @@ export function CursorOrb() {
             result="rawMap"
           />
           {/* Smooth the displacement field — kills 8-bit quantization steps */}
-          <feGaussianBlur in="rawMap" stdDeviation="0.35" result="map" />
+          <feGaussianBlur in="rawMap" stdDeviation="0.6" result="map" />
           {/* Single-channel refraction — dispersion removed for maximum
               sharpness: one displacement, no RGB misregistration. */}
           <feDisplacementMap in="SourceGraphic" in2="map" scale={SIZE} xChannelSelector="R" yChannelSelector="G" result="bent" />
           {/* Sub-pixel anti-alias: feDisplacementMap samples nearest-
               neighbor; a 0.3px smooth removes the jaggies it leaves. */}
-          <feGaussianBlur in="bent" stdDeviation="0.3" />
+          <feGaussianBlur in="bent" stdDeviation="0.45" />
         </filter>
       </svg>
 
