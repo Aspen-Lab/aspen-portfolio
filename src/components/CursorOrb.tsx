@@ -127,15 +127,15 @@ export function CursorOrb() {
             result="rawMap"
           />
           {/* Smooth the displacement field — kills 8-bit quantization steps */}
-          <feGaussianBlur in="rawMap" stdDeviation="0.01" result="map" />
+          <feGaussianBlur in="rawMap" stdDeviation="0.006" result="map" />
           {/* Dispersion: each channel refracts with its own index, then
               the three are summed back — the chromatic fringe at the rim
               is computed, not painted. */}
-          <feDisplacementMap in="SourceGraphic" in2="map" scale="0.88" xChannelSelector="R" yChannelSelector="G" result="dispR" />
+          <feDisplacementMap in="SourceGraphic" in2="map" scale="0.96" xChannelSelector="R" yChannelSelector="G" result="dispR" />
           <feColorMatrix in="dispR" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="chR" />
           <feDisplacementMap in="SourceGraphic" in2="map" scale="1" xChannelSelector="R" yChannelSelector="G" result="dispG" />
           <feColorMatrix in="dispG" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="chG" />
-          <feDisplacementMap in="SourceGraphic" in2="map" scale="1.12" xChannelSelector="R" yChannelSelector="G" result="dispB" />
+          <feDisplacementMap in="SourceGraphic" in2="map" scale="1.04" xChannelSelector="R" yChannelSelector="G" result="dispB" />
           <feColorMatrix in="dispB" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="chB" />
           <feComposite in="chR" in2="chG" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="chRG" />
           <feComposite in="chRG" in2="chB" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
