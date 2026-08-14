@@ -18,7 +18,7 @@ const LOCK_SELECTOR =
   'a, button, [role="button"], input, textarea, select, label, summary';
 
 const SIZE = 48;      // px — orb diameter
-const MAP_SIZE = 128; // px — displacement map resolution
+const MAP_SIZE = 384; // px — displacement map resolution (8-bit steps smooth out)
 
 /* R channel = x-displacement, G = y-displacement, 128 = neutral.
    Vectors point toward the center with r³ strength: rim pixels sample
@@ -124,8 +124,10 @@ export function CursorOrb() {
             width="1"
             height="1"
             preserveAspectRatio="none"
-            result="map"
+            result="rawMap"
           />
+          {/* Smooth the displacement field — kills 8-bit quantization steps */}
+          <feGaussianBlur in="rawMap" stdDeviation="0.01" result="map" />
           {/* Dispersion: each channel refracts with its own index, then
               the three are summed back — the chromatic fringe at the rim
               is computed, not painted. */}
