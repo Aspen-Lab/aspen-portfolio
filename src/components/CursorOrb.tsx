@@ -76,22 +76,56 @@ export function CursorOrb() {
 
     let snapEl: Element | null = null;
 
+    /* Pose = position + a directional squash. The glass stretches along
+       its motion vector (jelly physics) in EVERY form — ball, caret,
+       and the docked pill all deform when shaken — and relaxes round
+       via the decay loop below. Position writes stay synchronous. */
+    const pose = { x: -9999, y: -9999, ang: 0, s: 0 };
+    let lastX = 0;
+    let lastY = 0;
+    const write = () => {
+      el.style.transform =
+        `translate3d(${pose.x - SIZE / 2}px, ${pose.y - SIZE / 2}px, 0)` +
+        ` rotate(${pose.ang}rad) scale(${1 + pose.s}, ${1 - pose.s * 0.5}) rotate(${-pose.ang}rad)`;
+    };
+
     const onMove = (e: PointerEvent) => {
-      // Direct write in the event handler — the fastest path there is.
+      const mvx = e.clientX - lastX;
+      const mvy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      const speed = Math.hypot(mvx, mvy);
+      if (speed > 0.5 && speed < 200) {
+        pose.ang = Math.atan2(mvy, mvx);
+        pose.s = Math.max(pose.s * 0.72, Math.min(speed * 0.006, 0.16));
+      }
+
       if (snapEl && snapEl.isConnected && el.dataset.mode === "target") {
         // Adhered to a control: sit on its center, with a whisper of
         // pointer parallax inside it.
         const r = snapEl.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const cy = r.top + r.height / 2;
-        const px = Math.max(-3, Math.min(3, (e.clientX - cx) * 0.12));
-        const py = Math.max(-3, Math.min(3, (e.clientY - cy) * 0.12));
-        el.style.transform = `translate3d(${cx + px - SIZE / 2}px, ${cy + py - SIZE / 2}px, 0)`;
+        pose.x = cx + Math.max(-3, Math.min(3, (e.clientX - cx) * 0.12));
+        pose.y = cy + Math.max(-3, Math.min(3, (e.clientY - cy) * 0.12));
       } else {
-        el.style.transform = `translate3d(${e.clientX - SIZE / 2}px, ${e.clientY - SIZE / 2}px, 0)`;
+        pose.x = e.clientX;
+        pose.y = e.clientY;
       }
+      write();
       if (el.style.opacity !== "1") el.style.opacity = "1";
     };
+
+    // Relax the squash when the pointer rests — decay only, never position.
+    let relaxRaf = 0;
+    const relax = () => {
+      if (pose.s > 0.004) {
+        pose.s *= 0.85;
+        write();
+      }
+      relaxRaf = requestAnimationFrame(relax);
+    };
+    relaxRaf = requestAnimationFrame(relax);
     const onOver = (e: PointerEvent) => {
       const t = e.target as Element | null;
       const hit = t?.closest?.(LOCK_SELECTOR) ?? null;
@@ -141,6 +175,7 @@ export function CursorOrb() {
     document.documentElement.addEventListener("pointerleave", onLeave);
     document.documentElement.classList.add("cursor-orb-active");
     return () => {
+      cancelAnimationFrame(relaxRaf);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerover", onOver);
       window.removeEventListener("pointerdown", onDown);

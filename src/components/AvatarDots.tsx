@@ -120,8 +120,9 @@ export function AvatarDots() {
     const SCATTER = pitch * 1.2; // modest fling — motion stays compact
     const JITTER = 1.9;          // Brownian peak, weighted by f² below —
                                  // violent right at the cursor, quiet fast
-    const SPRING = 0.12;         // loose tether — lets the dance breathe
+    const SPRING = 0.16;         // tether — lively but held
     const DAMP = 0.8;            // light damping — lively, still settles
+    const MAX_OFF = pitch * 2.2; // hard leash: Brownian walk can't wander
 
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -192,6 +193,13 @@ export function AvatarDots() {
           d.vy *= DAMP;
           d.ox += d.vx;
           d.oy += d.vy;
+          // Hard leash — diffusion never escapes the neighborhood.
+          const off = Math.hypot(d.ox, d.oy);
+          if (off > MAX_OFF) {
+            const k2 = MAX_OFF / off;
+            d.ox *= k2;
+            d.oy *= k2;
+          }
         }
 
         const delay = ((d.gx + d.gy) / (TW + TH)) * 700;

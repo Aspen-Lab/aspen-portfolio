@@ -317,8 +317,10 @@ html.cursor-orb-active * {
   width: var(--pill-w, 64px);
   height: var(--pill-h, 40px);
   border-radius: var(--pill-r, 14px);
-  -webkit-backdrop-filter: blur(3px) brightness(1.09) saturate(1.05);
-  backdrop-filter: blur(3px) brightness(1.09) saturate(1.05);
+  background: rgba(255, 255, 255, 0.006);
+  /* Crystal-clear while docked — never blur the label underneath */
+  -webkit-backdrop-filter: brightness(1.16) saturate(1.05);
+  backdrop-filter: brightness(1.16) saturate(1.05);
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.14),
     0 5px 14px rgba(0, 0, 0, 0.24),
