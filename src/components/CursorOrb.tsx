@@ -109,28 +109,35 @@ export function CursorOrb() {
       <svg width="0" height="0" aria-hidden style={{ position: "absolute" }}>
         <filter
           id="orb-refraction"
-          x="0"
-          y="0"
-          width="100%"
-          height="100%"
-          filterUnits="objectBoundingBox"
-          primitiveUnits="objectBoundingBox"
+          x={-4}
+          y={-4}
+          width={SIZE + 8}
+          height={SIZE + 8}
+          filterUnits="userSpaceOnUse"
+          primitiveUnits="userSpaceOnUse"
           colorInterpolationFilters="sRGB"
         >
+          {/* userSpaceOnUse everywhere: Chromium rasterizes
+              objectBoundingBox feImage/displacement chains at low
+              resolution — px-based coordinates keep the backdrop
+              snapshot at device resolution. */}
           <feImage
             ref={feImageRef}
             x="0"
             y="0"
-            width="1"
-            height="1"
+            width={SIZE}
+            height={SIZE}
             preserveAspectRatio="none"
             result="rawMap"
           />
           {/* Smooth the displacement field — kills 8-bit quantization steps */}
-          <feGaussianBlur in="rawMap" stdDeviation="0.006" result="map" />
+          <feGaussianBlur in="rawMap" stdDeviation="0.35" result="map" />
           {/* Single-channel refraction — dispersion removed for maximum
               sharpness: one displacement, no RGB misregistration. */}
-          <feDisplacementMap in="SourceGraphic" in2="map" scale="1" xChannelSelector="R" yChannelSelector="G" />
+          <feDisplacementMap in="SourceGraphic" in2="map" scale={SIZE} xChannelSelector="R" yChannelSelector="G" result="bent" />
+          {/* Sub-pixel anti-alias: feDisplacementMap samples nearest-
+              neighbor; a 0.3px smooth removes the jaggies it leaves. */}
+          <feGaussianBlur in="bent" stdDeviation="0.3" />
         </filter>
       </svg>
 
