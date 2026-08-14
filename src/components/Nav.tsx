@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleToggle } from "./LocaleToggle";
@@ -101,12 +100,10 @@ export function Nav() {
               const inner = (
                 <>
                   {active ? (
-                    <motion.span
-                      layoutId="nav-well"
+                    <span
                       aria-hidden
                       className="absolute inset-0 rounded-[7px]"
                       style={WELL_STYLE}
-                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
                     />
                   ) : (
                     <span

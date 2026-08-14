@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -43,12 +42,10 @@ export function LocaleToggle() {
             }`}
           >
             {active && (
-              <motion.span
-                layoutId="locale-cap"
+              <span
                 aria-hidden
                 className="absolute inset-0 rounded-[6px]"
                 style={CAP_STYLE}
-                transition={{ type: "spring", stiffness: 400, damping: 28 }}
               />
             )}
             <span className="relative z-10">{labels[code]}</span>
