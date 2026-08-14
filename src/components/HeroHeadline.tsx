@@ -15,7 +15,10 @@ function MaskLine({
   return (
     <span
       className="block overflow-hidden"
-      style={{ paddingBottom: "0.08em", marginBottom: "-0.08em" }}
+      style={{
+        padding: "0 0.12em 0.12em",
+        margin: "0 -0.12em -0.12em",
+      }}
     >
       <motion.span
         className="block"
@@ -72,7 +75,10 @@ export function HeroHeadline({ line1, line2, line3a, line3Italic, line3b }: Prop
         </MaskLine>
         <MaskLine delay={BASE + 0.26} reduce={reduce}>
           {line3a}
-          <span className="italic font-normal leverage-gradient">
+          <span
+            className="italic font-normal leverage-gradient"
+            style={{ padding: "0 0.08em", margin: "0 -0.08em" }}
+          >
             {line3Italic}
           </span>
           {line3b}

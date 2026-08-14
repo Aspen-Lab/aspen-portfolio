@@ -112,6 +112,10 @@ export function AvatarDots() {
     const start = performance.now();
     let raf = 0;
 
+    // Blink scheduler — the portrait is alive. Occasional double blink.
+    let nextBlinkAt = start + 2400;
+    let blinkBegan = -1;
+
     const mouse = { x: -9999, y: -9999 };
     // Smoothed lens cursor — a touch of follow, mostly direct.
     const cur = { x: 0, y: 0, seeded: false };
@@ -156,6 +160,22 @@ export function AvatarDots() {
         }
         lensAmt += ((active ? 1 : 0) - lensAmt) * 0.09;
         if (!active && lensAmt < 0.01) cur.seeded = false;
+      }
+
+      // Blink drive: fast close, slower open, ~300ms per blink.
+      let blink = 0;
+      if (!reduce) {
+        if (blinkBegan < 0 && now >= nextBlinkAt) blinkBegan = now;
+        if (blinkBegan >= 0) {
+          const bp = (now - blinkBegan) / 300;
+          if (bp >= 1) {
+            blinkBegan = -1;
+            nextBlinkAt =
+              now + (Math.random() < 0.18 ? 320 : 2600 + Math.random() * 3600);
+          } else {
+            blink = Math.pow(Math.sin(Math.PI * bp), 1.3);
+          }
+        }
       }
 
       for (const d of dots) {
@@ -223,13 +243,27 @@ export function AvatarDots() {
           dL < 52 ? (1 - dL / 52) ** 2 : 0,
           dR < 52 ? (1 - dR / 52) ** 2 : 0,
         );
-        if (eyeInf > 0) alpha = Math.min(0.88, alpha + eyeInf * 0.45);
+        if (eyeInf > 0) alpha = Math.min(0.88, alpha + eyeInf * 0.45 * (1 - blink * 0.85));
+
+        // Blink: dots in each eye ellipse collapse onto the lid line
+        // and dim slightly — the lid comes down, the eye doesn't just fade.
+        let lidY = 0;
+        if (blink > 0.01) {
+          const eyY = cssH * 0.432;
+          const wL = Math.max(0, 1 - Math.hypot((px - cssW * 0.315) / 34, (py - eyY) / 20));
+          const wR = Math.max(0, 1 - Math.hypot((px - cssW * 0.535) / 34, (py - eyY) / 20));
+          const w = Math.min(1, Math.max(wL, wR) * 1.6);
+          if (w > 0) {
+            lidY = (eyY - py) * 0.9 * blink * w;
+            alpha *= 1 - 0.3 * blink * w;
+          }
+        }
 
         if (alpha <= 0.003) continue;
 
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(d.hx + d.ox, d.hy + d.oy, dot, 0, TWO_PI);
+        ctx.arc(d.hx + d.ox, d.hy + d.oy + lidY, dot, 0, TWO_PI);
         ctx.fill();
       }
 
@@ -257,14 +291,14 @@ export function AvatarDots() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none select-none absolute top-1/2 -translate-y-1/2 right-[-220px] sm:right-[-56px] lg:right-0 -z-0 opacity-[0.38] sm:opacity-95"
+      className="pointer-events-none select-none absolute top-1/2 -translate-y-1/2 right-[-220px] sm:right-[-110px] xl:right-[-30px] -z-0 opacity-[0.38] sm:opacity-95"
       style={{
-        // Elliptical fade — the portrait dissolves before it can touch
-        // the headline column or the ticker below.
+        // Elliptical fade, biased right — the face's left flank
+        // dissolves before it can slide under the headline column.
         maskImage:
-          "radial-gradient(72% 66% at 52% 46%, black 52%, transparent 94%)",
+          "radial-gradient(64% 62% at 58% 46%, black 42%, transparent 88%)",
         WebkitMaskImage:
-          "radial-gradient(72% 66% at 52% 46%, black 52%, transparent 94%)",
+          "radial-gradient(64% 62% at 58% 46%, black 42%, transparent 88%)",
       }}
     >
       <canvas ref={ref} className="block max-w-full h-auto" />
