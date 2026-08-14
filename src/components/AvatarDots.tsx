@@ -108,6 +108,10 @@ export function AvatarDots() {
       });
     }
 
+    // Eye positions — calibrated against the actual portrait.
+    const EYE_L = { x: 0.43, y: 0.435 };
+    const EYE_R = { x: 0.615, y: 0.425 };
+
     const TWO_PI = Math.PI * 2;
     const start = performance.now();
     let raf = 0;
@@ -237,8 +241,8 @@ export function AvatarDots() {
         // Eye-region boost
         const px = d.hx;
         const py = d.hy;
-        const dL = Math.sqrt((px - cssW * 0.315) ** 2 + (py - cssH * 0.432) ** 2);
-        const dR = Math.sqrt((px - cssW * 0.535) ** 2 + (py - cssH * 0.432) ** 2);
+        const dL = Math.sqrt((px - cssW * EYE_L.x) ** 2 + (py - cssH * EYE_L.y) ** 2);
+        const dR = Math.sqrt((px - cssW * EYE_R.x) ** 2 + (py - cssH * EYE_R.y) ** 2);
         const eyeInf = Math.max(
           dL < 52 ? (1 - dL / 52) ** 2 : 0,
           dR < 52 ? (1 - dR / 52) ** 2 : 0,
@@ -249,12 +253,14 @@ export function AvatarDots() {
         // and dim slightly — the lid comes down, the eye doesn't just fade.
         let lidY = 0;
         if (blink > 0.01) {
-          const eyY = cssH * 0.432;
-          const wL = Math.max(0, 1 - Math.hypot((px - cssW * 0.315) / 34, (py - eyY) / 20));
-          const wR = Math.max(0, 1 - Math.hypot((px - cssW * 0.535) / 34, (py - eyY) / 20));
-          const w = Math.min(1, Math.max(wL, wR) * 1.6);
-          if (w > 0) {
-            lidY = (eyY - py) * 0.9 * blink * w;
+          const yL = cssH * EYE_L.y;
+          const yR = cssH * EYE_R.y;
+          const wL = Math.max(0, 1 - Math.hypot((px - cssW * EYE_L.x) / 34, (py - yL) / 20));
+          const wR = Math.max(0, 1 - Math.hypot((px - cssW * EYE_R.x) / 34, (py - yR) / 20));
+          if (wL > 0 || wR > 0) {
+            const lidLine = wL >= wR ? yL : yR;
+            const w = Math.min(1, Math.max(wL, wR) * 1.6);
+            lidY = (lidLine - py) * 0.9 * blink * w;
             alpha *= 1 - 0.3 * blink * w;
           }
         }
