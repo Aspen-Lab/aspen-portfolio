@@ -11,7 +11,6 @@ import {
   Sparkles,
   BookOpen,
   Rss,
-  Hash,
   FlaskConical,
   MessageSquare,
   Code2,
@@ -108,15 +107,15 @@ type Detail = {
 };
 
 const DETAILS: Record<string, Detail> = {
-  Hermes: {
-    lead: "Self-hosted information agent. Five stages, three AI tiers, one Obsidian vault.",
+  Peer: {
+    lead: "Self-hosted AI news agent for researchers — live at peer.homes.",
     flow: {
       label: "Pipeline",
-      steps: ["ingest", "score", "dedup", "distill", "output"],
+      steps: ["collect", "score", "dedup", "distill", "deliver"],
     },
     grid: [
-      { label: "Sources", items: ["RSS", "HN", "arXiv", "Reddit"] },
-      { label: "AI tiers", items: ["T0 · rules", "T1 · Ollama", "T2 · BYOK cloud"] },
+      { label: "Sources", items: ["OpenAlex", "arXiv", "S2", "DBLP", "PubMed"] },
+      { label: "AI tiers", items: ["T0 · rules", "T1 · rerank", "T2 · BYOK cloud"] },
     ],
   },
   Lumen: {
@@ -154,15 +153,15 @@ const DETAILS: Record<string, Detail> = {
 };
 
 const DETAILS_CN: Record<string, Detail> = {
-  Hermes: {
-    lead: "自托管信息代理。五段管线、三层 AI、一个 Obsidian vault。",
+  Peer: {
+    lead: "面向研究者的自托管 AI 资讯代理——已上线 peer.homes。",
     flow: {
       label: "管线",
-      steps: ["抓取", "评分", "去重", "提炼", "输出"],
+      steps: ["抓取", "评分", "去重", "提炼", "送达"],
     },
     grid: [
-      { label: "来源", items: ["RSS", "HN", "arXiv", "Reddit"] },
-      { label: "AI 层级", items: ["T0 · 规则", "T1 · Ollama", "T2 · BYOK cloud"] },
+      { label: "来源", items: ["OpenAlex", "arXiv", "S2", "DBLP", "PubMed"] },
+      { label: "AI 层级", items: ["T0 · 规则", "T1 · 重排", "T2 · BYOK cloud"] },
     ],
   },
   Lumen: {
@@ -313,44 +312,44 @@ function FeatureChips({ label, items }: { label: string; items: string[] }) {
   );
 }
 
-/* ─── Hermes detail ────────────────────────────────────────────────── */
+/* ─── Peer detail ──────────────────────────────────────────────────── */
 
 const PIPELINE = [
-  { Icon: Download,  label: "ingest",  caption: "RSS · HN · arXiv · Reddit" },
-  { Icon: BarChart3, label: "score",   caption: "relevance ranking" },
-  { Icon: Layers,    label: "dedup",   caption: "exact + semantic" },
-  { Icon: Sparkles,  label: "distill", caption: "summarize + rewrite" },
-  { Icon: BookOpen,  label: "output",  caption: "→ Obsidian vault" },
+  { Icon: Download,  label: "collect", caption: "5 academic sources" },
+  { Icon: BarChart3, label: "score",   caption: "against your profile" },
+  { Icon: Layers,    label: "dedup",   caption: "cluster + merge" },
+  { Icon: Sparkles,  label: "distill", caption: "digest · deep reports" },
+  { Icon: BookOpen,  label: "deliver", caption: "feed + email briefing" },
 ] as const;
 
 const PIPELINE_CN = [
-  { Icon: Download,  label: "抓取",  caption: "RSS · HN · arXiv · Reddit" },
-  { Icon: BarChart3, label: "评分",  caption: "相关性排序" },
-  { Icon: Layers,    label: "去重",  caption: "精确 + 语义" },
-  { Icon: Sparkles,  label: "提炼",  caption: "总结 + 改写" },
-  { Icon: BookOpen,  label: "输出",  caption: "→ Obsidian vault" },
+  { Icon: Download,  label: "抓取",  caption: "5 个学术源" },
+  { Icon: BarChart3, label: "评分",  caption: "对齐你的画像" },
+  { Icon: Layers,    label: "去重",  caption: "聚类 + 合并" },
+  { Icon: Sparkles,  label: "提炼",  caption: "摘要 · 深度报告" },
+  { Icon: BookOpen,  label: "送达",  caption: "信息流 + 邮件简报" },
 ] as const;
 
 const SOURCES = [
-  { Icon: Rss,           label: "RSS" },
-  { Icon: Hash,          label: "HN" },
+  { Icon: Rss,           label: "OpenAlex" },
   { Icon: FlaskConical,  label: "arXiv" },
-  { Icon: MessageSquare, label: "Reddit" },
+  { Icon: BookOpen,      label: "S2 · DBLP" },
+  { Icon: MessageSquare, label: "PubMed" },
 ] as const;
 
 const TIERS = [
-  { tier: "T0", Icon: Code2,   name: "Rules",       note: "TF-IDF · instant · free" },
-  { tier: "T1", Icon: Monitor, name: "Ollama",      note: "local · private · GPU" },
-  { tier: "T2", Icon: Cloud,   name: "BYOK cloud",  note: "best quality · on-demand" },
+  { tier: "T0", Icon: Code2,   name: "Rule engine", note: "TF-IDF + ledger · zero keys" },
+  { tier: "T1", Icon: Monitor, name: "Rerank",      note: "heuristics + discovery" },
+  { tier: "T2", Icon: Cloud,   name: "BYOK cloud",  note: "LLM rerank · deep reports" },
 ] as const;
 
 const TIERS_CN = [
-  { tier: "T0", Icon: Code2,   name: "规则",       note: "TF-IDF · 即时 · 免费" },
-  { tier: "T1", Icon: Monitor, name: "Ollama",     note: "本地 · 私有 · GPU" },
-  { tier: "T2", Icon: Cloud,   name: "BYOK cloud", note: "质量最高 · 按需调用" },
+  { tier: "T0", Icon: Code2,   name: "规则引擎",   note: "TF-IDF + 偏好账本 · 零密钥" },
+  { tier: "T1", Icon: Monitor, name: "重排",       note: "启发式 + 检索发现" },
+  { tier: "T2", Icon: Cloud,   name: "BYOK cloud", note: "LLM 重排 · 深度报告" },
 ] as const;
 
-function HermesDetail({ locale }: { locale: Locale }) {
+function PeerDetail({ locale }: { locale: Locale }) {
   const pipeline = locale === "cn" ? PIPELINE_CN : PIPELINE;
   const tiers = locale === "cn" ? TIERS_CN : TIERS;
 
@@ -364,8 +363,8 @@ function HermesDetail({ locale }: { locale: Locale }) {
         className="text-[15px] text-ink/75 leading-[1.7] max-w-[54ch]"
       >
         {locale === "cn"
-          ? "自托管信息代理。五段管线、三层 AI、一个 Obsidian vault。"
-          : "Self-hosted information agent. Five stages, three AI tiers, one Obsidian vault."}
+          ? "替你读文献的自托管 AI 资讯代理——按你的研究画像抓取、评分、去重,每天给你一份小而准的简报。已上线 peer.homes。"
+          : "A self-hosted AI agent that reads the literature for you — fetching, scoring, and deduping against your research profile into one small, precise daily briefing. Live at peer.homes."}
       </motion.p>
 
       {/* Pipeline */}
@@ -469,7 +468,7 @@ function HermesDetail({ locale }: { locale: Locale }) {
 }
 
 function ProjectDetail({ name, locale }: { name: string; locale: Locale }) {
-  if (name === "Hermes") return <HermesDetail locale={locale} />;
+  if (name === "Peer") return <PeerDetail locale={locale} />;
   const d = (locale === "cn" ? DETAILS_CN : DETAILS)[name];
   if (!d) return null;
   return (
@@ -726,7 +725,9 @@ export function SideProjects() {
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-ink hover:text-mute transition-colors"
                       >
-                        {t("viewOnGithubShort")}
+                        {project.href.includes("github.com")
+                          ? t("viewOnGithubShort")
+                          : new URL(project.href).hostname}
                         <ArrowUpRight className="w-3 h-3" strokeWidth={1.75} />
                       </a>
                     ) : (

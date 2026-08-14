@@ -107,12 +107,12 @@ export function NowPanel() {
         </div>
       </Card>
 
-      {/* ── Hermes: 5-stage pipeline ── */}
+      {/* ── Peer: 5-stage pipeline ── */}
       <Card>
         <CardLink
-          title="Hermes"
-          subtitle="5-stage agent pipeline · Python"
-          href="https://github.com/Aspen-Lab/Hermes"
+          title="Peer"
+          subtitle="5-stage agent pipeline · peer.homes"
+          href="https://peer.homes"
           external
         />
 

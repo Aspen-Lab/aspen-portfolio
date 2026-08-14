@@ -836,8 +836,8 @@ export const stack: StackCategory[] = [
       "Docker Compose",
       "Postgres / Supabase",
     ],
-    note: "Hermes (self-hosted information agent) · pawsense",
-    link: { label: "See Hermes", href: "https://github.com/Aspen-Lab/Hermes" },
+    note: "Peer (self-hosted AI news agent) · pawsense",
+    link: { label: "See Peer", href: "https://peer.homes" },
   },
   {
     icon: "ai",
@@ -850,8 +850,8 @@ export const stack: StackCategory[] = [
     ],
     note: "Tier 0 / 1 / 2 — match cost and capability to the task",
     link: {
-      label: "Hermes pipeline",
-      href: "https://github.com/Aspen-Lab/Hermes",
+      label: "Peer pipeline",
+      href: "https://peer.homes",
     },
   },
   {
@@ -898,12 +898,12 @@ export type SideProject = {
 
 export const sideProjects: SideProject[] = [
   {
-    name: "Hermes",
+    name: "Peer",
     blurb:
-      "Self-hosted information agent. Five-stage pipeline (ingest → score → dedup → distill → output) turns RSS / HN / arXiv / Reddit into ten things I actually care about, written to my Obsidian vault. Tier 0 (rules) → Tier 1 (Ollama local) → Tier 2 (BYOK cloud).",
-    tech: "Python 3.10+ · asyncio · SQLite · YAML · Docker · MIT",
-    href: "https://github.com/Aspen-Lab/Hermes",
-    status: "v0 MVP",
+      "Self-hosted AI news agent for researchers, live at peer.homes. Declare your profile — topics, project, advisor, journals — and a five-stage pipeline (collect → score → dedup → distill → deliver) reads OpenAlex / arXiv / Semantic Scholar / DBLP / PubMed and hands you a small daily briefing of papers, events, and jobs. Tier 0 rule engine works with zero keys; Tier 2 is BYOK cloud.",
+    tech: "Next.js · TypeScript · Supabase · Python CLI · MIT",
+    href: "https://peer.homes",
+    status: "Active",
   },
   {
     name: "Lumen",

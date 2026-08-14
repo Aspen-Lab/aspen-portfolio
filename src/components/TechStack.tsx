@@ -56,13 +56,13 @@ const STACK_CN: ReadonlyArray<{
   },
   {
     label: "后端与数据",
-    note: "Hermes(自托管信息代理) · pawsense",
-    linkLabel: "看 Hermes",
+    note: "Peer(自托管 AI 资讯代理) · pawsense",
+    linkLabel: "看 Peer",
   },
   {
     label: "AI · 三层架构",
     note: "Tier 0 / 1 / 2 —— 按任务匹配成本和能力",
-    linkLabel: "Hermes 管线",
+    linkLabel: "Peer 管线",
   },
   {
     label: "游戏",
