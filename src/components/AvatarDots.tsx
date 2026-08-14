@@ -257,7 +257,15 @@ export function AvatarDots() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none select-none absolute -top-8 right-[-264px] sm:right-[-40px] -z-0 opacity-[0.38] sm:opacity-100"
+      className="pointer-events-none select-none absolute top-1/2 -translate-y-1/2 right-[-220px] sm:right-[-56px] lg:right-0 -z-0 opacity-[0.38] sm:opacity-95"
+      style={{
+        // Elliptical fade — the portrait dissolves before it can touch
+        // the headline column or the ticker below.
+        maskImage:
+          "radial-gradient(72% 66% at 52% 46%, black 52%, transparent 94%)",
+        WebkitMaskImage:
+          "radial-gradient(72% 66% at 52% 46%, black 52%, transparent 94%)",
+      }}
     >
       <canvas ref={ref} className="block max-w-full h-auto" />
     </div>

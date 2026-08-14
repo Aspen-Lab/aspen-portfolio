@@ -7,7 +7,7 @@ export function Hero() {
   const t = useTranslations("Hero");
 
   return (
-    <section className="container-fluid relative pt-6 sm:pt-14 pb-10 sm:pb-20 overflow-hidden">
+    <section className="container-fluid relative overflow-hidden flex flex-col justify-center pt-8 sm:pt-6 pb-10 sm:pb-14 sm:min-h-[calc(100svh-64px-58px)]">
       {/* Monochrome backdrop: a soft backlight behind the portrait, a
           vertical wash, and a fine dot-grid that fades out toward the
           edges — texture that echoes the matrix without competing. */}
@@ -16,7 +16,7 @@ export function Hero() {
           className="absolute inset-0"
           style={{
             background: [
-              "radial-gradient(56% 68% at 74% 36%, rgba(244,244,242,0.06) 0%, rgba(244,244,242,0.02) 44%, rgba(244,244,242,0) 70%)",
+              "radial-gradient(52% 64% at 72% 46%, rgba(244,244,242,0.055) 0%, rgba(244,244,242,0.018) 46%, rgba(244,244,242,0) 72%)",
               "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 32%, rgba(0,0,0,0.16) 100%)",
             ].join(", "),
           }}
@@ -25,19 +25,19 @@ export function Hero() {
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "radial-gradient(rgba(244,244,242,0.055) 1px, transparent 1px)",
+              "radial-gradient(rgba(244,244,242,0.05) 1px, transparent 1px)",
             backgroundSize: "22px 22px",
             maskImage:
-              "radial-gradient(75% 85% at 66% 38%, black 0%, rgba(0,0,0,0.3) 58%, transparent 82%)",
+              "radial-gradient(72% 80% at 68% 46%, black 0%, rgba(0,0,0,0.3) 56%, transparent 82%)",
             WebkitMaskImage:
-              "radial-gradient(75% 85% at 66% 38%, black 0%, rgba(0,0,0,0.3) 58%, transparent 82%)",
+              "radial-gradient(72% 80% at 68% 46%, black 0%, rgba(0,0,0,0.3) 56%, transparent 82%)",
           }}
         />
       </div>
 
       <AvatarDots />
 
-      <div className="relative z-10 mt-5 sm:mt-10 max-w-2xl">
+      <div className="relative z-10 max-w-4xl">
         <HeroHeadline
           line1={t("headlineLine1")}
           line2={t("headlineLine2")}
