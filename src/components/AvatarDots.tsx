@@ -116,9 +116,10 @@ export function AvatarDots() {
     // Smoothed lens cursor — a touch of follow, mostly direct.
     const cur = { x: 0, y: 0, seeded: false };
     let lensAmt = 0; // global lens strength, eased on enter/leave
-    const R = 118;
-    const SCATTER = pitch * 2.6; // how far the lens flings particles
-    const JITTER = 1.15;         // Brownian kick strength while scattered
+    const R = 96;
+    const SCATTER = pitch * 1.2; // modest fling — motion stays compact
+    const JITTER = 1.9;          // Brownian peak, weighted by f² below —
+                                 // violent right at the cursor, quiet fast
     const SPRING = 0.12;         // loose tether — lets the dance breathe
     const DAMP = 0.8;            // light damping — lively, still settles
 
@@ -183,8 +184,9 @@ export function AvatarDots() {
           d.vx += (tx - d.ox) * SPRING;
           d.vy += (ty - d.oy) * SPRING;
           if (f > 0.02) {
-            d.vx += (Math.random() - 0.5) * JITTER * f;
-            d.vy += (Math.random() - 0.5) * JITTER * f;
+            const g = f * f; // steep: intensity concentrates at the cursor
+            d.vx += (Math.random() - 0.5) * JITTER * g;
+            d.vy += (Math.random() - 0.5) * JITTER * g;
           }
           d.vx *= DAMP;
           d.vy *= DAMP;
