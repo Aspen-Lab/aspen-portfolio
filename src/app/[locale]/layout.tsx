@@ -9,7 +9,7 @@ import { setRequestLocale } from "next-intl/server";
 import { hasLocale } from "next-intl";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { CursorLight } from "@/components/CursorLight";
+import { CursorOrb } from "@/components/CursorOrb";
 import { routing } from "@/i18n/routing";
 import type { Locale } from "@/i18n/routing";
 import "../globals.css";
@@ -54,7 +54,7 @@ export default async function LocaleLayout({
           <Nav />
           <main className="flex-1">{children}</main>
           <Footer />
-          <CursorLight />
+          <CursorOrb />
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />
