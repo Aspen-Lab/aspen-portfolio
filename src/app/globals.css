@@ -250,42 +250,47 @@ button:not(:disabled) {
   cursor: pointer;
 }
 
-/* ── Cursor orb ── liquid glass, optics only. No painted shading:
-   the marble's identity comes from bending the page behind it
-   (displacement + dispersion in #orb-refraction). What remains here
-   is physics: a whisper of tint, a pinpoint light-source reflection,
-   the shadow it casts, and the reading-lamp halo. */
+/* ── Cursor orb ── liquid glass with three forms.
+   BALL while browsing (refracting lens), a CARET bar over text (height
+   follows the line), and a PILL adhered to interactive controls
+   (control-sized, corner-matched, flat glass — no lens bending while
+   docked). All morphs are width/height/radius transitions on the
+   centered inner element; the position path stays a direct write. */
 html.cursor-orb-active,
 html.cursor-orb-active * {
   cursor: none !important;
 }
 .cursor-orb .orb {
   position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  /* Cascade trick: browsers that can't parse url() backdrop-filters
-     drop that declaration and keep the plain glass below; Chromium
-     parses both and the refracting one wins. */
   -webkit-backdrop-filter: blur(2px) brightness(1.1) saturate(1.05);
   backdrop-filter: blur(2px) brightness(1.1) saturate(1.05);
   backdrop-filter: url(#orb-refraction) brightness(1.1) contrast(1.03) saturate(1.03);
   background: rgba(255, 255, 255, 0.01);
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.14),
-    0 8px 20px rgba(0, 0, 0, 0.38),
-    0 2px 5px rgba(0, 0, 0, 0.3);
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    0 4px 10px rgba(0, 0, 0, 0.22),
+    0 1px 3px rgba(0, 0, 0, 0.16);
   transition:
     transform 130ms cubic-bezier(0.3, 1.4, 0.5, 1),
+    width 180ms cubic-bezier(0.3, 1.2, 0.4, 1),
+    height 180ms cubic-bezier(0.3, 1.2, 0.4, 1),
+    border-radius 180ms cubic-bezier(0.3, 1.2, 0.4, 1),
     box-shadow 130ms ease;
 }
 /* Rim light — a continuous arc of light wrapping the bevel: bright
    where light enters (top-left), gone at the sides, a softer bounce
-   at the bottom-right. No point specular. */
+   at the bottom-right. Follows every form via inherited radius. */
 .cursor-orb .orb::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 50%;
+  border-radius: inherit;
   padding: 1.5px;
   background: linear-gradient(
     160deg,
@@ -301,32 +306,28 @@ html.cursor-orb-active * {
   mask-composite: exclude;
   filter: blur(0.4px);
 }
-/* Soft halo — the marble is also the reading lamp */
-.cursor-orb .orb::before {
-  content: "";
-  position: absolute;
-  inset: -300%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(244, 244, 242, 0.05) 0%,
-    rgba(244, 244, 242, 0.018) 35%,
-    transparent 65%
-  );
-  mix-blend-mode: screen;
+/* CARET — over readable text: a vertical glass bar at line height */
+.cursor-orb[data-mode="text"] .orb {
+  width: 7px;
+  height: var(--caret-h, 30px);
+  border-radius: 4px;
 }
-.cursor-orb[data-target="true"] .orb {
-  transform: scale(1.22);
+/* PILL — adhered to a control: its size, its corners, flat glass */
+.cursor-orb[data-mode="target"] .orb {
+  width: var(--pill-w, 64px);
+  height: var(--pill-h, 40px);
+  border-radius: var(--pill-r, 14px);
+  -webkit-backdrop-filter: blur(3px) brightness(1.09) saturate(1.05);
+  backdrop-filter: blur(3px) brightness(1.09) saturate(1.05);
   box-shadow:
-    inset 0 0 1px rgba(255, 255, 255, 0.09),
-    0 9px 22px rgba(0, 0, 0, 0.34),
-    0 1px 3px rgba(0, 0, 0, 0.25),
-    0 0 18px rgba(244, 244, 242, 0.07);
+    inset 0 1px 1px rgba(255, 255, 255, 0.14),
+    0 5px 14px rgba(0, 0, 0, 0.24),
+    0 1px 3px rgba(0, 0, 0, 0.16);
 }
 .cursor-orb[data-pressed="true"] .orb {
-  transform: scale(0.88);
+  transform: translate(-50%, -50%) scale(0.94);
   box-shadow:
-    inset 0 0 1px rgba(255, 255, 255, 0.07),
-    0 3px 8px rgba(0, 0, 0, 0.3),
-    0 1px 2px rgba(0, 0, 0, 0.25);
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    0 2px 6px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.15);
 }

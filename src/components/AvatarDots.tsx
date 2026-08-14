@@ -4,11 +4,11 @@ import { useEffect, useRef } from "react";
 import { AVATAR_TONES } from "@/lib/avatar-ascii";
 
 /**
- * Portrait as a dot matrix that MOVES without losing the grid.
- * The cursor lens does three things: dots swell and brighten with
- * proximity, and displace radially — but displacement is capped well
- * below one grid pitch and driven by a stiff, fast spring, so rows and
- * columns always stay legible. Mechanical, never gooey.
+ * Portrait as a particle field. The cursor scatters nearby dots off
+ * their grid; while scattered they dance — a Brownian random walk
+ * around the displaced position — then spring home when the cursor
+ * leaves. No size change, no brightness modulation, no shimmer: the
+ * interaction is purely positional.
  */
 export function AvatarDots() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -117,9 +117,10 @@ export function AvatarDots() {
     const cur = { x: 0, y: 0, seeded: false };
     let lensAmt = 0; // global lens strength, eased on enter/leave
     const R = 118;
-    const MAX_DISP = pitch * 0.45; // < half a cell — grid stays legible
-    const SPRING = 0.32;           // stiff pull toward the field target
-    const DAMP = 0.62;             // heavy damping — snaps, no wobble
+    const SCATTER = pitch * 2.6; // how far the lens flings particles
+    const JITTER = 1.15;         // Brownian kick strength while scattered
+    const SPRING = 0.12;         // loose tether — lets the dance breathe
+    const DAMP = 0.8;            // light damping — lively, still settles
 
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -169,16 +170,22 @@ export function AvatarDots() {
             const dist = Math.sqrt(dist2) || 0.001;
             const u = 1 - dist / R;
             f = u * u * (3 - 2 * u) * lensAmt; // smoothstep falloff
-            const k = (f * MAX_DISP) / dist;
+            const k = (f * SCATTER) / dist;
             tx = dx * k;
             ty = dy * k;
           }
         }
 
         if (!reduce) {
-          // Stiff, fast spring toward the field target — mechanical settle.
+          // Loose spring toward the scattered position; while inside the
+          // lens each particle also takes Brownian kicks — it dances
+          // around its displaced home instead of freezing there.
           d.vx += (tx - d.ox) * SPRING;
           d.vy += (ty - d.oy) * SPRING;
+          if (f > 0.02) {
+            d.vx += (Math.random() - 0.5) * JITTER * f;
+            d.vy += (Math.random() - 0.5) * JITTER * f;
+          }
           d.vx *= DAMP;
           d.vy *= DAMP;
           d.ox += d.vx;
@@ -187,7 +194,7 @@ export function AvatarDots() {
 
         const delay = ((d.gx + d.gy) / (TW + TH)) * 700;
         const reveal = Math.max(0, Math.min(1, (t - delay) / 420));
-        const shimmer = 0.82 + 0.18 * Math.sin(now * 0.0015 + d.gx * 0.16 + d.gy * 0.12);
+        const shimmer = 1; // no gradient animation — steady luminance
 
         // Center radial spotlight — face center is ~(42%, 44%) of canvas
         const dcx = d.hx - cssW * 0.42;
@@ -196,9 +203,6 @@ export function AvatarDots() {
         const cBoost = 1 + Math.max(0, 1 - dc / (cssW * 0.55)) * 1.3;
 
         let alpha = Math.min(0.78, d.bb * 0.44 * cBoost) * reveal * shimmer;
-
-        // Inside the lens: brighten with proximity (LED response)
-        if (f > 0.005) alpha = Math.min(0.92, alpha * (1 + f * 0.85));
 
         // Eye-region boost
         const px = d.hx;
@@ -215,7 +219,7 @@ export function AvatarDots() {
 
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(d.hx + d.ox, d.hy + d.oy, dot * (1 + f * 1.1), 0, TWO_PI);
+        ctx.arc(d.hx + d.ox, d.hy + d.oy, dot, 0, TWO_PI);
         ctx.fill();
       }
 

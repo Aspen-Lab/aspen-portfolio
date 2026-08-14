@@ -16,6 +16,8 @@ import { useEffect, useRef, useState } from "react";
 
 const LOCK_SELECTOR =
   'a, button, [role="button"], input, textarea, select, label, summary';
+const TEXT_SELECTOR =
+  "p, h1, h2, h3, h4, h5, h6, li, blockquote, dt, dd, figcaption";
 
 const SIZE = 48;      // px — orb diameter
 const MAP_SIZE = 384; // px — displacement map resolution (8-bit steps smooth out)
@@ -72,14 +74,61 @@ export function CursorOrb() {
       feImageRef.current.setAttribute("href", map);
     }
 
+    let snapEl: Element | null = null;
+
     const onMove = (e: PointerEvent) => {
       // Direct write in the event handler — the fastest path there is.
-      el.style.transform = `translate3d(${e.clientX - SIZE / 2}px, ${e.clientY - SIZE / 2}px, 0)`;
+      if (snapEl && snapEl.isConnected && el.dataset.mode === "target") {
+        // Adhered to a control: sit on its center, with a whisper of
+        // pointer parallax inside it.
+        const r = snapEl.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const px = Math.max(-3, Math.min(3, (e.clientX - cx) * 0.12));
+        const py = Math.max(-3, Math.min(3, (e.clientY - cy) * 0.12));
+        el.style.transform = `translate3d(${cx + px - SIZE / 2}px, ${cy + py - SIZE / 2}px, 0)`;
+      } else {
+        el.style.transform = `translate3d(${e.clientX - SIZE / 2}px, ${e.clientY - SIZE / 2}px, 0)`;
+      }
       if (el.style.opacity !== "1") el.style.opacity = "1";
     };
     const onOver = (e: PointerEvent) => {
-      const hit = (e.target as Element | null)?.closest?.(LOCK_SELECTOR);
-      el.dataset.target = hit ? "true" : "false";
+      const t = e.target as Element | null;
+      const hit = t?.closest?.(LOCK_SELECTOR) ?? null;
+      if (hit) {
+        const r = hit.getBoundingClientRect();
+        if (r.width <= 260 && r.height <= 80) {
+          // Melt into the control's shape: size, corner radius, center.
+          snapEl = hit;
+          const radius = Math.min(
+            parseFloat(getComputedStyle(hit).borderRadius) || 10,
+            (r.height + 8) / 2,
+          );
+          el.style.setProperty("--pill-w", `${Math.round(r.width + 8)}px`);
+          el.style.setProperty("--pill-h", `${Math.round(r.height + 8)}px`);
+          el.style.setProperty("--pill-r", `${Math.round(radius + 4)}px`);
+          el.dataset.mode = "target";
+          return;
+        }
+        // Oversized target: stay a ball, no snap.
+        snapEl = null;
+        el.dataset.mode = "ball";
+        return;
+      }
+      snapEl = null;
+      // Over readable text the marble melts into a caret bar sized to
+      // the text's line height (the iPadOS text-pointer morph).
+      const textEl = t?.closest?.(TEXT_SELECTOR);
+      if (textEl && textEl.textContent && textEl.textContent.trim()) {
+        const cs = getComputedStyle(textEl);
+        let lh = parseFloat(cs.lineHeight);
+        if (!Number.isFinite(lh)) lh = parseFloat(cs.fontSize) * 1.2 || 28;
+        lh = Math.max(20, Math.min(64, lh));
+        el.style.setProperty("--caret-h", `${Math.round(lh)}px`);
+        el.dataset.mode = "text";
+        return;
+      }
+      el.dataset.mode = "ball";
     };
     const onDown = () => { el.dataset.pressed = "true"; };
     const onUp = () => { el.dataset.pressed = "false"; };
