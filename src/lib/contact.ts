@@ -29,11 +29,6 @@ export const socials = [
     handle: "aspenlabs.framer.website",
     href: "https://aspenlabs.framer.website",
   },
-  {
-    platform: "Notion",
-    handle: "Design Studies",
-    href: "https://www.notion.so/Aspen-Design-Lab-29106c193aa980b3b791d7d7fe378e89",
-  },
 ];
 
 // Legacy — used by any remaining references

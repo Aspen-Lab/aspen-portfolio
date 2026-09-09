@@ -5,7 +5,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleToggle } from "./LocaleToggle";
 
 type Item = {
-  key: "work" | "about" | "studies" | "contact";
+  key: "work" | "about" | "contact";
   href: string;
   /** When the current locale-relative path satisfies this matcher, the item shows as active. */
   match: (path: string) => boolean;
@@ -22,11 +22,6 @@ const ITEMS: Item[] = [
     key: "about",
     href: "/about",
     match: (p) => p.startsWith("/about"),
-  },
-  {
-    key: "studies",
-    href: "/study",
-    match: (p) => p.startsWith("/study"),
   },
   {
     key: "contact",
@@ -95,7 +90,7 @@ export function Nav() {
               const label = t(item.key);
               const className = `group relative px-3.5 py-[6px] rounded-[7px] transition-colors duration-150 ${
                 active ? "text-ink" : "text-mute hover:text-ink"
-              } ${item.key === "studies" ? "hidden sm:inline-block" : ""}`;
+              }`;
 
               const inner = (
                 <>
