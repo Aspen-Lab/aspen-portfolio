@@ -47,7 +47,7 @@ const STACK_CN: ReadonlyArray<{
 }> = [
   {
     label: "前端 · 日常主力",
-    note: "helloaxel.com · Lumen · 这个作品集 · pawsense",
+    note: "helloaxel.com · Lumen · 这个作品集 · Pado",
     linkLabel: "看 Lumen",
   },
   {
@@ -56,7 +56,7 @@ const STACK_CN: ReadonlyArray<{
   },
   {
     label: "后端与数据",
-    note: "Peer(自托管 AI 资讯代理) · pawsense",
+    note: "Peer(开源论文晨报) · Pado",
     linkLabel: "看 Peer",
   },
   {

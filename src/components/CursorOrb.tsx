@@ -148,7 +148,9 @@ export function CursorOrb() {
       const hit = t?.closest?.(LOCK_SELECTOR) ?? null;
       if (hit) {
         const r = hit.getBoundingClientRect();
-        if (r.width <= 260 && r.height <= 80) {
+        // data-orb-ball: a stretched card link — its box is just the title,
+        // but it answers for the whole card, so the orb stays a ball.
+        if (r.width <= 260 && r.height <= 80 && !hit.hasAttribute("data-orb-ball")) {
           // Melt into the control's shape: size, corner radius, center.
           snapEl = hit;
           const radius = Math.min(

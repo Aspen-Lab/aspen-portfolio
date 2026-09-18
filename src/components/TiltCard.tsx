@@ -11,7 +11,8 @@ const SPRING = { stiffness: 300, damping: 24 } as const;
 const MAX_X = 5.5; // deg
 const MAX_Y = 7;   // deg
 
-export function TiltCard({ children }: { children: ReactNode }) {
+/** className lands on both wrappers (e.g. "h-full" for equal-height grid rows). */
+export function TiltCard({ children, className }: { children: ReactNode; className?: string }) {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const rx = useMotionValue(0);
@@ -34,9 +35,10 @@ export function TiltCard({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div style={{ perspective: 800 }}>
+    <div className={className} style={{ perspective: 800 }}>
       <motion.div
         ref={ref}
+        className={className}
         onPointerMove={onMove}
         onPointerLeave={onLeave}
         style={{

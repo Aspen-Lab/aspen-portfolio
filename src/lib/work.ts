@@ -813,7 +813,7 @@ export const stack: StackCategory[] = [
       "Motion",
       "Shiki + Lucide",
     ],
-    note: "helloaxel.com · Lumen · this portfolio · pawsense",
+    note: "helloaxel.com · Lumen · this portfolio · Pado",
     link: { label: "See Lumen", href: "https://github.com/Aspen-Lab/lumen" },
   },
   {
@@ -836,7 +836,7 @@ export const stack: StackCategory[] = [
       "Docker Compose",
       "Postgres / Supabase",
     ],
-    note: "Peer (self-hosted AI news agent) · pawsense",
+    note: "Peer (open-source research briefing) · Pado",
     link: { label: "See Peer", href: "https://peer.homes" },
   },
   {
@@ -888,54 +888,203 @@ export const spectrum = [
   "Game",
 ];
 
+type Bilingual = { en: string; cn: string };
+
+/* Side projects render as cards (components/SideProjects.tsx). Every
+   claim below, except Metroidvania (carried over from the old copy; no
+   public build to check), was checked against the live site and repo on
+   2026-09-17 — keep it that way: a card is a public statement.
+   Thumbnails are 16:10 captures of the live site in public/side/. */
 export type SideProject = {
+  slug: string;
   name: string;
-  blurb: string;
-  tech: string;
-  href: string;
-  status: string;
+  /** product = flagship card row; build = smaller grid below it */
+  tier: "product" | "build";
+  /** archive = finished and frozen (the moment it was built for has passed) */
+  status: "live" | "early" | "wip" | "archive";
+  category: Bilingual;
+  tagline: Bilingual;
+  blurb: Bilingual;
+  /** Where the product runs, e.g. "Web", "iPhone · coming to the App Store" */
+  platforms: Bilingual[];
+  tech: string[];
+  /** The live product — the whole card links here. None = private build. */
+  href?: string;
+  /** Secondary links shown on the card (repo, downloads, docs) */
+  links?: { label: Bilingual; href: string }[];
+  thumb?: string;
 };
 
 export const sideProjects: SideProject[] = [
   {
+    slug: "peer",
     name: "Peer",
-    blurb:
-      "Self-hosted AI news agent for researchers, live at peer.homes. Declare your profile — topics, project, advisor, journals — and a five-stage pipeline (collect → score → dedup → distill → deliver) reads OpenAlex / arXiv / Semantic Scholar / DBLP / PubMed and hands you a small daily briefing of papers, events, and jobs. Tier 0 rule engine works with zero keys; Tier 2 is BYOK cloud.",
-    tech: "Next.js · TypeScript · Supabase · Python CLI · MIT",
+    tier: "product",
+    status: "live",
+    category: { en: "Research tool", cn: "科研工具" },
+    tagline: {
+      en: "Ten papers a day, chosen for your work.",
+      cn: "每天十篇论文，按你的研究挑选",
+    },
+    blurb: {
+      en: "Open-source research briefing. Name your field; a five-stage pipeline reads OpenAlex, arXiv and Semantic Scholar, scores every paper against your work, and keeps ten a day.",
+      cn: "替你读文献的开源论文晨报——按你的研究领域从 OpenAlex、arXiv 等学术源抓取、去重、打分，每天只留十篇。",
+    },
+    platforms: [{ en: "Web", cn: "网页" }],
+    tech: ["Next.js", "Supabase", "Gemini API", "Tailwind"],
     href: "https://peer.homes",
-    status: "Active",
+    links: [{ label: { en: "GitHub · MIT", cn: "GitHub · MIT" }, href: "https://github.com/Aspen-Lab/peer" }],
+    thumb: "/side/peer.jpg",
   },
   {
-    name: "Lumen",
-    blurb:
-      "Interactive UI components for AI-native products — reasoning visualization, decision presentation, action confirmation. Two-layer parameters (visual + product semantic) and copyable code.",
-    tech: "TypeScript · Next.js · Motion",
-    href: "https://github.com/Aspen-Lab/lumen",
-    status: "Active",
+    slug: "pado",
+    // The product's own name; "Pado Pet" is only the App Store listing
+    name: "Pado",
+    tier: "product",
+    status: "live",
+    category: { en: "Pet care", cn: "宠物照护" },
+    tagline: {
+      en: "Your cat's everyday notebook.",
+      cn: "家里这只猫，每天的本子",
+    },
+    blurb: {
+      en: "Cat-care notebook the whole household shares: meals, meds, anything off. Paw, its AI, answers everyday questions with this cat's last few days in view, not internet articles.",
+      cn: "全家共用的养猫本子：吃了没、药吃了没、今晚正不正常，谁看到谁记。AI 助手 Paw 答日常问题，带着它这几天的记录。",
+    },
+    platforms: [
+      { en: "Web", cn: "网页" },
+      { en: "iPhone · coming to the App Store", cn: "iPhone · 即将上架 App Store" },
+    ],
+    tech: ["Next.js", "Supabase", "SwiftUI", "Electron"],
+    href: "https://www.pado.pet",
+    links: [
+      {
+        label: { en: "macOS · early build", cn: "macOS · 早期版" },
+        href: "https://github.com/Aspen-Lab/pado-releases/releases/latest",
+      },
+    ],
+    thumb: "/side/pado.jpg",
   },
   {
-    name: "Metroidvania",
-    blurb:
-      "Untitled 2D Metroidvania, Hollow-Knight stack. Engineering full-stack solo; Skyler on art and music. Working in 1–2 hour daily blocks: 2 weeks of greybox, 6 weeks for the first area, 3-month MVP target.",
-    tech: "Unity · C# · PlayMaker · Claude Code + unity-mcp",
-    href: "",
-    status: "WIP",
+    slug: "aspenplay",
+    name: "Aspen Play",
+    tier: "product",
+    status: "live",
+    category: { en: "Browser games", cn: "网页游戏" },
+    tagline: {
+      en: "Nineteen browser games, solo or with friends.",
+      cn: "十九款网页游戏，单人或约朋友玩",
+    },
+    blurb: {
+      en: "Nineteen browser games, from Blocks and chess to Dou Dizhu and hold'em, with friends, online rooms and rankings. Its design system, Aspen Origin, has public docs.",
+      cn: "十九款网页游戏，从俄罗斯方块、国际象棋到斗地主、德州扑克；可加好友、开房间联机、冲排行榜，设计系统文档也已公开。",
+    },
+    platforms: [{ en: "Web · installable", cn: "网页 · 可添加到主屏幕" }],
+    tech: ["Vanilla JS", "Supabase Realtime", "Three.js", "Web Audio"],
+    href: "https://www.aspenplay.dev",
+    links: [
+      {
+        label: { en: "Design system", cn: "设计系统" },
+        href: "https://www.aspenplay.dev/design-system",
+      },
+    ],
+    thumb: "/side/aspenplay.jpg",
   },
   {
+    slug: "cardflow",
     name: "CardFlow",
-    blurb:
-      "Notion-like editor that auto-generates 小红书-style swipeable cards. Five themes, real-time preview, swipe / keyboard / scroll paging.",
-    tech: "TypeScript · CN audience",
-    href: "https://github.com/Aspen-Lab/cardflow",
-    status: "Shipped",
+    tier: "build",
+    status: "live",
+    category: { en: "Content tool", cn: "内容工具" },
+    tagline: {
+      en: "Notion-style writing, 小红书-style cards.",
+      cn: "写成文档，排成小红书卡片",
+    },
+    blurb: {
+      en: "Notion-like editor that auto-generates 小红书-style swipeable cards: H1 becomes the cover, a divider starts the next card. Five themes, live preview.",
+      cn: "像写 Notion 一样写内容，自动排成小红书风格的翻页卡片——H1 成封面，分隔线即分页。五套主题，实时预览。",
+    },
+    platforms: [{ en: "Web · Chinese UI", cn: "网页 · 中文界面" }],
+    tech: ["Next.js", "TypeScript", "TipTap", "Tailwind"],
+    href: "https://cardflow-chi.vercel.app",
+    links: [{ label: { en: "GitHub", cn: "GitHub" }, href: "https://github.com/Aspen-Lab/cardflow" }],
+    thumb: "/side/cardflow.jpg",
   },
   {
-    name: "Itinerary",
-    blurb:
-      "A lightweight trip itinerary PWA — for the kind of trip you want to remember a year later.",
-    tech: "HTML · PWA",
-    href: "https://github.com/Aspen-Lab/Itinerary",
-    status: "Shipped",
+    slug: "skyler",
+    name: "SKYLER Visual Archive",
+    tier: "build",
+    status: "live",
+    category: { en: "Artist portfolio", cn: "作品集网站" },
+    tagline: {
+      en: "HUD-style portfolio built for concept artist Skyler.",
+      cn: "为概念美术 Skyler 搭的作品集",
+    },
+    blurb: {
+      en: "Portfolio built for concept artist Skyler (SECAL72): HUD-style black-and-line interface, auto-scrolling project strips, a zoom loupe for full-resolution art, all content edited from one file.",
+      cn: "为概念美术 Skyler 做的作品集：黑底 HUD 风界面，作品条自动滚动，原图可用放大镜细看，改一个文件即可更新。",
+    },
+    platforms: [{ en: "Web", cn: "网页" }],
+    tech: ["HTML", "CSS", "Vanilla JS"],
+    href: "https://www.secal72.com",
+    links: [{ label: { en: "GitHub", cn: "GitHub" }, href: "https://github.com/Aspen-Lab/skyler-portfolio" }],
+    thumb: "/side/skyler.jpg",
+  },
+  {
+    slug: "lumen",
+    name: "Lumen",
+    tier: "build",
+    status: "early",
+    category: { en: "UI components", cn: "UI 组件库" },
+    tagline: {
+      en: "UI components for AI-native products.",
+      cn: "为 AI 产品做的交互组件库",
+    },
+    blurb: {
+      en: "Showcase of UI components for AI products, broken down into reusable atoms. Tune each live, flip desktop/mobile, copy the TSX. Early: one component, seven atoms so far.",
+      cn: "面向 AI 产品的组件展示站，组件拆成可复用的原子——实时调参、切换桌面/移动端、一键复制代码。目前一个组件、七个原子。",
+    },
+    platforms: [{ en: "Web", cn: "网页" }],
+    tech: ["Next.js", "TypeScript", "Framer Motion", "Shiki"],
+    href: "https://lumen-nu-blond.vercel.app",
+    links: [{ label: { en: "GitHub", cn: "GitHub" }, href: "https://github.com/Aspen-Lab/lumen" }],
+    thumb: "/side/lumen.jpg",
+  },
+  {
+    slug: "typhoon",
+    name: "Typhoon Bavi × HX253",
+    tier: "build",
+    status: "archive",
+    category: { en: "Data visualization", cn: "数据可视化" },
+    tagline: {
+      en: "Typhoon Bavi's track, measured against one flight.",
+      cn: "台风巴威路径 × 一班航班",
+    },
+    blurb: {
+      en: "Interactive map of Typhoon Bavi based on a Hong Kong Observatory bulletin: drag a daily timeline and see how close the storm comes to the HKG–SHA flight route.",
+      cn: "根据香港天文台的一份公报画出台风巴威的路径——拖动每日时间轴，看风暴每天离香港飞上海的航线有多近。",
+    },
+    platforms: [{ en: "Web · Chinese UI", cn: "网页 · 中文界面" }],
+    tech: ["D3.js", "TopoJSON", "Single HTML"],
+    href: "https://typhoon-rho.vercel.app",
+    thumb: "/side/typhoon.jpg",
+  },
+  {
+    slug: "metroidvania",
+    name: "Metroidvania",
+    tier: "build",
+    status: "wip",
+    category: { en: "Game", cn: "游戏" },
+    tagline: {
+      en: "An untitled 2D Metroidvania.",
+      cn: "一款未命名的 2D 银河城游戏",
+    },
+    blurb: {
+      en: "Untitled 2D Metroidvania in Unity, Hollow-Knight stack. Engineering solo; Skyler on art and music. Built in one-to-two-hour daily blocks.",
+      cn: "未命名的 2D 银河城游戏，Unity 开发，Hollow Knight 同款技术栈。工程我一人包办，Skyler 负责美术和音乐；每天推进一到两小时。",
+    },
+    platforms: [{ en: "Unity · in development", cn: "Unity · 开发中" }],
+    tech: ["Unity", "C#", "PlayMaker"],
   },
 ];
 

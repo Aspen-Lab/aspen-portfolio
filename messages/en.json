@@ -117,23 +117,24 @@
   },
   "SideProjects": {
     "intro": "Things I build between design jobs — usually to scratch a personal itch, sometimes to test a tool I'm thinking about adopting at work.",
-    "githubLink": "github.com/Aspen-Lab →",
-    "featuredEyebrow": "{ Featured }",
-    "viewOnGithub": "View on GitHub →",
-    "github": "GitHub →",
-    "private": "Private",
-    "projectsLabel": "{count} projects",
-    "building": "Building",
     "replay": "↻ replay",
     "replayIntro": "Replay intro",
-    "viewOnGithubShort": "View on GitHub",
-    "calendar": {
-      "commitsLabel": "commits · last 90 days",
-      "activeDays": "{count} active days · peak {peak} in a day",
-      "personalPrivate": "Personal · Private",
-      "less": "Less",
-      "more": "More"
-    }
+    "productsTitle": "Products",
+    "productsMeta": "{count} live",
+    "buildsTitle": "Small builds",
+    "buildsMeta": "{count} projects",
+    "workshopTitle": "Workshop",
+    "workshopMeta": "Commit activity",
+    "status": {
+      "live": "Live",
+      "early": "Early",
+      "wip": "In progress",
+      "archive": "Archive"
+    },
+    "privateBuild": "Private build",
+    "thumbAlt": "{name} — the live site",
+    "techLabel": "Built with",
+    "visit": "Visit site"
   },
   "Moat": {
     "intro": "I'm not selling a skill — I'm selling a <i>shape</i>. Six credentials — <ink>proven, not asserted</ink>."

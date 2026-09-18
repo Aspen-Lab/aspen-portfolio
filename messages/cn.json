@@ -117,23 +117,24 @@
   },
   "SideProjects": {
     "intro": "设计工作之外的玩意儿 —— 多半为了挠痒痒,偶尔是为了试试某个想引入工作的工具。",
-    "githubLink": "github.com/Aspen-Lab →",
-    "featuredEyebrow": "{ 精选 }",
-    "viewOnGithub": "查看 GitHub →",
-    "github": "GitHub →",
-    "private": "私有",
-    "projectsLabel": "{count} 个项目",
-    "building": "构建中",
     "replay": "↻ 重播",
     "replayIntro": "重播介绍",
-    "viewOnGithubShort": "查看 GitHub",
-    "calendar": {
-      "commitsLabel": "次提交 · 近 90 天",
-      "activeDays": "{count} 天活跃 · 单日峰值 {peak}",
-      "personalPrivate": "个人 · 私有仓库",
-      "less": "少",
-      "more": "多"
-    }
+    "productsTitle": "产品",
+    "productsMeta": "{count} 款已上线",
+    "buildsTitle": "小项目",
+    "buildsMeta": "{count} 个项目",
+    "workshopTitle": "工坊",
+    "workshopMeta": "提交记录",
+    "status": {
+      "live": "已上线",
+      "early": "早期",
+      "wip": "开发中",
+      "archive": "存档"
+    },
+    "privateBuild": "未公开",
+    "thumbAlt": "{name} 线上页面",
+    "techLabel": "技术栈",
+    "visit": "打开网站"
   },
   "Moat": {
     "intro": "我卖的不是一项技能 —— 是一种 <i>形状</i>。六张可被验证的牌 —— <ink>有据可查,不是说说</ink>。"

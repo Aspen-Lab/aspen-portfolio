@@ -76,7 +76,7 @@ export function CommitCalendar() {
   }).format(new Date(`${activity.updated}T00:00:00Z`));
 
   return (
-    <div className="border-t border-line pt-10">
+    <div>
       <div className="flex items-end justify-between flex-wrap gap-y-3 mb-7">
         <div>
           <p className="font-display text-[28px] sm:text-[32px] tracking-[-0.01em] text-ink leading-none tabular-nums">
