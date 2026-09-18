@@ -5,7 +5,7 @@
    so anything that switches tabs — the tab bar, the nav's Work link —
    goes through selectHomeTab() and announces the change itself. */
 
-export const HOME_TABS = ["work", "stack", "side", "combo"] as const;
+export const HOME_TABS = ["work", "system", "stack", "side", "combo"] as const;
 export type HomeTab = (typeof HOME_TABS)[number];
 
 const TAB_EVENT = "home-tabs:change";

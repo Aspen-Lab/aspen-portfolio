@@ -65,6 +65,7 @@
   },
   "Tabs": {
     "work": "Featured work",
+    "system": "Design system",
     "stack": "Tech stack",
     "side": "Side projects",
     "combo": "The combo"
@@ -227,5 +228,10 @@
     "less": "Less",
     "more": "More",
     "cell": "{count, plural, =0 {No commits} one {# commit} other {# commits}} · {date}"
+  },
+  "DesignSystem": {
+    "eyebrow": "Design system · v{version}",
+    "open": "Open the design system",
+    "thumbAlt": "Aspen Origin — the live documentation"
   }
 }

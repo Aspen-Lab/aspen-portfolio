@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
-import { Briefcase, Code2, Zap, Trophy } from "lucide-react";
+import { Briefcase, SwatchBook, Code2, Zap, Trophy } from "lucide-react";
 import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE } from "@/lib/tactile";
 import {
   selectHomeTab,
@@ -15,15 +15,17 @@ import {
 import type { ComponentType, SVGProps } from "react";
 import { Hero } from "./Hero";
 import { SelectedWork } from "./SelectedWork";
+import { DesignSystem } from "./DesignSystem";
 import { TechStack } from "./TechStack";
 import { SideProjects } from "./SideProjects";
 import { Moat } from "./Moat";
 
 const tabs: { id: HomeTab; Icon: ComponentType<SVGProps<SVGSVGElement>>; Component: ComponentType }[] = [
-  { id: "work",  Icon: Briefcase, Component: SelectedWork },
-  { id: "stack", Icon: Code2,     Component: TechStack    },
-  { id: "side",  Icon: Zap,       Component: SideProjects },
-  { id: "combo", Icon: Trophy,    Component: Moat         },
+  { id: "work",   Icon: Briefcase,  Component: SelectedWork },
+  { id: "system", Icon: SwatchBook, Component: DesignSystem },
+  { id: "stack",  Icon: Code2,      Component: TechStack    },
+  { id: "side",   Icon: Zap,        Component: SideProjects },
+  { id: "combo",  Icon: Trophy,     Component: Moat         },
 ];
 
 export function TabsHome() {

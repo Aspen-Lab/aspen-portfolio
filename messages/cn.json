@@ -65,6 +65,7 @@
   },
   "Tabs": {
     "work": "精选作品",
+    "system": "设计系统",
     "stack": "技术栈",
     "side": "副业项目",
     "combo": "组合优势"
@@ -227,5 +228,10 @@
     "less": "少",
     "more": "多",
     "cell": "{date} · {count} 次提交"
+  },
+  "DesignSystem": {
+    "eyebrow": "设计系统 · v{version}",
+    "open": "打开设计系统",
+    "thumbAlt": "Aspen Origin 线上文档"
   }
 }

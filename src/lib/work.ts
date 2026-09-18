@@ -1101,6 +1101,33 @@ export const sideProjects: SideProject[] = [
   },
 ];
 
+/* Aspen Origin — the design system behind Aspen Play (home tab
+   "Design system"). One entry that opens the live docs. Copy checked on
+   2026-09-18 against the repo (public/design-system/**) and the live site
+   by a research pass + an independent verifier. Say "the design system
+   of Aspen Play", not "powers Aspen Play": the game pages don't use it
+   yet. The numbers are counts from source; re-check when it changes. */
+export const designSystem = {
+  name: "Aspen Origin",
+  version: "0.3",
+  href: "https://www.aspenplay.dev/design-system.html#overview",
+  thumb: "/system/aspen-origin.jpg",
+  tagline: {
+    en: "Aspen Play's design system, documented as a working tool.",
+    cn: "Aspen Play 的设计系统，本身就是一件能上手的工具。",
+  },
+  intro: {
+    en: "Aspen Origin is the design system of Aspen Play, a collection of browser games. Graphite surfaces, Geist type and three motion tempos keep the interface quiet so the game leads. Each page is a working tool: a contrast lab, a type tester, an inspector that measures real components. It also ships as an agent skill.",
+    cn: "Aspen Origin 是网页游戏合集 Aspen Play 的设计系统。石墨灰、Geist 字体和三档动效让界面退后，把舞台留给游戏。每页都能上手：对比度实验台、字体测试器、实时测量组件的检查器。它还是一份给 AI 编码助手用的 skill。",
+  },
+  numbers: [
+    { value: "8", label: { en: "components", cn: "个组件" } },
+    { value: "68", label: { en: "design tokens", cn: "个 design token" } },
+    { value: "38", label: { en: "icons, one 24 × 24 grid", cn: "个图标 · 24×24 网格" } },
+    { value: "70/180/240", label: { en: "ms · motion tempos", cn: "毫秒 · 三档动效" } },
+  ],
+};
+
 export type Combo = {
   index: string;
   title: string;
