@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import activity from "@/data/commit-activity.json";
 
 type Contrib = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 };
 
@@ -25,22 +27,15 @@ const LEVEL_SHADOW: (string | undefined)[] = [
 const CELL = 12;
 const GAP = 3;
 const COL = CELL + GAP;
-const WINDOW_DAYS = 90;
 const PUBLIC_HANDLE = "Aspen-Lab";
 
-/**
- * Hand-tuned 90-day commit distribution. Index 0 = oldest day in the window,
- * index 89 = today. Personal + private + Aspen-Lab merged ≈ 711 commits, 82
- * active days, peak 25. Pattern was generated with a deterministic seed and
- * hand-corrected (a few rest days, several deep-work bursts near the present)
- * so the heatmap reads as real workshop activity rather than uniform noise.
- */
-const COUNTS: number[] = [
-  9, 16, 9, 6, 2, 6, 4, 2, 0, 25, 8, 1, 10, 3, 14, 0, 8, 3, 5, 2, 13, 13, 17,
-  12, 7, 1, 5, 0, 5, 10, 2, 5, 2, 6, 12, 7, 8, 10, 1, 0, 8, 3, 6, 18, 8, 2, 10,
-  5, 19, 6, 25, 0, 0, 2, 5, 16, 2, 4, 0, 5, 5, 11, 6, 4, 7, 13, 7, 8, 6, 24, 3,
-  0, 12, 3, 3, 22, 25, 8, 15, 12, 2, 24, 8, 3, 7, 10, 5, 10, 25, 10,
-];
+/* Real activity: a dated snapshot of non-merge commits under Aspen's git
+   identity across every local repo (personal + private + Aspen-Lab),
+   written by scripts/commit-activity.mjs — Vercel can't see local repos,
+   so the snapshot ships with the site. The window ends on the snapshot's
+   `updated` day, never "today", so the claim stays true as it ages. */
+const COUNTS: number[] = activity.counts;
+const WINDOW_DAYS = COUNTS.length;
 
 function levelFor(count: number, peak: number): 0 | 1 | 2 | 3 | 4 {
   if (count === 0 || peak === 0) return 0;
@@ -53,10 +48,10 @@ function levelFor(count: number, peak: number): 0 | 1 | 2 | 3 | 4 {
 
 function buildDays(): Contrib[] {
   const peak = COUNTS.reduce((m, c) => Math.max(m, c), 0);
-  const today = new Date();
+  const start = new Date(`${activity.start}T00:00:00Z`);
   return COUNTS.map((count, i) => {
-    const date = new Date(today);
-    date.setUTCDate(today.getUTCDate() - (COUNTS.length - 1 - i));
+    const date = new Date(start);
+    date.setUTCDate(start.getUTCDate() + i);
     return {
       date: date.toISOString().slice(0, 10),
       count,
@@ -66,23 +61,35 @@ function buildDays(): Contrib[] {
 }
 
 export function CommitCalendar() {
+  const t = useTranslations("Commits");
+  // The route segment is "cn", which Intl doesn't know — map it to zh-CN.
+  const intlLocale = useLocale() === "cn" ? "zh-CN" : "en";
   const days = useMemo(() => buildDays(), []);
   const total = days.reduce((s, d) => s + d.count, 0);
   const activeDays = days.filter((d) => d.count > 0).length;
   const peak = days.reduce((m, d) => Math.max(m, d.count), 0);
+  const updated = new Intl.DateTimeFormat(intlLocale, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${activity.updated}T00:00:00Z`));
 
   return (
     <div className="border-t border-line pt-10">
       <div className="flex items-end justify-between flex-wrap gap-y-3 mb-7">
         <div>
           <p className="font-display text-[28px] sm:text-[32px] tracking-[-0.01em] text-ink leading-none tabular-nums">
-            {total.toLocaleString()}
+            {total.toLocaleString("en")}
             <span className="ml-3 font-mono text-[11px] uppercase tracking-[0.2em] text-soft align-middle">
-              commits · last {WINDOW_DAYS} days
+              {t("total", { days: WINDOW_DAYS })}
             </span>
           </p>
           <p className="mt-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-soft tabular-nums">
-            {activeDays} active days · peak {peak} in a day
+            {t("active", { active: activeDays, peak })}
+          </p>
+          <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-soft/60 tabular-nums">
+            {t("updated", { date: updated })}
           </p>
         </div>
 
@@ -95,7 +102,7 @@ export function CommitCalendar() {
                 "inset 0 1px 0 rgba(255,255,255,0.09), inset 0 0 0 1px rgba(255,255,255,0.02), 0 2px 5px rgba(0,0,0,0.45)",
             }}
           >
-            Personal · Private
+            {t("badge")}
           </span>
           <a
             href={`https://github.com/${PUBLIC_HANDLE}`}
@@ -109,10 +116,14 @@ export function CommitCalendar() {
       </div>
 
       <div className="overflow-x-auto pb-2 -mx-1 px-1 no-scrollbar">
-        <CalendarGrid days={days} />
+        <CalendarGrid
+          days={days}
+          monthLocale={intlLocale}
+          cellTitle={(count, date) => t("cell", { count, date })}
+        />
 
         <div className="mt-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-soft">
-          <span>Less</span>
+          <span>{t("less")}</span>
           {([0, 1, 2, 3, 4] as const).map((level) => (
             <div
               key={level}
@@ -121,14 +132,22 @@ export function CommitCalendar() {
               aria-hidden
             />
           ))}
-          <span>More</span>
+          <span>{t("more")}</span>
         </div>
       </div>
     </div>
   );
 }
 
-function CalendarGrid({ days }: { days: Contrib[] }) {
+function CalendarGrid({
+  days,
+  monthLocale,
+  cellTitle,
+}: {
+  days: Contrib[];
+  monthLocale: string;
+  cellTitle: (count: number, date: string) => string;
+}) {
   if (days.length === 0) return null;
 
   const firstDay = new Date(days[0].date);
@@ -154,7 +173,7 @@ function CalendarGrid({ days }: { days: Contrib[] }) {
     const m = date.getUTCMonth();
     if (m !== lastMonth) {
       monthLabels.push({
-        month: date.toLocaleString("en", { month: "short", timeZone: "UTC" }),
+        month: date.toLocaleString(monthLocale, { month: "short", timeZone: "UTC" }),
         weekIndex: wi,
       });
       lastMonth = m;
@@ -193,11 +212,7 @@ function CalendarGrid({ days }: { days: Contrib[] }) {
                   key={di}
                   className={`rounded-[2px] ${LEVEL_BG[d.level]}`}
                   style={{ width: CELL, height: CELL, boxShadow: LEVEL_SHADOW[d.level] }}
-                  title={`${
-                    d.count === 0
-                      ? "No"
-                      : d.count + " contribution" + (d.count === 1 ? "" : "s")
-                  } on ${d.date}`}
+                  title={cellTitle(d.count, d.date)}
                 />
               ),
             )}

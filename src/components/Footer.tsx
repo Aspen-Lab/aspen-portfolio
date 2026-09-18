@@ -7,12 +7,12 @@ export function Footer() {
   const copy =
     locale === "cn"
       ? {
-          label: "设计 · 代码 · Atlanta",
+          label: "设计 · 代码 · Bellevue",
           role: "唯一设计师 · Axel · YC W19",
           credit: "由 Aspen 设计并构建",
         }
       : {
-          label: "Design · Code · Atlanta",
+          label: "Design · Code · Bellevue",
           role: "Sole designer · Axel · YC W19",
           credit: "Designed & built by Aspen",
         };
@@ -59,7 +59,7 @@ export function Footer() {
             aspen.portfolio
           </span>
           <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-soft/25 tabular-nums">
-            33.749°N · 84.388°W
+            47.6101°N · 122.2015°W
           </span>
         </div>
 
