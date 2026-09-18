@@ -12,6 +12,13 @@ export type Project = {
   cover?: string;
   coverWidth?: number;
   coverHeight?: number;
+  /** Covers come in every ratio (1.33–2.13) but the frames are fixed
+      (16:10 card, 16:9 case-study hero). Say which part must survive:
+      coverPosition is a CSS object-position; "contain" shows the whole
+      image on coverBg (use the image's own edge colour). */
+  coverFit?: "cover" | "contain";
+  coverPosition?: string;
+  coverBg?: string;
   heroVideo?: string;
   metrics?: { label: string; value: string }[];
   sections?: {
@@ -113,6 +120,7 @@ export const projects: Project[] = [
     cover: "/work/axel.webp",
     coverWidth: 1200,
     coverHeight: 630,
+    coverPosition: "0% 50%", // wide art, type starts left: trim only the right
     status: "live",
     liveUrl: "https://helloaxel.com",
     metrics: [
@@ -503,6 +511,9 @@ export const projects: Project[] = [
     cover: "/work/tiktok.png",
     coverWidth: 2894,
     coverHeight: 1628,
+    coverFit: "contain",
+    coverPosition: "50% 100%",
+    coverBg: "#000",
     status: "live",
     metrics: [
       { label: "Vietnam KYC completion", value: "70 → 90%" },
@@ -729,6 +740,7 @@ export const projects: Project[] = [
     cover: "/work/cone.png",
     coverWidth: 2048,
     coverHeight: 1328,
+    coverPosition: "50% 100%", // keep the iF badge in the corner
     status: "coming-soon",
     metrics: [
       { label: "iF Design Award", value: "2025" },
@@ -1067,7 +1079,8 @@ export const sideProjects: SideProject[] = [
     platforms: [{ en: "Web · Chinese UI", cn: "网页 · 中文界面" }],
     tech: ["D3.js", "TopoJSON", "Single HTML"],
     href: "https://typhoon-rho.vercel.app",
-    thumb: "/side/typhoon.jpg",
+    // New file name, not a re-used one: image caches key on the URL
+    thumb: "/side/typhoon-map.jpg",
   },
   {
     slug: "metroidvania",

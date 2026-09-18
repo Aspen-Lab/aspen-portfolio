@@ -139,7 +139,10 @@ export default async function CaseStudy({
       </Reveal>
 
       <Reveal delay={0.14}>
-        <div className="mt-16 aspect-[16/9] rounded-[8px] overflow-hidden bg-cream relative">
+        <div
+          className="mt-16 aspect-[16/9] rounded-[8px] overflow-hidden bg-cream relative"
+          style={project.coverBg ? { backgroundColor: project.coverBg } : undefined}
+        >
           {project.heroVideo ? (
             <video
               src={project.heroVideo}
@@ -156,7 +159,8 @@ export default async function CaseStudy({
               alt={project.title}
               fill
               sizes="(max-width: 1280px) 100vw, 1280px"
-              className="object-cover"
+              // Per-cover crop (work.ts): the hero is 16:9, the art isn't
+              style={{ objectFit: project.coverFit ?? "cover", objectPosition: project.coverPosition }}
               priority
             />
           ) : (

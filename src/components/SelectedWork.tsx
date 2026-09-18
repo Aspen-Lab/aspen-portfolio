@@ -27,7 +27,10 @@ export function SelectedWork() {
                   className="group block card-material p-2.5 sm:p-3"
                 >
                   {/* Photo tile — sunken well with engraved overlay chips */}
-                  <div className="relative overflow-hidden rounded-[9px] bg-cream photo-frame">
+                  <div
+                    className="relative overflow-hidden rounded-[9px] bg-cream photo-frame"
+                    style={p.coverBg ? { backgroundColor: p.coverBg } : undefined}
+                  >
                     {p.cover ? (
                       <Image
                         src={p.cover}
@@ -38,7 +41,9 @@ export function SelectedWork() {
                         // The first cover peeks above the fold on phones and
                         // is their LCP — fetch it with the page, not lazily.
                         {...(i === 0 ? { loading: "eager", fetchPriority: "high" } as const : {})}
-                        className="w-full aspect-[16/10] object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                        // Per-cover crop (work.ts): the frame is 16:10, the art isn't
+                        style={{ objectFit: p.coverFit ?? "cover", objectPosition: p.coverPosition }}
+                        className="w-full aspect-[16/10] transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                       />
                     ) : (
                       <div className="aspect-[16/10] flex items-center justify-center">
@@ -60,7 +65,7 @@ export function SelectedWork() {
                     </span>
 
                     {p.status === "coming-soon" && (
-                      <span className="absolute bottom-2.5 right-2.5 z-10 font-mono text-[9.5px] uppercase tracking-[0.16em] px-2 py-[3px] rounded-[5px] bg-paper/85 backdrop-blur-sm text-mute">
+                      <span className="absolute bottom-2.5 left-2.5 z-10 font-mono text-[9.5px] uppercase tracking-[0.16em] px-2 py-[3px] rounded-[5px] bg-paper/85 backdrop-blur-sm text-mute">
                         {t("inProgress")}
                       </span>
                     )}
