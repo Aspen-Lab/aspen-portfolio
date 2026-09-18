@@ -126,6 +126,35 @@ button {
   transform: translateY(-2px);
 }
 
+/* Hero entrance — CSS keyframes, not JS, so the choreography starts at
+   first paint instead of waiting for hydration (the bio sat invisible
+   ~1.5s after the page had painted, which was the LCP). Same curves and
+   delays as before; each element passes its delay in --d.
+   .hero-rise: a line slides up out of its overflow-hidden mask.
+   .hero-fade-up: fade + lift + unblur for the widgets below. */
+@keyframes hero-rise {
+  from { transform: translateY(106%); }
+  to   { transform: none; }
+}
+@keyframes hero-fade-up {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes hero-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.hero-rise {
+  animation: hero-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
+}
+.hero-fade-up {
+  animation: hero-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise { animation: hero-fade 0.9s ease-out var(--d, 0s) both; }
+  .hero-fade-up { animation: hero-fade 0.4s ease-out var(--d, 0s) both; }
+}
+
 /* "leverage" — static diagonal gradient, no animation */
 .leverage-gradient {
   background: linear-gradient(

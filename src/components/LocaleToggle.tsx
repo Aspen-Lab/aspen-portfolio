@@ -37,7 +37,7 @@ export function LocaleToggle() {
             key={code}
             onClick={() => switchTo(code)}
             aria-pressed={active}
-            className={`relative px-2.5 py-[4px] rounded-[6px] transition-colors duration-150 ${
+            className={`relative whitespace-nowrap px-1.5 min-[381px]:px-2 sm:px-2.5 py-[4px] rounded-[6px] transition-colors duration-150 ${
               active ? "text-ink" : "text-soft hover:text-mute"
             }`}
           >

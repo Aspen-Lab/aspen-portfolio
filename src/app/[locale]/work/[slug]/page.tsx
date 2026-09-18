@@ -3,6 +3,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { projects } from "@/lib/work";
+import type { Locale } from "@/i18n/routing";
+import { pageMeta } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
 import { Carousel } from "@/components/Carousel";
 import { AnimatedMetric } from "@/components/AnimatedMetric";
@@ -18,7 +20,7 @@ import { Callout } from "@/components/Callout";
 import { Chart } from "@/components/Chart";
 import { UserFlow } from "@/components/UserFlow";
 
-type Params = { slug: string };
+type Params = { slug: string; locale: Locale };
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -29,13 +31,13 @@ export async function generateMetadata({
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const project = projects.find((p) => p.slug === slug);
   if (!project) return {};
-  return {
+  return pageMeta(locale, `/work/${slug}`, {
     title: `${project.title} — Aspen W.`,
     description: project.summary,
-  };
+  });
 }
 
 export default async function CaseStudy({
@@ -250,7 +252,8 @@ export default async function CaseStudy({
                       className="font-display font-light leading-[1.05] tracking-[-0.02em] text-ink"
                       style={{ fontSize: "clamp(28px, 3.6vw, 44px)" }}
                     >
-                      {s.heading}
+                      {/* Headings may carry `code` too — never print backticks */}
+                      <RichText as="span">{s.heading}</RichText>
                     </h2>
                   </header>
                   <RichText className="text-[17px] leading-[1.7] text-ink/85 max-w-2xl">
@@ -415,7 +418,10 @@ export default async function CaseStudy({
       </div>
 
       <Reveal delay={0.1}>
-        <div className="mt-40 border-t border-line pt-10 flex items-end justify-between gap-8">
+        <div
+          data-chapters-end
+          className="mt-40 border-t border-line pt-10 flex items-end justify-between gap-8"
+        >
           <div>
             <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
               Up next

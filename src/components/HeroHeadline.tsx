@@ -1,17 +1,9 @@
-"use client";
+import type { CSSProperties, ReactNode } from "react";
 
-import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
-
-function MaskLine({
-  children,
-  delay,
-  reduce,
-}: {
-  children: ReactNode;
-  delay: number;
-  reduce: boolean | null;
-}) {
+/* Each line rises out of its own mask. The motion is the .hero-rise CSS
+   keyframe in globals.css, so it plays from first paint — no JS, and
+   this component renders on the server. */
+function MaskLine({ children, delay }: { children: ReactNode; delay: number }) {
   return (
     <span
       className="block overflow-hidden"
@@ -20,14 +12,9 @@ function MaskLine({
         margin: "0 -0.12em -0.12em",
       }}
     >
-      <motion.span
-        className="block"
-        initial={reduce ? { opacity: 0 } : { y: "106%" }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay }}
-      >
+      <span className="block hero-rise" style={{ "--d": `${delay}s` } as CSSProperties}>
         {children}
-      </motion.span>
+      </span>
     </span>
   );
 }
@@ -43,7 +30,6 @@ type Props = {
 /* Hierarchy: the greeting is a quiet intro line; the statement owns
    the section. One idea per scale. */
 export function HeroHeadline({ line1, line2, line3a, line3Italic, line3b }: Props) {
-  const reduce = useReducedMotion();
   const BASE = 0.08;
 
   // Split "Hi! I'm Aspen." → before / "Aspen" / after
@@ -58,7 +44,7 @@ export function HeroHeadline({ line1, line2, line3a, line3Italic, line3b }: Prop
         className="font-display font-normal tracking-[-0.005em] mb-5"
         style={{ fontSize: "clamp(17px, 1.6vw, 21px)", color: "rgba(160,160,165,0.85)" }}
       >
-        <MaskLine delay={BASE} reduce={reduce}>
+        <MaskLine delay={BASE}>
           {before}
           {aspenIdx >= 0 && <span className="aspen-shimmer">Aspen</span>}
           {after}
@@ -70,10 +56,10 @@ export function HeroHeadline({ line1, line2, line3a, line3Italic, line3b }: Prop
         className="font-display font-light tracking-[-0.03em] leading-[1.02]"
         style={{ fontSize: "clamp(44px, 6.6vw, 96px)", color: "rgba(244,244,242,0.86)" }}
       >
-        <MaskLine delay={BASE + 0.14} reduce={reduce}>
+        <MaskLine delay={BASE + 0.14}>
           {line2}
         </MaskLine>
-        <MaskLine delay={BASE + 0.26} reduce={reduce}>
+        <MaskLine delay={BASE + 0.26}>
           {line3a}
           <span
             className="italic font-normal leverage-gradient"

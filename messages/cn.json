@@ -206,7 +206,7 @@
     "permanentResident": "永久居民 · 无需 Sponsor"
   },
   "NotFound": {
-    "eyebrow": "{ 404 } · 没找到这个页面",
+    "eyebrow": "'{ 404 }' · 没找到这个页面",
     "headline1": "这个页面",
     "headline2a": "不知道",
     "headline2Italic": "拐去了",
@@ -217,5 +217,14 @@
   },
   "LocaleToggle": {
     "switchTo": "切换到 {locale}"
+  },
+  "Commits": {
+    "total": "次提交 · 最近 {days} 天",
+    "active": "{active} 天有提交 · 单日最多 {peak} 次",
+    "updated": "数据快照 · {date}",
+    "badge": "个人 · 私有仓库",
+    "less": "少",
+    "more": "多",
+    "cell": "{date} · {count} 次提交"
   }
 }

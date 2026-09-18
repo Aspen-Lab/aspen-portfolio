@@ -8,13 +8,17 @@ import type { ReactNode } from "react";
 
 const TOKEN = /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
 
+/* Bold and italic parse their contents again, so **`/cmd`** renders a
+   bold code chip instead of printing the backticks. */
 function parse(input: string): ReactNode[] {
   const out: ReactNode[] = [];
   let lastIndex = 0;
   let key = 0;
+  // A fresh regex per call: the shared /g one keeps lastIndex, and the
+  // nested calls above would clobber the outer loop's position.
+  const re = new RegExp(TOKEN.source, "g");
   let m: RegExpExecArray | null;
-  TOKEN.lastIndex = 0;
-  while ((m = TOKEN.exec(input)) !== null) {
+  while ((m = re.exec(input)) !== null) {
     if (m.index > lastIndex) {
       out.push(input.slice(lastIndex, m.index));
     }
@@ -22,20 +26,20 @@ function parse(input: string): ReactNode[] {
     if (tok.startsWith("**")) {
       out.push(
         <strong key={key++} className="font-semibold text-ink">
-          {tok.slice(2, -2)}
+          {parse(tok.slice(2, -2))}
         </strong>,
       );
     } else if (tok.startsWith("*")) {
       out.push(
         <em key={key++} className="italic">
-          {tok.slice(1, -1)}
+          {parse(tok.slice(1, -1))}
         </em>,
       );
     } else if (tok.startsWith("`")) {
       out.push(
         <code
           key={key++}
-          className="font-mono text-[0.85em] px-1.5 py-0.5 rounded bg-cream text-ink/90 border border-line/60"
+          className="font-mono text-[0.85em] px-1.5 py-0.5 rounded bg-cream text-ink/90 border border-line/60 whitespace-nowrap"
         >
           {tok.slice(1, -1)}
         </code>,
@@ -66,7 +70,7 @@ function parse(input: string): ReactNode[] {
         out.push(tok);
       }
     }
-    lastIndex = m.index + tok.length;
+    lastIndex = re.lastIndex;
   }
   if (lastIndex < input.length) {
     out.push(input.slice(lastIndex));

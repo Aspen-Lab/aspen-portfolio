@@ -206,7 +206,7 @@
     "permanentResident": "Permanent Resident · No Sponsorship"
   },
   "NotFound": {
-    "eyebrow": "{ 404 } · Page not found",
+    "eyebrow": "'{ 404 }' · Page not found",
     "headline1": "This page",
     "headline2a": "took a ",
     "headline2Italic": "detour",
@@ -217,5 +217,14 @@
   },
   "LocaleToggle": {
     "switchTo": "Switch to {locale}"
+  },
+  "Commits": {
+    "total": "commits · last {days} days",
+    "active": "{active} active days · peak {peak} in a day",
+    "updated": "Snapshot · {date}",
+    "badge": "Personal · Private",
+    "less": "Less",
+    "more": "More",
+    "cell": "{count, plural, =0 {No commits} one {# commit} other {# commits}} · {date}"
   }
 }

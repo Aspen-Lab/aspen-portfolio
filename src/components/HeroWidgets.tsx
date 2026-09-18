@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
@@ -45,7 +45,6 @@ const icons: Record<string, React.ReactNode> = {
 };
 
 const TOOLS = ["Figma","Claude","Codex","Cursor","GitHub","Vercel","Supabase","Obsidian"] as const;
-const HERO_EASE = [0.16, 1, 0.3, 1] as const;
 
 /* ─── Monochrome brand lockups ───────────────────────────────────────────
    Full press-bar style logo wall (like the Axel investor row). Official
@@ -138,8 +137,14 @@ const COMPANIES: { name: string; node: ReactNode }[] = [
 ];
 
 /* ─── Company item ──────────────────────────────────────────────────────── */
-function CompanyItem({ name, node }: { name: string; node: ReactNode }) {
-  return (
+function CompanyItem({ name, node, echo }: { name: string; node: ReactNode; echo?: boolean }) {
+  // The ticker runs two copies for a seamless loop; the echo is silent
+  // so screen readers hear each company once.
+  return echo ? (
+    <div className="flex items-center gap-2 shrink-0" aria-hidden>
+      {node}
+    </div>
+  ) : (
     <div className="flex items-center gap-2 shrink-0" role="img" aria-label={name}>
       {node}
     </div>
@@ -287,15 +292,10 @@ function InventorySlot({ name, index, active, reduce, onEnter, onLeave }: {
   );
 }
 
-/* ─── Fade-up animation ─────────────────────────────────────────────────── */
-const fadeUp = (delay: number, reduce: boolean | null) =>
-  reduce
-    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.4, delay } }
-    : {
-        initial: { opacity: 0, y: 14, filter: "blur(6px)" },
-        animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-        transition: { duration: 0.7, ease: HERO_EASE, delay },
-      };
+/* ─── Fade-up entrance ──────────────────────────────────────────────────
+   The .hero-fade-up CSS keyframe (globals.css) — plays from first paint
+   instead of after hydration. Reduced motion is handled in the CSS. */
+const enterDelay = (s: number) => ({ "--d": `${s}s` }) as CSSProperties;
 
 /* ─── Widget ────────────────────────────────────────────────────────────── */
 export function HeroWidgets() {
@@ -307,27 +307,25 @@ export function HeroWidgets() {
     <div className="mt-8 sm:mt-10">
 
       {/* Bio */}
-      <motion.p
-        {...fadeUp(0.38, reduce)}
-        className="text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
-        style={{ color: "rgba(160,160,165,0.72)" }}
+      <p
+        className="hero-fade-up text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
+        style={{ ...enterDelay(0.38), color: "rgba(160,160,165,0.72)" }}
       >
         {t.rich("bio", {
           axel: (chunks: ReactNode) => (
             <span style={{ color: "rgba(244,244,242,0.52)" }}>{chunks}</span>
           ),
         })}
-      </motion.p>
+      </p>
 
       {/* Rule */}
-      <motion.div
-        {...fadeUp(0.50, reduce)}
-        className="mt-7 mb-7 h-px"
-        style={{ background: "rgba(255,255,255,0.07)" }}
+      <div
+        className="hero-fade-up mt-7 mb-7 h-px"
+        style={{ ...enterDelay(0.5), background: "rgba(255,255,255,0.07)" }}
       />
 
       {/* Inventory */}
-      <motion.div {...fadeUp(0.56, reduce)}>
+      <div className="hero-fade-up" style={enterDelay(0.56)}>
         <div className="inline-block max-w-full">
           <div className="flex items-baseline justify-between mb-2.5 px-0.5">
             <span
@@ -366,13 +364,10 @@ export function HeroWidgets() {
           </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Companies — infinite scrolling ticker */}
-      <motion.div
-        {...fadeUp(0.66, reduce)}
-        className="mt-8 -mx-4 sm:mx-0"
-      >
+      <div className="hero-fade-up mt-8 -mx-4 sm:mx-0" style={enterDelay(0.66)}>
         <div
           className="logo-ticker-wrap overflow-hidden"
           style={{
@@ -382,11 +377,16 @@ export function HeroWidgets() {
         >
           <div className="logo-ticker flex items-center gap-7 w-max py-1">
             {[...COMPANIES, ...COMPANIES].map((c, i) => (
-              <CompanyItem key={`${c.name}-${i}`} name={c.name} node={c.node} />
+              <CompanyItem
+                key={`${c.name}-${i}`}
+                name={c.name}
+                node={c.node}
+                echo={i >= COMPANIES.length}
+              />
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
 
     </div>
   );

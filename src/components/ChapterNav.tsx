@@ -7,32 +7,48 @@ type ChapterNavProps = {
   chapters: string[];
 };
 
+/* Reading line, as a fraction of viewport height: the active chapter is
+   the last one whose marker has scrolled above it. */
+const READ_LINE = 0.4;
+
 export function ChapterNav({ chapters }: ChapterNavProps) {
   const [active, setActive] = useState(0);
+  const [past, setPast] = useState(false);
 
+  /* Scroll-spy by position, not by intersection. The markers are thin
+     divider rows, and an observer band only fires while one is inside
+     it — a fast fling or an anchor jump skipped the band and left the
+     rail on 01, and scrolling back up kept the later chapter lit. Asking
+     "which marker is above the line?" on every frame is exact both ways. */
   useEffect(() => {
     if (chapters.length === 0) return;
+    let raf = 0;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .map((e) =>
-            parseInt((e.target as HTMLElement).dataset.chapter || "0", 10)
-          );
-        if (visible.length > 0) {
-          setActive(Math.min(...visible));
-        }
-      },
-      { rootMargin: "-30% 0px -55% 0px", threshold: 0 }
-    );
+    const measure = () => {
+      raf = 0;
+      const line = window.innerHeight * READ_LINE;
+      let current = 0;
+      for (let i = 0; i < chapters.length; i++) {
+        const el = document.querySelector(`[data-chapter="${i}"]`);
+        if (el && el.getBoundingClientRect().top <= line) current = i;
+      }
+      setActive(current);
+      // Retire the rail once "Up next" rises — it would sit on the footer
+      const end = document.querySelector("[data-chapters-end]");
+      setPast(!!end && end.getBoundingClientRect().top < window.innerHeight * 0.75);
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
+    };
 
-    chapters.forEach((_, i) => {
-      const el = document.querySelector(`[data-chapter="${i}"]`);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
   }, [chapters]);
 
   if (chapters.length < 2) return null;
@@ -84,7 +100,10 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
       {/* Desktop: compact fixed side rail (lg+) */}
       <nav
         aria-label="Chapter navigation"
-        className="hidden lg:block fixed right-5 xl:right-7 top-1/2 -translate-y-1/2 z-30 pointer-events-none"
+        inert={past}
+        className={`hidden lg:block fixed right-5 xl:right-7 top-1/2 -translate-y-1/2 z-30 pointer-events-none transition-opacity duration-300 ${
+          past ? "opacity-0" : "opacity-100"
+        }`}
       >
         <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-soft mb-5 text-right pr-1">
           Chapters

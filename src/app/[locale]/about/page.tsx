@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { moreWork, awards } from "@/lib/work";
 import type { Locale } from "@/i18n/routing";
+import { pageMeta } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
 import { BootSequence } from "@/components/BootSequence";
 import { PageEntrance } from "@/components/PageEntrance";
@@ -22,12 +23,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const cn = locale === "cn";
 
-  return {
+  return pageMeta(locale, "/about", {
     title: cn ? "关于 — Aspen W." : "About — Aspen W.",
     description: cn
       ? "一半是设计师，一半是心理学者，永远在交付。Aspen W. 是 Georgia Tech 双学位学生，目前在 Axel(Gordian, YC W19)担任 Design Engineer，直接向 CEO 汇报。"
       : "Half designer, half psychologist, always shipping. Aspen W. — dual-degree at Georgia Tech, currently a Design Engineer at Axel (Gordian, YC W19), reporting directly to the CEO.",
-  };
+  });
 }
 
 type CapIcon = "design" | "code" | "brand" | "research";
@@ -248,7 +249,10 @@ function Figure({
   priority = false,
 }: FigureProps) {
   return (
-    <figure className="group">
+    // w-min: the photo sets the frame's width and the caption wraps under
+    // it. Without it a long one-line caption widened the figure and left
+    // a caption-sized gap beside every portrait photo in the reel.
+    <figure className="group w-min">
       <div
         className="relative h-[clamp(240px,38vh,400px)] w-auto overflow-hidden rounded-[8px] bg-cream photo-frame"
         style={{ aspectRatio: aspect }}

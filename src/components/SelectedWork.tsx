@@ -35,6 +35,9 @@ export function SelectedWork() {
                         width={p.coverWidth ?? 1600}
                         height={p.coverHeight ?? 1000}
                         sizes="(max-width: 640px) 100vw, 50vw"
+                        // The first cover peeks above the fold on phones and
+                        // is their LCP — fetch it with the page, not lazily.
+                        {...(i === 0 ? { loading: "eager", fetchPriority: "high" } as const : {})}
                         className="w-full aspect-[16/10] object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                       />
                     ) : (

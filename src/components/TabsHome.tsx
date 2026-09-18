@@ -1,10 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
 import { Briefcase, Code2, Zap, Trophy } from "lucide-react";
 import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE } from "@/lib/tactile";
+import {
+  selectHomeTab,
+  subscribeHomeTab,
+  homeTabSnapshot,
+  serverHomeTabSnapshot,
+  type HomeTab,
+} from "@/lib/home-tabs";
 import type { ComponentType, SVGProps } from "react";
 import { Hero } from "./Hero";
 import { SelectedWork } from "./SelectedWork";
@@ -12,57 +19,17 @@ import { TechStack } from "./TechStack";
 import { SideProjects } from "./SideProjects";
 import { Moat } from "./Moat";
 
-const tabs = [
+const tabs: { id: HomeTab; Icon: ComponentType<SVGProps<SVGSVGElement>>; Component: ComponentType }[] = [
   { id: "work",  Icon: Briefcase, Component: SelectedWork },
   { id: "stack", Icon: Code2,     Component: TechStack    },
   { id: "side",  Icon: Zap,       Component: SideProjects },
   { id: "combo", Icon: Trophy,    Component: Moat         },
-] as const;
-
-// shut up TS about the icon type
-type Tab = { id: TabId; Icon: ComponentType<SVGProps<SVGSVGElement>>; Component: ComponentType };
-
-type TabId = (typeof tabs)[number]["id"];
-
-const isTabId = (s: string): s is TabId => tabs.some((t) => t.id === s);
+];
 
 export function TabsHome() {
   const t = useTranslations("Tabs");
-  const [active, setActive] = useState<TabId>(() => {
-    if (typeof window === "undefined") return "work";
-    const hash = window.location.hash.slice(1);
-    return hash && isTabId(hash) ? hash : "work";
-  });
-
-  // Honor an initial hash deep-link (e.g. /en#combo)
-  useEffect(() => {
-    const onHashChange = () => {
-      const h = window.location.hash.slice(1);
-      if (h && isTabId(h)) setActive(h);
-    };
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
-
-  // Mirror active state → URL hash without re-triggering layout
-  const updateHash = useCallback((id: TabId) => {
-    const newHash = id === "work" ? "" : `#${id}`;
-    if (typeof window !== "undefined") {
-      history.replaceState(
-        null,
-        "",
-        `${window.location.pathname}${newHash}${window.location.search}`,
-      );
-    }
-  }, []);
-
-  const handleClick = useCallback(
-    (id: TabId) => {
-      setActive(id);
-      updateHash(id);
-    },
-    [updateHash],
-  );
+  // Hash-backed; see src/lib/home-tabs.ts for why it is an external store.
+  const active = useSyncExternalStore(subscribeHomeTab, homeTabSnapshot, serverHomeTabSnapshot);
 
   const ActiveComponent = tabs.find((t) => t.id === active)?.Component ?? SelectedWork;
 
@@ -84,13 +51,14 @@ export function TabsHome() {
               className="flex items-center gap-0.5 rounded-[13px] p-1 w-max"
               style={TRAY_STYLE}
             >
-            {(tabs as unknown as Tab[]).map((tab) => {
+            {tabs.map((tab) => {
               const isActive = active === tab.id;
               const { Icon } = tab;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => handleClick(tab.id as typeof active)}
+                  onClick={() => selectHomeTab(tab.id)}
+                  aria-pressed={isActive}
                   className="relative flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-[9px] cursor-pointer group transition-colors duration-200"
                 >
                   {/* Active = pressed well · hover = raised keycap */}
@@ -136,7 +104,9 @@ export function TabsHome() {
         </div>
       </div>
 
-      {/* Tab content — only the active panel mounts. Crossfade on swap. */}
+      {/* Tab content — only the active panel mounts. Crossfade on swap.
+          The nav's Work link scrolls here; the margin clears both sticky bars. */}
+      <div id="home-panel" className="scroll-mt-[122px]">
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={active}
@@ -148,6 +118,7 @@ export function TabsHome() {
           <ActiveComponent />
         </motion.div>
       </AnimatePresence>
+      </div>
     </>
   );
 }

@@ -15,10 +15,22 @@ export function Hero() {
         <div
           className="absolute inset-0"
           style={{
-            background: [
+            background:
               "radial-gradient(52% 64% at 72% 46%, rgba(244,244,242,0.055) 0%, rgba(244,244,242,0.018) 46%, rgba(244,244,242,0) 72%)",
+          }}
+        />
+        {/* The wash is clipped to the 1280px container, so on wider
+            screens its side edges read as a hard-edged panel; feather
+            them into the page. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
               "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 32%, rgba(0,0,0,0.16) 100%)",
-            ].join(", "),
+            maskImage:
+              "linear-gradient(90deg, transparent 0%, black 14%, black 86%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(90deg, transparent 0%, black 14%, black 86%, transparent 100%)",
           }}
         />
         <div

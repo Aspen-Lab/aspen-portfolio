@@ -12,23 +12,23 @@ import { Footer } from "@/components/Footer";
 import { CursorOrb } from "@/components/CursorOrb";
 import { routing } from "@/i18n/routing";
 import type { Locale } from "@/i18n/routing";
+import { SITE_URL, homeCopy, htmlLang, pageMeta } from "@/lib/seo";
 import "../globals.css";
 
+// Home copy doubles as the fallback for pages without their own (the
+// 404); every real page overrides title, canonical and share card.
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const cn = locale === "cn";
+  const copy = homeCopy(locale);
+  // No alternates here — a canonical set in the layout would be
+  // inherited by every page that forgot its own.
+  const { openGraph, twitter } = pageMeta(locale, "", copy);
 
-  return {
-    metadataBase: new URL("https://aspen-portfolio.vercel.app"),
-    title: cn ? "Aspen W. — Axel 唯一设计师" : "Aspen W. — Sole Designer at Axel",
-    description: cn
-      ? "Aspen W. 是 Axel(Gordian, YC W19)唯一设计师，直接交付产品设计与生产代码。XING Art 创始人之一，MiraclePlus $300K，2025 iF + Red Dot + IDEA 获奖，Georgia Tech 工业设计 + 心理学双专业。"
-      : "Sole designer at Axel (Gordian, YC W19) — designs and ships production code. Founder of XING Art ($300K MiraclePlus '25). iF + Red Dot + IDEA 2025. GT dual major in Industrial Design + Psychology.",
-  };
+  return { metadataBase: new URL(SITE_URL), ...copy, openGraph, twitter };
 }
 
 export function generateStaticParams() {
@@ -48,7 +48,7 @@ export default async function LocaleLayout({
 
   // The site is one bilingual experience; html lang reflects the active route.
   return (
-    <html lang={locale} className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang={htmlLang(locale)} className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="min-h-screen flex flex-col bg-paper text-ink antialiased">
         <NextIntlClientProvider>
           <Nav />

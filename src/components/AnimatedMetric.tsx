@@ -80,31 +80,35 @@ export function AnimatedMetric({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
-  const tokens = tokenize(value);
+
+  /* Lines may break only between words. Each word is an unbreakable
+     unit, so a range like "5–10 / theme" wraps as "5–10 / | theme",
+     never "5– | 10 / theme". Count-up delays run across all words. */
+  let numIdx = 0;
+  const words = value.split(/(\s+)/);
 
   return (
     <span ref={ref} className={className}>
-      {tokens.map((t, i) => {
-        if (t.kind === "static") {
-          return (
-            <span key={i} className="whitespace-pre">
-              {t.text}
-            </span>
-          );
-        }
-        const numIdx = tokens
-          .slice(0, i)
-          .filter((token) => token.kind === "num").length;
-        const delay = numIdx * 0.18;
-        return (
-          <NumberToken
-            key={i}
-            target={t.value}
-            delay={delay}
-            active={inView}
-          />
-        );
-      })}
+      {words.map((word, w) =>
+        /^\s+$/.test(word) ? (
+          " "
+        ) : (
+          <span key={w} className="whitespace-nowrap">
+            {tokenize(word).map((t, i) => {
+              if (t.kind === "static") return <span key={i}>{t.text}</span>;
+              const delay = numIdx++ * 0.18;
+              return (
+                <NumberToken
+                  key={i}
+                  target={t.value}
+                  delay={delay}
+                  active={inView}
+                />
+              );
+            })}
+          </span>
+        ),
+      )}
     </span>
   );
 }

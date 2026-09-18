@@ -34,10 +34,22 @@ const ITEMS: Item[] = [
    and the active tab sits pressed into a lit recessed well. Hovering an
    inactive tab raises a faint keycap instead — hover lifts, active sinks. */
 import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE } from "@/lib/tactile";
+import { selectHomeTab } from "@/lib/home-tabs";
 
 export function Nav() {
   const t = useTranslations("Nav");
   const pathname = usePathname() ?? "/";
+
+  /* Already home with another tab open? Next would only rewrite the hash
+     (silently — no event) and the Combo/Stack panel stayed up. Switch the
+     tab ourselves and glide to the panel. Modified clicks pass through. */
+  const onWorkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname !== "/" || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    selectHomeTab("work");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById("home-panel")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+  };
 
   return (
     <header
@@ -47,10 +59,12 @@ export function Nav() {
           "inset 0 -1px 0 rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.035), 0 14px 30px rgba(0,0,0,0.22)",
       }}
     >
-      <div className="container-fluid h-16 flex items-center justify-between gap-6">
+      {/* Phones get tighter gaps and padding so brand, tray and switch
+          stay on one 64px row down to 360px wide. */}
+      <div className="container-fluid h-16 flex items-center justify-between gap-2 min-[381px]:gap-3 sm:gap-6">
         <Link
           href="/"
-          className="group flex items-center gap-3 font-display text-[20px] tracking-[-0.01em] text-ink"
+          className="group flex items-center gap-3 shrink-0 whitespace-nowrap font-display text-[17px] min-[381px]:text-[18px] sm:text-[20px] tracking-[-0.01em] text-ink"
         >
           <span>Aspen Lab</span>
           <span
@@ -80,7 +94,7 @@ export function Nav() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
           <nav
             className="flex items-center gap-0.5 rounded-[11px] p-1 text-[13px]"
             style={TRAY_STYLE}
@@ -88,7 +102,7 @@ export function Nav() {
             {ITEMS.map((item) => {
               const active = item.match(pathname);
               const label = t(item.key);
-              const className = `group relative px-3.5 py-[6px] rounded-[7px] transition-colors duration-150 ${
+              const className = `group relative whitespace-nowrap px-2 min-[381px]:px-2.5 sm:px-3.5 py-[6px] rounded-[7px] transition-colors duration-150 ${
                 active ? "text-ink" : "text-mute hover:text-ink"
               }`;
 
@@ -135,7 +149,13 @@ export function Nav() {
                 );
               }
               return (
-                <Link key={item.key} href={item.href} className={className}>
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  className={className}
+                  aria-current={active ? "page" : undefined}
+                  onClick={item.key === "work" ? onWorkClick : undefined}
+                >
                   {inner}
                 </Link>
               );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 
 /* Liquid-glass marble as the pointer.
    Real refraction, not a gradient impression: an SVG displacement map
@@ -54,15 +54,32 @@ function makeDisplacementMap(): string {
   return c.toDataURL();
 }
 
+/* The orb exists only for a fine pointer without reduced motion — a
+   client-only fact, so it is read as an external store. The server
+   snapshot (false) matches the static HTML during hydration and the
+   real value lands on the next render. Reading matchMedia inside
+   useState made every desktop visit a hydration mismatch, which threw
+   away the server HTML and re-rendered the whole page. */
+const FINE = "(pointer: fine)";
+const REDUCE = "(prefers-reduced-motion: reduce)";
+
+function subscribePointer(onChange: () => void) {
+  const queries = [window.matchMedia(FINE), window.matchMedia(REDUCE)];
+  queries.forEach((q) => q.addEventListener("change", onChange));
+  return () => queries.forEach((q) => q.removeEventListener("change", onChange));
+}
+const pointerSnapshot = () =>
+  window.matchMedia(FINE).matches && !window.matchMedia(REDUCE).matches;
+const serverPointerSnapshot = () => false;
+
 export function CursorOrb() {
   const ref = useRef<HTMLDivElement>(null);
   const feImageRef = useRef<SVGFEImageElement>(null);
-  const [enabled] = useState(() => {
-    if (typeof window === "undefined") return false;
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    return fine && !reduce;
-  });
+  const enabled = useSyncExternalStore(
+    subscribePointer,
+    pointerSnapshot,
+    serverPointerSnapshot,
+  );
 
   useEffect(() => {
     if (!enabled) return;
