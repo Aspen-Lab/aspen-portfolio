@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleToggle } from "./LocaleToggle";
@@ -40,6 +41,28 @@ export function Nav() {
   const t = useTranslations("Nav");
   const pathname = usePathname() ?? "/";
 
+  /* At rest the bar is part of the page: no glass, no engraved edge.
+     Its 1px line plus drop shadow used to cut a band across the hero
+     before anything had scrolled. The tray lifts only once content
+     actually passes under it. */
+  const [lifted, setLifted] = useState(false);
+  useEffect(() => {
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      setLifted(window.scrollY > 8);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   /* Already home with another tab open? Next would only rewrite the hash
      (silently — no event) and the Combo/Stack panel stayed up. Switch the
      tab ourselves and glide to the panel. Modified clicks pass through. */
@@ -53,10 +76,13 @@ export function Nav() {
 
   return (
     <header
-      className="sticky top-0 z-40 backdrop-blur-md bg-paper/75"
+      className={`sticky top-0 z-40 transition-[background-color,box-shadow,backdrop-filter] duration-300 ease-out ${
+        lifted ? "backdrop-blur-md bg-paper/75" : "bg-transparent"
+      }`}
       style={{
-        boxShadow:
-          "inset 0 -1px 0 rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.035), 0 14px 30px rgba(0,0,0,0.22)",
+        boxShadow: lifted
+          ? "inset 0 -1px 0 rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.035), 0 14px 30px rgba(0,0,0,0.22)"
+          : "none",
       }}
     >
       {/* Phones get tighter gaps and padding so brand, tray and switch
