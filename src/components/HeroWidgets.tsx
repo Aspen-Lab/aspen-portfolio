@@ -318,34 +318,15 @@ export function HeroWidgets() {
         })}
       </p>
 
-      {/* Rule */}
-      <div
-        className="hero-fade-up mt-7 mb-7 h-px"
-        style={{ ...enterDelay(0.5), background: "rgba(255,255,255,0.07)" }}
-      />
-
-      {/* Inventory */}
-      <div className="hero-fade-up" style={enterDelay(0.56)}>
+      {/* Inventory. The "Inventory 08/08" caption and the rule above it
+          are gone — the tray reads as itself, and the label lives on as
+          the accessible name. */}
+      <div className="hero-fade-up mt-8 sm:mt-9" style={enterDelay(0.5)}>
         <div className="inline-block max-w-full">
-          <div className="flex items-baseline justify-between mb-2.5 px-0.5">
-            <span
-              className="font-mono text-[9px] uppercase tracking-[0.24em]"
-              style={{ color: "rgba(113,113,119,0.40)" }}
-            >
-              {t("invLabel")}
-            </span>
-            <span
-              className="font-mono text-[8px] tracking-[0.16em]"
-              style={{ color: "rgba(113,113,119,0.32)" }}
-            >
-              {t("invCount")}
-            </span>
-          </div>
-
           {/* Tray — raised bezel holding eight recessed wells.
               On phones the tray scrolls sideways (hover cards are a
               pointer-only affordance, so clipping them there is fine). */}
-          <div className="max-sm:overflow-x-auto no-scrollbar">
+          <div className="max-sm:overflow-x-auto no-scrollbar" role="group" aria-label={t("invLabel")}>
           <div
             className="flex items-center gap-2 rounded-[12px] p-2 w-max"
             style={TRAY_STYLE}
@@ -367,7 +348,7 @@ export function HeroWidgets() {
       </div>
 
       {/* Companies — infinite scrolling ticker */}
-      <div className="hero-fade-up mt-8 -mx-4 sm:mx-0" style={enterDelay(0.66)}>
+      <div className="hero-fade-up mt-9 sm:mt-10 -mx-4 sm:mx-0" style={enterDelay(0.6)}>
         <div
           className="logo-ticker-wrap overflow-hidden"
           style={{
