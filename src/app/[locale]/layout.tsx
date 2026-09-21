@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { Instrument_Serif } from "next/font/google";
+import { Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
@@ -19,13 +19,17 @@ import "../globals.css";
 /* The display face. Geist stays the UI and body voice; the headline
    role — the hero statement, section titles, case-study titles — is set
    in a real editorial serif with a drawn italic, not an obliqued sans.
+   Newsreader replaced Instrument Serif (2026-09-21): Instrument is a
+   condensed display cut and read as cramped at 96px. Newsreader is wider,
+   carries an optical-size axis so the 32px section titles get sturdier
+   strokes than the 96px hero on their own, and keeps the drawn italic.
    Latin only: Chinese falls back to the grotesk (see .type-display). */
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
+const newsreader = Newsreader({
   style: ["normal", "italic"],
   subsets: ["latin"],
+  axes: ["opsz"],
   display: "swap",
-  variable: "--font-instrument-serif",
+  variable: "--font-newsreader",
 });
 
 // Home copy doubles as the fallback for pages without their own (the
@@ -61,7 +65,7 @@ export default async function LocaleLayout({
 
   // The site is one bilingual experience; html lang reflects the active route.
   return (
-    <html lang={htmlLang(locale)} className={`${GeistSans.variable} ${GeistMono.variable} ${instrumentSerif.variable}`}>
+    <html lang={htmlLang(locale)} className={`${GeistSans.variable} ${GeistMono.variable} ${newsreader.variable}`}>
       <body className="min-h-screen flex flex-col bg-paper text-ink antialiased">
         <NextIntlClientProvider>
           <Nav />

@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #171718;
-  --color-cream: #212123;
-  --color-line: #313134;
+  --color-paper: #0F0F10;
+  --color-cream: #181819;
+  --color-line: #252528;
   --color-ink: #F4F4F2;
   --color-mute: #A0A0A5;
   --color-soft: #717177;
@@ -37,17 +37,19 @@ body {
 }
 
 /* The headline role. Everything at display size — the hero statement,
-   section titles, case-study titles — is set in Instrument Serif; the
-   UI, body and labels stay Geist. Weight and tracking live here so the
-   call sites only say what size and colour they want.
+   section titles, case-study titles — is set in Newsreader; the UI, body
+   and labels stay Geist. Weight and tracking live here so the call sites
+   only say what size and colour they want. Newsreader's optical-size
+   axis is on (font-optical-sizing: auto is the default), so the 96px
+   hero gets the fine 72-opsz cut and a 32px title the sturdier one.
 
-   Instrument Serif has no CJK: on the Chinese routes the role falls
-   back to the grotesk at its old light/tight setting, which is what
-   those headlines were drawn for anyway. */
+   Newsreader has no CJK: on the Chinese routes the role falls back to
+   the grotesk at its old light/tight setting, which is what those
+   headlines were drawn for anyway. */
 .type-display {
-  font-family: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
-  font-weight: 400;
-  letter-spacing: -0.008em;
+  font-family: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  font-weight: 300;
+  letter-spacing: -0.014em;
 }
 html[lang="zh-CN"] .type-display {
   font-family: var(--font-display);
