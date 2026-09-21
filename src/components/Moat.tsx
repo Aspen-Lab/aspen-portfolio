@@ -272,7 +272,10 @@ function Widget({ index, locale }: { index: number; locale: Locale }) {
 
 /* ─── Main section ─────────────────────────────────────────────────── */
 
-export function Moat() {
+/* Lives at the bottom of /about now — it used to own a home tab, but the
+   home page reads better with four. `inPage` drops the tab-panel padding
+   so it sits in the About rhythm instead of floating. */
+export function Moat({ inPage = false }: { inPage?: boolean }) {
   const locale = useLocale() as Locale;
   const t = useTranslations("Moat");
   const [active, setActive] = useState(0);
@@ -281,7 +284,7 @@ export function Moat() {
   const Icon = ICONS[active];
 
   return (
-    <section id="combo" className="container-fluid pt-14 pb-32">
+    <section id="combo" className={inPage ? "pb-8" : "container-fluid pt-14 pb-32"}>
       <Reveal>
         <p className="text-[18px] text-mute leading-[1.6] max-w-2xl mb-12">
           {t.rich("intro", {

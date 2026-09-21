@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { BootSequence } from "@/components/BootSequence";
 import { PageEntrance } from "@/components/PageEntrance";
 import { BootReveal } from "@/components/BootReveal";
+import { Moat } from "@/components/Moat";
 import { TRAY_STYLE, WELL_STYLE, DOT_WELL } from "@/lib/tactile";
 
 /* Engraved groove — replaces flat 1px rules inside the plate. */
@@ -299,7 +300,7 @@ function SectionTitle({
   return (
     <Reveal>
       <div className="border-t border-b border-line py-4 mb-14 flex items-baseline justify-between gap-4">
-        <h2 className="font-display text-[24px] sm:text-[30px] tracking-[-0.01em] flex items-baseline gap-3 sm:gap-4">
+        <h2 className="type-display text-[26px] sm:text-[32px] flex items-baseline gap-3 sm:gap-4">
           <span className="font-mono text-soft/70 text-[12px] tracking-[0.2em] uppercase">
             [A-{number}]
           </span>
@@ -404,7 +405,7 @@ export default async function About({
               {/* Main — identity headline; the facts now live in the bands below */}
               <div className="flex items-center p-6 sm:p-9 lg:p-12">
                 <h1
-                  className="font-display font-light tracking-[-0.02em] text-ink leading-[1.02]"
+                  className="type-display text-ink leading-[1.02]"
                   style={{ fontSize: "clamp(32px, 4.2vw, 58px)" }}
                 >
                   {isCn ? "一半是设计师，" : "Half designer,"}
@@ -1137,6 +1138,23 @@ export default async function About({
             </Reveal>
           ))}
         </ul>
+      </section>
+      </BootReveal>
+
+      {/* [A-08] The combo — six proof points. It used to be a home tab;
+          the home page is sharper with four, and this is where someone
+          reading the whole story wants it anyway. */}
+      <BootReveal delay={0.73}>
+      <section className="container-fluid mt-20">
+          <div className="border-t border-line pt-6 mb-10">
+            <span className="font-mono text-soft/70 text-[11px] tracking-[0.24em] uppercase">
+              [A-08]
+            </span>
+            <p className="mt-2 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
+              {isCn ? "组合技" : "The combo"}
+            </p>
+          </div>
+        <Moat inPage />
       </section>
       </BootReveal>
     </article>

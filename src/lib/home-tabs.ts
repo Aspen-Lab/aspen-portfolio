@@ -1,11 +1,11 @@
-/* The home page's tab state lives in the URL hash (/en#combo deep-links
+/* The home page's tab state lives in the URL hash (/en#side deep-links
    straight to a panel). It is read as an external store so the server
    snapshot ("work") always matches the static HTML during hydration.
    Next's router changes the hash with pushState, which fires no event,
    so anything that switches tabs — the tab bar, the nav's Work link —
    goes through selectHomeTab() and announces the change itself. */
 
-export const HOME_TABS = ["work", "system", "stack", "side", "combo"] as const;
+export const HOME_TABS = ["work", "system", "stack", "side"] as const;
 export type HomeTab = (typeof HOME_TABS)[number];
 
 const TAB_EVENT = "home-tabs:change";

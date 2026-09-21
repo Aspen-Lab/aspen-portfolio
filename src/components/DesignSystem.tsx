@@ -28,7 +28,7 @@ export function DesignSystem() {
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
               {t("eyebrow", { version: ds.version })}
             </p>
-            <h2 className="mt-3 font-display text-[34px] sm:text-[44px] leading-[1.05] tracking-[-0.02em] text-ink">
+            <h2 className="mt-3 type-display text-[36px] sm:text-[48px] leading-[1.05] text-ink">
               <a
                 href={ds.href}
                 target="_blank"

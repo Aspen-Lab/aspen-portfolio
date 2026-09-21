@@ -3,58 +3,33 @@ import { AvatarDots } from "./AvatarDots";
 import { HeroHeadline } from "./HeroHeadline";
 import { HeroWidgets } from "./HeroWidgets";
 
-/* The backdrop is full-bleed and feathered on every side. It used to
-   live inside the 1280px container, so on wider screens the light
-   stopped in a rectangle: a visible panel edge down both sides, a bright
-   line under the nav and a dark band where the hero met the tab bar.
-   Now the section spans the viewport, the light is anchored in pixels to
-   the portrait (so it follows it at any width), and masks fade the wash
-   out at all four edges. */
+/* Flat paper, one texture. The hero carried a radial backlight and a
+   vertical wash; both are gone — the page is a single dark tone with
+   grain (globals.css) and the hero adds only the 22px dot grid that the
+   portrait gathers itself out of (components/AvatarDots.tsx). */
 export function Hero() {
   const t = useTranslations("Hero");
 
   return (
     <section id="hero" className="relative overflow-hidden">
+      {/* No wash, no backlight: the paper stays flat and the only thing
+          behind the words is the dot grid the portrait assembles out of.
+          The grid is held around the face and fades before every edge, so
+          nothing reads as a panel. */}
       <div aria-hidden className="absolute inset-0 pointer-events-none select-none">
-        {/* Backlight behind the portrait — px radii, so it neither
-            stretches nor drifts off the face as the viewport widens */}
+        {/* Phones only ever see the grid's outer falloff — the portrait it
+            belongs to is mostly off-canvas there — so it lands as noise
+            behind the bio. Desktop keeps it; phones get clean paper. */}
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(620px 430px at calc(50% + 320px) 46%, rgba(244,244,242,0.06) 0%, rgba(244,244,242,0.02) 46%, rgba(244,244,242,0) 72%)",
-          }}
-        />
-        {/* Vertical wash, feathered top and bottom (outer) and at the
-            sides (inner) so no edge of it is ever a line */}
-        <div
-          className="absolute inset-0"
-          style={{
-            maskImage: "linear-gradient(180deg, transparent 0%, black 10%, black 78%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(180deg, transparent 0%, black 10%, black 78%, transparent 100%)",
-          }}
-        >
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0) 34%, rgba(0,0,0,0.16) 100%)",
-              maskImage: "linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%)",
-              WebkitMaskImage: "linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%)",
-            }}
-          />
-        </div>
-        {/* Dot grid, held around the portrait */}
-        <div
-          className="absolute inset-0"
+          className="hidden sm:block absolute inset-0"
           style={{
             backgroundImage:
-              "radial-gradient(rgba(244,244,242,0.05) 1px, transparent 1px)",
+              "radial-gradient(rgba(244,244,242,0.055) 1px, transparent 1px)",
             backgroundSize: "22px 22px",
             maskImage:
-              "radial-gradient(680px 470px at calc(50% + 300px) 46%, black 0%, rgba(0,0,0,0.3) 56%, transparent 82%)",
+              "radial-gradient(700px 480px at calc(50% + 300px) 46%, black 0%, rgba(0,0,0,0.32) 56%, transparent 84%)",
             WebkitMaskImage:
-              "radial-gradient(680px 470px at calc(50% + 300px) 46%, black 0%, rgba(0,0,0,0.3) 56%, transparent 82%)",
+              "radial-gradient(700px 480px at calc(50% + 300px) 46%, black 0%, rgba(0,0,0,0.32) 56%, transparent 84%)",
           }}
         />
       </div>

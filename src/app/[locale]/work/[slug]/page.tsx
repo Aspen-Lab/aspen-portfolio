@@ -81,7 +81,7 @@ export default async function CaseStudy({
             </span>
           </div>
           <h1
-            className="mt-6 font-display font-light leading-[1.0] tracking-[-0.025em] text-ink"
+            className="mt-6 type-display leading-[1.0] text-ink"
             style={{ fontSize: "clamp(40px, 6vw, 84px)" }}
           >
             {project.title}

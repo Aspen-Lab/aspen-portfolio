@@ -66,13 +66,14 @@
     "work": "Featured work",
     "system": "Design system",
     "stack": "Tech stack",
-    "side": "Side projects",
-    "combo": "The combo"
+    "side": "Side projects"
   },
   "SelectedWork": {
     "inProgress": "In progress",
     "cover": "cover",
-    "viewAll": "View all projects on Aspen Lab →",
+    "viewAll": "View all projects on Aspen Lab",
+    "featured": "Featured case",
+    "more": "More work",
     "projects": {
       "axel": {
         "title": "Axel — sole designer × bidirectional loop",

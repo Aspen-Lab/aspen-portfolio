@@ -66,13 +66,14 @@
     "work": "精选作品",
     "system": "设计系统",
     "stack": "技术栈",
-    "side": "副业项目",
-    "combo": "组合优势"
+    "side": "副业项目"
   },
   "SelectedWork": {
     "inProgress": "进行中",
     "cover": "封面",
-    "viewAll": "在 Aspen Lab 查看全部项目 →",
+    "viewAll": "在 Aspen Lab 查看全部项目",
+    "featured": "重点案例",
+    "more": "更多项目",
     "projects": {
       "axel": {
         "title": "Axel — 唯一设计师 × 双向协作闭环",

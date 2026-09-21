@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { Instrument_Serif } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
@@ -14,6 +15,18 @@ import { routing } from "@/i18n/routing";
 import type { Locale } from "@/i18n/routing";
 import { SITE_URL, homeCopy, htmlLang, pageMeta } from "@/lib/seo";
 import "../globals.css";
+
+/* The display face. Geist stays the UI and body voice; the headline
+   role — the hero statement, section titles, case-study titles — is set
+   in a real editorial serif with a drawn italic, not an obliqued sans.
+   Latin only: Chinese falls back to the grotesk (see .type-display). */
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-instrument-serif",
+});
 
 // Home copy doubles as the fallback for pages without their own (the
 // 404); every real page overrides title, canonical and share card.
@@ -48,7 +61,7 @@ export default async function LocaleLayout({
 
   // The site is one bilingual experience; html lang reflects the active route.
   return (
-    <html lang={htmlLang(locale)} className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang={htmlLang(locale)} className={`${GeistSans.variable} ${GeistMono.variable} ${instrumentSerif.variable}`}>
       <body className="min-h-screen flex flex-col bg-paper text-ink antialiased">
         <NextIntlClientProvider>
           <Nav />

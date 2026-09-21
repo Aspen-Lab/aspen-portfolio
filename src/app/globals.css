@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #212121;
-  --color-cream: #2A2A2B;
-  --color-line: #38383A;
+  --color-paper: #171718;
+  --color-cream: #212123;
+  --color-line: #313134;
   --color-ink: #F4F4F2;
   --color-mute: #A0A0A5;
   --color-soft: #717177;
@@ -24,15 +24,35 @@ body {
   font-feature-settings: "ss01", "tnum";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* Depth + grain. A soft top spotlight lifts the flat #212121, and a fine
-     monochrome turbulence grain sits over it for tactile texture. */
+  /* Flat ink, no wash. Depth comes from the grain and from the raised and
+     recessed surfaces on top of it — two turbulence layers, one fine and
+     one coarse, so the paper has a tooth instead of a gradient. */
   background-color: var(--color-paper);
   background-image:
-    radial-gradient(140% 90% at 50% -10%, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 55%),
-    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.07'/%3E%3C/svg%3E");
-  background-repeat: no-repeat, repeat;
-  background-size: 100% 100%, 200px 200px;
-  background-attachment: fixed, scroll;
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.085'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.25' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)' opacity='0.035'/%3E%3C/svg%3E");
+  background-repeat: repeat, repeat;
+  background-size: 180px 180px, 460px 460px;
+  background-attachment: scroll, scroll;
+}
+
+/* The headline role. Everything at display size — the hero statement,
+   section titles, case-study titles — is set in Instrument Serif; the
+   UI, body and labels stay Geist. Weight and tracking live here so the
+   call sites only say what size and colour they want.
+
+   Instrument Serif has no CJK: on the Chinese routes the role falls
+   back to the grotesk at its old light/tight setting, which is what
+   those headlines were drawn for anyway. */
+.type-display {
+  font-family: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.008em;
+}
+html[lang="zh-CN"] .type-display {
+  font-family: var(--font-display);
+  font-weight: 300;
+  letter-spacing: -0.03em;
 }
 
 /* Photo frame · the image sits sunken into a recessed well — inner top
@@ -69,7 +89,7 @@ body {
 
 a,
 button {
-  transition: color 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .container-fluid {
@@ -91,7 +111,7 @@ button {
   height: 1px;
   background: currentColor;
   transform-origin: left;
-  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .link-rev::after {
   transform: scaleX(0);
@@ -114,16 +134,36 @@ button {
     0 1px 2px rgba(0, 0, 0, 0.4),
     0 14px 30px rgba(0, 0, 0, 0.32);
   transition:
-    box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow 420ms cubic-bezier(0.34, 1.4, 0.64, 1),
+    transform 420ms cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 .card-material:hover {
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11),
     inset 0 -1px 0 rgba(0, 0, 0, 0.42),
     0 2px 4px rgba(0, 0, 0, 0.4),
-    0 22px 48px rgba(0, 0, 0, 0.42);
-  transform: translateY(-2px);
+    0 26px 56px rgba(0, 0, 0, 0.46);
+  transform: translateY(-3px);
+}
+.card-material:active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.42),
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 10px 22px rgba(0, 0, 0, 0.36);
+  transform: translateY(-1px);
+  transition-duration: 90ms;
+}
+
+/* One motion vocabulary. Ease-out-expo for arrivals, a short settle with
+   a whisper of overshoot for hover, and three tempos borrowed from the
+   design system: press / feedback / entrance. */
+@theme {
+  --ease-arrive: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-settle: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --t-press: 90ms;
+  --t-feedback: 200ms;
+  --t-enter: 320ms;
 }
 
 /* Hero entrance — CSS keyframes, not JS, so the choreography starts at
@@ -133,11 +173,12 @@ button {
    .hero-rise: a line slides up out of its overflow-hidden mask.
    .hero-fade-up: fade + lift + unblur for the widgets below. */
 @keyframes hero-rise {
-  from { transform: translateY(106%); }
-  to   { transform: none; }
+  from { transform: translateY(106%); opacity: 0.55; }
+  60%  { opacity: 1; }
+  to   { transform: none; opacity: 1; }
 }
 @keyframes hero-fade-up {
-  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  from { opacity: 0; transform: translateY(9px); filter: blur(3px); }
   to   { opacity: 1; transform: none; filter: blur(0); }
 }
 @keyframes hero-fade {
@@ -145,10 +186,10 @@ button {
   to   { opacity: 1; }
 }
 .hero-rise {
-  animation: hero-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
+  animation: hero-rise 1.05s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
 }
 .hero-fade-up {
-  animation: hero-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
+  animation: hero-fade-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-rise { animation: hero-fade 0.9s ease-out var(--d, 0s) both; }
@@ -279,89 +320,115 @@ button:not(:disabled) {
   cursor: pointer;
 }
 
-/* ── Cursor orb ── liquid glass with three forms.
-   BALL while browsing (refracting lens), a CARET bar over text (height
-   follows the line), and a PILL adhered to interactive controls
-   (control-sized, corner-matched, flat glass — no lens bending while
-   docked). All morphs are width/height/radius transitions on the
-   centered inner element; the position path stays a direct write. */
+/* ── Cursor reticle ── a viewfinder, not a glass marble.
+   The old pointer was a 48px liquid-glass lens: an SVG feDisplacementMap
+   refraction through backdrop-filter: url(), a bevel rim light, inset
+   highlights, drop shadows and a directional jelly squash. All of it is
+   gone. What replaces it is Latent's language, measured off
+   latenthealth.com: 1px hairlines on transparent, square corners, one
+   monochrome ink, 180ms cubic-bezier(.16,1,.3,1), and registration marks
+   built the way .vf__reg is — two 1px bars per corner, never a box.
+
+   REST     a 24px crosshair with an 8px clear centre, so the pixel being
+            aimed at is never covered by the thing aiming at it
+   LOCK     on a control, the four ticks leave the pointer and land as
+            registration corners on the control's own padded box —
+            bracketed, not boxed, and nothing left over the label
+   WIDE     on a card or a CTA the same corners go on the element's box;
+            the crosshair stays, because on a 576px plate the corners
+            alone lose the pointer's x position
+   TEXT     one 1px bar at the element's line height
+   PRESS    corner arms and padding step to 84%, the rest gap halves
+
+   Nothing is ever anchored to the pointer while over a target — that is
+   what kept the corner bars off the glyphs of "designing for trust at
+   L2+" and the CTA's label. */
 html.cursor-orb-active,
 html.cursor-orb-active * {
   cursor: none !important;
 }
-.cursor-orb .orb {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 48px;
-  height: 48px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  -webkit-backdrop-filter: blur(2px) brightness(1.1) saturate(1.05);
-  backdrop-filter: blur(2px) brightness(1.1) saturate(1.05);
-  backdrop-filter: url(#orb-refraction) brightness(1.1) contrast(1.03) saturate(1.03);
-  background: rgba(255, 255, 255, 0.01);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.12),
-    0 4px 10px rgba(0, 0, 0, 0.22),
-    0 1px 3px rgba(0, 0, 0, 0.16);
-  transition:
-    transform 130ms cubic-bezier(0.3, 1.4, 0.5, 1),
-    width 180ms cubic-bezier(0.3, 1.2, 0.4, 1),
-    height 180ms cubic-bezier(0.3, 1.2, 0.4, 1),
-    border-radius 180ms cubic-bezier(0.3, 1.2, 0.4, 1),
-    box-shadow 130ms ease;
+
+.cursor-reticle,
+.cursor-bracket {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 180ms var(--ease-arrive);
+  --reticle-ink: color-mix(in srgb, var(--color-ink) 92%, transparent);
 }
-/* Rim light — a continuous arc of light wrapping the bevel: bright
-   where light enters (top-left), gone at the sides, a softer bounce
-   at the bottom-right. Follows every form via inherited radius. */
-.cursor-orb .orb::after {
+.cursor-reticle[data-vis="1"] { opacity: 1; }
+.cursor-bracket[data-on="1"][data-vis="1"] { opacity: 1; }
+
+/* The pointer root is a zero-size origin; only its transform moves, and
+   it is written synchronously in pointermove — no springs, no rAF. */
+.cursor-reticle {
+  width: 0;
+  height: 0;
+  will-change: transform;
+  transform: translate3d(-9999px, -9999px, 0);
+  --g: 4px;  /* half the centre gap */
+  --l: 8px;  /* tick length */
+}
+.cursor-reticle > i {
+  position: absolute;
+  display: block;
+  transition: opacity 180ms var(--ease-arrive);
+}
+.cursor-reticle > .t,
+.cursor-reticle > .bar { background: var(--reticle-ink); }
+
+.cursor-reticle > .n { left: 0; width: 1px; height: var(--l); top: calc(-1 * (var(--g) + var(--l))); }
+.cursor-reticle > .s { left: 0; width: 1px; height: var(--l); top: var(--g); }
+.cursor-reticle > .w { top: 0; height: 1px; width: var(--l); left: calc(-1 * (var(--g) + var(--l))); }
+.cursor-reticle > .e { top: 0; height: 1px; width: var(--l); left: var(--g); }
+
+/* CARET — over readable text */
+.cursor-reticle > .bar {
+  left: 0;
+  width: 1px;
+  height: var(--caret-h, 28px);
+  top: calc(-0.5 * var(--caret-h, 28px));
+  opacity: 0;
+}
+
+/* Registration corners, built like Latent's .vf__reg: an L of two 1px
+   bars. --a is the arm length, sized from the target so short chips
+   never have their arms meet and close into a frame. */
+.cursor-bracket > i {
+  position: absolute;
+  display: block;
+  width: var(--a, 10px);
+  height: var(--a, 10px);
+}
+.cursor-bracket > i::before,
+.cursor-bracket > i::after {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: linear-gradient(
-    160deg,
-    rgba(255, 255, 255, 0.55) 0%,
-    rgba(255, 255, 255, 0.10) 30%,
-    rgba(255, 255, 255, 0) 48%,
-    rgba(255, 255, 255, 0) 62%,
-    rgba(255, 255, 255, 0.30) 100%
-  );
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  filter: blur(0.4px);
+  background: var(--reticle-ink);
 }
-/* CARET — over readable text: a vertical glass bar at line height */
-.cursor-orb[data-mode="text"] .orb {
-  width: 7px;
-  height: var(--caret-h, 30px);
-  border-radius: 4px;
-}
-/* PILL — adhered to a control: its size, its corners, flat glass */
-.cursor-orb[data-mode="target"] .orb {
-  width: var(--pill-w, 64px);
-  height: var(--pill-h, 40px);
-  border-radius: var(--pill-r, 14px);
-  background: rgba(255, 255, 255, 0.006);
-  /* Crystal-clear while docked — never blur the label underneath */
-  -webkit-backdrop-filter: brightness(1.16) saturate(1.05);
-  backdrop-filter: brightness(1.16) saturate(1.05);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.14),
-    0 5px 14px rgba(0, 0, 0, 0.24),
-    0 1px 3px rgba(0, 0, 0, 0.16);
-}
-.cursor-orb[data-pressed="true"] .orb {
-  transform: translate(-50%, -50%) scale(0.94);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.1),
-    0 2px 6px rgba(0, 0, 0, 0.2),
-    0 1px 2px rgba(0, 0, 0, 0.15);
-}
+.cursor-bracket > i::before { width: var(--a, 10px); height: 1px; }
+.cursor-bracket > i::after  { width: 1px; height: var(--a, 10px); }
+.cursor-bracket > .tl { left: 0;  top: 0; }
+.cursor-bracket > .tr { right: 0; top: 0; }
+.cursor-bracket > .br { right: 0; bottom: 0; }
+.cursor-bracket > .bl { left: 0;  bottom: 0; }
+.cursor-bracket > .tl::before, .cursor-bracket > .tl::after { left: 0;  top: 0; }
+.cursor-bracket > .tr::before, .cursor-bracket > .tr::after { right: 0; top: 0; }
+.cursor-bracket > .br::before, .cursor-bracket > .br::after { right: 0; bottom: 0; }
+.cursor-bracket > .bl::before, .cursor-bracket > .bl::after { left: 0;  bottom: 0; }
+
+/* Modes. On a small control the crosshair withdraws — the corners say
+   where the pointer is and a crosshair would only sit on the label. */
+.cursor-reticle[data-mode="lock"] > .t { opacity: 0; }
+.cursor-reticle[data-mode="text"] > .t { opacity: 0; }
+.cursor-reticle[data-mode="text"] > .bar { opacity: 1; }
+
+/* PRESS — a flat 1-2px inset measured 2-4 device px on a 2x display and
+   was unreadable; scaling the whole mark is what actually registers. */
+.cursor-reticle[data-pressed="true"] { --g: 2px; --l: 7px; }
 
 /* Monochrome focus ring — replaces the UA default everywhere. */
 :focus-visible {

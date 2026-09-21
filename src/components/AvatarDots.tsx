@@ -62,14 +62,24 @@ export function AvatarDots() {
     canvas.style.height = `${cssH}px`;
     ctx.scale(dpr, dpr);
 
-    // Pre-build face dots — home is the grid cell; offset stays tiny
+    // Pre-build face dots — home is the grid cell; offset stays tiny.
+    // Each dot also remembers the background-grid node it comes from: the
+    // page opens as a plain 22px dot grid, and those dots fly together
+    // into the portrait.
     type Dot = {
-      gx: number; gy: number;   // grid indices (for shimmer/reveal)
+      gx: number; gy: number;   // grid indices (for the assembly stagger)
       hx: number; hy: number;   // home pixel position
+      sx: number; sy: number;   // start: the background grid node it leaves
+      delay: number;            // ms before this dot sets off
       bb: number;               // brightness
       ox: number; oy: number;   // displacement (capped below one pitch)
       vx: number; vy: number;   // velocity
     };
+
+    const CELL = 22;            // the backdrop's dot-grid pitch (globals/Hero)
+    const FACE_X = cssW * 0.42; // the face sits here inside the canvas
+    const FACE_Y = cssH * 0.44;
+    const maxR = Math.hypot(cssW * 0.58, cssH * 0.56);
 
     const dots: Dot[] = [];
     for (let y = 0; y < TH; y++) {
@@ -77,16 +87,32 @@ export function AvatarDots() {
         const v = 1 - grid[y][x];
         const bb = (v - 0.12) / 0.88;
         if (bb <= 0.02) continue;
+        const hx = x * pitch + pitch / 2;
+        const hy = y * pitch + pitch / 2;
+        // The face resolves from its centre outward, so the eyes arrive first
+        const r = Math.hypot(hx - FACE_X, hy - FACE_Y) / maxR;
         dots.push({
           gx: x, gy: y,
-          hx: x * pitch + pitch / 2,
-          hy: y * pitch + pitch / 2,
+          hx, hy,
+          sx: Math.round(hx / CELL) * CELL,
+          sy: Math.round(hy / CELL) * CELL,
+          delay: 120 + r * 620 + Math.random() * 90,
           bb,
           ox: 0, oy: 0,
           vx: 0, vy: 0,
         });
       }
     }
+
+    // The grid the dots leave behind: drawn by the canvas for the first
+    // beat, then faded out as the face takes over.
+    const nodes: { x: number; y: number }[] = [];
+    for (let y = CELL / 2; y < cssH; y += CELL) {
+      for (let x = CELL / 2; x < cssW; x += CELL) nodes.push({ x, y });
+    }
+    const GRID_A = 0.05;        // matches the CSS backdrop grid
+    const ASSEMBLY = 1500;      // ms: last dot lands
+    const easeOutQuint = (u: number) => 1 - Math.pow(1 - u, 5);
 
     // Stray dots in the ring outside the portrait (unchanged)
     const strays: { x: number; y: number; a: number; ph: number }[] = [];
@@ -115,10 +141,6 @@ export function AvatarDots() {
     const TWO_PI = Math.PI * 2;
     const start = performance.now();
     let raf = 0;
-
-    // Blink scheduler — the portrait is alive. Occasional double blink.
-    let nextBlinkAt = start + 2400;
-    let blinkBegan = -1;
 
     const mouse = { x: -9999, y: -9999 };
     // Smoothed lens cursor — a touch of follow, mostly direct.
@@ -166,18 +188,16 @@ export function AvatarDots() {
         if (!active && lensAmt < 0.01) cur.seeded = false;
       }
 
-      // Blink drive: fast close, slower open, ~300ms per blink.
-      let blink = 0;
-      if (!reduce) {
-        if (blinkBegan < 0 && now >= nextBlinkAt) blinkBegan = now;
-        if (blinkBegan >= 0) {
-          const bp = (now - blinkBegan) / 300;
-          if (bp >= 1) {
-            blinkBegan = -1;
-            nextBlinkAt =
-              now + (Math.random() < 0.18 ? 320 : 2600 + Math.random() * 3600);
-          } else {
-            blink = Math.pow(Math.sin(Math.PI * bp), 1.3);
+      // The assembly: grid first, then the face gathers out of it.
+      const assembling = !reduce && t < ASSEMBLY + 400;
+      if (assembling) {
+        const gridFade = Math.max(0, 1 - Math.max(0, t - 80) / 900);
+        if (gridFade > 0.01) {
+          ctx.fillStyle = `rgba(244,244,242,${(GRID_A * gridFade).toFixed(3)})`;
+          for (const n of nodes) {
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, 1, 0, TWO_PI);
+            ctx.fill();
           }
         }
       }
@@ -226,8 +246,12 @@ export function AvatarDots() {
           }
         }
 
-        const delay = ((d.gx + d.gy) / (TW + TH)) * 700;
-        const reveal = Math.max(0, Math.min(1, (t - delay) / 420));
+        // Assembly: travel from the grid node to the face, easing out.
+        const u = reduce ? 1 : Math.max(0, Math.min(1, (t - d.delay) / 900));
+        const e = easeOutQuint(u);
+        const ax = d.sx + (d.hx - d.sx) * e;
+        const ay = d.sy + (d.hy - d.sy) * e;
+        const reveal = e;
         const shimmer = 1; // no gradient animation — steady luminance
 
         // Center radial spotlight — face center is ~(42%, 44%) of canvas
@@ -247,33 +271,18 @@ export function AvatarDots() {
           dL < 52 ? (1 - dL / 52) ** 2 : 0,
           dR < 52 ? (1 - dR / 52) ** 2 : 0,
         );
-        if (eyeInf > 0) alpha = Math.min(0.88, alpha + eyeInf * 0.45 * (1 - blink * 0.85));
-
-        // Blink: dots in each eye ellipse collapse onto the lid line
-        // and dim slightly — the lid comes down, the eye doesn't just fade.
-        let lidY = 0;
-        if (blink > 0.01) {
-          const yL = cssH * EYE_L.y;
-          const yR = cssH * EYE_R.y;
-          const wL = Math.max(0, 1 - Math.hypot((px - cssW * EYE_L.x) / 34, (py - yL) / 20));
-          const wR = Math.max(0, 1 - Math.hypot((px - cssW * EYE_R.x) / 34, (py - yR) / 20));
-          if (wL > 0 || wR > 0) {
-            const lidLine = wL >= wR ? yL : yR;
-            const w = Math.min(1, Math.max(wL, wR) * 1.6);
-            lidY = (lidLine - py) * 0.9 * blink * w;
-            alpha *= 1 - 0.3 * blink * w;
-          }
-        }
+        if (eyeInf > 0) alpha = Math.min(0.88, alpha + eyeInf * 0.45);
 
         if (alpha <= 0.003) continue;
 
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(d.hx + d.ox, d.hy + d.oy + lidY, dot, 0, TWO_PI);
+        ctx.arc(ax + d.ox, ay + d.oy, dot, 0, TWO_PI);
         ctx.fill();
       }
 
       for (const s of strays) {
+        if (t < ASSEMBLY) continue; // no loose dots until the face has landed
         const tw = reduce ? 1 : 0.55 + 0.45 * Math.sin(now * 0.0012 + s.ph);
         const alpha = s.a * tw * globalReveal;
         if (alpha <= 0.003) continue;
@@ -297,7 +306,7 @@ export function AvatarDots() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none select-none absolute top-1/2 -translate-y-1/2 right-[-220px] sm:right-[-110px] xl:right-[-30px] -z-0 opacity-[0.38] sm:opacity-95"
+      className="pointer-events-none select-none absolute top-1/2 -translate-y-1/2 right-[-220px] sm:right-[-110px] xl:right-[-30px] -z-0 opacity-[0.16] sm:opacity-95"
       style={{
         // Elliptical fade, biased right — the face's left flank
         // dissolves before it can slide under the headline column.

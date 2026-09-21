@@ -53,7 +53,7 @@ export function HeroHeadline({ line1, line2, line3a, line3Italic, line3b }: Prop
 
       {/* The statement */}
       <h1
-        className="font-display font-light tracking-[-0.03em] leading-[1.02]"
+        className="type-display leading-[1.02]"
         style={{ fontSize: "clamp(44px, 6.6vw, 96px)", color: "rgba(244,244,242,0.86)" }}
       >
         <MaskLine delay={BASE + 0.14}>

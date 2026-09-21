@@ -20,7 +20,7 @@ export default async function NotFound() {
 
       <Reveal delay={0.05}>
         <h1
-          className="mt-10 font-display font-light tracking-[-0.025em] text-ink leading-[0.96]"
+          className="mt-10 type-display text-ink leading-[0.96]"
           style={{ fontSize: "clamp(48px, 8.4vw, 124px)" }}
         >
           {t("headline1")}

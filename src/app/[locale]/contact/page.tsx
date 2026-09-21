@@ -33,7 +33,7 @@ export default async function Contact({
     <article className="container-fluid pb-32">
       <Reveal>
         <h1
-          className="mt-14 sm:mt-20 font-display font-light tracking-[-0.025em] text-ink/70 leading-[1.0]"
+          className="mt-14 sm:mt-20 type-display text-ink/70 leading-[1.0]"
           style={{ fontSize: "clamp(40px, 6vw, 88px)" }}
         >
           {cn ? "联系我" : "Get in touch."}
