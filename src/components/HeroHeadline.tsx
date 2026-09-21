@@ -20,46 +20,28 @@ function MaskLine({ children, delay }: { children: ReactNode; delay: number }) {
 }
 
 type Props = {
-  line1: string;
   line2: string;
   line3a: string;
   line3Italic: string;
   line3b: string;
 };
 
-/* Hierarchy: the greeting is a quiet intro line; the statement owns
-   the section. One idea per scale. */
-export function HeroHeadline({ line1, line2, line3a, line3Italic, line3b }: Props) {
+/* One idea, one scale: the statement is the whole hero. (A "Hi! I'm
+   Aspen." greeting used to sit above it; cut 2026-09-21.) */
+export function HeroHeadline({ line2, line3a, line3Italic, line3b }: Props) {
   const BASE = 0.08;
-
-  // Split "Hi! I'm Aspen." → before / "Aspen" / after
-  const aspenIdx = line1.indexOf("Aspen");
-  const before   = aspenIdx >= 0 ? line1.slice(0, aspenIdx) : line1;
-  const after    = aspenIdx >= 0 ? line1.slice(aspenIdx + 5) : "";
 
   return (
     <div>
-      {/* Greeting — small, warm, out of the statement's way */}
-      <p
-        className="font-display font-normal tracking-[-0.005em] mb-5"
-        style={{ fontSize: "clamp(17px, 1.6vw, 21px)", color: "rgba(160,160,165,0.85)" }}
-      >
-        <MaskLine delay={BASE}>
-          {before}
-          {aspenIdx >= 0 && <span className="aspen-shimmer">Aspen</span>}
-          {after}
-        </MaskLine>
-      </p>
-
       {/* The statement */}
       <h1
         className="type-display leading-[1.02]"
         style={{ fontSize: "clamp(44px, 6.6vw, 96px)", color: "rgba(244,244,242,0.86)" }}
       >
-        <MaskLine delay={BASE + 0.14}>
+        <MaskLine delay={BASE}>
           {line2}
         </MaskLine>
-        <MaskLine delay={BASE + 0.26}>
+        <MaskLine delay={BASE + 0.12}>
           {line3a}
           <span
             className="italic font-normal leverage-gradient"

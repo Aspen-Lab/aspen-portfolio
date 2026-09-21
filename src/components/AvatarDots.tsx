@@ -72,8 +72,6 @@ export function AvatarDots() {
       sx: number; sy: number;   // start: the background grid node it leaves
       delay: number;            // ms before this dot sets off
       bb: number;               // brightness
-      ox: number; oy: number;   // displacement (capped below one pitch)
-      vx: number; vy: number;   // velocity
     };
 
     const CELL = 22;            // the backdrop's dot-grid pitch (globals/Hero)
@@ -98,8 +96,6 @@ export function AvatarDots() {
           sy: Math.round(hy / CELL) * CELL,
           delay: 120 + r * 620 + Math.random() * 90,
           bb,
-          ox: 0, oy: 0,
-          vx: 0, vy: 0,
         });
       }
     }
@@ -142,51 +138,14 @@ export function AvatarDots() {
     const start = performance.now();
     let raf = 0;
 
-    const mouse = { x: -9999, y: -9999 };
-    // Smoothed lens cursor — a touch of follow, mostly direct.
-    const cur = { x: 0, y: 0, seeded: false };
-    let lensAmt = 0; // global lens strength, eased on enter/leave
-    const R = 96;
-    const SCATTER = pitch * 1.2; // modest fling — motion stays compact
-    const JITTER = 1.9;          // Brownian peak, weighted by f² below —
-                                 // violent right at the cursor, quiet fast
-    const SPRING = 0.16;         // tether — lively but held
-    const DAMP = 0.8;            // light damping — lively, still settles
-    const MAX_OFF = pitch * 2.2; // hard leash: Brownian walk can't wander
-
-    const onMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      if (!rect.width) return;
-      mouse.x = (e.clientX - rect.left) * (cssW / rect.width);
-      mouse.y = (e.clientY - rect.top) * (cssH / rect.height);
-    };
-    const onLeave = () => { mouse.x = -9999; mouse.y = -9999; };
-
-    if (!reduce) {
-      window.addEventListener("mousemove", onMove);
-      window.addEventListener("mouseout", onLeave);
-    }
-
+    /* No pointer field. The portrait used to scatter and jitter around the
+       cursor (a "lens" with a spring, Brownian kicks and a leash); Aspen
+       cut it — the face holds still and the reticle alone answers the
+       pointer. */
     const frame = (now: number) => {
       const t = now - start;
       const globalReveal = reduce ? 1 : Math.max(0, Math.min(1, t / 900));
       ctx.clearRect(0, 0, cssW, cssH);
-
-      // Advance the smoothed lens cursor + global lens strength.
-      if (!reduce) {
-        const active = mouse.x > -9000;
-        if (active && !cur.seeded) {
-          cur.x = mouse.x;
-          cur.y = mouse.y;
-          cur.seeded = true;
-        }
-        if (cur.seeded && active) {
-          cur.x += (mouse.x - cur.x) * 0.35;
-          cur.y += (mouse.y - cur.y) * 0.35;
-        }
-        lensAmt += ((active ? 1 : 0) - lensAmt) * 0.09;
-        if (!active && lensAmt < 0.01) cur.seeded = false;
-      }
 
       // The assembly: grid first, then the face gathers out of it.
       const assembling = !reduce && t < ASSEMBLY + 400;
@@ -203,49 +162,6 @@ export function AvatarDots() {
       }
 
       for (const d of dots) {
-        // Lens field: proximity 0..1 — drives size, light, and a small
-        // radial push (capped at MAX_DISP so the grid never smears).
-        let f = 0;
-        let tx = 0;
-        let ty = 0;
-        if (!reduce && lensAmt > 0.005 && cur.seeded) {
-          const dx = d.hx - cur.x;
-          const dy = d.hy - cur.y;
-          const dist2 = dx * dx + dy * dy;
-          if (dist2 < R * R) {
-            const dist = Math.sqrt(dist2) || 0.001;
-            const u = 1 - dist / R;
-            f = u * u * (3 - 2 * u) * lensAmt; // smoothstep falloff
-            const k = (f * SCATTER) / dist;
-            tx = dx * k;
-            ty = dy * k;
-          }
-        }
-
-        if (!reduce) {
-          // Loose spring toward the scattered position; while inside the
-          // lens each particle also takes Brownian kicks — it dances
-          // around its displaced home instead of freezing there.
-          d.vx += (tx - d.ox) * SPRING;
-          d.vy += (ty - d.oy) * SPRING;
-          if (f > 0.02) {
-            const g = f * f; // steep: intensity concentrates at the cursor
-            d.vx += (Math.random() - 0.5) * JITTER * g;
-            d.vy += (Math.random() - 0.5) * JITTER * g;
-          }
-          d.vx *= DAMP;
-          d.vy *= DAMP;
-          d.ox += d.vx;
-          d.oy += d.vy;
-          // Hard leash — diffusion never escapes the neighborhood.
-          const off = Math.hypot(d.ox, d.oy);
-          if (off > MAX_OFF) {
-            const k2 = MAX_OFF / off;
-            d.ox *= k2;
-            d.oy *= k2;
-          }
-        }
-
         // Assembly: travel from the grid node to the face, easing out.
         const u = reduce ? 1 : Math.max(0, Math.min(1, (t - d.delay) / 900));
         const e = easeOutQuint(u);
@@ -277,7 +193,7 @@ export function AvatarDots() {
 
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(ax + d.ox, ay + d.oy, dot, 0, TWO_PI);
+        ctx.arc(ax, ay, dot, 0, TWO_PI);
         ctx.fill();
       }
 
@@ -298,8 +214,6 @@ export function AvatarDots() {
     raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseout", onLeave);
     };
   }, []);
 

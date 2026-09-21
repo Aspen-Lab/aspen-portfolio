@@ -39,7 +39,6 @@ export function Hero() {
 
         <div className="relative z-10 max-w-4xl">
           <HeroHeadline
-            line1={t("headlineLine1")}
             line2={t("headlineLine2")}
             line3a={t("headlineLine3a")}
             line3Italic={t("headlineLine3Italic")}
