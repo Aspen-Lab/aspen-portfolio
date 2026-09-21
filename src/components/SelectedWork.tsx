@@ -1,172 +1,166 @@
+"use client";
+
+import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { useReducedMotion } from "motion/react";
 import { projects } from "@/lib/work";
 import { Reveal } from "./Reveal";
 
-/* Three scales, one material, almost no chrome.
-   The last version dressed every card in five to seven mono fragments —
-   index chip, category chip, eyebrow, tag pills, meta, arrow cap — on a
-   bevelled keycap. Aspen: 「细小碎碎很多，不高级；质感没有科技感」. So:
-   a flat hairline plate (.plate, Latent's panel), the figure edge to
-   edge, and exactly two lines of text — the title and one meta line.
-   The reticle draws registration corners on hover; the card draws
-   nothing. Hierarchy comes from size and placement, not from labels. */
+/* The works as an index, not a card grid.
+   Two card passes — bevelled keycaps, then flat plates — both read as a
+   layout, not a design (Aspen: 「卡片本身不高级；没有设计感」). A grid of
+   equal thumbnails has no composition to speak of. This is a spread: on
+   the left, every work as a ruled row with a folio numeral, its name set
+   large in the display serif, and one mono line; on the right, a single
+   sticky viewfinder plate that crossfades to the cover of the row under
+   the pointer. The site's premium asset (Newsreader) finally does the
+   work here, and Latent's registration marks frame the figure. Under lg
+   there is no hover, so each row carries its own cover band. */
 
-const FEATURE_COUNT = 1;
-const CARD_COUNT = 2;
-
-/** One quiet line under a title: role · date, with status folded in
-    rather than badged. */
-function Meta({ slug, date, status }: { slug: string; date: string; status?: string }) {
-  const t = useTranslations("SelectedWork");
-  return (
-    <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-soft truncate">
-      {t(`projects.${slug}.role`)}
-      <span className="text-soft/55"> · {status === "coming-soon" ? t("inProgress") : date}</span>
-    </p>
-  );
+/** "Axel — sole designer × bidirectional loop" → ["Axel", "sole designer × …"].
+    The first dash (or comma) in a title splits name from subtitle. */
+function splitTitle(title: string): [string, string | null] {
+  const m = title.match(/^(.*?)\s*(?:—|–|,)\s+(.+)$/);
+  return m ? [m[1], m[2]] : [title, null];
 }
+
+const folio = (i: number) => String(i + 1).padStart(2, "0");
 
 export function SelectedWork() {
   const t = useTranslations("SelectedWork");
+  const reduce = useReducedMotion();
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [last, setLast] = useState(0);
+  const active = hovered ?? last;
 
-  const feature = projects.slice(0, FEATURE_COUNT);
-  const cards = projects.slice(FEATURE_COUNT, FEATURE_COUNT + CARD_COUNT);
-  const rows = projects.slice(FEATURE_COUNT + CARD_COUNT);
+  const enter = (i: number) => {
+    setHovered(i);
+    setLast(i);
+  };
+
+  const status = (p: (typeof projects)[number]) =>
+    p.status === "coming-soon" ? t("inProgress") : p.date;
 
   return (
     <section id="work" className="container-fluid pt-8 sm:pt-14 pb-20 sm:pb-32">
-      {/* ── Lead case — the figure beside its story ── */}
-      {feature.map((p) => (
-        <Reveal key={p.slug}>
-          <Link href={`/work/${p.slug}`} className="group block plate overflow-hidden">
-            <div className="grid lg:grid-cols-[1.3fr_1fr]">
-              <div
-                className="plate-figure border-b border-line lg:border-b-0 lg:border-r"
-                style={p.coverBg ? { backgroundColor: p.coverBg } : undefined}
-              >
-                {p.cover && (
-                  <Image
-                    src={p.cover}
-                    alt={p.title}
-                    width={p.coverWidth ?? 1600}
-                    height={p.coverHeight ?? 1000}
-                    sizes="(max-width: 1024px) 100vw, 55vw"
-                    // Above the fold on every viewport — this is the LCP.
-                    loading="eager"
-                    fetchPriority="high"
-                    // Per-cover crop (work.ts): the frame is 16:10, the art isn't
-                    style={{ objectFit: p.coverFit ?? "cover", objectPosition: p.coverPosition }}
-                    className="aspect-[16/10]"
-                  />
-                )}
-              </div>
-
-              <div className="flex flex-col justify-center px-5 py-6 sm:px-8 sm:py-8 lg:px-9">
-                <h3 className="font-display font-semibold text-[21px] sm:text-[25px] leading-[1.22] tracking-[-0.015em] text-ink">
-                  {t(`projects.${p.slug}.title`)}
-                </h3>
-                <p className="mt-4 text-[14px] leading-[1.7] text-mute line-clamp-4">
-                  {t(`projects.${p.slug}.summary`)}
-                </p>
-                <div className="mt-6">
-                  <Meta slug={p.slug} date={p.date} status={p.status} />
-                </div>
-              </div>
-            </div>
-          </Link>
-        </Reveal>
-      ))}
-
-      {/* ── Next two — figure over two lines ── */}
-      <ul className="mt-5 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-        {cards.map((p, n) => (
-          <li key={p.slug}>
-            <Reveal delay={n * 0.05}>
-              <Link href={`/work/${p.slug}`} className="group block plate overflow-hidden">
-                <div
-                  className="plate-figure border-b border-line"
-                  style={p.coverBg ? { backgroundColor: p.coverBg } : undefined}
-                >
-                  {p.cover ? (
-                    <Image
-                      src={p.cover}
-                      alt={p.title}
-                      width={p.coverWidth ?? 1600}
-                      height={p.coverHeight ?? 1000}
-                      sizes="(max-width: 640px) 100vw, 50vw"
-                      style={{ objectFit: p.coverFit ?? "cover", objectPosition: p.coverPosition }}
-                      className="aspect-[16/10]"
-                    />
-                  ) : (
-                    <div className="aspect-[16/10] flex items-center justify-center">
-                      <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-soft/70">
-                        {t("cover")} · {p.year}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="px-5 py-4 sm:px-6 sm:py-5">
-                  <h3 className="font-display font-semibold text-[16px] leading-[1.3] tracking-[-0.005em] text-ink line-clamp-2 sm:truncate">
-                    {t(`projects.${p.slug}.title`)}
-                  </h3>
-                  <Meta slug={p.slug} date={p.date} status={p.status} />
-                </div>
-              </Link>
-            </Reveal>
-          </li>
-        ))}
-      </ul>
-
-      {/* ── The rest — ruled rows, so the list can grow without weight ── */}
-      {rows.length > 0 && (
-        <div className="mt-12 sm:mt-16">
-          <Reveal>
-            <p className="border-t border-line pt-4 font-mono text-[10px] uppercase tracking-[0.22em] text-soft">
-              {t("more")}
-            </p>
-          </Reveal>
-          <ul className="mt-4 space-y-3">
-            {rows.map((p, n) => (
+      <div className="lg:grid lg:grid-cols-[1fr_minmax(380px,44%)] lg:gap-12 xl:gap-16 lg:items-start">
+        {/* ── The index ── */}
+        <ol className="border-t border-line" onPointerLeave={() => setHovered(null)}>
+          {projects.map((p, i) => {
+            const [name, sub] = splitTitle(t(`projects.${p.slug}.title`));
+            const dimmed = hovered !== null && hovered !== i;
+            return (
               <li key={p.slug}>
-                <Reveal delay={n * 0.05}>
+                <Reveal delay={i * 0.05}>
                   <Link
                     href={`/work/${p.slug}`}
-                    className="group flex items-center gap-4 sm:gap-6 plate p-3 sm:p-4"
+                    onPointerEnter={() => enter(i)}
+                    onFocus={() => enter(i)}
+                    className="group block border-b border-line py-6 sm:py-7 lg:py-8"
+                    style={{
+                      opacity: dimmed ? 0.42 : 1,
+                      transition: reduce ? "none" : "opacity 360ms var(--ease-arrive)",
+                    }}
                   >
+                    {/* Touch and narrow screens: the cover rides with its row */}
                     <div
-                      className="plate-figure shrink-0 w-[84px] sm:w-[124px] border border-line"
+                      className="lg:hidden plate plate-figure mb-5"
                       style={p.coverBg ? { backgroundColor: p.coverBg } : undefined}
                     >
                       {p.cover && (
                         <Image
                           src={p.cover}
-                          alt={p.title}
+                          alt=""
                           width={p.coverWidth ?? 1600}
                           height={p.coverHeight ?? 1000}
-                          sizes="124px"
+                          sizes="100vw"
+                          {...(i === 0 ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
                           style={{ objectFit: p.coverFit ?? "cover", objectPosition: p.coverPosition }}
                           className="aspect-[16/10]"
                         />
                       )}
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-display font-semibold text-[15px] sm:text-[16px] leading-[1.3] tracking-[-0.005em] text-ink line-clamp-2 sm:truncate">
-                        {t(`projects.${p.slug}.title`)}
-                      </h3>
-                      <Meta slug={p.slug} date={p.date} status={p.status} />
+
+                    <div className="grid grid-cols-[2.25rem_1fr_auto] sm:grid-cols-[3.5rem_1fr_auto] gap-x-3 sm:gap-x-5 items-baseline">
+                      <span className="font-mono text-[10px] tracking-[0.2em] text-soft tabular-nums">
+                        {folio(i)}
+                      </span>
+                      <div className="min-w-0">
+                        <h3 className="type-display text-[30px] sm:text-[38px] lg:text-[40px] leading-[1.05] text-ink">
+                          {name}
+                        </h3>
+                        {sub && (
+                          <p className="mt-2 text-[14px] sm:text-[15px] leading-[1.5] text-mute">
+                            {sub}
+                          </p>
+                        )}
+                        <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-soft truncate">
+                          {t(`projects.${p.slug}.role`)}
+                          {/* The category is on the plate readout at lg; on a phone the line
+                              would only truncate, so it drops to the role alone. */}
+                          <span className="hidden sm:inline text-soft/55"> · {t(`projects.${p.slug}.category`)}</span>
+                        </p>
+                      </div>
+                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-soft tabular-nums">
+                        {p.year}
+                      </span>
                     </div>
                   </Link>
                 </Reveal>
               </li>
-            ))}
-          </ul>
-        </div>
-      )}
+            );
+          })}
+        </ol>
+
+        {/* ── The viewfinder — one plate, the active row's cover ── */}
+        <aside aria-hidden className="hidden lg:block sticky top-[138px]">
+          <Reveal delay={0.1}>
+            <div className="plate relative overflow-hidden aspect-[16/10]">
+              {projects.map((p, i) => (
+                <div
+                  key={p.slug}
+                  className="absolute inset-0"
+                  style={{
+                    opacity: active === i ? 1 : 0,
+                    transition: reduce ? "none" : "opacity 360ms var(--ease-arrive)",
+                    backgroundColor: p.coverBg ?? "var(--color-paper)",
+                  }}
+                >
+                  {p.cover && (
+                    <Image
+                      src={p.cover}
+                      alt=""
+                      fill
+                      sizes="44vw"
+                      priority={i === 0}
+                      style={{ objectFit: p.coverFit ?? "cover", objectPosition: p.coverPosition }}
+                    />
+                  )}
+                </div>
+              ))}
+              <span className="reg-mark tl" />
+              <span className="reg-mark tr" />
+              <span className="reg-mark br" />
+              <span className="reg-mark bl" />
+            </div>
+            <div className="mt-3 flex items-baseline justify-between gap-6 font-mono text-[10px] uppercase tracking-[0.18em] text-soft">
+              <span className="tabular-nums">
+                {folio(active)} <span className="text-soft/55">/</span>{" "}
+                {t(`projects.${projects[active].slug}.category`)}
+              </span>
+              <span className="truncate">
+                {t(`projects.${projects[active].slug}.role`)}
+                <span className="text-soft/55"> · {status(projects[active])}</span>
+              </span>
+            </div>
+          </Reveal>
+        </aside>
+      </div>
 
       <Reveal delay={0.1}>
-        <div className="mt-12 sm:mt-16 flex justify-center">
+        <div className="mt-12 sm:mt-16 flex justify-center lg:justify-start">
           <a
             href="https://aspenlabs.framer.website/projects"
             target="_blank"

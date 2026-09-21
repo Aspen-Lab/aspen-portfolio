@@ -130,6 +130,34 @@ html[lang="zh-CN"] .type-display {
   border-color: color-mix(in srgb, var(--color-ink) 70%, transparent);
 }
 
+/* ── Registration marks ── Latent's .vf__reg on a figure: an 18px L of
+   two 1px bars in each corner, inset from the frame so they sit over the
+   image the way a viewfinder's do. Decorative only; the cursor draws its
+   own on targets. */
+.reg-mark {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  opacity: 0.54;
+  pointer-events: none;
+}
+.reg-mark::before,
+.reg-mark::after {
+  content: "";
+  position: absolute;
+  background: color-mix(in srgb, var(--color-ink) 92%, transparent);
+}
+.reg-mark::before { width: 18px; height: 1px; }
+.reg-mark::after  { width: 1px; height: 18px; }
+.reg-mark.tl { left: 10px;  top: 10px; }
+.reg-mark.tr { right: 10px; top: 10px; }
+.reg-mark.br { right: 10px; bottom: 10px; }
+.reg-mark.bl { left: 10px;  bottom: 10px; }
+.reg-mark.tl::before, .reg-mark.tl::after { left: 0;  top: 0; }
+.reg-mark.tr::before, .reg-mark.tr::after { right: 0; top: 0; }
+.reg-mark.br::before, .reg-mark.br::after { right: 0; bottom: 0; }
+.reg-mark.bl::before, .reg-mark.bl::after { left: 0;  bottom: 0; }
+
 ::selection {
   background: var(--color-ink);
   color: var(--color-paper);
