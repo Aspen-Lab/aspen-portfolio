@@ -84,6 +84,52 @@ html[lang="zh-CN"] .type-display {
   );
 }
 
+/* ── Plate ── the flat card. Latent's panel, not a keycap: one hairline,
+   a near-paper fill, 2px corners, no bevel, no shadow, no gradient, no
+   sunken well. On hover only the hairline brightens and the figure takes
+   a breath; the reticle draws the registration corners, so the plate
+   itself draws nothing else. The bevelled .card-material stays for the
+   tactile tabs until they are brought over. */
+.plate {
+  background: var(--color-cream);
+  border: 1px solid var(--color-line);
+  border-radius: 2px;
+  transition: border-color 180ms var(--ease-arrive);
+}
+.plate:hover {
+  border-color: color-mix(in srgb, var(--color-ink) 28%, transparent);
+}
+.plate:active {
+  border-color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+  transition-duration: 90ms;
+}
+/* The figure sits edge to edge inside the plate. The rule that separates
+   it from the text is a utility on the element (bottom on a card, right
+   on the wide feature), so the material does not assume a layout. */
+.plate-figure {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-paper);
+}
+.plate-figure > img {
+  display: block;
+  width: 100%;
+  transition: transform 700ms var(--ease-arrive);
+}
+.plate:hover .plate-figure > img {
+  transform: scale(1.02);
+}
+/* The flat button — Latent's: hairline, transparent, mono label. */
+.plate-button {
+  border: 1px solid color-mix(in srgb, var(--color-ink) 30%, transparent);
+  border-radius: 2px;
+  background: transparent;
+  transition: border-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
+}
+.plate-button:hover {
+  border-color: color-mix(in srgb, var(--color-ink) 70%, transparent);
+}
+
 ::selection {
   background: var(--color-ink);
   color: var(--color-paper);
