@@ -3,32 +3,26 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { motion, AnimatePresence } from "motion/react";
-import {
-  LayoutDashboard,
-  Mail,
-  Database,
-  Sparkles,
-  Gamepad2,
-  PencilRuler,
-  Wrench,
-  ArrowUpRight,
-} from "lucide-react";
-import type { ComponentType, SVGProps } from "react";
-import { stack, spectrum, type StackIcon } from "@/lib/work";
-import { WELL_STYLE, HOVER_CAP_STYLE, CAP_STYLE, DOT_WELL } from "@/lib/tactile";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { ArrowUpRight } from "lucide-react";
+import { stack, spectrum } from "@/lib/work";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 
-const iconMap: Record<StackIcon, ComponentType<SVGProps<SVGSVGElement>>> = {
-  frontend: LayoutDashboard,
-  email: Mail,
-  backend: Database,
-  ai: Sparkles,
-  game: Gamepad2,
-  design: PencilRuler,
-  tooling: Wrench,
-};
+/* The stack as a viewfinder, not a console.
+   The last version was a boxed "STACK.SYS" unit: a tray shell, a rail of
+   keycap buttons with the active one pressed into a lit well, tool chips,
+   a 30px heading in a 360px pane. Aspen: 「不够大，不够悬浮，不够 Latent」.
+   So: nothing is boxed. On the left the seven modules are ruled rows,
+   and the active one is held by a registration bracket that glides
+   between rows — the same marks the cursor draws. On the right a
+   viewfinder with no fill and no border, only four corners and four
+   mid-edge ticks floating on the paper, a mono readout in each top
+   corner, and the module's name set at up to 80px in the display serif.
+   Its tools are a ruled mono list, not chips. Switching crossfades on
+   Latent's own curve. */
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 function splitLabel(label: string): { name: string; caption?: string } {
   const parts = label.split(" · ");
@@ -38,7 +32,7 @@ function splitLabel(label: string): { name: string; caption?: string } {
   return { name: label };
 }
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const pad = (n: number) => String(n).padStart(2, "0");
 
 const STACK_CN: ReadonlyArray<{
   label: string;
@@ -80,10 +74,26 @@ const STACK_CN: ReadonlyArray<{
 
 const SPECTRUM_CN = ["设计", "前端", "模板", "后端", "游戏"];
 
+/** Four registration corners around a box — the bracket the cursor draws,
+    reused as the selector. `size` is the arm length. */
+function Bracket({ size = 9 }: { size?: number }) {
+  const s = `${size}px`;
+  return (
+    <>
+      <span className="reg-mark tl" style={{ width: s, height: s, left: 0, top: 0 }} />
+      <span className="reg-mark tr" style={{ width: s, height: s, right: 0, top: 0 }} />
+      <span className="reg-mark br" style={{ width: s, height: s, right: 0, bottom: 0 }} />
+      <span className="reg-mark bl" style={{ width: s, height: s, left: 0, bottom: 0 }} />
+    </>
+  );
+}
+
 export function TechStack() {
   const locale = useLocale() as Locale;
   const t = useTranslations("TechStack");
+  const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
+
   const localizedStack = stack.map((item, i) => {
     const copy = locale === "cn" ? STACK_CN[i] : undefined;
     return {
@@ -100,249 +110,185 @@ export function TechStack() {
   const total = localizedStack.length;
   const cat = localizedStack[active];
   const { name, caption } = splitLabel(cat.label);
-  const ActiveIcon = cat.icon ? iconMap[cat.icon] : null;
 
   return (
     <section className="container-fluid">
       <Reveal>
-        <p className="text-[18px] text-mute leading-[1.6] max-w-2xl mb-10">
+        <p className="text-[18px] sm:text-[20px] text-mute leading-[1.6] max-w-2xl">
           {t.rich("intro", {
-            ink: (chunks: ReactNode) => (
-              <span className="text-ink">{chunks}</span>
-            ),
+            ink: (chunks: ReactNode) => <span className="text-ink">{chunks}</span>,
           })}
         </p>
       </Reveal>
 
-      {/* Interactive console. The shell is the flat plate now (hairline,
-          no bevel); the selection wells and keycap chips inside are still
-          the tactile language and are next in line. */}
-      <Reveal>
-        <div className="plate overflow-hidden">
-          {/* Title bar */}
-          <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft border-b border-line">
-            <span className="flex items-center gap-2.5">
-              <span className="flex gap-1.5">
-                <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
-                <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
-                <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
-              </span>
-              <span className="text-ink">STACK.SYS</span>
-              <span className="text-soft/50 hidden sm:inline">
-                {`// ${t("modules", { count: total })}`}
-              </span>
+      <div className="mt-10 sm:mt-14 lg:grid lg:grid-cols-[minmax(260px,32%)_1fr] lg:gap-12 xl:gap-20 lg:items-start">
+        {/* ── The modules — ruled rows; the bracket holds the active one ── */}
+        <Reveal>
+          <ol className="border-t border-line" role="tablist" aria-label={t("modules", { count: total })}>
+            {localizedStack.map((s, i) => {
+              const { name: n, caption: c } = splitLabel(s.label);
+              const on = i === active;
+              return (
+                <li key={s.label} className="relative">
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={on}
+                    onPointerEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    onClick={() => setActive(i)}
+                    className="relative w-full text-left flex items-baseline gap-4 sm:gap-5 py-4 sm:py-[18px] border-b border-line cursor-pointer outline-none"
+                  >
+                    {on && (
+                      <motion.span
+                        layoutId="stack-bracket"
+                        aria-hidden
+                        className="pointer-events-none absolute -left-3 -right-3 top-2 bottom-2"
+                        transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 34 }}
+                      >
+                        <Bracket />
+                      </motion.span>
+                    )}
+                    <span className="font-mono text-[10px] tracking-[0.2em] text-soft/70 tabular-nums w-6 shrink-0">
+                      {pad(i + 1)}
+                    </span>
+                    <span
+                      className={`font-mono text-[12px] sm:text-[13px] uppercase tracking-[0.14em] transition-colors duration-300 ${
+                        on ? "text-ink" : "text-soft"
+                      }`}
+                    >
+                      {n}
+                    </span>
+                    {c && (
+                      <span className="ml-auto hidden xl:inline font-mono text-[10px] uppercase tracking-[0.16em] text-soft/50 truncate">
+                        {c}
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </Reveal>
+
+        {/* ── The viewfinder — no fill, no border; corners, ticks, readouts ── */}
+        <Reveal delay={0.08}>
+          <div className="relative mt-12 lg:mt-0 min-h-[440px] lg:min-h-[560px] px-6 py-10 sm:px-10 sm:py-12">
+            <span className="reg-mark tl" />
+            <span className="reg-mark tr" />
+            <span className="reg-mark br" />
+            <span className="reg-mark bl" />
+            <span className="vf-tick top" />
+            <span className="vf-tick bottom" />
+            <span className="vf-tick left" />
+            <span className="vf-tick right" />
+
+            <span className="absolute left-10 top-4 font-mono text-[10px] uppercase tracking-[0.2em] text-soft tabular-nums">
+              {pad(active + 1)} <span className="text-soft/50">/</span> {pad(total)}
             </span>
-            <span className="flex items-center gap-2">
-              <span
-                className="relative flex items-center justify-center w-[11px] h-[11px] rounded-full"
-                style={DOT_WELL}
-              >
-                <span className="absolute w-1 h-1 rounded-full bg-ink opacity-40 animate-ping" />
-                <span
-                  className="relative w-1 h-1 rounded-full"
-                  style={{
-                    background: "#F4F4F2",
-                    boxShadow: "0 0 5px rgba(244,244,242,0.9), 0 0 12px rgba(244,244,242,0.3)",
-                  }}
-                />
+            <span className="absolute right-10 top-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
+              <span aria-hidden className="relative flex w-1.5 h-1.5">
+                {!reduce && <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />}
+                <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
               </span>
               {t("live")}
             </span>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-[256px_1fr]">
-            {/* Module rail — active module sits pressed into a lit well */}
-            <ul
-              className="p-1.5 flex flex-col gap-0.5 md:border-none"
-              style={{ boxShadow: "inset -1px 0 0 rgba(0,0,0,0.3)" }}
-            >
-              {localizedStack.map((s, i) => {
-                const { name: n } = splitLabel(s.label);
-                const Icon = s.icon ? iconMap[s.icon] : null;
-                const on = i === active;
-                return (
-                  <li key={s.label}>
-                    <button
-                      type="button"
-                      onMouseEnter={() => setActive(i)}
-                      onFocus={() => setActive(i)}
-                      onClick={() => setActive(i)}
-                      className="group relative w-full flex items-center gap-3 px-3.5 py-3 text-left rounded-[8px] transition-colors duration-200"
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={active}
+                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                transition={{ duration: 0.36, ease: EASE }}
+                className="pt-6"
+              >
+                {caption && (
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft">
+                    {caption}
+                  </p>
+                )}
+                <h3 className="type-display text-[44px] sm:text-[64px] lg:text-[80px] leading-[0.98] text-ink mt-3">
+                  {name}
+                </h3>
+
+                <ol className="mt-8 sm:mt-10 border-t border-line max-w-[560px]">
+                  {cat.items.map((item, k) => (
+                    <motion.li
+                      key={item}
+                      initial={reduce ? false : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 + k * 0.045, duration: 0.32, ease: EASE }}
+                      className="flex items-baseline gap-4 py-3 border-b border-line font-mono text-[12px] sm:text-[13px] tracking-[0.02em] text-ink/85"
                     >
-                      {on ? (
-                        <motion.span
-                          layoutId="stack-active-well"
-                          aria-hidden
-                          className="absolute inset-0 rounded-[8px]"
-                          style={WELL_STYLE}
-                          transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                        />
-                      ) : (
-                        <span
-                          aria-hidden
-                          className="absolute inset-0 rounded-[8px] opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-                          style={HOVER_CAP_STYLE}
-                        />
-                      )}
-                      <span className="relative z-10 font-mono text-[10px] text-soft/45 tabular-nums w-5 shrink-0">
-                        {String(i + 1).padStart(2, "0")}
+                      <span className="text-[10px] tracking-[0.2em] text-soft/60 tabular-nums w-6 shrink-0">
+                        {pad(k + 1)}
                       </span>
-                      {Icon && (
-                        <Icon
-                          className={`relative z-10 w-4 h-4 shrink-0 transition-colors ${
-                            on ? "text-ink" : "text-soft"
-                          }`}
-                          strokeWidth={1.5}
-                          style={on ? { filter: "drop-shadow(0 0 6px rgba(244,244,242,0.35))" } : undefined}
-                        />
-                      )}
-                      <span
-                        className={`relative z-10 font-mono text-[12px] uppercase tracking-[0.1em] truncate transition-colors ${
-                          on ? "text-ink" : "text-mute"
-                        }`}
-                      >
-                        {n}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+                      {item}
+                    </motion.li>
+                  ))}
+                </ol>
 
-            {/* Detail pane */}
-            <div className="relative p-6 sm:p-8 min-h-[360px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={active}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.28, ease }}
-                >
-                  {/* Header */}
-                  <div className="flex items-start gap-4">
-                    {ActiveIcon && (
-                      <div
-                        className="shrink-0 w-11 h-11 rounded-[10px] flex items-center justify-center"
-                        style={WELL_STYLE}
+                {cat.note && (
+                  <div className="mt-8 sm:mt-10">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft">
+                      {t("whereItLives")}
+                    </p>
+                    <p className="mt-2 text-[15px] sm:text-[16px] text-mute leading-[1.6] max-w-[52ch]">
+                      {cat.note}
+                    </p>
+                    {cat.link && (
+                      <a
+                        href={cat.link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="plate-button mt-5 inline-flex items-center gap-2 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-mute hover:text-ink"
                       >
-                        <ActiveIcon
-                          className="w-5 h-5 text-ink"
-                          strokeWidth={1.5}
-                          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.5)) drop-shadow(0 0 6px rgba(244,244,242,0.2))" }}
-                        />
-                      </div>
+                        {cat.link.label}
+                        <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+                      </a>
                     )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-display text-[26px] sm:text-[30px] tracking-[-0.01em] text-ink leading-tight">
-                        {name}
-                      </h3>
-                      {caption && (
-                        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft mt-1.5">
-                          {caption}
-                        </p>
-                      )}
-                    </div>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft/50 shrink-0 tabular-nums">
-                      [{String(active + 1).padStart(2, "0")}/
-                      {String(total).padStart(2, "0")}]
-                    </span>
                   </div>
-
-                  {/* Tool chips */}
-                  <ul className="mt-6 flex flex-wrap gap-2">
-                    {cat.items.map((item, k) => (
-                      <motion.li
-                        key={item}
-                        initial={{ opacity: 0, scale: 0.96, y: 4 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{ delay: 0.06 + k * 0.04, duration: 0.3, ease }}
-                        whileHover={{ y: -1 }}
-                        className="inline-flex items-center px-3 py-1.5 rounded-[7px] font-mono text-[11px] tracking-tight text-ink/90"
-                        style={CAP_STYLE}
-                      >
-                        {item}
-                      </motion.li>
-                    ))}
-                  </ul>
-
-                  {/* Where it lives */}
-                  {cat.note && (
-                    <div className="mt-7 pt-5 border-t border-line/50">
-                      <p className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-soft mb-2">
-                        {t("whereItLives")}
-                      </p>
-                      <p className="text-[13.5px] text-mute leading-[1.65] max-w-[52ch]">
-                        {cat.note}
-                      </p>
-                      {cat.link && (
-                        <a
-                          href={cat.link.href}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="mt-4 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-ink hover:text-mute transition-colors"
-                        >
-                          {cat.link.label}
-                          <ArrowUpRight className="w-3 h-3" strokeWidth={1.75} />
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
 
-      {/* Capability spectrum — animated fill bars. */}
+      {/* ── Capability spectrum — hairline tracks, ink fills, no wells ── */}
       <Reveal delay={0.15}>
-        <div className="mt-14 border-t border-line pt-10">
-          <div className="flex items-baseline justify-between gap-4 mb-7">
-            <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
+        <div className="mt-16 sm:mt-20 border-t border-line pt-8">
+          <div className="flex items-baseline justify-between gap-4 mb-8">
+            <p className="font-mono uppercase tracking-[0.2em] text-[10px] text-soft">
               {t("spectrumTitle")}
             </p>
-            <p className="font-mono uppercase tracking-[0.2em] text-[10px] text-soft/50">
+            <p className="font-mono uppercase tracking-[0.2em] text-[10px] text-soft/50 tabular-nums">
               {t("spectrumStatus")}
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-x-4 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-x-6 gap-y-6">
             {localizedSpectrum.map((label, i) => (
-              <div key={label} className="group">
-                <div className="flex items-baseline justify-between mb-2 font-mono uppercase">
-                  <span className="text-[12px] tracking-[0.14em] text-ink/90 group-hover:text-ink transition-colors">
-                    {label}
-                  </span>
-                  <span className="text-[10px] tracking-[0.16em] text-soft/45 tabular-nums">
-                    {String(i + 1).padStart(2, "0")}
+              <div key={label}>
+                <div className="flex items-baseline justify-between mb-3 font-mono uppercase">
+                  <span className="text-[12px] tracking-[0.14em] text-ink/90">{label}</span>
+                  <span className="text-[10px] tracking-[0.16em] text-soft/50 tabular-nums">
+                    {pad(i + 1)}
                   </span>
                 </div>
-                <div
-                  className="h-[6px] rounded-full overflow-hidden"
-                  style={{
-                    background: "rgba(0,0,0,0.45)",
-                    boxShadow:
-                      "inset 0 1.5px 3px rgba(0,0,0,0.55), inset 0 -1px 0 rgba(255,255,255,0.045), 0 1px 0 rgba(255,255,255,0.04)",
-                  }}
-                >
+                <div className="h-px bg-line">
                   <motion.div
-                    className="h-full rounded-full origin-left"
-                    style={{
-                      background:
-                        "linear-gradient(180deg, rgba(244,244,242,0.95) 0%, rgba(200,200,198,0.85) 100%)",
-                      boxShadow:
-                        "0 0 8px rgba(244,244,242,0.35), 0 0 2px rgba(244,244,242,0.5)",
-                    }}
-                    initial={{ scaleX: 0 }}
+                    className="h-px bg-ink origin-left"
+                    initial={reduce ? false : { scaleX: 0 }}
                     whileInView={{ scaleX: 1 }}
                     viewport={{ once: true, amount: 0.6 }}
-                    transition={{ duration: 0.7, ease, delay: 0.1 + i * 0.08 }}
+                    transition={{ duration: 0.7, ease: EASE, delay: 0.1 + i * 0.08 }}
                   />
                 </div>
               </div>
             ))}
           </div>
-          <p className="mt-7 text-[15px] text-mute leading-[1.65] max-w-2xl">
+          <p className="mt-8 text-[15px] text-mute leading-[1.65] max-w-2xl">
             {t("spectrumNote")}
           </p>
         </div>

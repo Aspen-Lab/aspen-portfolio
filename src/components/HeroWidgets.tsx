@@ -312,8 +312,33 @@ export function HeroWidgets() {
         style={{ ...enterDelay(0.38), color: "rgba(160,160,165,0.72)" }}
       >
         {t.rich("bio", {
+          /* "Axel (YC W19)" becomes the mark itself: the Axel lockup in
+             ink (public/logos/axel.svg, their own header artwork) and a
+             hairline YC W19 tag, the pair one link to helloaxel.com. The
+             words stay for screen readers. */
           axel: (chunks: ReactNode) => (
-            <span style={{ color: "rgba(244,244,242,0.52)" }}>{chunks}</span>
+            <a
+              href="https://helloaxel.com"
+              target="_blank"
+              rel="noreferrer"
+              className="group/axel inline-flex items-baseline gap-2 align-baseline whitespace-nowrap"
+            >
+              <span className="sr-only">{chunks}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logos/axel.svg"
+                alt=""
+                aria-hidden
+                className="inline-block h-[13px] sm:h-[14px] w-auto translate-y-[2px] opacity-80 transition-opacity duration-300 group-hover/axel:opacity-100"
+                style={{ filter: "brightness(0) invert(0.96)" }}
+              />
+              <span
+                aria-hidden
+                className="plate-button inline-block translate-y-[-1px] px-[6px] py-[1px] font-mono text-[9px] uppercase tracking-[0.18em] text-soft transition-colors duration-300 group-hover/axel:text-ink"
+              >
+                YC W19
+              </span>
+            </a>
           ),
         })}
       </p>

@@ -158,6 +158,21 @@ html[lang="zh-CN"] .type-display {
 .reg-mark.br::before, .reg-mark.br::after { right: 0; bottom: 0; }
 .reg-mark.bl::before, .reg-mark.bl::after { left: 0;  bottom: 0; }
 
+/* ── Viewfinder ticks ── the mid-edge marks of Latent's .vf__cross: one
+   1px line, 10px long, centred on each edge of a frame that otherwise
+   has no border. With the four corners they make a frame out of eight
+   marks and nothing else. */
+.vf-tick {
+  position: absolute;
+  opacity: 0.54;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--color-ink) 92%, transparent);
+}
+.vf-tick.top    { top: 0;    left: 50%; width: 1px; height: 10px; }
+.vf-tick.bottom { bottom: 0; left: 50%; width: 1px; height: 10px; }
+.vf-tick.left   { left: 0;   top: 50%;  width: 10px; height: 1px; }
+.vf-tick.right  { right: 0;  top: 50%;  width: 10px; height: 1px; }
+
 ::selection {
   background: var(--color-ink);
   color: var(--color-paper);
