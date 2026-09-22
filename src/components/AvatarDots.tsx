@@ -51,7 +51,7 @@ export function AvatarDots() {
     }
 
     const pitch = 3.8;
-    const dot = 1.13;
+    const dot = 0.78;
     const cssW = TW * pitch;
     const cssH = TH * pitch;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -135,7 +135,7 @@ export function AvatarDots() {
 
     // Rasterize the settled portrait once. Breathing still uses the same
     // transform/opacity; pointer interaction and assembly retain individual dots.
-    // The original radius pulse was at most 0.028px, below a device pixel.
+    // The tiny radius pulse is below a device pixel; cache its base size.
     const portrait = document.createElement("canvas");
     portrait.width = canvas.width;
     portrait.height = canvas.height;
@@ -159,26 +159,14 @@ export function AvatarDots() {
     let lastDraw = 0;
     let inView = true;
 
-    // Nearby dots follow the pointer with a small orbit and a soft wake.
+    // The pointer stirs a local wave, never attracts or gathers the dots.
     const mouse = { x: -9999, y: -9999 };
     const cur = { x: 0, y: 0, seeded: false };
     const vel = { x: 0, y: 0 };
-    let amt = 0;              // the field's strength, eased on enter and leave
-    const R = 170;            // reach of the field, px
-    const PULL = 12;          // px, the most a dot leans toward the pointer
-    const CORE = 40;          // px, the soft centre: dots right under the pointer
-                              // barely lean, so they never pile up and brighten
-    /* The dance (「点点在 cursor 跳舞」): inside the field every dot also
-       circles its own home — a small orbit whose phase is set by the
-       dot's distance from the pointer, so neighbours turn in sequence and
-       the whole field reads as rings revolving around the cursor. It runs
-       while the pointer is there and eases out when it leaves. Nothing
-       random: the same dot always dances the same way. */
-    const DANCE_AMP = 5;      // px, the orbit's radius at the field's centre
-    const DANCE_HZ = 0.8;     // turns per second
-    const DANCE_PHASE = 0.05; // radians of phase per px of distance
-    const FOLLOW = 0.14;      // how fast the smoothed position chases the pointer
-    const WAKE = 0.35;        // how much of the pointer's velocity the dots carry
+    let amt = 0;
+    let lastMovement = -Infinity;
+    const R = 132;
+    const WAVE = 4.5;
     // Read geometry once per drawing frame, not once per mouse event.
     let pendingPointer: { x: number; y: number } | null = null;
     const onMove = (e: MouseEvent) => {
@@ -191,7 +179,9 @@ export function AvatarDots() {
       mouse.y = -9999;
     };
     window.addEventListener("mousemove", onMove, { passive: true });
-    window.addEventListener("mouseout", onLeave);
+    const onOut = (event: MouseEvent) => { if (!event.relatedTarget) onLeave(); };
+    window.addEventListener("mouseout", onOut);
+    window.addEventListener("scroll", onLeave, { passive: true });
 
     const frame = (now: number) => {
       if (!inView || document.hidden) return;
@@ -210,34 +200,33 @@ export function AvatarDots() {
       if (pendingPointer) {
         const rect = canvas.getBoundingClientRect();
         if (rect.width) {
-          mouse.x = (pendingPointer.x - rect.left) * (cssW / rect.width);
-          mouse.y = (pendingPointer.y - rect.top) * (cssH / rect.height);
+          const x = (pendingPointer.x - rect.left) * (cssW / rect.width);
+          const y = (pendingPointer.y - rect.top) * (cssH / rect.height);
+          if (Math.hypot(x - mouse.x, y - mouse.y) > 0.2) lastMovement = now;
+          mouse.x = x;
+          mouse.y = y;
           if (mouse.x < -R || mouse.x > cssW + R || mouse.y < -R || mouse.y > cssH + R) onLeave();
         }
         pendingPointer = null;
       }
 
-      // Chase the pointer; remember the velocity for the wake.
+      // Position follows immediately. Only the disturbance fades, so a
+      // stationary pointer releases the dots and returns to the cached face.
       if (!reduce) {
         const active = mouse.x > -9000;
-        if (active && !cur.seeded) {
+        if (active) {
+          vel.x = cur.seeded ? Math.max(-18, Math.min(18, mouse.x - cur.x)) : 0;
+          vel.y = cur.seeded ? Math.max(-18, Math.min(18, mouse.y - cur.y)) : 0;
           cur.x = mouse.x;
           cur.y = mouse.y;
           cur.seeded = true;
         }
-        if (cur.seeded && active) {
-          const nx = cur.x + (mouse.x - cur.x) * FOLLOW;
-          const ny = cur.y + (mouse.y - cur.y) * FOLLOW;
-          vel.x = nx - cur.x;
-          vel.y = ny - cur.y;
-          cur.x = nx;
-          cur.y = ny;
-        } else {
-          vel.x *= 0.85;
-          vel.y *= 0.85;
+        const energy = active ? Math.max(0, 1 - (now - lastMovement) / 480) : 0;
+        amt += (energy - amt) * 0.32;
+        if (energy === 0 && amt < 0.005) {
+          amt = 0;
+          cur.seeded = false;
         }
-        amt += ((active ? 1 : 0) - amt) * 0.08;
-        if (!active && amt < 0.01) cur.seeded = false;
       }
 
       // The assembly: grid first, then the face gathers out of it.
@@ -276,25 +265,23 @@ export function AvatarDots() {
 
         if (alpha <= 0.003) continue;
 
-        // The pointer field: lean toward the smoothed pointer, carry its wake.
+        // A radial ripple plus a small lateral ripple: no pull toward the
+        // cursor and no slow positional chasing. Facial structure stays put.
         let ox = 0;
         let oy = 0;
-        if (!reduce && cur.seeded && amt > 0.005 && reveal > 0.2) {
-          const dx = cur.x - ax;
-          const dy = cur.y - ay;
+        if (pointerActive && reveal > 0.2) {
+          const dx = ax - cur.x;
+          const dy = ay - cur.y;
           const d2 = dx * dx + dy * dy;
           if (d2 < R * R && d2 > 1) {
             const dist = Math.sqrt(d2);
-            const uu = 1 - dist / R;
-            const f = uu * uu * (3 - 2 * uu) * amt;
-            // Pull scales with distance over a soft core: strongest mid-field,
-            // near zero at the pointer, so dots gather without converging.
-            const k = (f * PULL) / (dist + CORE);
-            ox += dx * k + vel.x * WAKE * f;
-            oy += dy * k + vel.y * WAKE * f;
-            const ang = now * 0.001 * DANCE_HZ * TWO_PI + dist * DANCE_PHASE;
-            ox += Math.cos(ang) * DANCE_AMP * f;
-            oy += Math.sin(ang) * DANCE_AMP * f;
+            const edge = 1 - dist / R;
+            const f = edge * edge * (3 - 2 * edge) * amt;
+            const phase = (now - lastMovement) * 0.014 - dist * 0.065;
+            const radial = Math.sin(phase) * WAVE * f;
+            const lateral = Math.cos(phase * 0.8) * 2 * f;
+            ox = (dx * radial - dy * lateral) / dist + vel.x * 0.08 * f;
+            oy = (dy * radial + dx * lateral) / dist + vel.y * 0.08 * f;
           }
         }
 
@@ -348,7 +335,8 @@ export function AvatarDots() {
       motionPreference.removeEventListener("change", onMotionChange);
       document.removeEventListener("visibilitychange", syncPlayback);
       window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseout", onLeave);
+      window.removeEventListener("mouseout", onOut);
+      window.removeEventListener("scroll", onLeave);
     };
   }, []);
 

@@ -17,10 +17,6 @@ export function HeroPlayground() {
       role="group"
       aria-label={cn ? "设计与代码互动小实验" : "A little design and code playground"}
     >
-      <div className={styles.connector} aria-hidden="true">
-        <span>↔</span>
-      </div>
-
       <div className={`${styles.artifact} ${styles.design}`}>
         <div className={styles.label} aria-hidden="true">
           <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
@@ -54,7 +50,7 @@ export function HeroPlayground() {
           </svg>
           <div className={styles.radiusControl}>
             <label htmlFor={radiusId} className={styles.radiusLabel}>
-              <span aria-hidden="true">r</span>
+              <span aria-hidden="true">{cn ? "圆角" : "Radius"}</span>
               <span className={styles.srOnly}>{cn ? "形状圆角" : "Shape corner radius"}</span>
               <output htmlFor={radiusId} aria-hidden="true">{radius}</output>
             </label>
@@ -71,7 +67,6 @@ export function HeroPlayground() {
             />
           </div>
         </div>
-        <span className={styles.hint} aria-hidden="true">{cn ? "拖动试试" : "Try the slider"} ↗</span>
       </div>
 
       <div className={`${styles.artifact} ${styles.code}`}>
