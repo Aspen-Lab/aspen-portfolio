@@ -65,11 +65,12 @@ export function CursorOrb() {
 
     let lockEl: Element | null = null;
     let pressed = false;
+    let raf = 0;
 
-    /* The bracket box is re-read on every move: the pointer travels inside
-       a target, and the page can scroll under it, without the corners
-       drifting off its edges. */
+    // Keep pointer position immediate, but batch target measurements and
+    // bracket layout writes to at most once per animation frame.
     const frame = () => {
+      raf = 0;
       if (!lockEl || !lockEl.isConnected) return;
       const r = lockEl.getBoundingClientRect();
       const pad = pressed ? PAD * PRESS : PAD;
@@ -89,10 +90,14 @@ export function CursorOrb() {
       );
     };
 
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+
     const onMove = (e: PointerEvent) => {
       // Integer px: a hairline on a half pixel stops being a hairline.
       el.style.transform = `translate3d(${Math.round(e.clientX)}px, ${Math.round(e.clientY)}px, 0)`;
-      if (lockEl) frame();
+      if (lockEl) schedule();
       if (el.dataset.vis !== "1") {
         el.dataset.vis = "1";
         bracket.dataset.vis = "1";
@@ -117,7 +122,7 @@ export function CursorOrb() {
         // already fix the pointer. Only a real plate is deep enough that
         // losing the x position would matter.
         el.dataset.mode = r.height > 80 ? "wide" : "lock";
-        frame();
+        schedule();
         return;
       }
       lockEl = null;
@@ -130,12 +135,12 @@ export function CursorOrb() {
     const onDown = () => {
       pressed = true;
       el.dataset.pressed = "true";
-      frame();
+      schedule();
     };
     const onUp = () => {
       pressed = false;
       el.dataset.pressed = "false";
-      frame();
+      schedule();
     };
     const onLeave = () => {
       el.dataset.vis = "0";
@@ -146,15 +151,16 @@ export function CursorOrb() {
     window.addEventListener("pointerover", onOver, { passive: true });
     window.addEventListener("pointerdown", onDown, { passive: true });
     window.addEventListener("pointerup", onUp, { passive: true });
-    window.addEventListener("scroll", frame, { passive: true });
+    window.addEventListener("scroll", schedule, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
     document.documentElement.classList.add("cursor-orb-active");
     return () => {
+      cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerover", onOver);
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);
-      window.removeEventListener("scroll", frame);
+      window.removeEventListener("scroll", schedule);
       document.documentElement.removeEventListener("pointerleave", onLeave);
       document.documentElement.classList.remove("cursor-orb-active");
     };

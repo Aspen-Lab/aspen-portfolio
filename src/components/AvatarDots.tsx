@@ -133,6 +133,26 @@ export function AvatarDots() {
       });
     }
 
+    // Rasterize the settled portrait once. Breathing still uses the same
+    // transform/opacity; pointer interaction and assembly retain individual dots.
+    // The original radius pulse was at most 0.028px, below a device pixel.
+    const portrait = document.createElement("canvas");
+    portrait.width = canvas.width;
+    portrait.height = canvas.height;
+    const portraitCtx = portrait.getContext("2d");
+    let portraitReady = false;
+    const cachePortrait = () => {
+      if (!portraitCtx || portraitReady) return;
+      portraitCtx.scale(dpr, dpr);
+      for (const d of dots) {
+        portraitCtx.fillStyle = `rgba(244,244,242,${d.alpha.toFixed(3)})`;
+        portraitCtx.beginPath();
+        portraitCtx.arc(d.hx, d.hy, dot, 0, Math.PI * 2);
+        portraitCtx.fill();
+      }
+      portraitReady = true;
+    };
+
     const TWO_PI = Math.PI * 2;
     const start = performance.now();
     let raf = 0;
@@ -159,14 +179,14 @@ export function AvatarDots() {
     const DANCE_PHASE = 0.05; // radians of phase per px of distance
     const FOLLOW = 0.14;      // how fast the smoothed position chases the pointer
     const WAKE = 0.35;        // how much of the pointer's velocity the dots carry
+    // Read geometry once per drawing frame, not once per mouse event.
+    let pendingPointer: { x: number; y: number } | null = null;
     const onMove = (e: MouseEvent) => {
       if (reduce || !inView || document.hidden) return;
-      const rect = canvas.getBoundingClientRect();
-      if (!rect.width) return;
-      mouse.x = (e.clientX - rect.left) * (cssW / rect.width);
-      mouse.y = (e.clientY - rect.top) * (cssH / rect.height);
+      pendingPointer = { x: e.clientX, y: e.clientY };
     };
     const onLeave = () => {
+      pendingPointer = null;
       mouse.x = -9999;
       mouse.y = -9999;
     };
@@ -186,6 +206,16 @@ export function AvatarDots() {
       const breath = reduce ? 0 : (1 - Math.cos(Math.max(0, t - ASSEMBLY) / 6200 * TWO_PI)) / 2;
       const breathLight = reduce ? 1 : 0.92 + breath * 0.08;
       ctx.clearRect(0, 0, cssW, cssH);
+
+      if (pendingPointer) {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width) {
+          mouse.x = (pendingPointer.x - rect.left) * (cssW / rect.width);
+          mouse.y = (pendingPointer.y - rect.top) * (cssH / rect.height);
+          if (mouse.x < -R || mouse.x > cssW + R || mouse.y < -R || mouse.y > cssH + R) onLeave();
+        }
+        pendingPointer = null;
+      }
 
       // Chase the pointer; remember the velocity for the wake.
       if (!reduce) {
@@ -229,7 +259,13 @@ export function AvatarDots() {
       ctx.translate(FACE_X, FACE_Y - breath * 3);
       ctx.scale(1 + breath * 0.018, 1 + breath * 0.018);
       ctx.translate(-FACE_X, -FACE_Y);
-      for (const d of dots) {
+      const pointerActive = !reduce && cur.seeded && amt > 0.005;
+      if (!assembling && !pointerActive) cachePortrait();
+      if (!assembling && !pointerActive && portraitReady) {
+        ctx.globalAlpha = breathLight;
+        ctx.drawImage(portrait, 0, 0, cssW, cssH);
+        ctx.globalAlpha = 1;
+      } else for (const d of dots) {
         // Assembly: travel from the grid node to the face, easing out.
         const u = reduce ? 1 : Math.max(0, Math.min(1, (t - d.delay) / 900));
         const e = easeOutQuint(u);
@@ -307,6 +343,8 @@ export function AvatarDots() {
     return () => {
       cancelAnimationFrame(raf);
       observer.disconnect();
+      portrait.width = 0;
+      portrait.height = 0;
       motionPreference.removeEventListener("change", onMotionChange);
       document.removeEventListener("visibilitychange", syncPlayback);
       window.removeEventListener("mousemove", onMove);

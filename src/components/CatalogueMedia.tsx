@@ -61,6 +61,10 @@ export function CatalogueMedia({
   const cn = useLocale() === "cn";
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: cover.demo ? 0.45 : 0.15 });
+  // Warm the visible layout just before scrolling reaches it. Hidden mobile
+  // copies and hidden desktop plates never download a second set of images.
+  // All desktop covers warm together so hover crossfades remain immediate.
+  const showMedia = useInView(ref, { once: true, margin: "400px 0px" });
   const reduce = useReducedMotion();
   const [canPlay, setCanPlay] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
@@ -91,7 +95,7 @@ export function CatalogueMedia({
       data-fit={cover.fit ?? "cover"}
       style={{ backgroundColor: cover.bg ?? "var(--color-paper)" }}
     >
-      {cover.presentation === "axel" ? (
+      {showMedia && (cover.presentation === "axel" ? (
         <AxelPreview animate={animate} />
       ) : (
         <div className={styles.image}>
@@ -101,11 +105,11 @@ export function CatalogueMedia({
             alt={desktop ? "" : cover.alt ?? ""}
             fill
             sizes={desktop ? "(min-width: 1440px) 580px, 44vw" : "(min-width: 1024px) 1px, (min-width: 640px) 90vw, calc(100vw - 40px)"}
-            loading={cover.priority || (desktop && active) ? "eager" : "lazy"}
+            loading={active && inView ? "eager" : "lazy"}
             style={{ objectFit: cover.fit ?? "cover", objectPosition: cover.position }}
           />
         </div>
-      )}
+      ))}
       {cover.demo && active && inView && (
         <SideProjectDemo key={`${cover.demo}-${replay}`} id={cover.demo} playing={animate} cn={cn} />
       )}

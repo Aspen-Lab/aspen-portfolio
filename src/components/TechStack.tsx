@@ -8,8 +8,9 @@ import { ArrowRight, ArrowUpRight, RotateCcw } from "lucide-react";
 import { stack, spectrum } from "@/lib/work";
 import type { StackIcon } from "@/lib/work";
 import { Reveal } from "./Reveal";
-import { BuildScene } from "./stack/BuildScenes";
-import { ExploreScene } from "./stack/ExploreScenes";
+import dynamic from "next/dynamic";
+const BuildScene = dynamic(() => import("./stack/BuildScenes").then((m) => m.BuildScene));
+const ExploreScene = dynamic(() => import("./stack/ExploreScenes").then((m) => m.ExploreScene));
 import { StackCategoryIcon, StackToolIcon } from "./stack/StackIcons";
 import styles from "./TechStack.module.css";
 
@@ -92,6 +93,7 @@ export function TechStack() {
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const scene = useRef<HTMLElement>(null);
   const inView = useInView(scene, { amount: 0.5 });
+  const loadScene = useInView(scene, { once: true, margin: "400px 0px" });
 
   useEffect(() => {
     const update = () => setPageVisible(!document.hidden);
@@ -185,7 +187,7 @@ export function TechStack() {
 
             <figure ref={scene} className={styles.figure}>
               <div key={`${kind}-${replay}`} className={styles.scene}>
-                <StackScene kind={kind} cn={cn} playing={playing} />
+                {loadScene && <StackScene kind={kind} cn={cn} playing={playing} />}
               </div>
               <figcaption className={styles.sceneFooter}>
                 <span>{SCENE_CAPTIONS[kind][cn ? "cn" : "en"]}</span>
