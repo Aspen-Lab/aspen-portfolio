@@ -173,6 +173,30 @@ html[lang="zh-CN"] .type-display {
 .vf-tick.left   { left: 0;   top: 50%;  width: 10px; height: 1px; }
 .vf-tick.right  { right: 0;  top: 50%;  width: 10px; height: 1px; }
 
+/* ── Word rise ── the hero bio arrives one word at a time: each word is
+   masked by its own inline box and rises out of it on the arrival curve,
+   the delays stepping evenly along the sentence. Orderly, like the
+   headline's lines, at word scale. */
+@keyframes word-rise {
+  from { transform: translateY(110%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.word-rise {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding: 0 0.04em 0.12em;
+  margin: 0 -0.04em -0.12em;
+}
+.word-rise > span {
+  display: inline-block;
+  animation: word-rise 0.9s var(--ease-arrive) both;
+  animation-delay: var(--d, 0s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .word-rise > span { animation: none; }
+}
+
 ::selection {
   background: var(--color-ink);
   color: var(--color-paper);

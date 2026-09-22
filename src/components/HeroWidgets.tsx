@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import { Children, type CSSProperties, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import {
@@ -11,6 +11,7 @@ import {
   siVercel,
   siSupabase,
   siObsidian,
+  siReact,
   siTiktok,
   siYcombinator,
 } from "simple-icons";
@@ -183,6 +184,29 @@ function InventorySlot({ name, index, active, onEnter, onLeave }: {
   );
 }
 
+/* ─── Word stagger ────────────────────────────────────────────────────
+   Wraps every word of a rich string — plain words and tagged marks alike —
+   in its own .word-rise mask with a delay stepping along the sentence. */
+function staggerWords(node: ReactNode, base: number): ReactNode {
+  let i = 0;
+  const wrap = (child: ReactNode, key: string) => {
+    const d = `${(base + i++ * 0.035).toFixed(3)}s`;
+    return (
+      <span key={key} className="word-rise">
+        <span style={{ "--d": d } as CSSProperties}>{child}</span>
+      </span>
+    );
+  };
+  return Children.toArray(node).flatMap((child, ci) => {
+    if (typeof child === "string") {
+      return child
+        .split(/(\s+)/)
+        .map((part, pi) => (/^\s+$/.test(part) ? part : part ? wrap(part, `${ci}-${pi}`) : null));
+    }
+    return [wrap(child, `el-${ci}`)];
+  });
+}
+
 /* ─── Fade-up entrance ──────────────────────────────────────────────────
    The .hero-fade-up CSS keyframe (globals.css) — plays from first paint
    instead of after hydration. Reduced motion is handled in the CSS. */
@@ -196,12 +220,22 @@ export function HeroWidgets() {
   return (
     <div className="mt-8 sm:mt-10">
 
-      {/* Bio */}
+      {/* Bio — the lead in ink, the React and Axel marks inline, and the
+          whole line rising one word at a time. */}
       <p
-        className="hero-fade-up text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
-        style={{ ...enterDelay(0.38), color: "rgba(160,160,165,0.72)" }}
+        className="text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
+        style={{ color: "rgba(160,160,165,0.72)" }}
       >
-        {t.rich("bio", {
+        {staggerWords(t.rich("bio", {
+          lead: (chunks: ReactNode) => <span className="font-medium text-ink/90">{chunks}</span>,
+          react: (chunks: ReactNode) => (
+            <span className="inline-flex items-baseline gap-1 text-ink/80">
+              <svg viewBox="0 0 24 24" aria-hidden className="w-[12px] h-[12px] translate-y-[1px] shrink-0" fill="currentColor">
+                <path d={siReact.path} />
+              </svg>
+              {chunks}
+            </span>
+          ),
           /* "Axel (YC W19)" becomes the mark itself: the Axel lockup in
              ink (public/logos/axel.svg, their own header artwork) and a
              hairline YC W19 tag, the pair one link to helloaxel.com. The
@@ -230,7 +264,7 @@ export function HeroWidgets() {
               </span>
             </a>
           ),
-        })}
+        }), 0.38)}
       </p>
 
       {/* Inventory — eight hairline squares on the paper, one readout line */}
