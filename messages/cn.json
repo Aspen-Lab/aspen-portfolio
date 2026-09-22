@@ -168,8 +168,6 @@
     "methodResumeValue": "下载 PDF",
     "elsewhereDesignStudies": "设计研习",
     "elsewhereDesignStudiesPlatform": "Notion",
-    "elsewhereAspenLab": "Aspen Lab",
-    "elsewhereAspenLabPlatform": "Framer",
     "elsewhereCode": "代码",
     "elsewhereCodePlatform": "GitHub",
     "form": {
@@ -195,7 +193,6 @@
     "openContact": "打开联系页",
     "elsewhere": "其他",
     "designStudies": "设计研习(Notion)→",
-    "aspenLab": "Aspen Lab(Framer)→",
     "github": "GitHub",
     "now": "现在",
     "nowText": "在 <ink>Axel</ink>（Gordian, YC W19）担任创始设计工程师 · 西雅图 Bellevue。",

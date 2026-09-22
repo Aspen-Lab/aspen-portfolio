@@ -168,8 +168,6 @@
     "methodResumeValue": "Download PDF",
     "elsewhereDesignStudies": "Design Studies",
     "elsewhereDesignStudiesPlatform": "Notion",
-    "elsewhereAspenLab": "Aspen Lab",
-    "elsewhereAspenLabPlatform": "Framer",
     "elsewhereCode": "Code",
     "elsewhereCodePlatform": "GitHub",
     "form": {
@@ -195,7 +193,6 @@
     "openContact": "Open contact",
     "elsewhere": "Elsewhere",
     "designStudies": "Design Studies (Notion) →",
-    "aspenLab": "Aspen Lab (Framer) →",
     "github": "GitHub",
     "now": "Now",
     "nowText": "Founding Design Engineer at <ink>Axel</ink> (Gordian, YC W19) in Bellevue.",

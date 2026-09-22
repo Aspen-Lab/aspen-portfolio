@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
-import { siFramer, siGithub } from "simple-icons";
+import { siGithub } from "simple-icons";
 import styles from "./ContactChannels.module.css";
 
 type ContactChannel = { platform: string; handle: string; href: string };
@@ -7,7 +7,6 @@ type ContactChannel = { platform: string; handle: string; href: string };
 const descriptions: Record<string, { en: string; cn: string }> = {
   linkedin: { en: "Professional background & connections", cn: "职业经历和交流" },
   github: { en: "Code & personal projects", cn: "代码与个人项目" },
-  framer: { en: "Earlier portfolio", cn: "早期作品集" },
 };
 
 function ChannelMark({ platform }: { platform: string }) {
@@ -23,7 +22,7 @@ function ChannelMark({ platform }: { platform: string }) {
     );
   }
 
-  const icon = platform === "github" ? siGithub : platform === "framer" ? siFramer : null;
+  const icon = platform === "github" ? siGithub : null;
   if (!icon) return <ArrowUpRight className={styles.brandMark} strokeWidth={1.1} aria-hidden="true" />;
 
   return (
