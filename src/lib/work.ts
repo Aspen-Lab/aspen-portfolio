@@ -900,6 +900,73 @@ export const spectrum = [
   "Game",
 ];
 
+/* Six capabilities for the radar (components/CapabilityRadar.tsx).
+   Self-assessed, 0–100; the hint is the evidence and must stay true.
+   Aspen owns these numbers — change them here, nowhere else. */
+export type Capability = {
+  key: string;
+  label: { en: string; cn: string };
+  value: number;
+  hint: { en: string; cn: string };
+};
+
+export const capabilities: Capability[] = [
+  {
+    key: "design",
+    label: { en: "Design", cn: "设计" },
+    value: 92,
+    hint: {
+      en: "Where every project starts — Figma is the desk. iF Design Award and Red Dot 2025 for Field of Vision.",
+      cn: "每个项目开始的地方，Figma 是工作台。Field of Vision 拿到 2025 年 iF 与 Red Dot。",
+    },
+  },
+  {
+    key: "frontend",
+    label: { en: "Frontend", cn: "前端" },
+    value: 85,
+    hint: {
+      en: "Production React shipped solo at Axel; helloaxel.com, this portfolio, Pado.",
+      cn: "在 Axel 一个人交付生产级 React；helloaxel.com、这个作品集、Pado。",
+    },
+  },
+  {
+    key: "email",
+    label: { en: "Email", cn: "邮件" },
+    value: 80,
+    hint: {
+      en: "28 transactional templates at Axel, onboarding to cancellation — Customer.io and Liquid.",
+      cn: "Axel 的 28 个交易类邮件模板，从 onboarding 到 cancellation —— Customer.io 与 Liquid。",
+    },
+  },
+  {
+    key: "backend",
+    label: { en: "Backend", cn: "后端" },
+    value: 62,
+    hint: {
+      en: "Peer's five-stage pipeline in Python asyncio; Supabase behind Pado and Peer.",
+      cn: "Peer 的五阶段管线（Python asyncio）；Pado 与 Peer 背后的 Supabase。",
+    },
+  },
+  {
+    key: "ai",
+    label: { en: "AI", cn: "AI" },
+    value: 74,
+    hint: {
+      en: "Three-tier model routing in Peer — rules, then Gemini, then Anthropic, matched to cost.",
+      cn: "Peer 的三层模型路由 —— 规则、Gemini、Anthropic，按成本匹配任务。",
+    },
+  },
+  {
+    key: "game",
+    label: { en: "Game", cn: "游戏" },
+    value: 45,
+    hint: {
+      en: "Nineteen browser games on Aspen Play; Unity and PlayMaker on the side.",
+      cn: "Aspen Play 上的十九款网页游戏；业余在用 Unity 和 PlayMaker。",
+    },
+  },
+];
+
 type Bilingual = { en: string; cn: string };
 
 /* Side projects render as cards (components/SideProjects.tsx). Every
@@ -925,6 +992,8 @@ export type SideProject = {
   /** Secondary links shown on the card (repo, downloads, docs) */
   links?: { label: Bilingual; href: string }[];
   thumb?: string;
+  /** Kept in the data, left off the page (Aspen, 2026-09-21: 「lumen和小游戏拿掉」). */
+  hidden?: boolean;
 };
 
 export const sideProjects: SideProject[] = [
@@ -1044,6 +1113,7 @@ export const sideProjects: SideProject[] = [
   },
   {
     slug: "lumen",
+    hidden: true,
     name: "Lumen",
     tier: "build",
     status: "early",
@@ -1084,6 +1154,7 @@ export const sideProjects: SideProject[] = [
   },
   {
     slug: "metroidvania",
+    hidden: true,
     name: "Metroidvania",
     tier: "build",
     status: "wip",

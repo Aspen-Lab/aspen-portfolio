@@ -14,15 +14,8 @@ const LEVEL_BG = [
   "bg-ink",
 ] as const;
 
-/* LED-wall treatment: empty cells read as unlit sockets (inset), hot
-   cells emit a faint glow — the heatmap is a matrix of tiny lamps. */
-const LEVEL_SHADOW: (string | undefined)[] = [
-  "inset 0 1px 1.5px rgba(0,0,0,0.45)",
-  undefined,
-  undefined,
-  "0 0 5px rgba(244,244,242,0.22)",
-  "0 0 7px rgba(244,244,242,0.4), 0 0 2px rgba(244,244,242,0.5)",
-];
+/* Flat cells: five steps of ink on the line colour, square, no glow — a
+   printed chart, not an LED wall. */
 
 const CELL = 12;
 const GAP = 3;
@@ -79,9 +72,11 @@ export function CommitCalendar() {
     <div>
       <div className="flex items-end justify-between flex-wrap gap-y-3 mb-7">
         <div>
-          <p className="font-display text-[28px] sm:text-[32px] tracking-[-0.01em] text-ink leading-none tabular-nums">
-            {total.toLocaleString("en")}
-            <span className="ml-3 font-mono text-[11px] uppercase tracking-[0.2em] text-soft align-middle">
+          <p className="flex items-baseline gap-4 flex-wrap">
+            <span className="type-display text-[64px] sm:text-[80px] leading-none text-ink tabular-nums">
+              {total.toLocaleString("en")}
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
               {t("total", { days: WINDOW_DAYS })}
             </span>
           </p>
@@ -94,21 +89,14 @@ export function CommitCalendar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <span
-            className="inline-flex items-center px-2.5 py-1 rounded-full font-mono text-[9.5px] uppercase tracking-[0.22em] text-mute whitespace-nowrap"
-            style={{
-              background: "linear-gradient(180deg, #323234 0%, #28282A 100%)",
-              boxShadow:
-                "inset 0 1px 0 rgba(255,255,255,0.09), inset 0 0 0 1px rgba(255,255,255,0.02), 0 2px 5px rgba(0,0,0,0.45)",
-            }}
-          >
+          <span className="plate-button inline-flex items-center px-2.5 py-1 font-mono text-[9.5px] uppercase tracking-[0.22em] text-soft whitespace-nowrap">
             {t("badge")}
           </span>
           <a
             href={`https://github.com/${PUBLIC_HANDLE}`}
             target="_blank"
             rel="noreferrer"
-            className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hover:text-ink link link-rev"
+            className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hover:text-ink transition-colors"
           >
             github.com/{PUBLIC_HANDLE} →
           </a>
@@ -127,8 +115,8 @@ export function CommitCalendar() {
           {([0, 1, 2, 3, 4] as const).map((level) => (
             <div
               key={level}
-              className={`rounded-[2px] ${LEVEL_BG[level]}`}
-              style={{ width: CELL, height: CELL, boxShadow: LEVEL_SHADOW[level] }}
+              className={LEVEL_BG[level]}
+              style={{ width: CELL, height: CELL }}
               aria-hidden
             />
           ))}
@@ -210,8 +198,8 @@ function CalendarGrid({
               ) : (
                 <div
                   key={di}
-                  className={`rounded-[2px] ${LEVEL_BG[d.level]}`}
-                  style={{ width: CELL, height: CELL, boxShadow: LEVEL_SHADOW[d.level] }}
+                  className={LEVEL_BG[d.level]}
+                  style={{ width: CELL, height: CELL }}
                   title={cellTitle(d.count, d.date)}
                 />
               ),

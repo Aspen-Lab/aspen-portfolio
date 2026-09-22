@@ -231,5 +231,10 @@
     "eyebrow": "设计系统 · v{version}",
     "open": "打开设计系统",
     "thumbAlt": "Aspen Origin 线上文档"
+  },
+  "Radar": {
+    "aria": "六个维度的能力雷达图",
+    "now": "现在",
+    "potential": "潜力"
   }
 }

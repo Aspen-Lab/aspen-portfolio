@@ -13,7 +13,8 @@ import { SideProjects } from "./SideProjects";
    It used to be one panel behind a sticky tab bar — work, system, stack,
    side — with the other three folded away. Aspen: 「与其靠这个折叠，不如把
    整页面合理地排列」. So the fold is gone: the four sections follow the
-   hero in sequence, each under the same head (folio, serif title, one
+   hero in sequence — works, then side projects as their peer, then the
+   design system and the stack — each under the same head (folio, serif title, one
    figure), on the page's own beat. The hash anchors survive as plain
    section ids, so /#work still lands where it always did. (The file
    keeps its name so the route import does not move.) */
@@ -49,25 +50,27 @@ export function TabsHome() {
         <SelectedWork />
       </Block>
 
+      {/* Side projects sit right after the works, on the same catalogue,
+          so the two read as peers — commissioned work, then own work. */}
+      <Block id="side">
+        <div className="container-fluid">
+          <SectionHead folio="02" title={t("side")} meta={pad(sideProjects.filter((p) => !p.hidden).length)} />
+        </div>
+        <SideProjects />
+      </Block>
+
       <Block id="system">
         <div className="container-fluid">
-          <SectionHead folio="02" title={t("system")} meta={`v${designSystem.version}`} />
+          <SectionHead folio="03" title={t("system")} meta={`v${designSystem.version}`} />
         </div>
         <DesignSystem />
       </Block>
 
       <Block id="stack">
         <div className="container-fluid">
-          <SectionHead folio="03" title={t("stack")} />
+          <SectionHead folio="04" title={t("stack")} />
         </div>
         <TechStack />
-      </Block>
-
-      <Block id="side">
-        <div className="container-fluid">
-          <SectionHead folio="04" title={t("side")} meta={pad(sideProjects.length)} />
-        </div>
-        <SideProjects />
       </Block>
 
       <div className="h-16 sm:h-24" />

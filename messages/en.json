@@ -231,5 +231,10 @@
     "eyebrow": "Design system · v{version}",
     "open": "Open the design system",
     "thumbAlt": "Aspen Origin — the live documentation"
+  },
+  "Radar": {
+    "aria": "Capability radar across six axes",
+    "now": "Now",
+    "potential": "Potential"
   }
 }
