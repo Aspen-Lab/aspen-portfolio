@@ -9,10 +9,8 @@ const labels: Record<Locale, string> = {
   cn: "中文",
 };
 
-/* Physical two-position switch: a recessed track (same well treatment as
-   the inventory slots) with a raised cap that slides between positions. */
-import { WELL_STYLE as TRACK_STYLE, CAP_STYLE } from "@/lib/tactile";
-
+/* Two mono labels either side of one hairline. The active language is
+   ink; the other is soft and comes up on hover. No track, no cap. */
 export function LocaleToggle() {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
@@ -24,32 +22,23 @@ export function LocaleToggle() {
   };
 
   return (
-    <div
-      role="group"
-      aria-label="Language"
-      className="flex items-center font-mono text-[10px] uppercase tracking-[0.16em] rounded-[9px] p-[3px]"
-      style={TRACK_STYLE}
-    >
-      {(Object.keys(labels) as Locale[]).map((code) => {
+    <div role="group" aria-label="Language" className="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[0.18em]">
+      {(Object.keys(labels) as Locale[]).map((code, i) => {
         const active = code === locale;
         return (
-          <button
-            key={code}
-            onClick={() => switchTo(code)}
-            aria-pressed={active}
-            className={`relative whitespace-nowrap px-1.5 min-[381px]:px-2 sm:px-2.5 py-[4px] rounded-[6px] transition-colors duration-150 ${
-              active ? "text-ink" : "text-soft hover:text-mute"
-            }`}
-          >
-            {active && (
-              <span
-                aria-hidden
-                className="absolute inset-0 rounded-[6px]"
-                style={CAP_STYLE}
-              />
-            )}
-            <span className="relative z-10">{labels[code]}</span>
-          </button>
+          <span key={code} className="flex items-center gap-2.5">
+            {i > 0 && <span aria-hidden className="w-px h-3 bg-line" />}
+            <button
+              type="button"
+              onClick={() => switchTo(code)}
+              aria-pressed={active}
+              className={`whitespace-nowrap py-1 transition-colors duration-200 cursor-pointer ${
+                active ? "text-ink" : "text-soft hover:text-ink"
+              }`}
+            >
+              {labels[code]}
+            </button>
+          </span>
         );
       })}
     </div>

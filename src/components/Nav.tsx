@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { motion, useReducedMotion } from "motion/react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleToggle } from "./LocaleToggle";
 
@@ -10,40 +11,27 @@ type Item = {
   href: string;
   /** When the current locale-relative path satisfies this matcher, the item shows as active. */
   match: (path: string) => boolean;
-  external?: boolean;
 };
 
 const ITEMS: Item[] = [
-  {
-    key: "work",
-    href: "/#work",
-    match: (p) => p === "/" || p.startsWith("/work"),
-  },
-  {
-    key: "about",
-    href: "/about",
-    match: (p) => p.startsWith("/about"),
-  },
-  {
-    key: "contact",
-    href: "/contact",
-    match: (p) => p.startsWith("/contact"),
-  },
+  { key: "work", href: "/#work", match: (p) => p === "/" || p.startsWith("/work") },
+  { key: "about", href: "/about", match: (p) => p.startsWith("/about") },
+  { key: "contact", href: "/contact", match: (p) => p.startsWith("/contact") },
 ];
 
-/* Same physical language as the hero inventory: a raised tray bezel,
-   and the active tab sits pressed into a lit recessed well. Hovering an
-   inactive tab raises a faint keycap instead — hover lifts, active sinks. */
-import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE } from "@/lib/tactile";
-
+/* The nav in the site's flat language. It used to be a raised tray with
+   the active item pressed into a lit well and a hover keycap; now the
+   items are mono labels on the paper, and the active one is held by a
+   registration bracket that glides between them — the same marks the
+   cursor draws and the stack's selector uses. The availability LED
+   loses its recessed housing and glow: one ink dot, one ping. */
 export function Nav() {
   const t = useTranslations("Nav");
   const pathname = usePathname() ?? "/";
+  const reduce = useReducedMotion();
 
-  /* At rest the bar is part of the page: no glass, no engraved edge.
-     Its 1px line plus drop shadow used to cut a band across the hero
-     before anything had scrolled. The tray lifts only once content
-     actually passes under it. */
+  /* At rest the bar is part of the page. Once content passes under it,
+     it takes a translucent paper and one hairline. */
   const [lifted, setLifted] = useState(false);
   useEffect(() => {
     let raf = 0;
@@ -67,24 +55,17 @@ export function Nav() {
   const onWorkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (pathname !== "/" || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document.getElementById("work")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    const reduceNow = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById("work")?.scrollIntoView({ behavior: reduceNow ? "auto" : "smooth" });
   };
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-[background-color,box-shadow,backdrop-filter] duration-300 ease-out ${
-        lifted ? "backdrop-blur-md bg-paper/75" : "bg-transparent"
+      className={`sticky top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ease-out border-b ${
+        lifted ? "backdrop-blur-md bg-paper/80 border-line" : "bg-transparent border-transparent"
       }`}
-      style={{
-        boxShadow: lifted
-          ? "inset 0 -1px 0 rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.035), 0 14px 30px rgba(0,0,0,0.22)"
-          : "none",
-      }}
     >
-      {/* Phones get tighter gaps and padding so brand, tray and switch
-          stay on one 64px row down to 360px wide. */}
-      <div className="container-fluid h-16 flex items-center justify-between gap-2 min-[381px]:gap-3 sm:gap-6">
+      <div className="container-fluid h-16 flex items-center justify-between gap-3 sm:gap-6">
         <Link
           href="/"
           className="group flex items-center gap-3 shrink-0 whitespace-nowrap font-display text-[17px] min-[381px]:text-[18px] sm:text-[20px] tracking-[-0.01em] text-ink"
@@ -94,92 +75,42 @@ export function Nav() {
             aria-label={t("available")}
             className="hidden sm:flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-soft"
           >
-            {/* LED set into a recessed round housing */}
-            <span
-              className="relative flex items-center justify-center w-[13px] h-[13px] rounded-full"
-              style={{
-                background: "rgba(0,0,0,0.4)",
-                boxShadow:
-                  "inset 0 1px 2px rgba(0,0,0,0.6), inset 0 -0.5px 0 rgba(255,255,255,0.05)",
-              }}
-            >
-              <span className="absolute w-1.5 h-1.5 rounded-full bg-ink opacity-40 animate-ping" />
-              <span
-                className="relative w-1.5 h-1.5 rounded-full"
-                style={{
-                  background: "#F4F4F2",
-                  boxShadow:
-                    "0 0 6px rgba(244,244,242,0.9), 0 0 14px rgba(244,244,242,0.35)",
-                }}
-              />
+            <span aria-hidden className="relative flex w-1.5 h-1.5">
+              {!reduce && <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />}
+              <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
             </span>
             <span className="hidden md:inline">{t("available")}</span>
           </span>
         </Link>
 
-        <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
-          <nav
-            className="flex items-center gap-0.5 rounded-[11px] p-1 text-[13px]"
-            style={TRAY_STYLE}
-          >
+        <div className="flex items-center gap-5 sm:gap-8 min-w-0">
+          <nav className="flex items-center gap-4 sm:gap-7">
             {ITEMS.map((item) => {
               const active = item.match(pathname);
-              const label = t(item.key);
-              const className = `group relative whitespace-nowrap px-2 min-[381px]:px-2.5 sm:px-3.5 py-[6px] rounded-[7px] transition-colors duration-150 ${
-                active ? "text-ink" : "text-mute hover:text-ink"
-              }`;
-
-              const inner = (
-                <>
-                  {active ? (
-                    <span
-                      aria-hidden
-                      className="absolute inset-0 rounded-[7px]"
-                      style={WELL_STYLE}
-                    />
-                  ) : (
-                    <span
-                      aria-hidden
-                      className="absolute inset-0 rounded-[7px] opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-                      style={HOVER_CAP_STYLE}
-                    />
-                  )}
-                  <span className="relative z-10">
-                    {label}
-                    {item.external && (
-                      <span
-                        aria-hidden
-                        className="ml-1 inline-block translate-y-[-1px] text-[11px] text-soft"
-                      >
-                        ↗
-                      </span>
-                    )}
-                  </span>
-                </>
-              );
-
-              if (item.external) {
-                return (
-                  <a
-                    key={item.key}
-                    href={item.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={className}
-                  >
-                    {inner}
-                  </a>
-                );
-              }
               return (
                 <Link
                   key={item.key}
                   href={item.href}
-                  className={className}
                   aria-current={active ? "page" : undefined}
                   onClick={item.key === "work" ? onWorkClick : undefined}
+                  className={`relative whitespace-nowrap py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors duration-200 ${
+                    active ? "text-ink" : "text-soft hover:text-ink"
+                  }`}
                 >
-                  {inner}
+                  {active && (
+                    <motion.span
+                      layoutId="nav-bracket"
+                      aria-hidden
+                      className="pointer-events-none absolute -inset-x-2.5 -inset-y-0.5"
+                      transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 34 }}
+                    >
+                      <span className="reg-mark tl" style={{ width: 7, height: 7, left: 0, top: 0 }} />
+                      <span className="reg-mark tr" style={{ width: 7, height: 7, right: 0, top: 0 }} />
+                      <span className="reg-mark br" style={{ width: 7, height: 7, right: 0, bottom: 0 }} />
+                      <span className="reg-mark bl" style={{ width: 7, height: 7, left: 0, bottom: 0 }} />
+                    </motion.span>
+                  )}
+                  {t(item.key)}
                 </Link>
               );
             })}

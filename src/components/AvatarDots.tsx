@@ -138,14 +138,48 @@ export function AvatarDots() {
     const start = performance.now();
     let raf = 0;
 
-    /* No pointer field. The portrait used to scatter and jitter around the
-       cursor (a "lens" with a spring, Brownian kicks and a leash); Aspen
-       cut it — the face holds still and the reticle alone answers the
-       pointer. */
+    /* The pointer field. Dots never move — the scatter-and-jitter lens was
+       cut (「这个效果我没那么喜欢」). Instead the pointer carries a
+       spotlight: dots within R brighten and grow on a smoothstep falloff.
+       And every move sends a ripple — a ring that expands from the pointer
+       at RING_SPEED and, for the beat it takes to cross a dot, lifts that
+       dot. A scanner passing over the portrait, not jelly. Rings are
+       rate-limited and capped, so a fast sweep leaves a wake, not a storm.
+       (「hover 来点炫酷的点点效果」, 2026-09-21.) */
+    const mouse = { x: -9999, y: -9999 };
+    const rings: { x: number; y: number; t0: number }[] = [];
+    let lastRing = 0;
+    const R = 120;            // spotlight radius, px
+    const RING_SPEED = 0.55;  // px per ms
+    const RING_LIFE = 900;    // ms
+    const RING_BAND = 26;     // px, the ring's thickness
+    const onMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width) return;
+      mouse.x = (e.clientX - rect.left) * (cssW / rect.width);
+      mouse.y = (e.clientY - rect.top) * (cssH / rect.height);
+      const now = performance.now();
+      const near = mouse.x > -80 && mouse.x < cssW + 80 && mouse.y > -80 && mouse.y < cssH + 80;
+      if (near && now - lastRing > 140) {
+        rings.push({ x: mouse.x, y: mouse.y, t0: now });
+        if (rings.length > 6) rings.shift();
+        lastRing = now;
+      }
+    };
+    const onLeave = () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    };
+    if (!reduce) {
+      window.addEventListener("mousemove", onMove, { passive: true });
+      window.addEventListener("mouseout", onLeave);
+    }
+
     const frame = (now: number) => {
       const t = now - start;
       const globalReveal = reduce ? 1 : Math.max(0, Math.min(1, t / 900));
       ctx.clearRect(0, 0, cssW, cssH);
+      while (rings.length && now - rings[0].t0 > RING_LIFE) rings.shift();
 
       // The assembly: grid first, then the face gathers out of it.
       const assembling = !reduce && t < ASSEMBLY + 400;
@@ -189,11 +223,37 @@ export function AvatarDots() {
         );
         if (eyeInf > 0) alpha = Math.min(0.88, alpha + eyeInf * 0.45);
 
+        // The pointer field: spotlight + the rings passing through.
+        let lift = 0;
+        let grow = 0;
+        if (!reduce && reveal > 0.2) {
+          const mx = ax - mouse.x;
+          const my = ay - mouse.y;
+          const m2 = mx * mx + my * my;
+          if (m2 < R * R) {
+            const uu = 1 - Math.sqrt(m2) / R;
+            const f = uu * uu * (3 - 2 * uu);
+            lift += f * 0.5;
+            grow += f * 0.9;
+          }
+          for (const rg of rings) {
+            const age = now - rg.t0;
+            const rr = age * RING_SPEED;
+            const dd = Math.abs(Math.hypot(ax - rg.x, ay - rg.y) - rr);
+            if (dd < RING_BAND) {
+              const k = (1 - dd / RING_BAND) * (1 - age / RING_LIFE);
+              lift += k * 0.55;
+              grow += k * 0.5;
+            }
+          }
+        }
+        if (lift > 0) alpha = Math.min(0.96, alpha + lift);
+
         if (alpha <= 0.003) continue;
 
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(ax, ay, dot, 0, TWO_PI);
+        ctx.arc(ax, ay, dot * (1 + grow), 0, TWO_PI);
         ctx.fill();
       }
 
@@ -214,6 +274,8 @@ export function AvatarDots() {
     raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(raf);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseout", onLeave);
     };
   }, []);
 

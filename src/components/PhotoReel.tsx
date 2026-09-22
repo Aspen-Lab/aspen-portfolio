@@ -5,21 +5,23 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
-/* A reel of photographs with a viewer.
-   The About page's photo modules used to be sunken .photo-frame tiles
-   with an "⤢ Inspect" pill that inspected nothing. Now each frame is a
-   flat plate; hovering shows the registration corners; clicking opens
-   the frame in a viewer that is the same viewfinder at full size — the
-   photo on the paper, corners and mid-edge ticks around it, a mono
-   readout (frame 03 / 08, the caption), and arrows. Esc or a click on
-   the paper closes it; ← → move. */
+/* A wall of photographs, and a viewer.
+   The reels used to be a sideways scroll of fixed-height tiles, each
+   forced into a declared ratio and cropped to it (Aspen: 「很多图片被裁
+   切，而且横向不好」). Now every photo keeps its own proportions — the
+   sizes come from the files — in a masonry of two or three columns that
+   fills the width, no cropping, no sideways scroll. Hovering shows the
+   registration corners and the frame number; clicking opens the frame
+   in a full-size viewfinder that also never crops (object-contain), with
+   a readout, arrows, ← → and Esc. */
 
 export type Frame = {
   src: string;
   alt: string;
+  /** The file's own pixel size — the layout keeps this ratio exactly. */
+  w: number;
+  h: number;
   caption?: string;
-  /** CSS aspect-ratio, e.g. "3/4". */
-  aspect?: string;
   priority?: boolean;
 };
 
@@ -55,23 +57,24 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
 
   return (
     <>
-      <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
+      {/* Masonry: CSS columns keep each photo at its own ratio; captions ride under their photo. */}
+      <div className="columns-2 lg:columns-3 gap-5 sm:gap-6 [&>*]:mb-5 sm:[&>*]:mb-6">
         {frames.map((f, i) => (
-          <figure key={f.src} className="group shrink-0 snap-start w-min">
+          <figure key={f.src} className="group break-inside-avoid">
             <button
               type="button"
               onClick={() => setOpen(i)}
               aria-label={`${label} · ${pad(i + 1)} / ${pad(frames.length)}${f.caption ? ` · ${f.caption}` : ""}`}
-              className="relative block h-[clamp(240px,38vh,400px)] w-auto plate plate-figure cursor-pointer outline-none"
-              style={{ aspectRatio: f.aspect ?? "3/4" }}
+              className="relative block w-full plate plate-figure cursor-pointer outline-none"
             >
               <Image
                 src={f.src}
                 alt={f.alt}
-                fill
+                width={f.w}
+                height={f.h}
                 priority={f.priority}
-                sizes="(max-width: 640px) 80vw, 640px"
-                className="object-cover transition-transform duration-[900ms] group-hover:scale-[1.03]"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 45vw, 30vw"
+                className="block w-full h-auto transition-transform duration-[900ms] group-hover:scale-[1.02]"
                 style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
               />
               <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
@@ -85,7 +88,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
               </span>
             </button>
             {f.caption && (
-              <figcaption className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-soft leading-[1.7]">
+              <figcaption className="mt-3 font-mono text-[10.5px] uppercase tracking-[0.16em] text-soft leading-[1.7]">
                 <span className="text-soft/50">{"// "}</span>
                 {f.caption}
               </figcaption>
@@ -108,7 +111,6 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
             className="fixed inset-0 z-[90] bg-paper/96 backdrop-blur-[2px] flex flex-col"
             onClick={() => setOpen(null)}
           >
-            {/* Readout row */}
             <div className="container-fluid flex items-center justify-between h-16 font-mono text-[10px] uppercase tracking-[0.22em] text-soft">
               <span className="tabular-nums">
                 {label} <span className="text-soft/50">·</span> {pad(open + 1)}{" "}
@@ -124,13 +126,12 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
               </button>
             </div>
 
-            {/* The frame */}
             <div className="relative flex-1 min-h-0 container-fluid pb-6 flex items-center justify-center">
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); step(-1); }}
                 aria-label="Previous"
-                className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-3 text-soft hover:text-ink cursor-pointer"
+                className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-3 text-soft hover:text-ink cursor-pointer z-10"
               >
                 <ChevronLeft className="w-6 h-6" strokeWidth={1.5} />
               </button>
@@ -138,7 +139,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                 type="button"
                 onClick={(e) => { e.stopPropagation(); step(1); }}
                 aria-label="Next"
-                className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-3 text-soft hover:text-ink cursor-pointer"
+                className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-3 text-soft hover:text-ink cursor-pointer z-10"
               >
                 <ChevronRight className="w-6 h-6" strokeWidth={1.5} />
               </button>
@@ -150,7 +151,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                   animate={{ opacity: 1, scale: 1 }}
                   exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.99 }}
                   transition={{ duration: 0.28, ease: EASE }}
-                  className="relative max-w-[min(92vw,1180px)] max-h-full flex flex-col items-center"
+                  className="relative flex flex-col items-center max-w-full max-h-full"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="relative p-5 sm:p-7">
@@ -162,11 +163,15 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                     <span className="vf-tick bottom" />
                     <span className="vf-tick left" />
                     <span className="vf-tick right" />
+                    {/* The frame takes the photo's own ratio and fits the viewport; nothing is cropped. */}
                     <div
-                      className="relative plate overflow-hidden max-h-[calc(100vh-13rem)]"
-                      style={{ aspectRatio: current.aspect ?? "3/4", height: "min(calc(100vh - 13rem), 780px)" }}
+                      className="relative plate overflow-hidden"
+                      style={{
+                        aspectRatio: `${current.w} / ${current.h}`,
+                        width: `min(calc(100vw - 8rem), calc((100vh - 14rem) * ${current.w} / ${current.h}), 1240px)`,
+                      }}
                     >
-                      <Image src={current.src} alt={current.alt} fill sizes="92vw" className="object-cover" priority />
+                      <Image src={current.src} alt={current.alt} fill sizes="92vw" className="object-contain" priority />
                     </div>
                   </div>
                   {current.caption && (

@@ -1,10 +1,8 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
-import { TRAY_STYLE } from "@/lib/tactile";
 import {
   siFigma,
   siClaude,
@@ -152,27 +150,21 @@ function CompanyItem({ name, node, echo }: { name: string; node: ReactNode; echo
 }
 
 /* ─── Inventory slot ─────────────────────────────────────────────────────
-   Game-hotbar UX: recessed square wells in a tray, engraved hotkey
-   numerals, items that lift out of the well on hover, and an RPG-style
-   item card (name / rarity / type / flavor). Rarity is expressed
-   monochromatically — glow strength, never color. */
+   A hairline square holding one tool's mark, with a mono folio in the
+   corner. Hovering (or focusing) lights the mark and the frame and puts
+   the tool's line — name · type — flavor — on the readout under the row.
+   The recessed wells, keycaps, glows and the RPG item card are gone;
+   rarity survives only as a word in that line. */
 
-// 1 = Uncommon · 2 = Rare · 3 = Epic · 4 = Legendary
-const RARITY: Record<string, number> = {
-  Figma: 3, Claude: 4, Codex: 2, Cursor: 3,
-  GitHub: 2, Vercel: 2, Supabase: 1, Obsidian: 1,
-};
-
-function InventorySlot({ name, index, active, reduce, onEnter, onLeave }: {
-  name: string; index: number; active: boolean; reduce: boolean | null;
+function InventorySlot({ name, index, active, onEnter, onLeave }: {
+  name: string; index: number; active: boolean;
   onEnter: () => void; onLeave: () => void;
 }) {
-  const t = useTranslations("Hero");
-  const tier = RARITY[name] ?? 1;
-
   return (
     <div
-      className="relative"
+      className={`relative grid place-items-center w-10 h-10 sm:w-11 sm:h-11 border transition-colors duration-300 ${
+        active ? "border-ink/45 text-ink" : "border-line text-soft"
+      }`}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onFocus={onEnter}
@@ -180,114 +172,13 @@ function InventorySlot({ name, index, active, reduce, onEnter, onLeave }: {
       tabIndex={0}
       aria-label={name}
     >
-      {/* Item card */}
-      <AnimatePresence>
-        {active && (
-          <motion.div
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 7, scale: 0.95 }}
-            animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: 5, scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 420, damping: 26 }}
-            className="absolute bottom-[calc(100%+11px)] left-1/2 -translate-x-1/2 z-50 pointer-events-none select-none w-[188px]"
-            style={{
-              background: "linear-gradient(180deg, #2E2E30 0%, #262628 100%)",
-              borderRadius: 10,
-              boxShadow: [
-                "inset 0 1px 0 rgba(255,255,255,0.09)",
-                "inset 0 0 0 1px rgba(255,255,255,0.03)",
-                "0 4px 10px rgba(0,0,0,0.35)",
-                "0 18px 44px rgba(0,0,0,0.5)",
-                tier === 4 ? "0 0 26px rgba(255,255,255,0.07)" : "",
-              ].filter(Boolean).join(", "),
-            }}
-          >
-            <div className="px-3 pt-2.5 pb-3">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="font-display font-semibold text-[13px]" style={{ color: "rgba(244,244,242,0.92)" }}>
-                  {name}
-                </span>
-                <span
-                  className="font-mono text-[7.5px] uppercase tracking-[0.18em]"
-                  style={{
-                    color: `rgba(244,244,242,${0.3 + tier * 0.14})`,
-                    textShadow: tier >= 3 ? "0 0 8px rgba(255,255,255,0.45)" : "none",
-                  }}
-                >
-                  {t(`inv.${name}.rarity`)}
-                </span>
-              </div>
-              <div
-                className="font-mono text-[8px] tracking-[0.14em] mt-1"
-                style={{ color: "rgba(160,160,165,0.55)" }}
-              >
-                {t(`inv.${name}.type`)}
-              </div>
-              <div className="h-px my-2" style={{ background: "rgba(255,255,255,0.07)" }} />
-              <div className="italic text-[10.5px] leading-[1.55]" style={{ color: "rgba(160,160,165,0.78)" }}>
-                {t(`inv.${name}.flavor`)}
-              </div>
-            </div>
-            {/* Caret */}
-            <div
-              className="absolute left-1/2 -bottom-[5px] w-[10px] h-[10px] -translate-x-1/2 rotate-45"
-              style={{
-                background: "#262628",
-                boxShadow: "inset -1px -1px 0 rgba(255,255,255,0.02)",
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Well */}
-      <div
-        className="relative w-[44px] h-[44px] rounded-[8px] flex items-center justify-center"
-        style={{
-          background: active
-            ? "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(255,255,255,0.045) 100%)"
-            : "linear-gradient(180deg, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.14) 100%)",
-          boxShadow: [
-            "inset 0 2px 5px rgba(0,0,0,0.55)",
-            "inset 0 -1px 0 rgba(255,255,255,0.05)",
-            "inset 1px 0 2px rgba(0,0,0,0.25)",
-            "0 1px 0 rgba(255,255,255,0.045)",
-            active ? `inset 0 0 ${6 + tier * 4}px rgba(255,255,255,${(0.03 + tier * 0.02).toFixed(3)})` : "",
-          ].filter(Boolean).join(", "),
-          transition: "background 180ms ease, box-shadow 180ms ease",
-        }}
+      <span
+        aria-hidden
+        className="absolute right-[3px] bottom-[1px] font-mono text-[7px] tabular-nums pointer-events-none select-none text-soft/45"
       >
-        {/* Engraved hotkey numeral */}
-        <span
-          className="absolute bottom-[2px] right-[4px] font-mono text-[7px] pointer-events-none select-none"
-          style={{
-            color: "rgba(0,0,0,0.6)",
-            textShadow: "0 1px 0 rgba(255,255,255,0.06)",
-          }}
-        >
-          {index + 1}
-        </span>
-
-        {/* Item */}
-        <motion.div
-          animate={
-            reduce
-              ? undefined
-              : active
-                ? { y: -2.5, scale: 1.16 }
-                : { y: 0, scale: 1 }
-          }
-          transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          style={{
-            color: active ? "rgba(244,244,242,0.9)" : "rgba(140,140,146,0.52)",
-            filter: active
-              ? `drop-shadow(0 5px 6px rgba(0,0,0,0.55)) drop-shadow(0 0 ${3 + tier * 2}px rgba(255,255,255,${(0.05 + tier * 0.04).toFixed(3)}))`
-              : "drop-shadow(0 2px 2px rgba(0,0,0,0.45))",
-            transition: "color 180ms ease, filter 180ms ease",
-          }}
-        >
-          {icons[name]}
-        </motion.div>
-      </div>
+        {index + 1}
+      </span>
+      <span className="[&>svg]:w-[18px] [&>svg]:h-[18px]">{icons[name]}</span>
     </div>
   );
 }
@@ -300,7 +191,6 @@ const enterDelay = (s: number) => ({ "--d": `${s}s` }) as CSSProperties;
 /* ─── Widget ────────────────────────────────────────────────────────────── */
 export function HeroWidgets() {
   const t = useTranslations("Hero");
-  const reduce = useReducedMotion();
   const [tip, setTip] = useState<string | null>(null);
 
   return (
@@ -343,33 +233,33 @@ export function HeroWidgets() {
         })}
       </p>
 
-      {/* Inventory. The "Inventory 08/08" caption and the rule above it
-          are gone — the tray reads as itself, and the label lives on as
-          the accessible name. */}
+      {/* Inventory — eight hairline squares on the paper, one readout line */}
       <div className="hero-fade-up mt-8 sm:mt-9" style={enterDelay(0.5)}>
-        <div className="inline-block max-w-full">
-          {/* Tray — raised bezel holding eight recessed wells.
-              On phones the tray scrolls sideways (hover cards are a
-              pointer-only affordance, so clipping them there is fine). */}
-          <div className="max-sm:overflow-x-auto no-scrollbar" role="group" aria-label={t("invLabel")}>
-          <div
-            className="flex items-center gap-2 rounded-[12px] p-2 w-max"
-            style={TRAY_STYLE}
-          >
+        <div className="max-sm:overflow-x-auto no-scrollbar" role="group" aria-label={t("invLabel")}>
+          <div className="flex items-center gap-2 w-max">
             {TOOLS.map((name, i) => (
               <InventorySlot
                 key={name}
                 name={name}
                 index={i}
                 active={tip === name}
-                reduce={reduce}
                 onEnter={() => setTip(name)}
                 onLeave={() => setTip(null)}
               />
             ))}
           </div>
-          </div>
         </div>
+        <p className="mt-3 min-h-[1.25rem] font-mono text-[10px] uppercase tracking-[0.18em] text-soft">
+          {tip ? (
+            <>
+              <span className="text-ink">{tip}</span>
+              <span className="text-soft/55"> · {t(`inv.${tip}.type`)} · {t(`inv.${tip}.rarity`)}</span>
+              <span className="normal-case tracking-[0.02em] text-[11px] text-mute"> — {t(`inv.${tip}.flavor`)}</span>
+            </>
+          ) : (
+            <span className="text-soft/55">{t("invLabel")} · 08</span>
+          )}
+        </p>
       </div>
 
       {/* Companies — infinite scrolling ticker */}
