@@ -138,24 +138,24 @@ export function AvatarDots() {
     const start = performance.now();
     let raf = 0;
 
-    /* The pointer field — motion, not light. Aspen cut the first lens
-       (random scatter and jitter: 「这个效果我没那么喜欢」) and then the
-       spotlight (「不喜欢明度变化，而是 dot 来一些动作」). So no dot ever
-       changes brightness or size here; they move, deterministically:
-       every pointer move drops a ripple, and each ring is a smooth radial
-       bump that carries the dots it passes outward by a few px and sets
-       them back — a stone in water. Under the pointer itself the dots
-       lean toward it a little and settle when it leaves. Rings are
-       rate-limited and capped, so a sweep leaves a wake, not a storm. */
+    /* The pointer field — orderly motion, not light. Three lenses were
+       cut before this one: random scatter and jitter (「没那么喜欢」), a
+       brightness spotlight (「不喜欢明度变化」), and a watery radial
+       ripple (「我喜欢规整运动」). So the wave is SQUARE and AXIS-LOCKED:
+       a pulse expands from the pointer as a square front (Chebyshev
+       distance), and every dot it crosses shifts by the same amount along
+       one grid axis — up, down, left or right, whichever side of the
+       square it sits on — then returns. A pulse leaves on every move and,
+       while the pointer rests on the portrait, on a steady beat. No dot
+       ever changes brightness or size. */
     const mouse = { x: -9999, y: -9999 };
     const rings: { x: number; y: number; t0: number }[] = [];
     let lastRing = 0;
-    const R = 110;            // the pull's reach, px
     const RING_SPEED = 0.55;  // px per ms
     const RING_LIFE = 900;    // ms
-    const RING_BAND = 34;     // px, the ring's half-width
-    const RING_AMP = 8;       // px, how far a ring carries a dot
-    const PULL = 5;           // px, how far a dot leans toward the pointer
+    const RING_BAND = 30;     // px, the front's half-width
+    const RING_AMP = 7;       // px, the shift a front carries — the same for every dot
+    const REST_BEAT = 1200;   // ms between pulses while the pointer rests on the portrait
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       if (!rect.width) return;
@@ -183,6 +183,12 @@ export function AvatarDots() {
       const globalReveal = reduce ? 1 : Math.max(0, Math.min(1, t / 900));
       ctx.clearRect(0, 0, cssW, cssH);
       while (rings.length && now - rings[0].t0 > RING_LIFE) rings.shift();
+      // A steady beat while the pointer rests over the portrait.
+      if (!reduce && mouse.x > 0 && mouse.x < cssW && mouse.y > 0 && mouse.y < cssH && now - lastRing > REST_BEAT) {
+        rings.push({ x: mouse.x, y: mouse.y, t0: now });
+        if (rings.length > 6) rings.shift();
+        lastRing = now;
+      }
 
       // The assembly: grid first, then the face gathers out of it.
       const assembling = !reduce && t < ASSEMBLY + 400;
@@ -228,36 +234,22 @@ export function AvatarDots() {
 
         if (alpha <= 0.003) continue;
 
-        // The pointer field: displacement only.
+        // The pointer field: a square, axis-locked shift.
         let ox = 0;
         let oy = 0;
         if (!reduce && reveal > 0.2) {
-          // Lean toward the pointer on a smoothstep, strongest near it.
-          const mx = mouse.x - ax;
-          const my = mouse.y - ay;
-          const m2 = mx * mx + my * my;
-          if (m2 < R * R && m2 > 1) {
-            const dist = Math.sqrt(m2);
-            const uu = 1 - dist / R;
-            const f = uu * uu * (3 - 2 * uu);
-            const k = (f * PULL) / dist;
-            ox += mx * k;
-            oy += my * k;
-          }
-          // Each ring is a cosine bump travelling outward; a dot on the
-          // crest is carried away from the ring's centre and returns.
           for (const rg of rings) {
             const age = now - rg.t0;
             const rr = age * RING_SPEED;
             const vx = ax - rg.x;
             const vy = ay - rg.y;
-            const dist = Math.hypot(vx, vy) || 1;
-            const dd = dist - rr;
+            const cheb = Math.max(Math.abs(vx), Math.abs(vy));
+            const dd = cheb - rr;
             if (dd > -RING_BAND && dd < RING_BAND) {
               const w = Math.cos((dd / RING_BAND) * (Math.PI / 2));
-              const k = (w * w * RING_AMP * (1 - age / RING_LIFE)) / dist;
-              ox += vx * k;
-              oy += vy * k;
+              const amp = w * w * RING_AMP * (1 - age / RING_LIFE);
+              if (Math.abs(vx) >= Math.abs(vy)) ox += Math.sign(vx) * amp;
+              else oy += Math.sign(vy) * amp;
             }
           }
         }
