@@ -138,36 +138,30 @@ export function AvatarDots() {
     const start = performance.now();
     let raf = 0;
 
-    /* The pointer field — orderly motion, not light. Three lenses were
-       cut before this one: random scatter and jitter (「没那么喜欢」), a
-       brightness spotlight (「不喜欢明度变化」), and a watery radial
-       ripple (「我喜欢规整运动」). So the wave is SQUARE and AXIS-LOCKED:
-       a pulse expands from the pointer as a square front (Chebyshev
-       distance), and every dot it crosses shifts by the same amount along
-       one grid axis — up, down, left or right, whichever side of the
-       square it sits on — then returns. A pulse leaves on every move and,
-       while the pointer rests on the portrait, on a steady beat. No dot
-       ever changes brightness or size. */
+    /* The pointer field — the dots FOLLOW the pointer. Four lenses came
+       before this one (random scatter ✗, brightness ✗, radial ripple ✗,
+       square pulse ✗); Aspen's words for what she wants: 「点阵跟随 hover，
+       来点动作」. So: the pointer has a smoothed position that trails the
+       real one, and every dot within R leans toward that position on a
+       smoothstep — the lattice gathers toward the cursor and, as the
+       cursor moves, the gathered region follows behind it with a little
+       lag and a wake in the direction of travel. Deterministic, smooth,
+       no brightness or size change, nothing random. */
     const mouse = { x: -9999, y: -9999 };
-    const rings: { x: number; y: number; t0: number }[] = [];
-    let lastRing = 0;
-    const RING_SPEED = 0.55;  // px per ms
-    const RING_LIFE = 900;    // ms
-    const RING_BAND = 30;     // px, the front's half-width
-    const RING_AMP = 7;       // px, the shift a front carries — the same for every dot
-    const REST_BEAT = 1200;   // ms between pulses while the pointer rests on the portrait
+    const cur = { x: 0, y: 0, seeded: false };
+    const vel = { x: 0, y: 0 };
+    let amt = 0;              // the field's strength, eased on enter and leave
+    const R = 170;            // reach of the pull, px
+    const PULL = 14;          // px, the most a dot moves toward the pointer
+    const CORE = 40;          // px, the soft centre: dots right under the pointer
+                              // barely move, so they never pile up and brighten
+    const FOLLOW = 0.14;      // how fast the smoothed position chases the pointer
+    const WAKE = 0.35;        // how much of the pointer's velocity the dots carry
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       if (!rect.width) return;
       mouse.x = (e.clientX - rect.left) * (cssW / rect.width);
       mouse.y = (e.clientY - rect.top) * (cssH / rect.height);
-      const now = performance.now();
-      const near = mouse.x > -80 && mouse.x < cssW + 80 && mouse.y > -80 && mouse.y < cssH + 80;
-      if (near && now - lastRing > 140) {
-        rings.push({ x: mouse.x, y: mouse.y, t0: now });
-        if (rings.length > 6) rings.shift();
-        lastRing = now;
-      }
     };
     const onLeave = () => {
       mouse.x = -9999;
@@ -182,12 +176,28 @@ export function AvatarDots() {
       const t = now - start;
       const globalReveal = reduce ? 1 : Math.max(0, Math.min(1, t / 900));
       ctx.clearRect(0, 0, cssW, cssH);
-      while (rings.length && now - rings[0].t0 > RING_LIFE) rings.shift();
-      // A steady beat while the pointer rests over the portrait.
-      if (!reduce && mouse.x > 0 && mouse.x < cssW && mouse.y > 0 && mouse.y < cssH && now - lastRing > REST_BEAT) {
-        rings.push({ x: mouse.x, y: mouse.y, t0: now });
-        if (rings.length > 6) rings.shift();
-        lastRing = now;
+
+      // Chase the pointer; remember the velocity for the wake.
+      if (!reduce) {
+        const active = mouse.x > -9000;
+        if (active && !cur.seeded) {
+          cur.x = mouse.x;
+          cur.y = mouse.y;
+          cur.seeded = true;
+        }
+        if (cur.seeded && active) {
+          const nx = cur.x + (mouse.x - cur.x) * FOLLOW;
+          const ny = cur.y + (mouse.y - cur.y) * FOLLOW;
+          vel.x = nx - cur.x;
+          vel.y = ny - cur.y;
+          cur.x = nx;
+          cur.y = ny;
+        } else {
+          vel.x *= 0.85;
+          vel.y *= 0.85;
+        }
+        amt += ((active ? 1 : 0) - amt) * 0.08;
+        if (!active && amt < 0.01) cur.seeded = false;
       }
 
       // The assembly: grid first, then the face gathers out of it.
@@ -234,23 +244,22 @@ export function AvatarDots() {
 
         if (alpha <= 0.003) continue;
 
-        // The pointer field: a square, axis-locked shift.
+        // The pointer field: lean toward the smoothed pointer, carry its wake.
         let ox = 0;
         let oy = 0;
-        if (!reduce && reveal > 0.2) {
-          for (const rg of rings) {
-            const age = now - rg.t0;
-            const rr = age * RING_SPEED;
-            const vx = ax - rg.x;
-            const vy = ay - rg.y;
-            const cheb = Math.max(Math.abs(vx), Math.abs(vy));
-            const dd = cheb - rr;
-            if (dd > -RING_BAND && dd < RING_BAND) {
-              const w = Math.cos((dd / RING_BAND) * (Math.PI / 2));
-              const amp = w * w * RING_AMP * (1 - age / RING_LIFE);
-              if (Math.abs(vx) >= Math.abs(vy)) ox += Math.sign(vx) * amp;
-              else oy += Math.sign(vy) * amp;
-            }
+        if (!reduce && cur.seeded && amt > 0.005 && reveal > 0.2) {
+          const dx = cur.x - ax;
+          const dy = cur.y - ay;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < R * R && d2 > 1) {
+            const dist = Math.sqrt(d2);
+            const uu = 1 - dist / R;
+            const f = uu * uu * (3 - 2 * uu) * amt;
+            // Pull scales with distance over a soft core: strongest mid-field,
+            // near zero at the pointer, so dots gather without converging.
+            const k = (f * PULL) / (dist + CORE);
+            ox += dx * k + vel.x * WAKE * f;
+            oy += dy * k + vel.y * WAKE * f;
           }
         }
 

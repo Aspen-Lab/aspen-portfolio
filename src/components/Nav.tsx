@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { motion, useReducedMotion } from "motion/react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleToggle } from "./LocaleToggle";
+import { Logo } from "./Logo";
 
 type Item = {
   key: "work" | "about" | "contact";
@@ -70,7 +71,7 @@ export function Nav() {
           href="/"
           className="group flex items-center gap-3 shrink-0 whitespace-nowrap font-display text-[17px] min-[381px]:text-[18px] sm:text-[20px] tracking-[-0.01em] text-ink"
         >
-          <span>Aspen Lab</span>
+          <Logo />
           <span
             aria-label={t("available")}
             className="hidden sm:flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-soft"

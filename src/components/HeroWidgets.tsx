@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, type CSSProperties, type ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import {
@@ -184,29 +184,6 @@ function InventorySlot({ name, index, active, onEnter, onLeave }: {
   );
 }
 
-/* ─── Word stagger ────────────────────────────────────────────────────
-   Wraps every word of a rich string — plain words and tagged marks alike —
-   in its own .word-rise mask with a delay stepping along the sentence. */
-function staggerWords(node: ReactNode, base: number): ReactNode {
-  let i = 0;
-  const wrap = (child: ReactNode, key: string) => {
-    const d = `${(base + i++ * 0.035).toFixed(3)}s`;
-    return (
-      <span key={key} className="word-rise">
-        <span style={{ "--d": d } as CSSProperties}>{child}</span>
-      </span>
-    );
-  };
-  return Children.toArray(node).flatMap((child, ci) => {
-    if (typeof child === "string") {
-      return child
-        .split(/(\s+)/)
-        .map((part, pi) => (/^\s+$/.test(part) ? part : part ? wrap(part, `${ci}-${pi}`) : null));
-    }
-    return [wrap(child, `el-${ci}`)];
-  });
-}
-
 /* ─── Fade-up entrance ──────────────────────────────────────────────────
    The .hero-fade-up CSS keyframe (globals.css) — plays from first paint
    instead of after hydration. Reduced motion is handled in the CSS. */
@@ -220,13 +197,13 @@ export function HeroWidgets() {
   return (
     <div className="mt-8 sm:mt-10">
 
-      {/* Bio — the lead in ink, the React and Axel marks inline, and the
-          whole line rising one word at a time. */}
+      {/* Bio — the lead in ink, the React and Axel marks inline. (A word-by-
+          word rise was tried here and cut; the line fades up as one.) */}
       <p
-        className="text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
-        style={{ color: "rgba(160,160,165,0.72)" }}
+        className="hero-fade-up text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
+        style={{ ...enterDelay(0.38), color: "rgba(160,160,165,0.72)" }}
       >
-        {staggerWords(t.rich("bio", {
+        {t.rich("bio", {
           lead: (chunks: ReactNode) => <span className="font-medium text-ink/90">{chunks}</span>,
           react: (chunks: ReactNode) => (
             <span className="inline-flex items-baseline gap-1 text-ink/80">
@@ -264,7 +241,7 @@ export function HeroWidgets() {
               </span>
             </a>
           ),
-        }), 0.38)}
+        })}
       </p>
 
       {/* Inventory — eight hairline squares on the paper, one readout line */}

@@ -11,7 +11,8 @@ export function Hero() {
   const t = useTranslations("Hero");
 
   return (
-    <section id="hero" className="relative overflow-hidden">
+    // select-none: the hero is display, not copy — Aspen: 「这些文字是不能选中的」
+    <section id="hero" className="relative overflow-hidden select-none">
       {/* No wash, no backlight: the paper stays flat and the only thing
           behind the words is the dot grid the portrait assembles out of.
           The grid is held around the face and fades before every edge, so
