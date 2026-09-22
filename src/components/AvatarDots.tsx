@@ -138,21 +138,24 @@ export function AvatarDots() {
     const start = performance.now();
     let raf = 0;
 
-    /* The pointer field. Dots never move — the scatter-and-jitter lens was
-       cut (「这个效果我没那么喜欢」). Instead the pointer carries a
-       spotlight: dots within R brighten and grow on a smoothstep falloff.
-       And every move sends a ripple — a ring that expands from the pointer
-       at RING_SPEED and, for the beat it takes to cross a dot, lifts that
-       dot. A scanner passing over the portrait, not jelly. Rings are
-       rate-limited and capped, so a fast sweep leaves a wake, not a storm.
-       (「hover 来点炫酷的点点效果」, 2026-09-21.) */
+    /* The pointer field — motion, not light. Aspen cut the first lens
+       (random scatter and jitter: 「这个效果我没那么喜欢」) and then the
+       spotlight (「不喜欢明度变化，而是 dot 来一些动作」). So no dot ever
+       changes brightness or size here; they move, deterministically:
+       every pointer move drops a ripple, and each ring is a smooth radial
+       bump that carries the dots it passes outward by a few px and sets
+       them back — a stone in water. Under the pointer itself the dots
+       lean toward it a little and settle when it leaves. Rings are
+       rate-limited and capped, so a sweep leaves a wake, not a storm. */
     const mouse = { x: -9999, y: -9999 };
     const rings: { x: number; y: number; t0: number }[] = [];
     let lastRing = 0;
-    const R = 120;            // spotlight radius, px
+    const R = 110;            // the pull's reach, px
     const RING_SPEED = 0.55;  // px per ms
     const RING_LIFE = 900;    // ms
-    const RING_BAND = 26;     // px, the ring's thickness
+    const RING_BAND = 34;     // px, the ring's half-width
+    const RING_AMP = 8;       // px, how far a ring carries a dot
+    const PULL = 5;           // px, how far a dot leans toward the pointer
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       if (!rect.width) return;
@@ -223,37 +226,45 @@ export function AvatarDots() {
         );
         if (eyeInf > 0) alpha = Math.min(0.88, alpha + eyeInf * 0.45);
 
-        // The pointer field: spotlight + the rings passing through.
-        let lift = 0;
-        let grow = 0;
+        if (alpha <= 0.003) continue;
+
+        // The pointer field: displacement only.
+        let ox = 0;
+        let oy = 0;
         if (!reduce && reveal > 0.2) {
-          const mx = ax - mouse.x;
-          const my = ay - mouse.y;
+          // Lean toward the pointer on a smoothstep, strongest near it.
+          const mx = mouse.x - ax;
+          const my = mouse.y - ay;
           const m2 = mx * mx + my * my;
-          if (m2 < R * R) {
-            const uu = 1 - Math.sqrt(m2) / R;
+          if (m2 < R * R && m2 > 1) {
+            const dist = Math.sqrt(m2);
+            const uu = 1 - dist / R;
             const f = uu * uu * (3 - 2 * uu);
-            lift += f * 0.5;
-            grow += f * 0.9;
+            const k = (f * PULL) / dist;
+            ox += mx * k;
+            oy += my * k;
           }
+          // Each ring is a cosine bump travelling outward; a dot on the
+          // crest is carried away from the ring's centre and returns.
           for (const rg of rings) {
             const age = now - rg.t0;
             const rr = age * RING_SPEED;
-            const dd = Math.abs(Math.hypot(ax - rg.x, ay - rg.y) - rr);
-            if (dd < RING_BAND) {
-              const k = (1 - dd / RING_BAND) * (1 - age / RING_LIFE);
-              lift += k * 0.55;
-              grow += k * 0.5;
+            const vx = ax - rg.x;
+            const vy = ay - rg.y;
+            const dist = Math.hypot(vx, vy) || 1;
+            const dd = dist - rr;
+            if (dd > -RING_BAND && dd < RING_BAND) {
+              const w = Math.cos((dd / RING_BAND) * (Math.PI / 2));
+              const k = (w * w * RING_AMP * (1 - age / RING_LIFE)) / dist;
+              ox += vx * k;
+              oy += vy * k;
             }
           }
         }
-        if (lift > 0) alpha = Math.min(0.96, alpha + lift);
-
-        if (alpha <= 0.003) continue;
 
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(ax, ay, dot * (1 + grow), 0, TWO_PI);
+        ctx.arc(ax + ox, ay + oy, dot, 0, TWO_PI);
         ctx.fill();
       }
 
