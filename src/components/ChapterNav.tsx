@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale } from "next-intl";
 import { motion } from "motion/react";
 
 type ChapterNavProps = {
@@ -13,6 +14,7 @@ const READ_LINE = 0.4;
 
 export function ChapterNav({ chapters }: ChapterNavProps) {
   const [active, setActive] = useState(0);
+  const cn = useLocale() === "cn";
   const [past, setPast] = useState(false);
 
   /* Scroll-spy by position, not by intersection. The markers are thin
@@ -65,10 +67,10 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
   return (
     <>
       {/* Mobile: horizontal sticky bar (lg-) */}
-      <div className="lg:hidden sticky top-16 z-30 bg-paper/90 backdrop-blur-md border-y border-line/80 -mx-[max(1.25rem,4vw)]">
+      <div className="lg:hidden sticky top-24 min-[420px]:top-16 z-30 bg-paper/90 backdrop-blur-md border-y border-line/80 -mx-[max(1.25rem,4vw)]">
         <div className="container-fluid flex items-center gap-7 overflow-x-auto no-scrollbar py-3.5">
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft shrink-0">
-            Chapters
+            {cn ? "章节" : "Chapters"}
           </span>
           {chapters.map((c, i) => (
             <button
@@ -99,14 +101,14 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
 
       {/* Desktop: compact fixed side rail (lg+) */}
       <nav
-        aria-label="Chapter navigation"
+        aria-label={cn ? "章节导航" : "Chapter navigation"}
         inert={past}
         className={`hidden lg:block fixed right-5 xl:right-7 top-1/2 -translate-y-1/2 z-30 pointer-events-none transition-opacity duration-300 ${
           past ? "opacity-0" : "opacity-100"
         }`}
       >
         <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-soft mb-5 text-right pr-1">
-          Chapters
+          {cn ? "章节" : "Chapters"}
         </p>
         <ul className="relative flex flex-col items-end gap-4">
           {/* Vertical track behind dots */}

@@ -1,76 +1,60 @@
 import type { Metadata } from "next";
+import { ArrowDownRight, MapPin } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
-import { socials } from "@/lib/contact";
+import { ContactNote } from "@/components/contact/ContactNote";
+import { ContactChannels } from "@/components/contact/ContactChannels";
+import { contactInfo, socials } from "@/lib/contact";
 import type { Locale } from "@/i18n/routing";
 import { pageMeta } from "@/lib/seo";
+import styles from "./contact.module.css";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params;
   const cn = locale === "cn";
   return pageMeta(locale, "/contact", {
     title: cn ? "联系 — Aspen W." : "Contact — Aspen W.",
     description: cn
-      ? "通过邮件或社交平台联系 Aspen W."
-      : "Get in touch with Aspen W.",
+      ? "联系 Aspen W.，Axel 创始设计工程师。聊聊产品设计、前端开发、品牌，或一个值得实现的想法。"
+      : "Get in touch with Aspen W., Founding Design Engineer at Axel. Let's talk product, frontend, brand, or an idea worth building.",
   });
 }
 
-export default async function Contact({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}) {
+export default async function Contact({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   const cn = locale === "cn";
-
-  const links = socials.filter((s) => s.href);
+  const links = socials.filter((social) => social.href && social.platform !== "Email");
 
   return (
-    <article className="container-fluid pb-32">
-      <Reveal>
-        <h1
-          className="mt-14 sm:mt-20 type-display text-ink/70 leading-[1.0]"
-          style={{ fontSize: "clamp(40px, 6vw, 88px)" }}
-        >
-          {cn ? "联系我" : "Get in touch."}
-        </h1>
-      </Reveal>
-
-      <ul className="mt-14 sm:mt-20">
-        {links.map((s, i) => (
-          <li key={s.platform}>
-            <Reveal delay={i * 0.04}>
-              <a
-                href={s.href}
-                target={s.href.startsWith("mailto") ? undefined : "_blank"}
-                rel={s.href.startsWith("mailto") ? undefined : "noreferrer"}
-                className="group flex items-center justify-between gap-4 py-5 border-b border-white/[0.07] hover:border-white/[0.15] transition-colors duration-200"
-              >
-                {/* Phones stack the label over the handle — the email
-                    address alone is wider than a 375px row beside it. */}
-                <div className="flex min-w-0 flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-10">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft/55 sm:w-24 shrink-0">
-                    {s.platform}
-                  </span>
-                  <span className="font-display text-[18px] sm:text-[22px] tracking-[-0.01em] text-mute/75 group-hover:text-ink/90 transition-colors duration-200 break-words">
-                    {s.handle}
-                  </span>
-                </div>
-                <span
-                  aria-hidden
-                  className="font-mono text-[14px] text-soft/45 group-hover:text-ink/60 group-hover:translate-x-1 transition-all duration-200"
-                >
-                  ↗
-                </span>
-              </a>
-            </Reveal>
-          </li>
-        ))}
-      </ul>
+    <article className={`container-fluid ${styles.page}`}>
+      <div className={styles.masthead}>
+        <span>03 <span aria-hidden>/</span> {cn ? "联系" : "CONTACT"}</span>
+        <span>{cn ? "一段新对话的起点" : "THE START OF A CONVERSATION"}</span>
+      </div>
+      <section className={styles.hero} aria-labelledby="contact-title">
+        <Reveal className={styles.statement}>
+          <p className={styles.eyebrow}><span aria-hidden />{cn ? "ASPEN W. · 创始设计工程师" : "ASPEN W. · FOUNDING DESIGN ENGINEER"}</p>
+          <h1 id="contact-title" className={`type-display ${styles.headline}`}>
+            {cn ? "好想法，" : "Good things"}<br />
+            {cn ? "从一句你好" : "start with"}<br />
+            <em>{cn ? "开始。" : "hello."}</em><span className={styles.asterisk} aria-hidden>✳</span>
+          </h1>
+          <p className={styles.intro}>
+            {cn ? "设计、前端、品牌，或一个还没成形的点子。都可以从聊聊开始。" : "Product, code, brand, or an idea that's still taking shape. I'd love to hear what you're thinking."}
+          </p>
+          <div className={styles.signature}>
+            <span>Aspen W.</span>
+            <p><MapPin size={13} strokeWidth={1.5} aria-hidden />Bellevue, Washington</p>
+          </div>
+        </Reveal>
+        <Reveal delay={0.12} className={styles.note}><ContactNote cn={cn} email={contactInfo.email} /></Reveal>
+      </section>
+      <section className={styles.connections} aria-labelledby="contact-elsewhere">
+        <div className={styles.sectionHead}>
+          <div><span className={styles.eyebrow}>{cn ? "不止在收件箱" : "BEYOND THE INBOX"}</span><h2 id="contact-elsewhere" className="type-display">{cn ? "也在这些地方。" : "Elsewhere, too."}</h2></div>
+          <ArrowDownRight size={30} strokeWidth={1} aria-hidden />
+        </div>
+        <ContactChannels cn={cn} items={links} />
+      </section>
     </article>
   );
 }

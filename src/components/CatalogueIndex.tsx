@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
 import { useReducedMotion } from "motion/react";
+import { CatalogueMedia } from "./CatalogueMedia";
+import { demoCaption, type SideDemoId } from "./SideProjectDemo";
 
 /* The catalogue: a ruled index with one sticky viewfinder plate.
    Built for the works, then generalised so the side projects read as
@@ -25,6 +27,10 @@ export type CatalogueCover = {
   alt?: string;
   /** The first entry's cover is the LCP when the catalogue is high on the page. */
   priority?: boolean;
+  /** Optional code-native artwork or a short silent desktop preview. */
+  presentation?: "axel";
+  video?: string;
+  demo?: SideDemoId;
 };
 
 export type CatalogueRow = {
@@ -46,20 +52,45 @@ export type CatalogueRow = {
 const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const folio = (i: number) => String(i + 1).padStart(2, "0");
 
+function DemoControls({ row, cn, reduce, onReplay }: {
+  row: CatalogueRow;
+  cn: boolean;
+  reduce: boolean | null;
+  onReplay: () => void;
+}) {
+  if (!row.cover?.demo) return null;
+  return (
+    <div className="flex min-h-11 items-center justify-between gap-4 font-mono text-[10px] leading-relaxed text-mute">
+      <span className="min-w-0"><span className="text-soft">{cn ? "演示" : "DEMO"}</span><span className="mx-2 text-soft/50">/</span>{demoCaption(row.cover.demo, cn)}</span>
+      {!reduce && <button
+        type="button"
+        onClick={onReplay}
+        aria-label={`${cn ? "重播" : "Replay"} ${row.name} ${cn ? "演示" : "demo"}`}
+        className="group/replay flex min-h-11 shrink-0 items-center gap-2 pl-3 uppercase tracking-[0.12em] text-mute transition-colors hover:text-ink focus-visible:text-ink"
+      >
+        <svg aria-hidden width="12" height="12" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 motion-safe:group-hover/replay:-rotate-45"><path d="M3 5a5.5 5.5 0 1 1-.4 5M3 1.5V5h3.5" stroke="currentColor" strokeWidth="1.2" /></svg>
+        {cn ? "重播" : "Replay"}
+      </button>}
+    </div>
+  );
+}
+
 function RowShell({
   row,
   className,
   style,
   onEnter,
+  ariaLabel,
   children,
 }: {
   row: CatalogueRow;
   className: string;
   style: React.CSSProperties;
   onEnter: () => void;
+  ariaLabel?: string;
   children: ReactNode;
 }) {
-  const common = { className, style, onPointerEnter: onEnter, onFocus: onEnter };
+  const common = { className, style, onPointerEnter: onEnter, onFocus: onEnter, "aria-label": ariaLabel };
   if (!row.href) return <div {...common}>{children}</div>;
   if (row.external) {
     return (
@@ -77,8 +108,11 @@ function RowShell({
 
 export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
   const reduce = useReducedMotion();
+  const cn = useLocale() === "cn";
   const [hovered, setHovered] = useState<number | null>(null);
   const [last, setLast] = useState(0);
+  const [replays, setReplays] = useState<Record<string, number>>({});
+  const replay = (key: string) => setReplays((previous) => ({ ...previous, [key]: (previous[key] ?? 0) + 1 }));
   const active = hovered ?? last;
   const enter = (i: number) => {
     setHovered(i);
@@ -89,41 +123,39 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
   return (
     <div className="lg:grid lg:grid-cols-[1fr_minmax(380px,44%)] lg:gap-12 xl:gap-16 lg:items-start">
       {/* ── The index ── */}
-      <ol className="border-t border-line" onPointerLeave={() => setHovered(null)}>
+      <ol
+        className="border-t border-line"
+        onPointerLeave={() => setHovered(null)}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setHovered(null);
+        }}
+      >
         {rows.map((row, i) => {
           const dimmed = hovered !== null && hovered !== i;
           return (
-            <li key={row.key}>
+            <li key={row.key} className="border-b border-line">
+              {/* Keep replay beside the picture and outside its project link. */}
+              {row.cover && <div className="lg:hidden pt-6 sm:pt-7 mb-5">
+                <RowShell
+                  row={row}
+                  onEnter={() => enter(i)}
+                  ariaLabel={`${row.name} — ${cn ? "查看项目" : "View project"}`}
+                  className="plate block relative overflow-hidden aspect-[16/10]"
+                  style={row.cover.bg ? { backgroundColor: row.cover.bg } : {}}
+                >
+                  <CatalogueMedia cover={row.cover} replay={replays[row.key]} />
+                </RowShell>
+                <DemoControls row={row} cn={cn} reduce={reduce} onReplay={() => replay(row.key)} />
+              </div>}
               <RowShell
                 row={row}
                 onEnter={() => enter(i)}
-                className="group block border-b border-line py-6 sm:py-7 lg:py-8"
+                className={`group block pb-6 sm:pb-7 lg:py-8 ${row.cover ? "" : "pt-6 sm:pt-7"}`}
                 style={{
-                  opacity: dimmed ? 0.42 : 1,
+                  opacity: dimmed ? 0.58 : 1,
                   transition: reduce ? "none" : `opacity 360ms ${EASE}`,
                 }}
               >
-                {/* Touch and narrow screens: the cover rides with its row */}
-                {row.cover && (
-                  <div
-                    className="lg:hidden plate plate-figure mb-5"
-                    style={row.cover.bg ? { backgroundColor: row.cover.bg } : undefined}
-                  >
-                    <Image
-                      src={row.cover.src}
-                      alt={row.cover.alt ?? ""}
-                      width={row.cover.width}
-                      height={row.cover.height}
-                      sizes="100vw"
-                      {...(row.cover.priority
-                        ? { loading: "eager" as const, fetchPriority: "high" as const }
-                        : {})}
-                      style={{ objectFit: row.cover.fit ?? "cover", objectPosition: row.cover.position }}
-                      className="aspect-[16/10]"
-                    />
-                  </div>
-                )}
-
                 <div className="grid grid-cols-[2.25rem_1fr_auto] sm:grid-cols-[3.5rem_1fr_auto] gap-x-3 sm:gap-x-5 items-baseline">
                   <span className="font-mono text-[10px] tracking-[0.2em] text-soft tabular-nums">
                     {folio(i)}
@@ -152,12 +184,13 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
       </ol>
 
       {/* ── The viewfinder — one plate, the active entry's cover ── */}
-      <aside aria-hidden className="hidden lg:block sticky top-[138px]">
-        <div className="plate relative overflow-hidden aspect-[16/10]">
+      <aside className="hidden lg:block sticky top-[138px]">
+        <div className="group/preview plate relative overflow-hidden aspect-[16/10]">
           {rows.map((row, i) => (
             <div
               key={row.key}
               className="absolute inset-0"
+              aria-hidden
               style={{
                 opacity: active === i ? 1 : 0,
                 transition: reduce ? "none" : `opacity 360ms ${EASE}`,
@@ -165,14 +198,7 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
               }}
             >
               {row.cover && (
-                <Image
-                  src={row.cover.src}
-                  alt=""
-                  fill
-                  sizes="44vw"
-                  priority={!!row.cover.priority}
-                  style={{ objectFit: row.cover.fit ?? "cover", objectPosition: row.cover.position }}
-                />
+                <CatalogueMedia cover={row.cover} active={active === i} desktop replay={replays[row.key]} />
               )}
             </div>
           ))}
@@ -180,12 +206,31 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
           <span className="reg-mark tr" />
           <span className="reg-mark br" />
           <span className="reg-mark bl" />
+          {current.href && (current.external ? (
+            <a
+              href={current.href}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`${current.name} — ${cn ? "访问项目" : "Visit project"}`}
+              className="absolute inset-0 z-10"
+            />
+          ) : (
+            <Link
+              href={current.href}
+              aria-label={`${current.name} — ${cn ? "查看项目" : "View project"}`}
+              className="absolute inset-0 z-10"
+            />
+          ))}
+          <span aria-hidden className="pointer-events-none absolute right-5 bottom-5 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white opacity-0 transition-opacity duration-200 group-hover/preview:opacity-100 group-focus-within/preview:opacity-100">↗</span>
         </div>
-        <div className="mt-3 flex items-baseline justify-between gap-6 font-mono text-[10px] uppercase tracking-[0.18em] text-soft">
+        {current.cover?.demo && <div className="border-b border-line pt-1">
+          <DemoControls row={current} cn={cn} reduce={reduce} onReplay={() => replay(current.key)} />
+        </div>}
+        <div aria-hidden className="mt-4 grid grid-cols-[auto_1fr] items-baseline gap-5 font-mono text-[10px] leading-relaxed uppercase tracking-[0.14em] text-soft">
           <span className="tabular-nums">
             {folio(active)} <span className="text-soft/55">/</span> {current.readout[0]}
           </span>
-          <span className="truncate">{current.readout[1]}</span>
+          <span className="text-right text-balance">{current.readout[1]}</span>
         </div>
       </aside>
     </div>

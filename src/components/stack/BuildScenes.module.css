@@ -1,0 +1,42 @@
+.scene { display: block; width: 100%; height: auto; overflow: visible; color: #e1e0d6; font-family: var(--font-sans); }
+.surface { fill: #181819; stroke: #3d3d3b; stroke-width: 1; }
+.rule { fill: none; stroke: #3c3d38; stroke-width: 1; }
+.glyph { fill: none; stroke: #92948a; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+.connection { stroke: #45473e; stroke-width: 1; }
+.packet { stroke: #dedfd2; stroke-width: 1.5; stroke-dasharray: 16 120; stroke-dashoffset: -100; opacity: 0; }
+.filename { font: 10px var(--font-mono); fill: #b4b5a8; }
+.micro { font: 8px var(--font-mono); letter-spacing: .5px; fill: #73766b; }
+.tiny { font: 7px var(--font-mono); letter-spacing: .5px; fill: #73766b; }
+.code { font: 10px var(--font-mono); fill: #898d7e; }
+.codeBright { font: 10px var(--font-mono); fill: #d2d3c5; }
+.lineNumber { font: 8px var(--font-mono); fill: #56594f; text-anchor: middle; }
+.dimFill { fill: #54564d; }
+.placeholder { stroke: #6e7263; stroke-width: 2; }
+.serif { font: 25px var(--font-newsreader), Georgia, serif; letter-spacing: -.4px; fill: #e7e5da; }
+.buttonText { font: 11px var(--font-sans); fill: #292925; }
+.paperMicro { font: 7px var(--font-mono); letter-spacing: .8px; fill: #7f7f74; }
+.emailGreeting { font: 16px var(--font-newsreader), Georgia, serif; letter-spacing: -.4px; fill: #252522; }
+.emailButton { font: 9px var(--font-sans); fill: #efede2; }
+.stageCheck { fill: none; stroke: #a6ac96; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 15; stroke-dashoffset: 0; }
+
+.scene[data-playing="true"] .input { animation: settle 600ms cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .packet { animation: transmit 1250ms var(--delay, 0ms) ease-in-out both; }
+.scene[data-playing="true"] .codeHighlight { animation: highlight 1800ms ease both; }
+.scene[data-playing="true"] .frontendResult { animation: arrive 900ms 720ms cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .buttonReveal { animation: arrive 750ms 1280ms cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .templateHighlight { animation: highlight 1900ms 300ms ease both; }
+.scene[data-playing="true"] .emailResult { animation: arrive 900ms 1300ms cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .source { animation: settle 650ms calc(var(--i) * 110ms) cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .stage { animation: arrive 600ms calc(520ms + var(--i) * 210ms) cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .stageCheck { animation: check 430ms calc(850ms + var(--i) * 210ms) ease both; }
+.scene[data-playing="true"] .databaseResult { animation: arrive 800ms 1750ms cubic-bezier(.2,.8,.2,1) both; }
+
+@keyframes settle { from { opacity: .4; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes arrive { from { opacity: 0; transform: translateX(-7px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes transmit { 0% { stroke-dashoffset: 20; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { stroke-dashoffset: -100; opacity: 0; } }
+@keyframes highlight { 0%, 100% { opacity: .04; } 40%, 65% { opacity: .16; } }
+@keyframes check { from { stroke-dashoffset: 15; } to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .scene[data-playing="true"] * { animation: none !important; }
+}

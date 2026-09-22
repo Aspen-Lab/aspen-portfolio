@@ -24,7 +24,7 @@ const STOPS: Stop[] = [
   { pos: 44, year: "'24", name: "Cone", tag: "iF Design · '25" },
   { pos: 62, year: "'25", name: "TikTok Pay", tag: "KYC · multi-region" },
   { pos: 80, year: "'25", name: "Hyundai", tag: "IONIQ HMI · L2+" },
-  { pos: 100, year: "Now", name: "Axel", tag: "sole · YC W19", active: true },
+  { pos: 100, year: "Now", name: "Axel", tag: "Founding Design Engineer", active: true },
 ];
 
 function ActiveDot() {

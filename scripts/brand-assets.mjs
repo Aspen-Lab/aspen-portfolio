@@ -14,12 +14,15 @@
 //
 // Run after changing the headline or the portrait:
 //   node scripts/brand-assets.mjs
+// Refresh only the share card, preserving all icons:
+//   node scripts/brand-assets.mjs --og-only
 import { spawn } from "node:child_process";
 import { readFileSync, writeFileSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
+const OG_ONLY = process.argv.includes("--og-only");
 const CHROME =
   process.env.CHROME_BIN ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
@@ -67,7 +70,7 @@ const OG = `<!doctype html><html><head><meta charset="utf-8"><style>${FONTS}
   <div class="col">
     <div class="brand">Aspen Lab <span class="led"><i></i></span><span class="avail">AVAILABLE</span></div>
     <h1>Design × engineering,<br>one <em>leverage</em> force.</h1>
-    <p class="bio">Designer who codes — product design and production React at <b>Axel (YC W19)</b>.</p>
+    <p class="bio">Founding Design Engineer at <b>Axel (YC W19)</b>, shipping product design and frontend PRs.</p>
   </div>
   <div class="foot"><span>www.aspenlab.io</span><span>EN · 中文</span></div>
 <script>
@@ -191,11 +194,13 @@ await send("Runtime.enable");
 const out = (p, buf) => { writeFileSync(join(ROOT, p), buf); console.log(`wrote ${p} (${buf.length} bytes)`); };
 
 out("public/og.jpg", await render(OG, 1200, 630, { jpeg: true }));
-out("src/app/icon.png", await render(cap(512, { bleed: false }), 512, 512, { transparent: true }));
-out("src/app/apple-icon.png", await render(cap(180, { bleed: true }), 180, 180));
-const frames = [];
-for (const size of [16, 32, 48]) frames.push({ size, png: await render(cap(size, { bleed: false }), size, size, { transparent: true }) });
-out("src/app/favicon.ico", ico(frames));
+if (!OG_ONLY) {
+  out("src/app/icon.png", await render(cap(512, { bleed: false }), 512, 512, { transparent: true }));
+  out("src/app/apple-icon.png", await render(cap(180, { bleed: true }), 180, 180));
+  const frames = [];
+  for (const size of [16, 32, 48]) frames.push({ size, png: await render(cap(size, { bleed: false }), size, size, { transparent: true }) });
+  out("src/app/favicon.ico", ico(frames));
+}
 
 ws.close();
 chrome.kill();

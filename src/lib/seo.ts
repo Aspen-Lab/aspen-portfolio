@@ -16,22 +16,22 @@ export const htmlLang = (locale: Locale) => LANG_TAG[locale];
     explicitly: a page that sets its own openGraph drops any image it
     would inherit from the file convention. Bump the version after
     regenerating so LinkedIn/Slack/iMessage fetch the new card. */
-const OG_VERSION = 1;
+const OG_VERSION = 2;
 const OG_IMAGE = {
   url: `/og.jpg?v=${OG_VERSION}`,
   width: 1200,
   height: 630,
-  alt: "Aspen Lab — Design × engineering, one leverage force. Portfolio of Aspen W., sole designer at Axel (YC W19).",
+  alt: "Aspen Lab — Design × engineering, one leverage force. Portfolio of Aspen W., Founding Design Engineer at Axel (YC W19).",
 };
 
 /** Home title + description — also the layout's fallback. */
 export function homeCopy(locale: Locale) {
   const cn = locale === "cn";
   return {
-    title: cn ? "Aspen W. — Axel 唯一设计师" : "Aspen W. — Sole Designer at Axel",
+    title: cn ? "Aspen W. — Axel 创始设计工程师" : "Aspen W. — Founding Design Engineer at Axel",
     description: cn
-      ? "Aspen W. 是 Axel(Gordian, YC W19)唯一设计师，直接交付产品设计与生产代码。XING Art 创始人之一，MiraclePlus $300K，2025 iF + Red Dot + IDEA 获奖，Georgia Tech 工业设计 + 心理学双专业。"
-      : "Sole designer at Axel (Gordian, YC W19) — designs and ships production code. Founder of XING Art ($300K MiraclePlus '25). iF + Red Dot + IDEA 2025. GT dual major in Industrial Design + Psychology.",
+      ? "Aspen W. 是 Axel（Gordian, YC W19）的创始设计工程师，负责前端 PR、品牌、广告、邮件与测试。XING Art 联合创始人，MiraclePlus $300K，2025 iF + Red Dot + IDEA 获奖，Georgia Tech 工业设计与心理学背景。"
+      : "Founding Design Engineer at Axel (YC W19), shipping frontend PRs, brand, campaigns, and email. XING Art co-founder. Georgia Tech design and psychology background.",
   };
 }
 

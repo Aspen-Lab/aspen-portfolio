@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { projects } from "@/lib/work";
+import { localizeProject } from "@/lib/project-locales";
 import type { Locale } from "@/i18n/routing";
 import { pageMeta } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
@@ -32,8 +33,9 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug, locale } = await params;
-  const project = projects.find((p) => p.slug === slug);
-  if (!project) return {};
+  const source = projects.find((p) => p.slug === slug);
+  if (!source) return {};
+  const project = localizeProject(source, locale);
   return pageMeta(locale, `/work/${slug}`, {
     title: `${project.title} — Aspen W.`,
     description: project.summary,
@@ -45,12 +47,14 @@ export default async function CaseStudy({
 }: {
   params: Promise<Params>;
 }) {
-  const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
-  if (!project) notFound();
+  const { slug, locale } = await params;
+  const source = projects.find((p) => p.slug === slug);
+  if (!source) notFound();
+  const project = localizeProject(source, locale);
+  const cn = locale === "cn";
 
   const idx = projects.findIndex((p) => p.slug === slug);
-  const next = projects[(idx + 1) % projects.length];
+  const next = localizeProject(projects[(idx + 1) % projects.length], locale);
   const sections = project.sections ?? [];
 
   const chapters: string[] = [];
@@ -64,12 +68,15 @@ export default async function CaseStudy({
   }
 
   return (
-    <article className="container-fluid pt-12 pb-24">
+    <article
+      className="container-fluid pt-12 pb-24"
+      data-project-theme={project.theme}
+    >
       <Link
         href="/#work"
         className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hover:text-ink link link-rev"
       >
-        ← Back to work
+        {cn ? "← 返回作品" : "← Back to work"}
       </Link>
 
       <Reveal>
@@ -96,7 +103,7 @@ export default async function CaseStudy({
               rel="noreferrer"
               className="mt-6 inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.2em] text-ink underline underline-offset-[6px] decoration-1 hover:decoration-soft"
             >
-              Visit live →{" "}
+              {cn ? "访问网站 →" : "Visit live →"}{" "}
               <span className="text-mute">
                 {project.liveUrl.replace(/^https?:\/\//, "")}
               </span>
@@ -109,19 +116,19 @@ export default async function CaseStudy({
         <dl className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-8 border-t border-line pt-8 max-w-4xl">
           <div>
             <dt className="font-mono uppercase tracking-[0.18em] text-[10px] text-soft mb-2">
-              Role
+              {cn ? "角色" : "Role"}
             </dt>
             <dd className="text-[15px] text-ink/85">{project.role}</dd>
           </div>
           <div>
             <dt className="font-mono uppercase tracking-[0.18em] text-[10px] text-soft mb-2">
-              Period
+              {cn ? "时间" : "Period"}
             </dt>
             <dd className="text-[15px] text-ink/85">{project.period}</dd>
           </div>
           <div>
             <dt className="font-mono uppercase tracking-[0.18em] text-[10px] text-soft mb-2">
-              Client
+              {cn ? "公司 / 客户" : "Client"}
             </dt>
             <dd className="text-[15px] text-ink/85">
               {project.client.split(" · ")[0]}
@@ -129,7 +136,7 @@ export default async function CaseStudy({
           </div>
           <div>
             <dt className="font-mono uppercase tracking-[0.18em] text-[10px] text-soft mb-2">
-              Themes
+              {cn ? "方向" : "Themes"}
             </dt>
             <dd className="text-[15px] text-ink/85">
               {project.tags.join(" · ")}
@@ -234,17 +241,17 @@ export default async function CaseStudy({
                     className="mt-32 mb-12 max-w-5xl flex items-baseline gap-6 scroll-mt-32"
                   >
                     <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-soft tabular-nums whitespace-nowrap">
-                      Chapter {String(chapterIndex + 1).padStart(2, "0")}
+                      {cn ? "章节" : "Chapter"} {String(chapterIndex + 1).padStart(2, "0")}
                     </span>
                     <span className="h-px flex-1 bg-line" />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink whitespace-nowrap">
+                    <span className="min-w-0 text-right font-mono text-[11px] uppercase tracking-[0.2em] text-ink">
                       {s.chapter}
                     </span>
                   </div>
                 </Reveal>
               )}
 
-              <Reveal delay={0.04}>
+              <Reveal delay={0.04} amount={s.figures || s.videos ? "some" : undefined}>
                 <section
                   className={`max-w-5xl ${isFirstInChapter ? "mt-0" : "mt-24"}`}
                 >
@@ -414,6 +421,54 @@ export default async function CaseStudy({
                       />
                     </div>
                   )}
+                  {s.figures?.map((figure) => (
+                    <figure key={figure.src} className="mt-10">
+                      <a
+                        href={figure.src}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`${figure.alt} — ${cn ? "查看原图" : "View full-size image"}`}
+                        className="block overflow-hidden rounded-[8px] border border-line bg-cream"
+                      >
+                        <Image
+                          src={figure.src}
+                          alt={figure.alt}
+                          width={figure.width}
+                          height={figure.height}
+                          sizes="(max-width: 1280px) 100vw, 1024px"
+                          className="block h-auto w-full"
+                        />
+                      </a>
+                      <figcaption className="mt-3 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[13px] leading-relaxed text-mute">
+                        <span>{figure.caption ?? figure.alt}</span>
+                        <span className="text-soft">
+                          {cn ? "点击图片查看原图 ↗" : "Open image at full size ↗"}
+                        </span>
+                      </figcaption>
+                    </figure>
+                  ))}
+                  {s.videos?.map((video) => (
+                    <figure key={video.src} className="mt-10">
+                      <video
+                        src={video.src}
+                        poster={video.poster}
+                        width={video.width}
+                        height={video.height}
+                        controls
+                        playsInline
+                        preload="none"
+                        aria-label={video.title}
+                        className="block h-auto w-full rounded-[8px] border border-line bg-cream"
+                      >
+                        <a href={video.src}>
+                          {cn ? "观看演示视频" : "Watch the prototype video"}
+                        </a>
+                      </video>
+                      <figcaption className="mt-3 text-[13px] leading-relaxed text-mute">
+                        {video.title}
+                      </figcaption>
+                    </figure>
+                  ))}
                 </section>
               </Reveal>
             </div>
@@ -428,7 +483,7 @@ export default async function CaseStudy({
         >
           <div>
             <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              Up next
+              {cn ? "下一个项目" : "Up next"}
             </p>
             <Link
               href={`/work/${next.slug}`}

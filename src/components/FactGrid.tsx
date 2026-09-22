@@ -13,9 +13,9 @@ const BLOCKS: Block[] = [
   {
     label: "Now",
     facts: [
-      { text: "Sole Designer · Axel" },
-      { text: "Reports to CEO" },
-      { hint: "100% mine", text: "helloaxel.com" },
+      { text: "Founding Design Engineer · Axel" },
+      { text: "Product design → frontend PRs" },
+      { hint: "shipping", text: "helloaxel.com" },
     ],
   },
   {

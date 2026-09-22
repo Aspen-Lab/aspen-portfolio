@@ -66,7 +66,7 @@ export function Nav() {
         lifted ? "backdrop-blur-md bg-paper/80 border-line" : "bg-transparent border-transparent"
       }`}
     >
-      <div className="container-fluid h-16 flex items-center justify-between gap-3 sm:gap-6">
+      <div className="container-fluid min-h-16 py-3 min-[420px]:py-0 min-[420px]:h-16 flex flex-wrap min-[420px]:flex-nowrap items-center justify-between gap-3 sm:gap-6">
         <Link
           href="/"
           className="group flex items-center gap-3 shrink-0 whitespace-nowrap font-display text-[17px] min-[381px]:text-[18px] sm:text-[20px] tracking-[-0.01em] text-ink"
@@ -84,7 +84,7 @@ export function Nav() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-5 sm:gap-8 min-w-0">
+        <div className="flex items-center justify-between min-[420px]:justify-start max-[419px]:w-full gap-5 sm:gap-8 min-w-0">
           <nav className="flex items-center gap-4 sm:gap-7">
             {ITEMS.map((item) => {
               const active = item.match(pathname);

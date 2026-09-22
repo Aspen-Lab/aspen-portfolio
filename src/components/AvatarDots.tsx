@@ -2,13 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { AVATAR_TONES } from "@/lib/avatar-ascii";
+import styles from "./AvatarDots.module.css";
 
 /**
- * Portrait as a particle field. The cursor scatters nearby dots off
- * their grid; while scattered they dance — a Brownian random walk
- * around the displaced position — then spring home when the cursor
- * leaves. No size change, no brightness modulation, no shimmer: the
- * interaction is purely positional.
+ * A portrait assembled from dots, with a slow breath and a local pointer
+ * field. Facial detail stays visible throughout the breathing cycle.
  */
 export function AvatarDots() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -19,7 +17,8 @@ export function AvatarDots() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reduce = motionPreference.matches;
 
     const src = AVATAR_TONES.map((line) => {
       const arr: number[] = [];
@@ -52,7 +51,7 @@ export function AvatarDots() {
     }
 
     const pitch = 3.8;
-    const dot = 1;
+    const dot = 1.13;
     const cssW = TW * pitch;
     const cssH = TH * pitch;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -67,17 +66,18 @@ export function AvatarDots() {
     // page opens as a plain 22px dot grid, and those dots fly together
     // into the portrait.
     type Dot = {
-      gx: number; gy: number;   // grid indices (for the assembly stagger)
       hx: number; hy: number;   // home pixel position
       sx: number; sy: number;   // start: the background grid node it leaves
       delay: number;            // ms before this dot sets off
-      bb: number;               // brightness
+      alpha: number;            // precomputed facial contrast
     };
 
     const CELL = 22;            // the backdrop's dot-grid pitch (globals/Hero)
     const FACE_X = cssW * 0.42; // the face sits here inside the canvas
     const FACE_Y = cssH * 0.44;
     const maxR = Math.hypot(cssW * 0.58, cssH * 0.56);
+    const EYE_L = { x: cssW * 0.43, y: cssH * 0.435 };
+    const EYE_R = { x: cssW * 0.615, y: cssH * 0.425 };
 
     const dots: Dot[] = [];
     for (let y = 0; y < TH; y++) {
@@ -87,15 +87,19 @@ export function AvatarDots() {
         if (bb <= 0.02) continue;
         const hx = x * pitch + pitch / 2;
         const hy = y * pitch + pitch / 2;
+        const centerDistance = Math.hypot(hx - FACE_X, hy - FACE_Y);
+        const contrast = 1 + Math.max(0, 1 - centerDistance / (cssW * 0.62)) * 1.05;
+        const eyeDistance = Math.min(Math.hypot(hx - EYE_L.x, hy - EYE_L.y), Math.hypot(hx - EYE_R.x, hy - EYE_R.y));
+        const eyeDetail = eyeDistance < 52 ? (1 - eyeDistance / 52) ** 2 * 0.3 : 0;
+        const alpha = Math.min(0.95, Math.min(0.91, bb * 0.64 * contrast) + eyeDetail);
         // The face resolves from its centre outward, so the eyes arrive first
         const r = Math.hypot(hx - FACE_X, hy - FACE_Y) / maxR;
         dots.push({
-          gx: x, gy: y,
           hx, hy,
           sx: Math.round(hx / CELL) * CELL,
           sy: Math.round(hy / CELL) * CELL,
           delay: 120 + r * 620 + Math.random() * 90,
-          bb,
+          alpha,
         });
       }
     }
@@ -110,8 +114,8 @@ export function AvatarDots() {
     const ASSEMBLY = 1500;      // ms: last dot lands
     const easeOutQuint = (u: number) => 1 - Math.pow(1 - u, 5);
 
-    // Stray dots in the ring outside the portrait (unchanged)
-    const strays: { x: number; y: number; a: number; ph: number }[] = [];
+    // A few quiet dots finish the outer edge of the portrait.
+    const strays: { x: number; y: number; a: number }[] = [];
     for (let tries = 0; tries < 2400 && strays.length < 34; tries++) {
       const ux = Math.random();
       const uy = Math.random();
@@ -126,27 +130,16 @@ export function AvatarDots() {
         x: ux * cssW,
         y: uy * cssH,
         a: 0.06 + Math.random() * 0.13,
-        ph: Math.random() * Math.PI * 2,
       });
     }
-
-    // Eye positions — calibrated against the actual portrait.
-    const EYE_L = { x: 0.43, y: 0.435 };
-    const EYE_R = { x: 0.615, y: 0.425 };
 
     const TWO_PI = Math.PI * 2;
     const start = performance.now();
     let raf = 0;
+    let lastDraw = 0;
+    let inView = true;
 
-    /* The pointer field — the dots FOLLOW the pointer. Four lenses came
-       before this one (random scatter ✗, brightness ✗, radial ripple ✗,
-       square pulse ✗); Aspen's words for what she wants: 「点阵跟随 hover，
-       来点动作」. So: the pointer has a smoothed position that trails the
-       real one, and every dot within R leans toward that position on a
-       smoothstep — the lattice gathers toward the cursor and, as the
-       cursor moves, the gathered region follows behind it with a little
-       lag and a wake in the direction of travel. Deterministic, smooth,
-       no brightness or size change, nothing random. */
+    // Nearby dots follow the pointer with a small orbit and a soft wake.
     const mouse = { x: -9999, y: -9999 };
     const cur = { x: 0, y: 0, seeded: false };
     const vel = { x: 0, y: 0 };
@@ -167,6 +160,7 @@ export function AvatarDots() {
     const FOLLOW = 0.14;      // how fast the smoothed position chases the pointer
     const WAKE = 0.35;        // how much of the pointer's velocity the dots carry
     const onMove = (e: MouseEvent) => {
+      if (reduce || !inView || document.hidden) return;
       const rect = canvas.getBoundingClientRect();
       if (!rect.width) return;
       mouse.x = (e.clientX - rect.left) * (cssW / rect.width);
@@ -176,14 +170,21 @@ export function AvatarDots() {
       mouse.x = -9999;
       mouse.y = -9999;
     };
-    if (!reduce) {
-      window.addEventListener("mousemove", onMove, { passive: true });
-      window.addEventListener("mouseout", onLeave);
-    }
+    window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mouseout", onLeave);
 
     const frame = (now: number) => {
+      if (!inView || document.hidden) return;
+      // A calm portrait needs only 30 draws per second.
+      if (!reduce && now - lastDraw < 1000 / 30) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
+      lastDraw = reduce ? now : now - ((now - lastDraw) % (1000 / 30));
       const t = now - start;
       const globalReveal = reduce ? 1 : Math.max(0, Math.min(1, t / 900));
+      const breath = reduce ? 0 : (1 - Math.cos(Math.max(0, t - ASSEMBLY) / 6200 * TWO_PI)) / 2;
+      const breathLight = reduce ? 1 : 0.92 + breath * 0.08;
       ctx.clearRect(0, 0, cssW, cssH);
 
       // Chase the pointer; remember the velocity for the wake.
@@ -223,6 +224,11 @@ export function AvatarDots() {
         }
       }
 
+      // Expand around the face instead of scaling the headline or backdrop.
+      ctx.save();
+      ctx.translate(FACE_X, FACE_Y - breath * 3);
+      ctx.scale(1 + breath * 0.018, 1 + breath * 0.018);
+      ctx.translate(-FACE_X, -FACE_Y);
       for (const d of dots) {
         // Assembly: travel from the grid node to the face, easing out.
         const u = reduce ? 1 : Math.max(0, Math.min(1, (t - d.delay) / 900));
@@ -230,26 +236,7 @@ export function AvatarDots() {
         const ax = d.sx + (d.hx - d.sx) * e;
         const ay = d.sy + (d.hy - d.sy) * e;
         const reveal = e;
-        const shimmer = 1; // no gradient animation — steady luminance
-
-        // Center radial spotlight — face center is ~(42%, 44%) of canvas
-        const dcx = d.hx - cssW * 0.42;
-        const dcy = d.hy - cssH * 0.44;
-        const dc  = Math.sqrt(dcx * dcx + dcy * dcy);
-        const cBoost = 1 + Math.max(0, 1 - dc / (cssW * 0.55)) * 1.3;
-
-        let alpha = Math.min(0.78, d.bb * 0.44 * cBoost) * reveal * shimmer;
-
-        // Eye-region boost
-        const px = d.hx;
-        const py = d.hy;
-        const dL = Math.sqrt((px - cssW * EYE_L.x) ** 2 + (py - cssH * EYE_L.y) ** 2);
-        const dR = Math.sqrt((px - cssW * EYE_R.x) ** 2 + (py - cssH * EYE_R.y) ** 2);
-        const eyeInf = Math.max(
-          dL < 52 ? (1 - dL / 52) ** 2 : 0,
-          dR < 52 ? (1 - dR / 52) ** 2 : 0,
-        );
-        if (eyeInf > 0) alpha = Math.min(0.88, alpha + eyeInf * 0.45);
+        const alpha = d.alpha * reveal * breathLight;
 
         if (alpha <= 0.003) continue;
 
@@ -277,14 +264,14 @@ export function AvatarDots() {
 
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(ax + ox, ay + oy, dot, 0, TWO_PI);
+        ctx.arc(ax + ox, ay + oy, dot * (1 + breath * 0.025), 0, TWO_PI);
         ctx.fill();
       }
+      ctx.restore();
 
       for (const s of strays) {
-        if (t < ASSEMBLY) continue; // no loose dots until the face has landed
-        const tw = reduce ? 1 : 0.55 + 0.45 * Math.sin(now * 0.0012 + s.ph);
-        const alpha = s.a * tw * globalReveal;
+        if (!reduce && t < ASSEMBLY) continue;
+        const alpha = s.a * breathLight * globalReveal;
         if (alpha <= 0.003) continue;
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
@@ -295,28 +282,41 @@ export function AvatarDots() {
       if (!reduce) raf = requestAnimationFrame(frame);
     };
 
-    raf = requestAnimationFrame(frame);
+    const syncPlayback = () => {
+      cancelAnimationFrame(raf);
+      if (inView && !document.hidden) raf = requestAnimationFrame(frame);
+    };
+    const onMotionChange = () => {
+      reduce = motionPreference.matches;
+      onLeave();
+      cur.seeded = false;
+      amt = 0;
+      vel.x = 0;
+      vel.y = 0;
+      syncPlayback();
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      if (!inView) onLeave();
+      syncPlayback();
+    });
+    observer.observe(canvas);
+    motionPreference.addEventListener("change", onMotionChange);
+    document.addEventListener("visibilitychange", syncPlayback);
+    syncPlayback();
     return () => {
       cancelAnimationFrame(raf);
+      observer.disconnect();
+      motionPreference.removeEventListener("change", onMotionChange);
+      document.removeEventListener("visibilitychange", syncPlayback);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseout", onLeave);
     };
   }, []);
 
   return (
-    <div
-      aria-hidden
-      className="pointer-events-none select-none absolute top-1/2 -translate-y-1/2 right-[-220px] sm:right-[-110px] xl:right-[-30px] -z-0 opacity-[0.16] sm:opacity-95"
-      style={{
-        // Elliptical fade, biased right — the face's left flank
-        // dissolves before it can slide under the headline column.
-        maskImage:
-          "radial-gradient(64% 62% at 58% 46%, black 42%, transparent 88%)",
-        WebkitMaskImage:
-          "radial-gradient(64% 62% at 58% 46%, black 42%, transparent 88%)",
-      }}
-    >
-      <canvas ref={ref} className="block max-w-full h-auto" />
+    <div aria-hidden className={styles.portrait}>
+      <canvas ref={ref} className={styles.canvas} />
     </div>
   );
 }

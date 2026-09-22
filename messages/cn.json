@@ -7,77 +7,74 @@
     "contact": "联系"
   },
   "Hero": {
-    "eyebrow": "Axel(YC W19)首位设计师 · 西雅图 Bellevue",
-    "headlineLine2": "设计 × 工程，",
+    "eyebrow": "Axel (YC W19) 创始设计工程师 · 西雅图 Bellevue",
+    "headlineLine2": "设计 ❤️ 工程",
     "headlineLine3a": "一股 ",
     "headlineLine3Italic": "杠杆",
     "headlineLine3b": " 力量。",
     "ctaWork": "看精选作品",
     "ctaStack": "技术栈",
     "ctaEmail": "xiaoyangw.design@gmail.com",
-    "bio": "<lead>会写代码的设计师</lead> —— 在 <axel>Axel (YC W19)</axel> 直接交付产品设计和生产级 <react>React</react>，一个人也能快速推进。",
+    "bio": "<lead>创始设计工程师</lead> —— 在 <axel>Axel (YC W19)</axel> 负责产品设计与前端实现，直接交付生产级 <react>React</react> PR。",
     "stackLabel": "工具栈",
-    "invLabel": "物品栏",
+    "invLabel": "工具箱",
     "inv": {
       "Figma": {
-        "rarity": "史诗",
-        "type": "设计 · 主手",
-        "flavor": "每个像素在出厂前，都在这里锻造。"
+        "level": "核心工作流",
+        "description": "设计产品界面、可复用组件和交互原型，连接设计与前端实现。"
       },
       "Claude": {
-        "rarity": "传说",
-        "type": "AI · 随从",
-        "flavor": "第二大脑，会还嘴，出活更快。"
+        "level": "核心工作流",
+        "description": "用 Claude Code 推进代码实现、迭代和调试。"
       },
       "Codex": {
-        "rarity": "稀有",
-        "type": "AI · 召唤物",
-        "flavor": "自主使魔——指个仓库，就能自己干活。"
+        "level": "项目实践",
+        "description": "把明确的任务落实为代码改动，并检查最终结果。"
       },
       "Cursor": {
-        "rarity": "史诗",
-        "type": "代码 · 副手",
-        "flavor": "设计决策在这里变成生产级 React。"
+        "level": "核心工作流",
+        "description": "直接在代码中构建和打磨生产级 React 界面。"
       },
       "GitHub": {
-        "rarity": "稀有",
-        "type": "版本 · 宝库",
-        "flavor": "第一天起的每一次出手，都记在账上。"
+        "level": "核心工作流",
+        "description": "交付前端 PR，参与代码评审，并将改动推进到合并。"
       },
       "Vercel": {
-        "rarity": "稀有",
-        "type": "部署 · 传送门",
-        "flavor": "从合并到上线，咖啡还没凉。"
+        "level": "交付流程",
+        "description": "发布可体验的预览，完成网页项目的部署。"
       },
       "Supabase": {
-        "rarity": "罕见",
-        "type": "数据 · 反应堆",
-        "flavor": "鉴权、存储、状态——一颗嗡嗡作响的核心。"
+        "level": "项目实践",
+        "description": "为产品界面接入登录鉴权、数据库和文件存储。"
       },
       "Obsidian": {
-        "rarity": "罕见",
-        "type": "笔记 · 魔典",
-        "flavor": "多年积累的咒语，全部互链、可检索。"
+        "level": "个人工作流",
+        "description": "整理研究、想法与项目笔记，建立可关联的知识库。"
       }
-    }
+    },
+    "invHint": "悬停或点选工具，查看使用深度和实际用途。"
   },
   "Tabs": {
+    "closerLook": "接下来，挑一个项目，看看具体的设计与实现。",
+    "backToWork": "返回精选作品",
     "work": "精选作品",
     "system": "设计系统",
     "stack": "技术栈",
     "side": "副业项目"
   },
   "SelectedWork": {
+    "browseLabel": "浏览建议",
+    "browseHint": "进入项目前，建议先滑到页底，看看我的工作方式、能力和个人实验，再挑一个项目细看。",
+    "keepScrolling": "继续向下探索",
     "inProgress": "进行中",
     "cover": "封面",
-    "viewAll": "在 Aspen Lab 查看全部项目",
     "more": "更多项目",
     "projects": {
       "axel": {
-        "title": "Axel — 唯一设计师 × 双向协作闭环",
+        "title": "Axel — 设计、代码与增长",
         "category": "旅行 · 金融科技",
-        "summary": "YC W19 旅行金融创业公司的唯一设计师，直接向 CEO 汇报。与首席工程师建立对称的 Design ⇌ FE 交付协议，把交接变成收敛：三区域、四级审查、每周节奏。Axel 的每一个像素都经过我。",
-        "role": "唯一设计师 · 直接汇报 CEO"
+        "summary": "在 Axel，我把产品想法直接写成生产代码 PR，让设计与工程双向协作。从前端到品牌与增长，用 AI 编程工具加速实现、测试和迭代。",
+        "role": "创始设计工程师 · 全职"
       },
       "nutra": {
         "title": "Nutra — 面向普通人的金融科技",
@@ -94,7 +91,7 @@
       "hyundai": {
         "title": "Hyundai IONIQ 6 — 为 L2+ 信任感设计",
         "category": "企业赞助项目",
-        "summary": "在人机控制权切换的半自动驾驶场景中，如何提升驾驶者信心？基于 9 位驾驶者、生理指标和三组 UI 方向的研究，绿色 UI 相比基线将信心提升 10%。",
+        "summary": "围绕 HDA 2.0 的人机控制权切换，开展真实道路与模拟器研究，并设计三组 UI 方案。原型研究中，绿色 UI 的信心评分比原始界面高 10%。",
         "role": "HMI 设计师"
       },
       "cone": {
@@ -106,16 +103,16 @@
     }
   },
   "TechStack": {
-    "intro": "会写代码的设计师。我的 Side Project 几乎都跑在生产环境 —— 主要在 <ink>Cursor</ink> 和 <ink>Claude Code</ink> 里写,通过一串 MCP 把 Figma / Unity / Customer.io 串进同一个工作流。",
-    "spectrumTitle": "能力光谱",
-    "spectrumStatus": "5 / 5 点亮",
-    "spectrumNote": "五条全亮。横向覆盖才是关键 —— 真正的护城河是那条把设计 / 前端 / 邮件 / 后端 / 游戏开发拧成一条链路的 AI loop。",
+    "intro": "从设计、开发到上线 —— 在 Axel 持续交付生产代码 PR，也把自己的产品做到线上。用 <ink>Cursor</ink> 和 <ink>Claude Code</ink> 加速实现，通过 MCP 把 Figma、Unity 和 Customer.io 接入同一条工作流。",
+    "spectrumTitle": "相互连接的实践",
+    "spectrumStatus": "设计 ↔ 代码",
+    "spectrumNote": "在设计与实现之间自由切换：定义体验、动手实现、测试验证，再把真实反馈带回设计。",
     "modules": "{count} 个模块",
     "live": "在线",
     "whereItLives": "用在哪里"
   },
   "SideProjects": {
-    "intro": "设计工作之外的玩意儿 —— 多半为了挠痒痒,偶尔是为了试试某个想引入工作的工具。",
+    "intro": "Axel 工作之外做的东西 —— 多半为了解决自己的需求，偶尔为了试试某个想引入工作的工具。",
     "replay": "↻ 重播",
     "replayIntro": "重播介绍",
     "productsTitle": "产品",
@@ -136,7 +133,7 @@
     "visit": "打开网站"
   },
   "Moat": {
-    "intro": "我卖的不是一项技能 —— 是一种 <i>形状</i>。六张可被验证的牌 —— <ink>有据可查,不是说说</ink>。"
+    "intro": "我在等你发掘我的<i>潜力</i>。<ink>我才 23 岁。</ink>"
   },
   "About": {
     "eyebrow": "{ 关于 } · 我的故事",
@@ -144,10 +141,10 @@
     "headline2": "一半是心理学者,",
     "headline3Italic": "永远在交付。",
     "bio1": "我在 <ink>Georgia Tech</ink> 念双学位 —— 工业设计 BS(2021–2024)+ 心理学 BS(2023–2026)。设计和心理之所以咬合,是因为问题面是同一个:微小的摩擦、隐藏的预期、嘴上说的和实际做的之间那道缝。",
-    "bio2": "我做过 <ink>TikTok Pay</ink> 多国 KYC、<ink>Hyundai</ink> 半自动驾驶 HMI、<ink>CDC</ink> 公共卫生包装系统,联合创办了 <ink>XING Art</ink>(MiraclePlus $300K 种子,1K+ 真实用户)。现在是 <ink>Axel</ink>(Gordian Software, YC W19)的 Design Engineer —— helloaxel.com 的生产 React 由我交付,Customer.io 上的整套交易类邮件系统也由我维护,直接向 CEO 汇报。",
+    "bio2": "我做过 <ink>TikTok Pay</ink> 多国 KYC、<ink>Hyundai</ink> 半自动驾驶 HMI、<ink>CDC</ink> 公共卫生包装系统，联合创办了 <ink>XING Art</ink>（MiraclePlus $300K 种子轮、1K+ 真实用户）。自 2025 年 12 月起，我在 <ink>Axel</ink>（Gordian Software, YC W19）担任创始设计工程师，直接向 CEO 汇报。我负责前端交付，直接提交生产代码 PR，并推动设计与工程双向协作。工作也覆盖品牌视觉、核心广告 Campaign、Customer.io 邮件和测试，用 AI 编程工具加速迭代。",
     "bio3": "下班之后 —— 自己冲胶卷、用炭笔画黑白人体、给我和伴侣做饭、和室友焊无线发光骰子。节奏快,对字体和动效有强偏好,最迷恋研究 / 增长 / 工艺三者交叉的那块。",
-    "closingQuote": "我在等你看见我的潜力。",
-    "closingAttribution": "—— Aspen,21 岁",
+    "closingQuote": "我在等你发掘我的潜力。",
+    "closingAttribution": "—— Aspen，23 岁",
     "awardsTitle": "奖项与认可",
     "moreWorkTitle": "更多过往作品"
   },
@@ -201,7 +198,7 @@
     "aspenLab": "Aspen Lab(Framer)→",
     "github": "GitHub",
     "now": "现在",
-    "nowText": "在 <ink>Axel</ink>(Gordian, YC W19)做 Design Engineer · 西雅图 Bellevue。",
+    "nowText": "在 <ink>Axel</ink>（Gordian, YC W19）担任创始设计工程师 · 西雅图 Bellevue。",
     "copyright": "© {year} Aspen W. — 王晓阳",
     "permanentResident": "永久居民 · 无需 Sponsor"
   },

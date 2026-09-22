@@ -1,0 +1,38 @@
+.scene { display: block; width: 100%; height: 100%; font-family: var(--font-sans); }
+.micro { font: 9px var(--font-mono); letter-spacing: .7px; }
+.small { font: 10px var(--font-mono); letter-spacing: .2px; }
+.body { font-size: 13px; }
+.peerLogo { font: 28px var(--font-newsreader), Georgia, serif; fill: #e9e9dd; }
+.peerTitle { font: 36px var(--font-newsreader), Georgia, serif; fill: #e9e9dd; letter-spacing: -.5px; }
+.topic { font: 10px var(--font-mono); letter-spacing: .4px; }
+.paperTitle { font: 28px var(--font-newsreader), Georgia, serif; fill: #deded2; letter-spacing: -.4px; }
+.bar { transform-box: fill-box; transform-origin: center bottom; }
+.topicCheck { stroke-dasharray: 18; stroke-dashoffset: 0; }
+.padoLogo { font-size: 27px; font-weight: 650; letter-spacing: -.7px; fill: #f0eaf6; }
+.catName { font-size: 26px; font-weight: 650; letter-spacing: -.8px; fill: #433451; }
+.padoHeading { font-size: 21px; font-weight: 580; letter-spacing: -.5px; fill: #4e3c60; }
+.logLabel { font-size: 14px; fill: #5d4c70; }
+.pawLabel { font-size: 12px; font-weight: 600; fill: #755298; }
+.pawCopy { font-size: 14px; fill: #68507d; }
+.check { stroke-dasharray: 18; stroke-dashoffset: 0; }
+.catEyes { transform-box: fill-box; transform-origin: center; }
+
+.scene[data-playing="true"] .topicSelected { animation: topicSelect 700ms ease both; }
+.scene[data-playing="true"] .topicCheck { animation: drawCheck 420ms 530ms ease both; }
+.scene[data-playing="true"] .bar { animation: growBar 650ms calc(850ms + var(--i) * 55ms) cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .paper { animation: paperArrive 780ms calc(1100ms + var(--i) * 170ms) cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .logRow { animation: logArrive 650ms calc(400ms + var(--i) * 550ms) cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .check { animation: drawCheck 450ms calc(950ms + var(--i) * 550ms) ease both; }
+.scene[data-playing="true"] .pawMessage { animation: paperArrive 850ms 2100ms cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .catEyes { animation: blink 3200ms ease both; }
+
+@keyframes topicSelect { 0%, 45% { fill: #32312b; } 100% { fill: #c56d41; } }
+@keyframes drawCheck { from { stroke-dashoffset: 18; } to { stroke-dashoffset: 0; } }
+@keyframes growBar { from { transform: scaleY(.12); opacity: .2; } to { transform: scaleY(1); opacity: 1; } }
+@keyframes paperArrive { from { transform: translateY(14px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes logArrive { from { transform: translateX(8px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes blink { 0%, 66%, 73%, 100% { transform: scaleY(1); } 69% { transform: scaleY(.12); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .scene[data-playing="true"] * { animation: none !important; }
+}

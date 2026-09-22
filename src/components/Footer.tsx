@@ -1,109 +1,130 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
-import type { Locale } from "@/i18n/routing";
+import { ArrowUp, ArrowUpRight, Code2, MapPin } from "lucide-react";
+import { Link, usePathname } from "@/i18n/navigation";
+import { socials } from "@/lib/contact";
+import { AspenMark } from "./Logo";
+import { FooterDotLab } from "./FooterDotLab";
+import styles from "./Footer.module.css";
+
+function BellevueTime({ label }: { label: string }) {
+  const [time, setTime] = useState("—:—");
+
+  useEffect(() => {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    });
+    const update = () => setTime(formatter.format(new Date()));
+    update();
+    const timer = window.setInterval(update, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return <span className={styles.time} aria-label={`${label}: ${time}`}>{time}</span>;
+}
 
 export function Footer() {
-  const locale = useLocale() as Locale;
+  const cn = useLocale() === "cn";
+  const onContact = usePathname() === "/contact";
   const year = new Date().getFullYear();
-  const copy =
-    locale === "cn"
-      ? {
-          label: "设计 · 代码 · Bellevue",
-          role: "唯一设计师 · Axel · YC W19",
-          credit: "由 Aspen 设计并构建",
-        }
-      : {
-          label: "Design · Code · Bellevue",
-          role: "Sole designer · Axel · YC W19",
-          credit: "Designed & built by Aspen",
-        };
+  const copy = cn
+    ? {
+        footer: "页脚",
+        backTop: "回到顶部",
+        role: "创始设计工程师 / 设计 ↔ 代码",
+        headline: "保持好奇，",
+        ending: "继续创造。",
+        description: "从一个好想法，到一个真正用得起来的产品。",
+        contact: "聊聊你的想法",
+        navigation: "继续探索",
+        work: "作品",
+        about: "关于",
+        email: "邮件",
+        time: "Bellevue 当地时间",
+        credit: "由 Aspen 设计并构建",
+        signature: "从设计到代码，亲手完成。",
+      }
+    : {
+        footer: "Footer",
+        backTop: "Back to top",
+        role: "Founding Design Engineer / Design ↔ code",
+        headline: "Always curious.",
+        ending: "Still building.",
+        description: "From a good idea to something people can actually use.",
+        contact: "Start a conversation",
+        navigation: "Keep exploring",
+        work: "Work",
+        about: "About",
+        email: "Email",
+        time: "Local time in Bellevue",
+        credit: "Designed & built by Aspen",
+        signature: "From design to code, by hand.",
+      };
+
+  function backToTop() {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Keep the visitor on their current page, including a case study.
+    document.querySelector<HTMLAnchorElement>("header a")?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: reduce ? "instant" : "smooth" });
+  }
 
   return (
-    <footer className="overflow-hidden select-none" aria-hidden>
-      {/* ── HUD frame ──────────────────────────────────────────── */}
-      <div className="relative mx-4 sm:mx-8 mb-0 border border-line/30 rounded-t-2xl overflow-hidden">
+    <footer id="footer" className={styles.footer} aria-label={copy.footer}>
+      <div className="container-fluid">
+        <div className={styles.inner}>
+          <div className={styles.topline}>
+            <Link href="/" className={styles.brand}>
+              <AspenMark size={24} />
+              <span>Aspen Lab</span>
+            </Link>
+            <button type="button" className={styles.top} onClick={backToTop}>
+              <span>{copy.backTop}</span>
+              <span className={styles.topIcon}><ArrowUp size={20} strokeWidth={1.4} aria-hidden /></span>
+            </button>
+          </div>
 
-        {/* Scan-line texture */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.012) 3px, rgba(255,255,255,0.012) 4px)",
-          }}
-        />
+          <div className={styles.body}>
+            <div>
+              <p className={styles.eyebrow}>{copy.role}</p>
+              <h2 className={styles.headline}>
+                <span>{copy.headline}</span>
+                <span><em>{copy.ending}</em></span>
+              </h2>
+              <p className={styles.description}>{copy.description}</p>
+              <Link href={onContact ? "/#work" : "/contact"} className={styles.contact}>
+                {onContact ? (cn ? "看看我的作品" : "Explore my work") : copy.contact}<ArrowUpRight size={21} strokeWidth={1.35} aria-hidden />
+              </Link>
+            </div>
+            <div className={styles.play}><FooterDotLab cn={cn} /></div>
+          </div>
 
-        {/* Ambient glow — center */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 60% at 50% 80%, rgba(255,255,255,0.04) 0%, transparent 70%)",
-          }}
-        />
-
-        {/* Corner marks */}
-        {[
-          "top-3 left-3 border-t border-l",
-          "top-3 right-3 border-t border-r",
-          "bottom-3 left-3 border-b border-l",
-          "bottom-3 right-3 border-b border-r",
-        ].map((cls) => (
-          <span
-            key={cls}
-            className={`absolute w-3.5 h-3.5 border-line/50 ${cls}`}
-          />
-        ))}
-
-        {/* HUD readout — top bar */}
-        <div className="relative flex items-center justify-between px-6 py-2.5 border-b border-line/25">
-          <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-soft/30">
-            aspen.portfolio
-          </span>
-          <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-soft/25 tabular-nums">
-            47.6101°N · 122.2015°W
-          </span>
+          <div className={styles.utility}>
+            <div className={styles.location}>
+              <MapPin size={14} strokeWidth={1.5} aria-hidden />
+              <span>Bellevue, WA</span>
+              <span className={styles.timeDivider} aria-hidden>/</span>
+              <BellevueTime label={copy.time} />
+            </div>
+            <nav className={styles.nav} aria-label={copy.navigation}>
+              <Link href="/#work">{copy.work}</Link>
+              <Link href="/about">{copy.about}</Link>
+              {socials.filter((social) => social.platform === "GitHub" || social.platform === "Email").map((social) => (
+                <a key={social.platform} href={social.href} target={social.platform === "Email" ? undefined : "_blank"} rel={social.platform === "Email" ? undefined : "noreferrer"}>
+                  {social.platform === "Email" ? copy.email : social.platform}<ArrowUpRight size={12} aria-hidden />
+                </a>
+              ))}
+            </nav>
+          </div>
+          <div className={styles.credit}>
+            <span>© {year} Aspen Lab <span aria-hidden>·</span> {copy.credit}</span>
+            <span className={styles.signature}><Code2 size={13} strokeWidth={1.3} aria-hidden />{copy.signature}</span>
+          </div>
         </div>
-
-        {/* Main typographic composition */}
-        <div className="relative flex flex-col items-center justify-center gap-3 py-16 sm:py-20 text-center">
-
-          {/* Label */}
-          <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.55em] text-soft/30">
-            {copy.label}
-          </p>
-
-          {/* Name — hero */}
-          <p
-            className="font-display font-black uppercase leading-none text-ink/[0.13]"
-            style={{
-              fontSize: "clamp(64px, 11vw, 160px)",
-              letterSpacing: "0.18em",
-            }}
-          >
-            ASPEN
-          </p>
-
-          {/* Role line */}
-          <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.4em] text-soft/22">
-            {copy.role}
-          </p>
-        </div>
-
-        {/* HUD readout — bottom bar */}
-        <div className="relative flex items-center justify-between px-6 py-2.5 border-t border-line/25">
-          <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-soft/25">
-            iF · Red Dot · IDEA 2025
-          </span>
-          <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-soft/25 tabular-nums">
-            © {year}
-          </span>
-        </div>
-      </div>
-
-      {/* Micro credit below frame */}
-      <div className="flex items-center justify-center py-5">
-        <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-soft/20">
-          {copy.credit}
-        </span>
       </div>
     </footer>
   );

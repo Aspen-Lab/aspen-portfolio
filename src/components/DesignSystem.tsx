@@ -1,93 +1,89 @@
 "use client";
 
-import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight } from "lucide-react";
+import { useId, useState, type CSSProperties } from "react";
+import { useLocale } from "next-intl";
+import { ArrowUpRight, Layers2 } from "lucide-react";
 import { designSystem as ds } from "@/lib/work";
-import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
+import { OriginControls } from "./OriginControls";
+import styles from "./DesignSystem.module.css";
 
-/* Aspen Origin — one large entry that opens the live docs. The same
-   plate + window language as the project cards, at hero scale: the
-   words on the left, the docs' own first page in a window on the right,
-   the whole plate one link. Monochrome until hover, like the cards. */
+// Values from Origin's tokens.css; exploded geometry illustrates surface levels.
+const surfaces = [
+  { key: "page", name: ["Canvas", "底面"], token: "--ap-color-page", hex: "#181818", note: ["A quiet foundation for everything above it.", "安静的底面，托住上面的每一层。"] },
+  { key: "inset", name: ["Inset", "凹槽"], token: "--ap-color-inset", hex: "#202020", note: ["An inner shadow draws the surface inward.", "内阴影让表面向内收，形成明确的凹槽。"] },
+  { key: "raised", name: ["Raised", "抬升"], token: "--ap-surface-raised", hex: "#242424", note: ["A fine top highlight. A compact shadow below.", "上沿一线高光，下方一层紧凑的阴影。"] },
+] as const;
 
 export function DesignSystem() {
-  const t = useTranslations("DesignSystem");
-  const cn = (useLocale() as Locale) === "cn";
-  const tr = (b: { en: string; cn: string }) => (cn ? b.cn : b.en);
-  const address = new URL(ds.href);
+  const cn = useLocale() === "cn";
+  const language = cn ? 1 : 0;
+  const [active, setActive] = useState(2);
+  const readoutId = useId();
+  const current = surfaces[active];
 
   return (
-    <section className="container-fluid">
+    <section className="container-fluid" aria-labelledby="origin-title">
       <Reveal>
-        <article className="group relative plate overflow-hidden grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-center">
-          {/* Words */}
-          <div className="order-2 lg:order-1 px-5 py-6 sm:px-8 sm:py-8 lg:px-9 flex flex-col">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
-              {t("eyebrow", { version: ds.version })}
-            </p>
-            <h2 className="mt-3 type-display text-[36px] sm:text-[48px] leading-[1.05] text-ink">
-              <a
-                href={ds.href}
-                target="_blank"
-                rel="noreferrer"
-                data-orb-ball
-                // One link for the whole plate; outline-none! beats the
-                // global :focus-visible so focus draws one ring (the plate's)
-                className="outline-none! after:absolute after:inset-0 after:rounded-[2px] after:content-[''] focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-ink/35"
-              >
-                {ds.name}
-              </a>
-            </h2>
-            <p className="mt-4 text-[16px] sm:text-[17px] leading-[1.5] text-ink/85">{tr(ds.tagline)}</p>
-            <p className="mt-3 text-[14px] leading-[1.7] text-mute">{tr(ds.intro)}</p>
-
-            <ul className="mt-7 grid grid-cols-2 gap-x-6 gap-y-5">
-              {ds.numbers.map((n) => (
-                <li key={n.label.en}>
-                  <p className="font-display text-[26px] leading-none tracking-[-0.01em] text-ink tabular-nums">
-                    {n.value}
-                  </p>
-                  <p className="mt-2 font-mono text-[9.5px] uppercase tracking-[0.16em] text-soft">
-                    {tr(n.label)}
-                  </p>
-                </li>
-              ))}
-            </ul>
-
-            <span
-              aria-hidden
-              className="plate-button pointer-events-none mt-8 self-start inline-flex items-center gap-2 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-mute group-hover:text-ink"
-            >
-              {t("open")}
-              <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={1.75} />
-            </span>
+        <div className={styles.intro}>
+          <div>
+            <p className={styles.eyebrow}><span className={styles.originMark} aria-hidden><i /><i /><i /><i /></span> ASPEN PLAY / DESIGN SYSTEM</p>
+            <h2 id="origin-title" className="type-display">{ds.name}<span className={styles.version}>v{ds.version}</span></h2>
           </div>
+          <div className={styles.introRight}>
+            <p>{cn ? "用明度建立层次，用反馈赋予手感。把设计系统放到手边，亲自试一试。" : "Depth through tone. Feeling through feedback. A design system you can put your hands on."}</p>
+            <a href={ds.href} target="_blank" rel="noreferrer" className={styles.docsLink}>{cn ? "打开完整设计系统" : "Explore the full system"}<ArrowUpRight size={15} strokeWidth={1.5} aria-hidden /></a>
+          </div>
+        </div>
 
-          {/* The docs, in a window. pointer-events-none: this block comes
-              after the link in the DOM and is positioned, so it would paint
-              over the stretched link and swallow clicks on the picture. */}
-          <div className="order-1 lg:order-2 pointer-events-none plate-figure border-b border-line lg:border-b-0 lg:border-l">
-            {/* The address line: one hairline under a mono readout — no
-                window dots, no inset bar. */}
-            <div className="flex h-9 items-center justify-between gap-3 px-4 font-mono text-[10px] uppercase tracking-[0.18em] border-b border-line">
-              <span className="truncate text-soft">
-                {address.hostname.replace(/^www\./, "")}
-                <span className="text-soft/55">{address.pathname}</span>
-              </span>
-              <span className="shrink-0 text-soft/70">v{ds.version}</span>
+        <div className={styles.workbench}>
+          <div className={styles.benchHeader}>
+            <span><Layers2 size={14} strokeWidth={1.4} aria-hidden />{cn ? "SURFACE / 材质试验台" : "SURFACE / MATERIAL STUDY"}</span>
+            <span className={styles.live}><i aria-hidden />{cn ? "可以直接操作" : "LIVE COMPONENTS"}</span>
+          </div>
+          <div className={styles.labGrid}>
+            <div className={styles.material}>
+              <div className={styles.stage} aria-hidden data-active={current.key}>
+                <span className={styles.stageFolio}>01 — 03</span>
+                <span className={styles.stageLabel}>{cn ? "同一种石墨，三个层次。" : "ONE MATERIAL. THREE LEVELS."}</span>
+                <div className={styles.ground}>
+                  <svg viewBox="0 0 400 320" fill="none"><path d="M20 160 200 52 380 160 200 268ZM65 133 245 241M110 106 290 214M155 79 335 187M65 187 245 79M110 214 290 106M155 241 335 133" stroke="currentColor" strokeWidth=".65" /></svg>
+                </div>
+                <div className={styles.stack}>
+                  <div className={styles.slab + " " + styles.canvasSlab} data-selected={active === 0}>
+                    <span className={styles.engraving}>01 / CANVAS</span><span className={styles.cornerMark}>+</span>
+                  </div>
+                  <div className={styles.slab + " " + styles.insetSlab} data-selected={active === 1}>
+                    <div className={styles.recess}><span className={styles.insetLabel}>02 / INSET</span></div>
+                  </div>
+                  <div className={styles.slab + " " + styles.raisedSlab} data-selected={active === 2}>
+                    <span className={styles.raisedLabel}>03 / RAISED</span>
+                    <span className={styles.sculptedMark}><i /><i /><i /><i /></span>
+                    <span className={styles.raisedSignature}>aspen origin</span>
+                  </div>
+                </div>
+                <span className={styles.stageHint}>{cn ? "点选下方材质，查看层次" : "SELECT A SURFACE BELOW"}</span>
+              </div>
+              <div className={styles.surfaceChoices} role="group" aria-label={cn ? "选择展示材质" : "Choose a surface"}>
+                {surfaces.map((surface, i) => <button key={surface.key} type="button"
+                  aria-pressed={active === i} aria-controls={readoutId} onClick={() => setActive(i)}
+                  className={styles.surfaceChoice}>
+                  <span className={styles.swatch} style={{ "--surface-color": surface.hex } as CSSProperties} data-kind={surface.key} aria-hidden />
+                  <span>{surface.name[language]}</span><span className={styles.choiceNumber}>0{i + 1}</span>
+                </button>)}
+              </div>
+              <div id={readoutId} className={styles.readout} aria-live="polite" aria-atomic="true">
+                <div><code>{current.token}</code><span>{current.hex}</span></div>
+                <p>{current.note[language]}</p>
+              </div>
             </div>
-            <Image
-              src={ds.thumb}
-              alt={t("thumbAlt")}
-              width={1440}
-              height={900}
-              sizes="(max-width: 1023px) 100vw, 58vw"
-              className="w-full aspect-[16/10] object-cover object-top grayscale-[0.9] transition-[filter,transform] duration-700 ease-out group-hover:grayscale-0 group-hover:scale-[1.02]"
-            />
+            <div className={styles.componentSide}><OriginControls cn={cn} /></div>
           </div>
-        </article>
+          <div className={styles.benchFooter}>
+            <span>{cn ? "手感，也是一套系统。" : "A SYSTEM YOU CAN FEEL."}</span>
+            <div>{[["70", cn ? "按压" : "PRESS"], ["180", cn ? "反馈" : "FEEDBACK"], ["240", cn ? "入场" : "ENTER"]].map(([time, label]) => <span key={time}><b>{time}<small>ms</small></b>{label}</span>)}</div>
+          </div>
+        </div>
       </Reveal>
     </section>
   );

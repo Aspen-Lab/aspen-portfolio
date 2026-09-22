@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { ArrowDown } from "lucide-react";
 import { projects } from "@/lib/work";
 import { CatalogueIndex, type CatalogueRow } from "./CatalogueIndex";
 import { Reveal } from "./Reveal";
@@ -9,7 +10,7 @@ import { Reveal } from "./Reveal";
    only maps the projects to rows; the side projects map to the same
    component so the two sections are peers. */
 
-/** "Axel — sole designer × bidirectional loop" → ["Axel", "sole designer × …"].
+/** "Axel — design to frontend PRs" → ["Axel", "design to frontend PRs"].
     The first dash (or comma) in a title splits name from subtitle. */
 function splitTitle(title: string): [string, string | null] {
   const m = title.match(/^(.*?)\s*(?:—|–|,)\s+(.+)$/);
@@ -43,11 +44,17 @@ export function SelectedWork() {
             src: p.cover,
             width: p.coverWidth ?? 1600,
             height: p.coverHeight ?? 1000,
-            fit: p.coverFit,
+            fit: p.slug === "cone" ? "contain" : p.coverFit,
             position: p.coverPosition,
-            bg: p.coverBg,
+            bg: p.slug === "cone" ? "#fff" : p.coverBg,
             alt: p.title,
             priority: i === 0,
+            ...(p.slug === "axel" ? { presentation: "axel" as const } : {}),
+            ...(p.slug === "hyundai" ? {
+              src: "/work/hyundai/40-87uEUPs8PzUhntr9n1wPYjuPUQ.jpg",
+              video: "/work/hyundai/40-87uEUPs8PzUhntr9n1wPYjuPUQ.mp4",
+              bg: "#080a0b",
+            } : {}),
           }
         : undefined,
       readout: [
@@ -62,22 +69,19 @@ export function SelectedWork() {
 
   return (
     <section className="container-fluid">
-      <Reveal>
-        <CatalogueIndex rows={rows} />
-      </Reveal>
-
-      <Reveal delay={0.1}>
-        <div className="mt-12 sm:mt-16 flex justify-center lg:justify-start">
-          <a
-            href="https://aspenlabs.framer.website/projects"
-            target="_blank"
-            rel="noreferrer"
-            className="plate-button inline-flex items-center gap-3 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mute hover:text-ink"
-          >
-            {t("viewAll")}
-            <span aria-hidden>↗</span>
-          </a>
+      <aside className="mb-8 sm:mb-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8" aria-label={t("browseLabel")}>
+        <div className="flex items-start gap-3 sm:gap-4">
+          <ArrowDown aria-hidden size={18} strokeWidth={1.5} className="mt-0.5 shrink-0 text-soft" />
+          <p className="max-w-[62ch] text-[13px] sm:text-[14px] leading-[1.75] text-mute">
+            {t("browseHint")}
+          </p>
         </div>
+        <a href="#side" className="inline-flex min-h-11 items-center gap-2 self-start sm:shrink-0 sm:self-auto font-mono text-[10px] tracking-[0.08em] text-mute hover:text-ink focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-ink">
+          {t("keepScrolling")}<ArrowDown aria-hidden size={12} />
+        </a>
+      </aside>
+      <Reveal amount="some">
+        <CatalogueIndex rows={rows} />
       </Reveal>
     </section>
   );

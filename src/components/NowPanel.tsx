@@ -68,7 +68,7 @@ export function NowPanel() {
       <Card>
         <CardLink
           title="Axel"
-          subtitle="Sole designer · YC W19"
+          subtitle="Founding Design Engineer · YC W19"
           href="/work/axel"
         />
 

@@ -1,0 +1,56 @@
+.figure { width: 100%; min-width: 0; color: var(--color-ink); container-type: inline-size; }
+.caption { display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 10px var(--font-mono); letter-spacing: .13em; color: var(--color-mute); }
+.count { color: var(--color-soft); }
+.map { position: relative; height: clamp(308px, 66cqw, 350px); margin: 17px 0 10px; }
+.connections { position: absolute; inset: 0; height: 100%; width: 100%; overflow: visible; }
+.spoke { stroke: currentColor; stroke-opacity: .13; stroke-width: .25; transition: stroke-opacity 220ms, stroke-width 220ms; }
+.spoke[data-active="true"] { stroke-opacity: .8; stroke-width: .4; }
+.tabs { position: absolute; inset: 0; }
+.node { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 116px; min-height: 66px; transform: translate(-50%, -22px); background: none; border: 0; padding: 0; cursor: pointer; color: var(--color-mute); outline: none; }
+.icon { display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; border: 1px solid var(--color-line); background: var(--color-paper); transition: color 200ms, border-color 200ms, background-color 200ms, transform 200ms; }
+.nodeLabel { display: block; font: 11px/1.4 var(--font-sans); letter-spacing: -.01em; text-align: center; text-wrap: balance; transition: color 200ms; }
+.node[aria-selected="true"] { color: var(--color-ink); }
+.node[aria-selected="true"] .icon { border-color: var(--color-mute); background-color: var(--color-cream); }
+.node:hover .icon { color: var(--color-ink); border-color: var(--color-soft); transform: translateY(-2px); }
+.node:focus-visible .icon { outline: 2px solid var(--color-ink); outline-offset: 4px; }
+.center { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); width: 136px; display: flex; flex-direction: column; align-items: center; text-align: center; background: var(--color-paper); padding: 13px 0; pointer-events: none; }
+.centerOverline, .centerFoot { font: 8px var(--font-mono); letter-spacing: .14em; color: var(--color-soft); }
+.centerOverline { margin-bottom: 10px; }
+.centerFoot { margin-top: 11px; }
+.centerTitle { font: 36px/.9 var(--font-newsreader), Georgia, serif; letter-spacing: -.04em; }
+.centerBridge { font: 23px/.9 var(--font-sans); color: var(--color-mute); margin: 4px 0 7px; }
+.evidence { border-top: 1px solid var(--color-line); padding-top: 17px; min-height: 224px; outline: none; }
+.evidence:focus-visible { outline: 1px solid var(--color-soft); outline-offset: 6px; }
+.evidenceMeta { display: flex; justify-content: space-between; gap: 12px; font: 9px/1.4 var(--font-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--color-soft); }
+.evidenceMeta > span:last-child { flex: 0 0 auto; }
+.evidenceTitle { margin-top: 9px; font: 28px/1.15 var(--font-newsreader), Georgia, serif; font-weight: 350; letter-spacing: -.025em; }
+.evidenceBody { margin-top: 10px; max-width: 47ch; font-size: 13px; line-height: 1.65; color: var(--color-mute); }
+.outputs { margin-top: 14px; font: 10px/1.7 var(--font-mono); color: var(--color-soft); }
+.caseLinks { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 16px; margin-top: 13px; font: 10px var(--font-mono); }
+.caseLinks > span { font-size: 9px; letter-spacing: .08em; color: var(--color-soft); }
+.caseLinks a { display: inline-flex; align-items: center; gap: 9px; min-height: 36px; color: var(--color-ink); text-underline-offset: 4px; }
+.caseLinks a:hover { text-decoration: underline; }
+.caseLinks a:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
+:global(html[lang="zh-CN"]) .centerTitle, :global(html[lang="zh-CN"]) .evidenceTitle { font-family: var(--font-display); font-weight: 350; }
+:global(html[lang="zh-CN"]) .centerTitle { font-size: 30px; line-height: 1; }
+:global(html[lang="zh-CN"]) .evidenceTitle { font-size: 25px; }
+
+@container (max-width: 380px) {
+  .map { margin-top: 21px; }
+  .node { width: 92px; }
+  .nodeLabel { font-size: 10px; max-width: 90px; }
+  .center { width: 98px; }
+  .centerTitle { font-size: 30px; }
+  .centerOverline, .centerFoot { font-size: 6.5px; letter-spacing: .08em; }
+  .centerOverline { margin-bottom: 9px; }
+  .centerFoot { margin-top: 10px; }
+  .centerBridge { font-size: 20px; }
+  .evidence { min-height: 258px; }
+  .evidenceMeta > span:last-child { display: none; }
+  .evidenceTitle { font-size: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spoke, .icon, .nodeLabel { transition: none; }
+  .node:hover .icon { transform: none; }
+}

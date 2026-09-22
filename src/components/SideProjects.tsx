@@ -5,9 +5,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { sideProjects } from "@/lib/work";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
-import { CommitCalendar } from "./CommitCalendar";
-import { CapabilityRadar } from "./CapabilityRadar";
+import { Workshop } from "./Workshop";
 import { CatalogueIndex, type CatalogueRow } from "./CatalogueIndex";
+import { demoCaption, isSideDemo } from "./SideProjectDemo";
 
 /* The side projects on the same catalogue as the works — ruled rows,
    the sticky viewfinder plate, one readout — so the two sections are
@@ -99,6 +99,7 @@ export function SideProjects() {
     const category = tr(p.category);
     const platforms = p.platforms.map(tr).join(" · ");
     const host = p.href ? new URL(p.href).hostname.replace(/^www\./, "") : null;
+    const demo = isSideDemo(p.slug) ? p.slug : undefined;
     return {
       key: p.slug,
       href: p.href,
@@ -113,7 +114,13 @@ export function SideProjects() {
       ),
       right: status,
       cover: p.thumb
-        ? { src: p.thumb, width: 1440, height: 900, alt: t("thumbAlt", { name: p.name }) }
+        ? {
+          src: p.thumb,
+          width: 1440,
+          height: 900,
+          alt: demo ? `${p.name} — ${demoCaption(demo, cn)} (${cn ? "功能演示" : "product demo"})` : t("thumbAlt", { name: p.name }),
+          demo,
+        }
         : undefined,
       readout: [
         <>
@@ -129,30 +136,11 @@ export function SideProjects() {
     <section className="container-fluid">
       <SideIntro />
 
-      <Reveal>
+      <Reveal amount="some">
         <CatalogueIndex rows={rows} />
       </Reveal>
 
-      {/* Workshop — the commit calendar beside the capability radar, under
-          one ruled mono line. Two instruments, no boxes. */}
-      <div className="mt-16 sm:mt-20">
-        <Reveal>
-          <div className="flex items-baseline justify-between gap-4 border-t border-line pt-4 mb-10 font-mono text-[10px] uppercase tracking-[0.22em] text-soft">
-            <span>{t("workshopTitle")}</span>
-            <span className="text-soft/55">{t("workshopMeta")}</span>
-          </div>
-        </Reveal>
-        <div className="lg:grid lg:grid-cols-[1fr_minmax(360px,42%)] lg:gap-16 xl:gap-24 lg:items-start">
-          <Reveal>
-            <CommitCalendar />
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div className="mt-14 lg:mt-0 lg:px-6">
-              <CapabilityRadar />
-            </div>
-          </Reveal>
-        </div>
-      </div>
+      <Workshop />
     </section>
   );
 }

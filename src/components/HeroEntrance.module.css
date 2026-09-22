@@ -1,0 +1,170 @@
+.entrance {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  overflow: hidden;
+  color: #f4f4f2;
+  pointer-events: none;
+  user-select: none;
+  animation: finish 1.35s linear both;
+}
+
+.shutter {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(50% + 1px);
+  background: rgba(15, 15, 16, 0.985);
+  animation-duration: 0.86s;
+  animation-delay: 0.44s;
+  animation-timing-function: cubic-bezier(0.76, 0, 0.14, 1);
+  animation-fill-mode: both;
+}
+
+.top {
+  top: 0;
+  border-bottom: 1px solid rgba(244, 244, 242, 0.09);
+  animation-name: openTop;
+}
+
+.bottom {
+  bottom: 0;
+  border-top: 1px solid rgba(244, 244, 242, 0.09);
+  animation-name: openBottom;
+}
+
+.horizontalGuide,
+.verticalGuide {
+  position: absolute;
+  background: rgba(244, 244, 242, 0.2);
+}
+
+.horizontalGuide {
+  left: 6%;
+  right: 6%;
+  top: 50%;
+  height: 1px;
+  animation: guideAcross 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.verticalGuide {
+  top: 12%;
+  bottom: 12%;
+  width: 1px;
+  animation: guideDown 0.72s 0.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.leftGuide {
+  left: 6%;
+}
+
+.rightGuide {
+  right: 6%;
+}
+
+.stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 112px;
+  height: 64px;
+  transform: translate(-50%, -50%);
+}
+
+.design,
+.code,
+.mark {
+  position: absolute;
+  display: block;
+}
+
+.design,
+.code {
+  top: 16px;
+  animation-duration: 0.54s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+}
+
+.design {
+  left: 4px;
+  animation-name: designArrives;
+}
+
+.code {
+  right: 4px;
+  animation-name: codeArrives;
+}
+
+.mark {
+  top: 8px;
+  left: 36px;
+  animation: markArrives 0.55s 0.28s ease both;
+}
+
+.letter {
+  stroke-dasharray: 1;
+  animation: drawMark 0.36s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes openTop {
+  from { transform: translateY(0); }
+  to { transform: translateY(-101%); }
+}
+
+@keyframes openBottom {
+  from { transform: translateY(0); }
+  to { transform: translateY(101%); }
+}
+
+@keyframes guideAcross {
+  0% { transform: scaleX(0); opacity: 0; }
+  36% { transform: scaleX(1); opacity: 0.65; }
+  65% { transform: scaleX(1); opacity: 0.4; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+
+@keyframes guideDown {
+  0% { transform: scaleY(0); opacity: 0; }
+  42% { transform: scaleY(1); opacity: 0.45; }
+  100% { transform: scaleY(1); opacity: 0; }
+}
+
+@keyframes designArrives {
+  0% { opacity: 0; transform: translateX(-8px); }
+  20%, 45% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(28px) scale(0.75); }
+}
+
+@keyframes codeArrives {
+  0% { opacity: 0; transform: translateX(8px); }
+  20%, 45% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-28px) scale(0.75); }
+}
+
+@keyframes markArrives {
+  0% { opacity: 0; transform: scale(0.9); }
+  28%, 58% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.04); }
+}
+
+@keyframes drawMark {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes finish {
+  0%, 99.9% { visibility: visible; }
+  100% { visibility: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entrance {
+    display: none;
+    animation: none;
+  }
+
+  .entrance * {
+    animation: none;
+  }
+}

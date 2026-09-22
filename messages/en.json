@@ -7,77 +7,74 @@
     "contact": "Contact"
   },
   "Hero": {
-    "eyebrow": "Sole Designer at Axel (YC W19) · Bellevue, WA",
-    "headlineLine2": "Design × engineering,",
+    "eyebrow": "Founding Design Engineer at Axel (YC W19) · Bellevue, WA",
+    "headlineLine2": "Design ❤️ Engineering",
     "headlineLine3a": "one ",
     "headlineLine3Italic": "leverage",
     "headlineLine3b": " force.",
     "ctaWork": "See selected work",
     "ctaStack": "Stack",
     "ctaEmail": "xiaoyangw.design@gmail.com",
-    "bio": "<lead>Designer who codes</lead> — shipping product design and production <react>React</react> at <axel>Axel (YC W19)</axel>, solo and fast.",
+    "bio": "<lead>Founding Design Engineer</lead> at <axel>Axel (YC W19)</axel>, shipping product design and production <react>React</react> PRs.",
     "stackLabel": "Stack",
-    "invLabel": "Inventory",
+    "invLabel": "Toolbox",
     "inv": {
       "Figma": {
-        "rarity": "Epic",
-        "type": "DESIGN · MAIN HAND",
-        "flavor": "Every pixel is forged here before it ships."
+        "level": "Core workflow",
+        "description": "Design product interfaces, reusable components, and interactive prototypes."
       },
       "Claude": {
-        "rarity": "Legendary",
-        "type": "AI · COMPANION",
-        "flavor": "A second brain that argues back and ships faster."
+        "level": "Core workflow",
+        "description": "Use Claude Code to work through implementation, iteration, and debugging."
       },
       "Codex": {
-        "rarity": "Rare",
-        "type": "AI · SUMMON",
-        "flavor": "Autonomous familiar — point it at a repo, walk away."
+        "level": "Project use",
+        "description": "Turn scoped tasks into code changes, then check the result."
       },
       "Cursor": {
-        "rarity": "Epic",
-        "type": "CODE · OFF HAND",
-        "flavor": "Where design decisions become production React."
+        "level": "Core workflow",
+        "description": "Build and refine production React interfaces directly in code."
       },
       "GitHub": {
-        "rarity": "Rare",
-        "type": "VCS · VAULT",
-        "flavor": "Every run since day one, kept in the ledger."
+        "level": "Core workflow",
+        "description": "Ship frontend PRs, work through review, and prepare changes to merge."
       },
       "Vercel": {
-        "rarity": "Rare",
-        "type": "DEPLOY · PORTAL",
-        "flavor": "From merge to live before the coffee cools."
+        "level": "Delivery workflow",
+        "description": "Share working previews and deploy web projects."
       },
       "Supabase": {
-        "rarity": "Uncommon",
-        "type": "DATA · REACTOR",
-        "flavor": "Auth, storage, and state — one humming core."
+        "level": "Project use",
+        "description": "Connect product interfaces to authentication, databases, and storage."
       },
       "Obsidian": {
-        "rarity": "Uncommon",
-        "type": "NOTES · GRIMOIRE",
-        "flavor": "Years of spells, cross-linked and searchable."
+        "level": "Personal workflow",
+        "description": "Connect research, ideas, and project notes in one knowledge base."
       }
-    }
+    },
+    "invHint": "Hover or select a tool to see how I use it."
   },
   "Tabs": {
+    "closerLook": "Now, pick a project for a closer look at the design and build.",
+    "backToWork": "Back to featured work",
     "work": "Featured work",
     "system": "Design system",
     "stack": "Tech stack",
     "side": "Side projects"
   },
   "SelectedWork": {
+    "browseLabel": "A suggestion for exploring",
+    "browseHint": "Before diving into a project, scroll to the bottom for a fuller picture of how I work, what I build, and the experiments in between.",
+    "keepScrolling": "Keep exploring",
     "inProgress": "In progress",
     "cover": "cover",
-    "viewAll": "View all projects on Aspen Lab",
     "more": "More work",
     "projects": {
       "axel": {
-        "title": "Axel — sole designer × bidirectional loop",
+        "title": "Axel — design, code & growth",
         "category": "Travel · Fintech",
-        "summary": "Sole designer at a YC W19 travel-money startup, reporting directly to the CEO. Built a symmetric Design ⇌ FE delivery protocol with the lead engineer that turns handoff into convergence — three zones, four review tiers, a weekly cadence. Every pixel in Axel goes through one person.",
-        "role": "Sole designer · reports to CEO"
+        "summary": "I turn product ideas into production PRs at Axel, connecting design and engineering in both directions. The same hands-on approach extends into brand and growth, with AI coding tools accelerating iteration.",
+        "role": "Founding Design Engineer · Full-time"
       },
       "nutra": {
         "title": "Nutra — fintech for everyone",
@@ -94,7 +91,7 @@
       "hyundai": {
         "title": "Hyundai IONIQ 6 — designing for trust at L2+",
         "category": "Sponsored Project",
-        "summary": "How might we improve driver confidence in semi-autonomous scenarios, where control transitions between human and machine? A study across 9 drivers, biometrics, and three UI directions — Green UI lifted confidence by +10% over the baseline.",
+        "summary": "Researching driver confidence during HDA 2.0 handoffs, from real-road and simulator testing to three UI directions. The Green UI recorded a 10% higher confidence score than the original interface in the prototype study.",
         "role": "HMI Designer"
       },
       "cone": {
@@ -106,16 +103,16 @@
     }
   },
   "TechStack": {
-    "intro": "Designer who codes. Most of my side projects ship to production — mostly written out of <ink>Cursor</ink> and <ink>Claude Code</ink>, with a chain of MCPs gluing Figma, Unity, and Customer.io into the same loop.",
-    "spectrumTitle": "Capability spectrum",
-    "spectrumStatus": "5 / 5 lit",
-    "spectrumNote": "All five lit. The width is the point — the moat is the AI loop that fuses design, frontend, email, backend, and game dev into a single delivery chain.",
+    "intro": "I design, build, and ship — production PRs at Axel and live products of my own. <ink>Cursor</ink> and <ink>Claude Code</ink> accelerate the work, with MCPs connecting Figma, Unity, and Customer.io to the same workflow.",
+    "spectrumTitle": "A connected practice",
+    "spectrumStatus": "Design ↔ code",
+    "spectrumNote": "I move between design and implementation: shape the experience, build it, test it, and bring what I learn back into the design.",
     "modules": "{count} modules",
     "live": "Live",
     "whereItLives": "Where it lives"
   },
   "SideProjects": {
-    "intro": "Things I build between design jobs — usually to scratch a personal itch, sometimes to test a tool I'm thinking about adopting at work.",
+    "intro": "Things I build outside Axel — usually to scratch a personal itch, sometimes to test a tool I'm thinking about adopting at work.",
     "replay": "↻ replay",
     "replayIntro": "Replay intro",
     "productsTitle": "Products",
@@ -136,7 +133,7 @@
     "visit": "Visit site"
   },
   "Moat": {
-    "intro": "I'm not selling a skill — I'm selling a <i>shape</i>. Six credentials — <ink>proven, not asserted</ink>."
+    "intro": "I'm waiting for you to discover my <i>potential</i>.<ink>I'm only 23.</ink>"
   },
   "About": {
     "eyebrow": "{ About } · My Story",
@@ -144,10 +141,10 @@
     "headline2": "half psychologist,",
     "headline3Italic": "always shipping.",
     "bio1": "I'm a dual-degree student at <ink>Georgia Tech</ink> — BS Industrial Design (2021–2024) and BS Psychology (2023–2026). Design and psychology stuck together because the questions overlap: small frictions, hidden expectations, the gap between what someone says and what they do.",
-    "bio2": "I've designed multi-country KYC for <ink>TikTok Pay</ink>, semi-autonomous HMI for <ink>Hyundai</ink>, a packaging system for the <ink>CDC</ink>, and co-founded <ink>XING Art</ink> with a $300K pre-seed from MiraclePlus and 1K+ real users. I'm now a Design Engineer at <ink>Axel</ink> (Gordian Software, YC W19) — shipping production React on helloaxel.com, building the transactional email system on Customer.io, and reporting directly to the CEO.",
+    "bio2": "I've designed multi-country KYC for <ink>TikTok Pay</ink>, semi-autonomous HMI for <ink>Hyundai</ink>, a packaging system for the <ink>CDC</ink>, and co-founded <ink>XING Art</ink> with a $300K pre-seed from MiraclePlus and 1K+ real users. Since December 2025, I've been the Founding Design Engineer at <ink>Axel</ink> (Gordian Software, YC W19), reporting directly to the CEO. I own frontend delivery, ship production PRs, and connect design and engineering in both directions. My work also spans brand identity, core ad campaigns, Customer.io emails, and testing, with AI coding tools helping me iterate quickly.",
     "bio3": "Off the clock — film washing by hand, B&W sketching, cooking for me and my partner, building wireless illuminated dice with roommates. I move fast, hold strong opinions on type and motion, and like the part of design where research, growth, and craft intersect.",
-    "closingQuote": "I'm waiting for you to find my potential.",
-    "closingAttribution": "— Aspen, 21 yrs",
+    "closingQuote": "I'm waiting for you to discover my potential.",
+    "closingAttribution": "— Aspen, 23 yrs",
     "awardsTitle": "Awards & recognition",
     "moreWorkTitle": "Selected past work"
   },
@@ -201,7 +198,7 @@
     "aspenLab": "Aspen Lab (Framer) →",
     "github": "GitHub",
     "now": "Now",
-    "nowText": "Design Engineer at <ink>Axel</ink> (Gordian, YC W19) in Bellevue.",
+    "nowText": "Founding Design Engineer at <ink>Axel</ink> (Gordian, YC W19) in Bellevue.",
     "copyright": "© {year} Aspen W. — Xiaoyang Wang",
     "permanentResident": "Permanent Resident · No Sponsorship"
   },

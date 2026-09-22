@@ -1,0 +1,159 @@
+.scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.brand {
+  fill: #eeeae4;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -.7px;
+}
+
+.eyebrow {
+  fill: #a3a69e;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.playHeadline {
+  fill: #e5e6df;
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -1.5px;
+}
+
+.description {
+  fill: #a4a99d;
+  font-size: 13px;
+}
+
+.keycaps rect {
+  fill: #232721;
+  stroke: #3b4036;
+}
+
+.keycaps path {
+  fill: none;
+  stroke: #a8ae9d;
+  stroke-width: 1.25px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.stack { transform: translateY(22px); }
+.bottomRow, .fallingPiece, .clearFlash { opacity: 0; }
+.clearLabel, .nextPiece { opacity: 1; }
+
+.scene[data-playing="true"] .stack { animation: stack-settle 3.25s cubic-bezier(.25,.8,.25,1) both; }
+.scene[data-playing="true"] .bottomRow { animation: bottom-clear 3.25s linear both; }
+.scene[data-playing="true"] .fallingPiece { animation: block-drop 3.25s linear both; }
+.scene[data-playing="true"] .clearFlash { animation: row-flash 3.25s ease-out both; }
+.scene[data-playing="true"] .clearLabel { animation: cleared-label 3.25s ease-out both; }
+.scene[data-playing="true"] .nextPiece { animation: next-piece 3.9s cubic-bezier(.2,.8,.2,1) both; }
+
+@keyframes block-drop {
+  0%, 8% { opacity: 1; transform: translateY(0); }
+  27% { opacity: 1; transform: translateY(66px); }
+  39% { opacity: 1; transform: translateY(88px); }
+  54%, 65% { opacity: 1; transform: translateY(242px); }
+  71%, 100% { opacity: 0; transform: translateY(242px); }
+}
+
+@keyframes bottom-clear {
+  0%, 65% { opacity: 1; }
+  71%, 100% { opacity: 0; }
+}
+
+@keyframes row-flash {
+  0%, 58% { opacity: 0; }
+  64% { opacity: .9; }
+  81%, 100% { opacity: 0; }
+}
+
+@keyframes stack-settle {
+  0%, 72% { transform: translateY(0); }
+  86%, 100% { transform: translateY(22px); }
+}
+
+@keyframes cleared-label {
+  0%, 72% { opacity: 0; transform: translateY(4px); }
+  92%, 100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes next-piece {
+  0%, 71% { opacity: 0; transform: translateY(-14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.toolText {
+  fill: #918891;
+  font-size: 11px;
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.documentTitle {
+  fill: #efebe7;
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -.5px;
+}
+
+.documentBody { fill: #a29aa2; font-size: 13px; }
+.documentSection { fill: #ddd3d7; font-size: 16px; font-weight: 500; }
+.coverTitle { fill: #f2e7e2; font-size: 31px; font-weight: 600; letter-spacing: 1px; }
+.cardSmall { fill: #bca397; font-size: 10px; letter-spacing: .5px; }
+.writingMask { transform: scaleX(0); transform-box: fill-box; transform-origin: right center; }
+.transfer { opacity: .8; }
+
+.scene[data-playing="true"] .writingMask { animation: write-heading 1.1s steps(8, end) both; }
+.scene[data-playing="true"] .editorDivider { animation: insert-divider 2.2s ease-out both; transform-origin: 44px 212px; }
+.scene[data-playing="true"] .editorBody { animation: insert-body 2.5s ease-out both; }
+.scene[data-playing="true"] .transfer { animation: send-to-preview 3.2s ease-out both; }
+.scene[data-playing="true"] .frontCard { animation: cover-arrive 2.9s cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .middleCard { animation: middle-arrive 3.7s cubic-bezier(.2,.8,.2,1) both; }
+.scene[data-playing="true"] .backCard { animation: back-arrive 4.1s cubic-bezier(.2,.8,.2,1) both; }
+
+@keyframes write-heading {
+  0%, 15% { transform: scaleX(1); }
+  100% { transform: scaleX(0); }
+}
+
+@keyframes insert-divider {
+  0%, 57% { transform: scaleX(0); opacity: 0; }
+  84%, 100% { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes insert-body {
+  0%, 60% { opacity: 0; transform: translateY(5px); }
+  86%, 100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes send-to-preview {
+  0%, 30% { opacity: .15; transform: translateX(-4px); }
+  55% { opacity: 1; transform: translateX(0); }
+  100% { opacity: .8; transform: translateX(0); }
+}
+
+@keyframes cover-arrive {
+  0%, 20% { opacity: .2; transform: translateX(-12px) translateY(8px); }
+  67%, 100% { opacity: 1; transform: translateX(0) translateY(0); }
+}
+
+@keyframes middle-arrive {
+  0%, 49% { opacity: 0; transform: translateX(-42px) translateY(-6px); }
+  100% { opacity: 1; transform: translateX(0) translateY(0); }
+}
+
+@keyframes back-arrive {
+  0%, 61% { opacity: 0; transform: translateX(-65px) translateY(-12px); }
+  100% { opacity: 1; transform: translateX(0) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene[data-playing="true"] * { animation: none !important; }
+}

@@ -88,7 +88,7 @@ export function CommitCalendar() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <span className="plate-button inline-flex items-center px-2.5 py-1 font-mono text-[9.5px] uppercase tracking-[0.22em] text-soft whitespace-nowrap">
             {t("badge")}
           </span>

@@ -1,0 +1,258 @@
+.frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.archive {
+  background: #090a0a;
+  color: #eeeee9;
+}
+
+.archive::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  opacity: 0.15;
+  background-image: radial-gradient(#b9c0b9 0.6px, transparent 0.6px);
+  background-size: 9px 9px;
+  mask-image: linear-gradient(#000, transparent 48%);
+}
+
+.rule {
+  stroke: #363b36;
+  stroke-width: 1;
+}
+
+.mono,
+.dimMono,
+.loupeLabel,
+.mapEyebrow,
+.timelineLabel {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 1.8px;
+  fill: #c6cbc3;
+}
+
+.dimMono {
+  font-size: 11px;
+  fill: #8e968d;
+}
+
+.archiveTitle {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 89px;
+  font-weight: 850;
+  letter-spacing: -5px;
+  fill: #f1f1eb;
+}
+
+.archiveOutline {
+  fill: transparent;
+  stroke: #ced2c9;
+  stroke-width: 1.2;
+}
+
+.projectTitle {
+  fill: #e4e7dd;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: 1px;
+}
+
+.artStrip {
+  transform: translateX(-165px);
+}
+
+.loupe {
+  transform-origin: 714px 338px;
+  filter: drop-shadow(0 10px 20px #0009);
+}
+
+.loupeLabel {
+  fill: #141715;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.helper {
+  fill: #a5aca1;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 19px;
+}
+
+.archive[data-playing="true"] .artStrip {
+  animation: strip-glide 4200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.archive[data-playing="true"] .loupe {
+  animation: inspect-art 4200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.map {
+  background: #111a1b;
+}
+
+.mapImage {
+  opacity: 0.65;
+}
+
+.mapEyebrow {
+  fill: #a0b8ad;
+  font-size: 12px;
+  letter-spacing: 1.3px;
+}
+
+.mapTitle {
+  fill: #e4eae2;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 35px;
+  font-weight: 550;
+  letter-spacing: -0.9px;
+}
+
+.mapTitleDim {
+  fill: #6a8479;
+  font-weight: 300;
+}
+
+.routeTitle {
+  fill: #edf0e7;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 31px;
+  font-weight: 450;
+  letter-spacing: -0.5px;
+}
+
+.legend {
+  fill: #b7c7bc;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 16px;
+}
+
+.mapHelper {
+  fill: #dae4d9;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 22px;
+  letter-spacing: -0.3px;
+}
+
+.connection {
+  fill: none;
+  stroke: #ddf7e9;
+  stroke-width: 2;
+  stroke-dasharray: 4 5;
+}
+
+.connectionOne,
+.connectionTwo {
+  opacity: 0;
+}
+
+.connectionThree {
+  opacity: 0.8;
+}
+
+.stormMarker {
+  transform: translate(431px, 337px);
+}
+
+.timelineFill {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.scrubber {
+  transform: translate(906px, 554px);
+}
+
+.timelineLabel {
+  fill: #97aaa0;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+}
+
+.map[data-playing="true"] .stormMarker {
+  animation: follow-bavi 4200ms ease-in-out both;
+}
+
+.map[data-playing="true"] .connectionOne {
+  animation: first-comparison 4200ms ease-in-out both;
+}
+
+.map[data-playing="true"] .connectionTwo {
+  animation: second-comparison 4200ms ease-in-out both;
+}
+
+.map[data-playing="true"] .connectionThree {
+  animation: final-comparison 4200ms ease-in-out both;
+}
+
+.map[data-playing="true"] .scrubber {
+  animation: timeline-scrub 4200ms ease-in-out both;
+}
+
+.map[data-playing="true"] .timelineFill {
+  animation: timeline-fill 4200ms ease-in-out both;
+}
+
+@keyframes strip-glide {
+  0%, 10% { transform: translateX(0); }
+  48%, 100% { transform: translateX(-165px); }
+}
+
+@keyframes inspect-art {
+  0%, 43% { opacity: 0; transform: translate(-35px, 16px) scale(0.85); }
+  68%, 100% { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+@keyframes follow-bavi {
+  0%, 12% { transform: translate(614px, 552px); }
+  42%, 57% { transform: translate(507px, 442px); }
+  87%, 100% { transform: translate(431px, 337px); }
+}
+
+@keyframes first-comparison {
+  0%, 12% { opacity: 0.8; }
+  25%, 100% { opacity: 0; }
+}
+
+@keyframes second-comparison {
+  0%, 30% { opacity: 0; }
+  42%, 57% { opacity: 0.8; }
+  70%, 100% { opacity: 0; }
+}
+
+@keyframes final-comparison {
+  0%, 73% { opacity: 0; }
+  87%, 100% { opacity: 0.8; }
+}
+
+@keyframes timeline-scrub {
+  0%, 12% { transform: translate(54px, 554px); }
+  42%, 57% { transform: translate(480px, 554px); }
+  87%, 100% { transform: translate(906px, 554px); }
+}
+
+@keyframes timeline-fill {
+  0%, 12% { stroke-dashoffset: 1; }
+  42%, 57% { stroke-dashoffset: 0.5; }
+  87%, 100% { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame[data-playing="true"] * {
+    animation: none !important;
+  }
+}

@@ -490,3 +490,37 @@ html.cursor-orb-active * {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* Hyundai's light case is scoped to the mounted article. The root tokens
+   also reach the shared nav, footer and cursor on the first server paint;
+   leaving the case restores the site's palette without saved preferences. */
+html:has([data-project-theme="light"]) {
+  --color-paper: #FCFCFD;
+  --color-cream: #F0F3F6;
+  --color-line: #D6DEE5;
+  --color-ink: #152330;
+  --color-mute: #4C5B6A;
+  --color-soft: #63707C;
+  --project-accent: #004B78;
+  color-scheme: light;
+}
+
+html:has([data-project-theme="light"]) body {
+  background-image: none;
+}
+
+html:has([data-project-theme="light"]) :focus-visible {
+  outline-color: var(--project-accent);
+}
+
+[data-project-theme="light"] a:hover {
+  color: var(--project-accent);
+}
+
+[data-project-theme="light"] blockquote {
+  border-color: var(--project-accent);
+}
+
+[data-project-theme="light"] [role="note"] > span {
+  color: var(--project-accent);
+}

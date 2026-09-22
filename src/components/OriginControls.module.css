@@ -1,0 +1,263 @@
+/* A local specimen of Aspen Origin's Graphite tokens. Keep these aligned
+   with aspen-origin-release/public/design-system/tokens.css. */
+.playground {
+  --ap-color-text: #ededed;
+  --ap-color-muted: #ababab;
+  --ap-color-soft: #878787;
+  --ap-color-action: #d1d1d1;
+  --ap-color-line: #ffffff14;
+  --ap-color-inset: #202020;
+  --ap-color-control: #292929;
+  --ap-color-on-action: #242424;
+  --ap-surface-raised: #242424;
+  --ap-button-secondary-hover: #343434;
+  --ap-button-primary-well: #b9b9b9;
+  --ap-shadow-raised: 0 3px 7px #0005, inset 0 1px 1px #ffffff08;
+  --ap-shadow-inset: inset 0 2px 6px #0008, inset 0 -1px 1px #ffffff06;
+  --ap-shadow-button: 0 2px 2px #0002, 0 5px 14px #0001;
+  --ap-duration-press: 70ms;
+  --ap-duration-feedback: 180ms;
+  --ap-duration-enter: 240ms;
+  --ap-ease-enter: cubic-bezier(.22, 1, .36, 1);
+  --ap-ease-feedback: cubic-bezier(.2, .8, .2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+  min-width: 0;
+  width: 100%;
+  color: var(--ap-color-text);
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.heading p {
+  margin: 0;
+  color: var(--ap-color-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.heading > span {
+  display: block;
+  margin-top: 7px;
+  color: var(--ap-color-soft);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.segmentTrack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--ap-color-inset);
+  box-shadow: var(--ap-shadow-inset);
+}
+
+.segment {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 5px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ap-color-soft);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color var(--ap-duration-feedback), color var(--ap-duration-feedback), transform var(--ap-duration-feedback) var(--ap-ease-feedback), box-shadow var(--ap-duration-feedback);
+}
+
+.segment[aria-pressed="true"] {
+  border-color: var(--ap-color-line);
+  background: var(--ap-color-control);
+  color: var(--ap-color-text);
+  box-shadow: var(--ap-shadow-raised);
+}
+
+.segment:active {
+  transform: translateY(1px);
+  transition-duration: var(--ap-duration-press);
+}
+
+.motionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 76px;
+  padding: 12px 13px 12px 16px;
+  border: 1px solid var(--ap-color-line);
+  border-radius: 16px;
+  background: var(--ap-surface-raised);
+  box-shadow: var(--ap-shadow-raised);
+}
+
+.motionCopy { min-width: 0; }
+.motionCopy > span { font-size: 13px; font-weight: 500; line-height: 1.5; }
+
+.motionCopy p {
+  margin: 4px 0 0;
+  color: var(--ap-color-soft);
+  font-size: 10px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.switch {
+  display: inline-flex;
+  flex: 0 0 48px;
+  align-items: center;
+  min-height: 44px;
+  width: 48px;
+  padding: 3px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.switchTrack {
+  display: block;
+  width: 42px;
+  height: 24px;
+  padding: 3px;
+  border-radius: 24px;
+  background: var(--ap-color-control);
+  box-shadow: var(--ap-shadow-inset);
+  transition: background-color var(--ap-duration-feedback);
+}
+
+.switchThumb {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ap-color-muted);
+  color: var(--ap-color-control);
+  transition: transform var(--ap-duration-feedback) var(--ap-ease-feedback), background-color var(--ap-duration-feedback);
+}
+
+.switch[aria-checked="true"] .switchTrack { background: var(--ap-color-action); }
+.switch[aria-checked="true"] .switchThumb {
+  transform: translateX(18px);
+  background: var(--ap-color-on-action);
+  color: var(--ap-color-action);
+}
+
+.primary {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 15px 8px 8px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--ap-color-action);
+  color: var(--ap-color-on-action);
+  box-shadow: var(--ap-shadow-button), inset 0 1px 0 #ffffff20;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -.015em;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color var(--ap-duration-feedback), transform var(--ap-duration-enter) var(--ap-ease-enter), box-shadow var(--ap-duration-feedback);
+}
+
+.iconWell {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  margin-right: auto;
+  border-radius: 50%;
+  background: var(--ap-button-primary-well);
+  box-shadow: inset 0 1px 2px #00000014;
+}
+
+.pressMark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 24px;
+  min-width: 24px;
+  margin-left: auto;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 17px;
+  opacity: .6;
+}
+
+.primary:active {
+  transform: translateY(2px) scale(.98);
+  box-shadow: none;
+  transition-duration: var(--ap-duration-press);
+}
+
+.check { animation: confirm-enter var(--ap-duration-enter) var(--ap-ease-enter) both; }
+
+.result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 42px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ap-color-line);
+  color: var(--ap-color-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.resultState { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
+.resultState[data-tested="true"] { animation: confirm-enter var(--ap-duration-enter) var(--ap-ease-enter) both; color: var(--ap-color-text); }
+.resultIcon { display: grid; place-items: center; flex: 0 0 14px; width: 14px; }
+.readyDot { width: 4px; height: 4px; border-radius: 50%; background: var(--ap-color-soft); }
+.separator { padding-inline: 3px; color: var(--ap-color-soft); }
+.resultLabel { flex: 0 0 auto; color: var(--ap-color-soft); font-size: 8px; letter-spacing: .1em; }
+
+.segment:focus-visible,
+.switch:focus-visible,
+.primary:focus-visible {
+  outline: 2px solid var(--ap-color-action);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) {
+  .segment:hover { color: var(--ap-color-text); }
+  .segment[aria-pressed="true"]:hover { background: var(--ap-button-secondary-hover); }
+  .primary:hover { background: var(--ap-color-text); }
+  .switch:hover .switchTrack { background: var(--ap-button-secondary-hover); }
+  .switch[aria-checked="true"]:hover .switchTrack { background: var(--ap-color-text); }
+}
+
+@keyframes confirm-enter {
+  from { opacity: .35; transform: translateY(4px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.playground[data-motion="false"] .primary { transition: none; transform: none; }
+.playground[data-motion="false"] .check,
+.playground[data-motion="false"] .resultState { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .playground *, .playground *::before, .playground *::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .switch[aria-checked="true"] .switchThumb { transform: translateX(18px) !important; }
+}

@@ -1,0 +1,38 @@
+.portrait {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  right: -245px;
+  width: max-content;
+  max-width: none;
+  transform: translateY(-50%);
+  opacity: .22;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  /* Reveal the forehead, jaw, and shoulder while retaining a soft
+     left edge behind the headline. Breathing belongs to the canvas. */
+  -webkit-mask-image: radial-gradient(73% 70% at 55% 46%, #000 55%, transparent 93%);
+  mask-image: radial-gradient(73% 70% at 55% 46%, #000 55%, transparent 93%);
+}
+
+.canvas {
+  display: block;
+  max-width: none;
+  height: auto;
+}
+
+@media (min-width: 640px) {
+  .portrait {
+    right: -75px;
+    opacity: .95;
+  }
+}
+
+@media (min-width: 1024px) {
+  .portrait { right: -25px; }
+}
+
+@media (min-width: 1440px) {
+  .portrait { right: 0; }
+}

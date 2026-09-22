@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "next-intl";
 import { motion } from "motion/react";
 
 type Direction = "forward" | "reverse" | null;
@@ -35,6 +36,32 @@ function Arrow({ direction }: { direction: "right" | "left" }) {
 
 export function LoopDiagram() {
   const [active, setActive] = useState<Direction>(null);
+  const cn = useLocale() === "cn";
+  const copy = cn
+    ? {
+        role: "创始设计工程师",
+        engineer: "工程团队",
+        partner: "首席工程师",
+        forward: "设计 → 工程",
+        reverse: "工程 → 设计",
+        forwardDetail: "设计意图 → 前端实现 → PR 与运行预览",
+        reverseDetail: "技术约束与实现反馈 → 更新设计与交互",
+        forwardHint: "用可运行的前端和 PR 交付设计",
+        reverseHint: "将工程反馈带回产品体验",
+        idleHint: "聚焦任一方向，查看协作过程",
+      }
+    : {
+        role: "Founding Design Engineer",
+        engineer: "Engineering",
+        partner: "Lead engineer",
+        forward: "Design → engineering",
+        reverse: "Engineering → design",
+        forwardDetail: "Design intent → frontend implementation → PR & preview",
+        reverseDetail: "Constraints & implementation feedback → updated design",
+        forwardHint: "Deliver design through working frontend and PRs",
+        reverseHint: "Bring engineering feedback back into the experience",
+        idleHint: "Focus either direction to explore the collaboration",
+      };
 
   return (
     <div className="card-material p-6 sm:p-8">
@@ -42,18 +69,18 @@ export function LoopDiagram() {
       <div className="grid grid-cols-2 gap-6 mb-7">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft mb-1.5">
-            Designer
+            {copy.role}
           </p>
-          <p className="font-display text-[22px] sm:text-[24px] tracking-[-0.01em] text-ink leading-tight">
+          <p className="font-display text-[20px] sm:text-[24px] tracking-[-0.01em] text-ink leading-tight">
             Aspen
           </p>
         </div>
         <div className="text-right">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft mb-1.5">
-            Lead engineer
+            {copy.partner}
           </p>
-          <p className="font-display text-[22px] sm:text-[24px] tracking-[-0.01em] text-ink leading-tight">
-            Jesus
+          <p className="font-display text-[20px] sm:text-[24px] tracking-[-0.01em] text-ink leading-tight">
+            {copy.engineer}
           </p>
         </div>
       </div>
@@ -69,11 +96,11 @@ export function LoopDiagram() {
         transition={{ duration: 0.3 }}
         className="block w-full text-left mb-5 cursor-pointer outline-none"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Dot filled active={active === "forward"} />
           <div className="h-px flex-1 bg-ink/70" />
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink whitespace-nowrap shrink-0">
-            Forward
+            {copy.forward}
           </span>
           <div className="h-px flex-1 bg-ink/70" />
           <Arrow direction="right" />
@@ -84,7 +111,7 @@ export function LoopDiagram() {
             active === "forward" ? "text-ink" : "text-mute"
           }`}
         >
-          3 zones · 2 paths · branches die in 1–3 days
+          {copy.forwardDetail}
         </p>
       </motion.button>
 
@@ -99,12 +126,12 @@ export function LoopDiagram() {
         transition={{ duration: 0.3 }}
         className="block w-full text-left cursor-pointer outline-none"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Dot filled={false} active={active === "reverse"} />
           <Arrow direction="left" />
           <div className="h-px flex-1 bg-ink/70" />
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink whitespace-nowrap shrink-0">
-            Reverse
+            {copy.reverse}
           </span>
           <div className="h-px flex-1 bg-ink/70" />
           <Dot filled active={active === "reverse"} />
@@ -114,7 +141,7 @@ export function LoopDiagram() {
             active === "reverse" ? "text-ink" : "text-mute"
           }`}
         >
-          /audit-changes · 4 tiers · halt-as-feature
+          {copy.reverseDetail}
         </p>
       </motion.button>
 
@@ -127,9 +154,9 @@ export function LoopDiagram() {
           transition={{ duration: 0.25 }}
           className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft"
         >
-          {active === "forward" && "Designer ships → engineer routes by tier"}
-          {active === "reverse" && "Engineer audits → designer escalates on halt"}
-          {active === null && "Hover a flow to focus the protocol"}
+          {active === "forward" && copy.forwardHint}
+          {active === "reverse" && copy.reverseHint}
+          {active === null && copy.idleHint}
         </motion.p>
       </div>
     </div>

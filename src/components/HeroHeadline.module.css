@@ -1,0 +1,70 @@
+.headline {
+  font-size: clamp(42px, 6.05vw, 92px);
+  color: rgb(244 244 242 / 90%);
+}
+
+.firstLine {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 0.2em;
+  row-gap: 0.04em;
+  padding-top: 0.08em;
+}
+
+.discipline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15em;
+  white-space: nowrap;
+}
+
+.heart {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  font-size: 0.48em;
+  line-height: 1;
+  align-self: center;
+  transform: translateY(-0.04em);
+}
+
+.icon {
+  display: inline-grid;
+  place-items: center;
+  width: 0.66em;
+  height: 0.66em;
+  flex-shrink: 0;
+  border: 1px solid #424247;
+  border-radius: 0.13em;
+  background: #1a1a1c;
+  color: #dbdbd7;
+  transform: translateY(-0.04em);
+  transition: transform 240ms var(--ease-arrive), border-color 240ms;
+}
+
+.icon svg { width: 76%; height: 76%; }
+.design { transform: translateY(-0.04em) rotate(-7deg); }
+.code { transform: translateY(-0.04em) rotate(6deg); }
+.discipline:hover .icon { transform: translateY(-0.08em) rotate(0); border-color: #8a8a8e; }
+.handles { opacity: 0.4; }
+.curve { stroke-dasharray: 1; animation: draw-curve 1100ms 650ms both; }
+.bracketLeft { animation: bracket-left 750ms 650ms both; }
+.bracketRight { animation: bracket-right 750ms 650ms both; }
+.slash { animation: slash-in 500ms 950ms both; }
+
+@keyframes draw-curve { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes bracket-left { from { transform: translateX(5px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes bracket-right { from { transform: translateX(-5px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes slash-in { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 639px) {
+  .headline { font-size: clamp(40px, 10.4vw, 62px); }
+  :global(html[lang="zh-CN"]) .headline { font-size: clamp(32px, 8.8vw, 48px); }
+  .firstLine { column-gap: 0.2em; row-gap: 0.08em; }
+  .icon { width: 0.6em; height: 0.6em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon { transition: none; }
+  .curve, .bracketLeft, .bracketRight, .slash { animation: none; }
+  .discipline:hover .icon { transform: translateY(-0.04em); }
+}

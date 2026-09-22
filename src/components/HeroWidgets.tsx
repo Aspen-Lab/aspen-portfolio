@@ -150,28 +150,29 @@ function CompanyItem({ name, node, echo }: { name: string; node: ReactNode; echo
   );
 }
 
-/* ─── Inventory slot ─────────────────────────────────────────────────────
-   A hairline square holding one tool's mark, with a mono folio in the
-   corner. Hovering (or focusing) lights the mark and the frame and puts
-   the tool's line — name · type — flavor — on the readout under the row.
-   The recessed wells, keycaps, glows and the RPG item card are gone;
-   rarity survives only as a word in that line. */
+/* Tool marks share a readable explanation below. Hover previews it;
+   selecting a tool keeps its explanation available on touch screens. */
 
-function InventorySlot({ name, index, active, onEnter, onLeave }: {
+function InventorySlot({ name, index, active, selected, label, descriptionId, onEnter, onLeave, onFocus, onBlur, onSelect }: {
   name: string; index: number; active: boolean;
+  selected: boolean; label: string; descriptionId?: string;
   onEnter: () => void; onLeave: () => void;
+  onFocus: () => void; onBlur: () => void; onSelect: () => void;
 }) {
   return (
-    <div
-      className={`relative grid place-items-center w-10 h-10 sm:w-11 sm:h-11 border transition-colors duration-300 ${
+    <button
+      type="button"
+      className={`relative grid place-items-center w-11 h-11 border cursor-pointer transition-colors duration-200 motion-reduce:transition-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-ink focus-visible:outline-offset-2 ${
         active ? "border-ink/45 text-ink" : "border-line text-soft"
       }`}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      onFocus={onEnter}
-      onBlur={onLeave}
-      tabIndex={0}
-      aria-label={name}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onClick={onSelect}
+      aria-label={label}
+      aria-pressed={selected}
+      aria-describedby={descriptionId}
     >
       <span
         aria-hidden
@@ -180,7 +181,7 @@ function InventorySlot({ name, index, active, onEnter, onLeave }: {
         {index + 1}
       </span>
       <span className="[&>svg]:w-[18px] [&>svg]:h-[18px]">{icons[name]}</span>
-    </div>
+    </button>
   );
 }
 
@@ -192,7 +193,11 @@ const enterDelay = (s: number) => ({ "--d": `${s}s` }) as CSSProperties;
 /* ─── Widget ────────────────────────────────────────────────────────────── */
 export function HeroWidgets() {
   const t = useTranslations("Hero");
-  const [tip, setTip] = useState<string | null>(null);
+  const [hoveredTool, setHoveredTool] = useState<string | null>(null);
+  const [focusedTool, setFocusedTool] = useState<string | null>(null);
+  const [selectedTool, setSelectedTool] = useState<string | null>(null);
+  const descriptionId = useId();
+  const tip = hoveredTool ?? focusedTool ?? selectedTool;
 
   return (
     <div className="mt-8 sm:mt-10">
@@ -201,7 +206,7 @@ export function HeroWidgets() {
           word rise was tried here and cut; the line fades up as one.) */}
       <p
         className="hero-fade-up text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
-        style={{ ...enterDelay(0.38), color: "rgba(160,160,165,0.72)" }}
+        style={{ ...enterDelay(0.62), color: "rgba(160,160,165,0.72)" }}
       >
         {t.rich("bio", {
           lead: (chunks: ReactNode) => <span className="font-medium text-ink/90">{chunks}</span>,
@@ -244,8 +249,8 @@ export function HeroWidgets() {
         })}
       </p>
 
-      {/* Inventory — eight hairline squares on the paper, one readout line */}
-      <div className="hero-fade-up mt-8 sm:mt-9" style={enterDelay(0.5)}>
+      {/* Toolbox — usage depth and a concrete scope for each tool. */}
+      <div className="hero-fade-up mt-8 sm:mt-9" style={enterDelay(0.76)}>
         <div className="max-sm:overflow-x-auto no-scrollbar" role="group" aria-label={t("invLabel")}>
           <div className="flex items-center gap-2 w-max">
             {TOOLS.map((name, i) => (
@@ -254,27 +259,38 @@ export function HeroWidgets() {
                 name={name}
                 index={i}
                 active={tip === name}
-                onEnter={() => setTip(name)}
-                onLeave={() => setTip(null)}
+                selected={selectedTool === name}
+                label={`${name} — ${t(`inv.${name}.level`)}`}
+                descriptionId={tip === name ? descriptionId : undefined}
+                onEnter={() => setHoveredTool(name)}
+                onLeave={() => setHoveredTool(null)}
+                onFocus={() => setFocusedTool(name)}
+                onBlur={() => setFocusedTool(null)}
+                onSelect={() => setSelectedTool(selectedTool === name ? null : name)}
               />
             ))}
           </div>
         </div>
-        <p className="mt-3 min-h-[1.25rem] font-mono text-[10px] uppercase tracking-[0.18em] text-soft">
+        <div id={descriptionId} className="mt-3 min-h-[5rem] sm:min-h-[3.75rem] max-w-[560px]">
           {tip ? (
             <>
-              <span className="text-ink">{tip}</span>
-              <span className="text-soft/55"> · {t(`inv.${tip}.type`)} · {t(`inv.${tip}.rarity`)}</span>
-              <span className="normal-case tracking-[0.02em] text-[11px] text-mute"> — {t(`inv.${tip}.flavor`)}</span>
+              <p className="flex items-baseline gap-3 font-mono text-[10px] uppercase tracking-[0.12em]">
+                <span className="text-ink">{tip}</span>
+                <span className="border-l border-line pl-3 text-mute">{t(`inv.${tip}.level`)}</span>
+              </p>
+              <p className="mt-1.5 text-[12px] leading-[1.6] text-mute">{t(`inv.${tip}.description`)}</p>
             </>
           ) : (
-            <span className="text-soft/55">{t("invLabel")} · 08</span>
+            <>
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft">{t("invLabel")} · 08</p>
+              <p className="mt-1.5 text-[12px] leading-[1.6] text-mute">{t("invHint")}</p>
+            </>
           )}
-        </p>
+        </div>
       </div>
 
       {/* Companies — infinite scrolling ticker */}
-      <div className="hero-fade-up mt-9 sm:mt-10 -mx-4 sm:mx-0" style={enterDelay(0.6)}>
+      <div className="hero-fade-up mt-9 sm:mt-10 -mx-4 sm:mx-0" style={enterDelay(0.86)}>
         <div
           className="logo-ticker-wrap overflow-hidden"
           style={{

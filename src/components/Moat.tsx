@@ -266,12 +266,12 @@ export function Moat({ inPage = false }: { inPage?: boolean }) {
   const Icon = ICONS[active];
 
   return (
-    <section id="combo" className={inPage ? "pb-8" : "container-fluid pt-14 pb-32"}>
+    <section id="combo" className={inPage ? "pb-8 scroll-mt-28" : "container-fluid pt-14 pb-32 scroll-mt-28"}>
       <Reveal>
-        <p className="text-[18px] text-mute leading-[1.6] max-w-2xl mb-12">
+        <p className="type-display text-ink leading-[1.15] max-w-3xl mb-12" style={{ fontSize: "clamp(30px, 4.2vw, 54px)" }}>
           {t.rich("intro", {
             i: (chunks: ReactNode) => <span className="italic text-ink">{chunks}</span>,
-            ink: (chunks: ReactNode) => <span className="text-ink">{chunks}</span>,
+            ink: (chunks: ReactNode) => <span className="block mt-5 font-sans text-[18px] sm:text-[21px] leading-relaxed text-mute tracking-normal">{chunks}</span>,
           })}
         </p>
       </Reveal>

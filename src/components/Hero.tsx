@@ -2,6 +2,8 @@ import { useTranslations } from "next-intl";
 import { AvatarDots } from "./AvatarDots";
 import { HeroHeadline } from "./HeroHeadline";
 import { HeroWidgets } from "./HeroWidgets";
+import { HeroPlayground } from "./HeroPlayground";
+import { HeroEntrance } from "./HeroEntrance";
 
 /* Flat paper, one texture. The hero carried a radial backlight and a
    vertical wash; both are gone — the page is a single dark tone with
@@ -12,7 +14,8 @@ export function Hero() {
 
   return (
     // select-none: the hero is display, not copy — Aspen: 「这些文字是不能选中的」
-    <section id="hero" className="relative overflow-hidden select-none">
+    <section id="hero" className="relative isolate overflow-hidden select-none">
+      <HeroEntrance />
       {/* No wash, no backlight: the paper stays flat and the only thing
           behind the words is the dot grid the portrait assembles out of.
           The grid is held around the face and fades before every edge, so
@@ -35,10 +38,13 @@ export function Hero() {
         />
       </div>
 
-      <div className="container-fluid relative flex flex-col justify-center pt-8 sm:pt-6 pb-10 sm:pb-14 sm:min-h-[calc(100svh-64px-58px)]">
+      <div className="container-fluid relative flex flex-col justify-center pt-7 sm:pt-6 pb-10 sm:pb-14 sm:min-h-[calc(100svh-64px-58px)]">
         <AvatarDots />
 
-        <div className="relative z-10 max-w-4xl">
+        <div className="relative z-10 mb-5 sm:mb-7">
+          <HeroPlayground />
+        </div>
+        <div className="relative z-10 max-w-6xl">
           <HeroHeadline
             line2={t("headlineLine2")}
             line3a={t("headlineLine3a")}

@@ -1,20 +1,16 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import {
-  Activity,
+  ArrowDown,
   Award,
+  FlaskConical,
   Briefcase,
-  Building2,
   Camera,
   ChefHat,
-  GraduationCap,
   Layers,
-  MapPin,
   Monitor,
   Music,
-  Rocket,
   Sun,
-  UserRound,
 } from "lucide-react";
 import { siTiktok } from "simple-icons";
 import { moreWork, awards } from "@/lib/work";
@@ -25,16 +21,11 @@ import { SectionHead } from "@/components/SectionHead";
 import { PhotoReel, type Frame } from "@/components/PhotoReel";
 import { Moat } from "@/components/Moat";
 
-/* The About page in the home page's language, with more to touch.
-   It used to boot: a loader, a page-entrance wipe, a bevelled ASPEN_W
-   window with dots and grooves, glyphs in lit wells, sunken photo tiles
-   with an "Inspect" pill that inspected nothing. Aspen: 「about 也是同样
-   的设计，但是 rich in UX and icons visual」. So: the same flat paper,
-   hairlines, folio heads and Newsreader statement as the home page —
-   and, on top of it, a glyph on every head, a dossier with an icon per
-   line, the trajectory's actual org marks, and photo reels whose frames
-   open in a full-size viewfinder. Every fact, photo and caption is the
-   one that was here before. */
+import { AboutProfile } from "@/components/about/AboutProfile";
+import { CapabilityCards } from "@/components/about/CapabilityCards";
+import { AwardCards } from "@/components/about/AwardCards";
+import { PastWorkCards } from "@/components/about/PastWorkCards";
+import styles from "./about.module.css";
 
 export async function generateMetadata({
   params,
@@ -47,8 +38,8 @@ export async function generateMetadata({
   return pageMeta(locale, "/about", {
     title: cn ? "关于 — Aspen W." : "About — Aspen W.",
     description: cn
-      ? "一半是设计师，一半是心理学者，永远在交付。Aspen W. 是 Georgia Tech 双学位学生，目前在 Axel(Gordian, YC W19)担任 Design Engineer，直接向 CEO 汇报。"
-      : "Half designer, half psychologist, always shipping. Aspen W. — dual-degree at Georgia Tech, currently a Design Engineer at Axel (Gordian, YC W19), reporting directly to the CEO.",
+      ? "Aspen W. 是 Axel（Gordian, YC W19）的创始设计工程师，负责前端 PR、设计与工程协作、品牌视觉、广告 Campaign、邮件和测试。Georgia Tech 工业设计与心理学双学位背景。"
+      : "Founding Design Engineer at Axel (YC W19). I ship frontend PRs and connect design, engineering, brand, and growth. Georgia Tech design and psychology background.",
   });
 }
 
@@ -69,19 +60,19 @@ const CAPABILITIES: ReadonlyArray<{ name: Bi; tag: Bi; desc: Bi; icon: CapIcon }
   },
   {
     name: { en: "Design Engineering", cn: "设计工程" },
-    tag: { en: "React · production", cn: "React · 生产环境" },
+    tag: { en: "frontend · PRs", cn: "前端 · PR 交付" },
     desc: {
-      en: "I ship my own design as PRs — same tokens, components, and stack as the team.",
-      cn: "我把自己的设计直接作为 PR 交付 —— token、组件、技术栈和团队保持一致。",
+      en: "I own frontend delivery and ship production PRs, turning designs into code and engineering feedback into better design. AI coding tools help me build, test, and iterate quickly.",
+      cn: "负责前端交付，直接提交生产代码 PR。把设计变成代码，也把工程反馈带回设计，用 AI 编程工具加速实现、测试和迭代。",
     },
     icon: "code",
   },
   {
     name: { en: "Brand & Visual", cn: "品牌与视觉" },
-    tag: { en: "identity · motion", cn: "identity · motion" },
+    tag: { en: "campaigns · email", cn: "广告 · 邮件" },
     desc: {
-      en: "Type, systems, packaging, motion — from CDC packaging to product marks.",
-      cn: "字体、系统、包装、动效 —— 从 CDC 包装到产品标识。",
+      en: "Brand identity, core ad campaigns, and email experiences — keeping the product's visual language consistent wherever people meet it.",
+      cn: "从品牌视觉到核心广告 Campaign 与邮件体验，让用户在每个触点都能感受到一致的产品语言。",
     },
     icon: "brand",
   },
@@ -101,7 +92,7 @@ type Mark = { kind: "img"; src: string; h: number } | { kind: "si"; path: string
 const TRAJECTORY: ReadonlyArray<{ org: string; role: Bi; period: Bi; mark: Mark }> = [
   {
     org: "Axel · Gordian (YC W19)",
-    role: { en: "Sole Designer · reports to CEO", cn: "唯一设计师 · 直接汇报 CEO" },
+    role: { en: "Founding Design Engineer · Full-time", cn: "创始设计工程师 · 全职" },
     period: { en: "Dec 2025 — Now", cn: "2025.12 — 至今" },
     mark: { kind: "img", src: "/logos/axel.svg", h: 12 },
   },
@@ -261,49 +252,6 @@ const REELS: ReadonlyArray<{ key: string; title: Bi; icon: ReactNode; intro?: Bi
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-function CapabilityGlyph({ icon }: { icon: CapIcon }) {
-  const common = {
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 1.5,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    className: "w-6 h-6",
-    "aria-hidden": true,
-  };
-  switch (icon) {
-    case "design":
-      return (
-        <svg {...common}>
-          <rect x="3" y="3" width="18" height="18" rx="1.5" />
-          <path d="M3 9h18M9 21V9" />
-        </svg>
-      );
-    case "code":
-      return (
-        <svg {...common}>
-          <path d="M9 8l-4 4 4 4M15 8l4 4-4 4M13 6l-2 12" />
-        </svg>
-      );
-    case "brand":
-      return (
-        <svg {...common}>
-          <path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z" />
-        </svg>
-      );
-    case "research":
-      return (
-        <svg {...common}>
-          <circle cx="6" cy="7" r="2" />
-          <circle cx="18" cy="6" r="2" />
-          <circle cx="11" cy="18" r="2" />
-          <path d="M7.7 8.2l2.4 8M7.9 6.7l8.2-.6" />
-        </svg>
-      );
-  }
-}
-
 /** An org's mark in a hairline square: its own artwork where one exists, its initials where not. */
 function OrgMark({ mark }: { mark: Mark }) {
   return (
@@ -324,8 +272,8 @@ function OrgMark({ mark }: { mark: Mark }) {
   );
 }
 
-function Block({ children }: { children: ReactNode }) {
-  return <div className="container-fluid pt-16 sm:pt-24">{children}</div>;
+function Block({ children, id }: { children: ReactNode; id?: string }) {
+  return <section id={id} className="container-fluid pt-16 sm:pt-24 scroll-mt-20">{children}</section>;
 }
 
 /* ─── Page ─────────────────────────────────────────────────────────── */
@@ -341,122 +289,75 @@ export default async function About({
   const localizedAwards = cn ? AWARDS_CN : awards;
   const localizedMoreWork = cn ? MORE_WORK_CN : moreWork;
 
-  const dossier: { icon: ReactNode; k: string; v: string }[] = [
-    { icon: <UserRound strokeWidth={1.5} />, k: cn ? "角色" : "Role", v: cn ? "设计工程师" : "Design Engineer" },
-    { icon: <Building2 strokeWidth={1.5} />, k: cn ? "公司" : "At", v: "Axel · YC W19" },
-    { icon: <GraduationCap strokeWidth={1.5} />, k: cn ? "教育" : "Edu", v: cn ? "GT — 工业设计 + 心理学" : "GT — ID + Psych" },
-    { icon: <MapPin strokeWidth={1.5} />, k: cn ? "所在地" : "Base", v: "Bellevue, WA" },
-    { icon: <Rocket strokeWidth={1.5} />, k: cn ? "创办" : "Founded", v: "XING Art · $300K" },
-    { icon: <Activity strokeWidth={1.5} />, k: cn ? "状态" : "State", v: cn ? "持续交付" : "Shipping" },
-  ];
-
   let folio = 0;
   const next = () => pad(++folio);
 
   return (
-    <article className="pb-24 sm:pb-32">
-      {/* ── 00 · Identity: the statement beside the dossier ── */}
+    <article className={`${styles.page} pb-24 sm:pb-32`}>
       <section className="container-fluid pt-10 sm:pt-16 lg:pt-20">
-        <div className="lg:grid lg:grid-cols-[1.15fr_1fr] lg:gap-16 xl:gap-24 lg:items-center">
+        <div className={styles.hero}>
           <Reveal>
-            <h1 className="type-display text-ink leading-[1.02]" style={{ fontSize: "clamp(40px, 5.2vw, 72px)" }}>
-              {cn ? "一半是设计师，" : "Half designer,"}
-              <br />
-              {cn ? "一半是心理学者，" : "half psychologist,"}
-              <br />
-              <span className="italic font-normal">{cn ? "永远在交付。" : "always shipping."}</span>
+            <p className={styles.eyebrow}>ASPEN W. <span>/</span> {cn ? "创始设计工程师" : "FOUNDING DESIGN ENGINEER"}</p>
+            <h1 className={`type-display ${styles.headline}`}>
+              {cn ? "设计有章法，" : "Design with intent."}<br />
+              {cn ? "代码能落地，" : "Build with care."}<br />
+              <span className="italic font-normal">{cn ? "好奇不设限。" : "Stay curious."}</span>
             </h1>
+            <p className={styles.intro}>
+              {cn
+                ? "在 Axel，把设计写成前端 PR，也把工程反馈带回设计。从产品体验到品牌、广告和邮件，亲手构思、实现、测试。"
+                : "At Axel, I turn design into frontend PRs and bring engineering feedback back into design. From product to brand, campaigns, and email — I design, build, and test."}
+            </p>
+            <a href="#about-capabilities" className={styles.explore}>{cn ? "认识我的不同面" : "A few sides of me"}<ArrowDown size={15} aria-hidden /></a>
           </Reveal>
-
-          {/* The dossier — a viewfinder, no box: corners, ticks, readouts, one icon a line */}
-          <Reveal delay={0.08}>
-            <div className="relative mt-12 lg:mt-0 px-6 py-9 sm:px-8 sm:py-10">
-              <span className="reg-mark tl" />
-              <span className="reg-mark tr" />
-              <span className="reg-mark br" />
-              <span className="reg-mark bl" />
-              <span className="vf-tick top" />
-              <span className="vf-tick bottom" />
-              <span className="vf-tick left" />
-              <span className="vf-tick right" />
-              <span className="absolute left-8 top-3 font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
-                ASPEN_W <span className="text-soft/50">·</span> {cn ? "档案" : "dossier"}
-              </span>
-              <span className="absolute right-8 top-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
-                <span aria-hidden className="relative flex w-1.5 h-1.5">
-                  <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
-                  <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
-                </span>
-                {cn ? "在线" : "Online"}
-              </span>
-
-              <dl className="mt-3 border-t border-line">
-                {dossier.map((d) => (
-                  <div key={d.k} className="group flex items-center gap-4 py-3.5 border-b border-line">
-                    <span aria-hidden className="text-soft transition-colors duration-300 group-hover:text-ink [&>svg]:w-4 [&>svg]:h-4">
-                      {d.icon}
-                    </span>
-                    <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft w-20 shrink-0">{d.k}</dt>
-                    <dd className="ml-auto text-right text-[14px] text-ink/90">{d.v}</dd>
-                  </div>
-                ))}
-              </dl>
-              <div className="mt-4 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-soft/55">
-                <span>LAT 47.6101 · LON −122.2015</span>
-                <span>{cn ? "REC · 1995 — 至今" : "REC · 1995 — PRESENT"}</span>
-              </div>
-            </div>
-          </Reveal>
+          <Reveal delay={0.08}><AboutProfile cn={cn} /></Reveal>
         </div>
+        <nav className={styles.jumpNav} aria-label={cn ? "关于页面导航" : "On this page"}>
+          {[
+            { id: "about-capabilities", label: cn ? "能力与小实验" : "Capabilities & play" },
+            { id: "about-trajectory", label: cn ? "职业轨迹" : "Trajectory" },
+            { id: "about-awards", label: cn ? "奖项与认可" : "Recognition" },
+            { id: "about-projects", label: cn ? "过往经历" : "Past work" },
+            { id: "about-life", label: cn ? "工作之外" : "Off the clock" },
+          ].map((item, index) => <a href={`#${item.id}`} key={item.id}><span>0{index + 1}</span>{item.label}<ArrowDown size={13} aria-hidden /></a>)}
+        </nav>
       </section>
 
-      {/* ── Capabilities ── */}
-      <Block>
-        <SectionHead folio={next()} title={cn ? "能力" : "Capabilities"} icon={<Layers strokeWidth={1.5} />} meta={pad(CAPABILITIES.length)} />
-        <ul className="grid grid-cols-1 sm:grid-cols-2 border-t border-l border-line">
-          {CAPABILITIES.map((c, i) => (
-            <li key={c.icon} className="group border-b border-r border-line p-6 sm:p-8">
-              <Reveal delay={i * 0.05}>
-                <div className="flex items-start gap-5">
-                  <span className="grid place-items-center w-12 h-12 shrink-0 border border-line text-mute transition-colors duration-300 group-hover:text-ink group-hover:border-ink/40">
-                    <CapabilityGlyph icon={c.icon} />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-baseline justify-between gap-3">
-                      <h3 className="font-display font-semibold text-[17px] sm:text-[18px] tracking-[-0.01em] text-ink">{tr(c.name)}</h3>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-soft/60 whitespace-nowrap shrink-0">{tr(c.tag)}</span>
-                    </div>
-                    <p className="mt-2.5 text-[14px] leading-[1.65] text-mute max-w-[44ch]">{tr(c.desc)}</p>
-                  </div>
-                </div>
-              </Reveal>
-            </li>
-          ))}
-        </ul>
+      <Block id="about-capabilities">
+        <SectionHead folio={next()} title={cn ? "能力与小实验" : "Capabilities & play"} icon={<Layers strokeWidth={1.5} />} meta={pad(CAPABILITIES.length)} />
+        <aside className={styles.studyNote}>
+          <FlaskConical size={20} strokeWidth={1.5} aria-hidden />
+          <div>
+            <p className={styles.noteTitle}>{cn ? "可以动手玩的个人视觉练习" : "Personal visual studies. Made to play with."}</p>
+            <p>{cn
+              ? "本页的抽象 UI 卡片与交互小实验均为个人视觉练习，与本职工作无关，也不代表所列项目的真实界面或交付物。奖项和经历以各卡片下方文字为准。"
+              : "The abstract UI cards and interactive experiments on this page are independent personal visual studies, unrelated to my employment. They are not actual project screens or deliverables. Award and experience details appear separately below each visual."}</p>
+          </div>
+        </aside>
+        <CapabilityCards cn={cn} items={CAPABILITIES.map((c) => ({ icon: c.icon, name: tr(c.name), tag: tr(c.tag), desc: tr(c.desc) }))} />
       </Block>
 
       {/* ── Trajectory ── */}
-      <Block>
+      <Block id="about-trajectory">
         <SectionHead folio={next()} title={cn ? "轨迹" : "Trajectory"} icon={<Briefcase strokeWidth={1.5} />} meta={cn ? `${pad(TRAJECTORY.length)} 站` : `${pad(TRAJECTORY.length)} stops`} />
         <ol className="border-t border-line">
           {TRAJECTORY.map((e, i) => (
             <li key={e.org}>
               <Reveal delay={i * 0.04}>
-                <div className="group flex items-center gap-5 sm:gap-6 py-5 border-b border-line">
+                <div className="group grid grid-cols-[36px_minmax(0,1fr)] sm:grid-cols-[36px_minmax(0,1fr)_auto] items-center gap-x-4 sm:gap-x-6 gap-y-2 py-5 border-b border-line">
                   <OrgMark mark={e.mark} />
                   <div className="min-w-0 flex-1">
                     <p className="flex items-center gap-3 text-[15px] sm:text-[16px] text-ink tracking-[-0.005em]">
                       {e.org}
                       {i === 0 && (
                         <span aria-hidden className="relative flex w-1.5 h-1.5">
-                          <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
                           <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
                         </span>
                       )}
                     </p>
                     <p className="mt-1 text-[13.5px] leading-[1.5] text-mute">{tr(e.role)}</p>
                   </div>
-                  <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-soft whitespace-nowrap shrink-0">
+                  <span className="col-start-2 sm:col-start-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-soft whitespace-nowrap shrink-0">
                     {tr(e.period)}
                   </span>
                 </div>
@@ -466,9 +367,20 @@ export default async function About({
         </ol>
       </Block>
 
+      <Block id="about-awards">
+        <SectionHead folio={next()} title={cn ? "奖项与认可" : "Awards & recognition"} icon={<Award strokeWidth={1.5} />} meta={pad(localizedAwards.length)} />
+        <p className={styles.sectionNote}>{cn ? "记录一路获得的认可。卡片中的几何图形为个人抽象创作，不是奖项标志、奖杯或证书。" : "Recognition along the way. The geometric studies are personal artwork, not award logos, trophies, or certificates."}</p>
+        <AwardCards cn={cn} items={localizedAwards} />
+      </Block>
+
+      <Block id="about-projects">
+        <SectionHead folio={next()} title={cn ? "过往经历" : "Selected past work"} icon={<Briefcase strokeWidth={1.5} />} meta={pad(localizedMoreWork.length)} />
+        <PastWorkCards cn={cn} items={localizedMoreWork} />
+      </Block>
+
       {/* ── The reels ── */}
-      {REELS.map((r) => (
-        <Block key={r.key}>
+      {REELS.map((r, index) => (
+        <Block key={r.key} id={index === 0 ? "about-life" : undefined}>
           <SectionHead
             folio={next()}
             title={tr(r.title)}
@@ -495,56 +407,6 @@ export default async function About({
           </Reveal>
         </Block>
       ))}
-
-      {/* ── The line ── */}
-      <section className="container-fluid pt-20 sm:pt-28">
-        <Reveal>
-          <div className="border-t border-line pt-12 max-w-3xl">
-            <p className="type-display italic text-ink leading-[1.05]" style={{ fontSize: "clamp(30px, 4.5vw, 60px)" }}>
-              {cn ? "“我在等你看见我的潜力。”" : "“I'm waiting for you to find my potential.”"}
-            </p>
-            <p className="mt-6 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              {cn ? "—— Aspen, 21 岁" : "— Aspen, 21 yrs"}
-            </p>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ── Awards ── */}
-      <Block>
-        <SectionHead folio={next()} title={cn ? "奖项与认可" : "Awards & recognition"} icon={<Award strokeWidth={1.5} />} meta={pad(localizedAwards.length)} />
-        <ul className="border-t border-line max-w-3xl">
-          {localizedAwards.map((a, i) => (
-            <li key={a.title + a.project}>
-              <Reveal delay={i * 0.03}>
-                <div className="grid grid-cols-12 gap-3 items-baseline border-b border-line py-3.5 text-[14px]">
-                  <span className="col-span-12 sm:col-span-5 text-ink/90">{a.title}</span>
-                  <span className="col-span-7 sm:col-span-5 text-mute">{a.project}</span>
-                  <span className="col-span-5 sm:col-span-2 font-mono text-[11px] text-soft uppercase tracking-[0.14em] text-right tabular-nums">{a.year}</span>
-                </div>
-              </Reveal>
-            </li>
-          ))}
-        </ul>
-      </Block>
-
-      {/* ── Past work ── */}
-      <Block>
-        <SectionHead folio={next()} title={cn ? "更多过往作品" : "Selected past work"} icon={<Briefcase strokeWidth={1.5} />} meta={pad(localizedMoreWork.length)} />
-        <ul className="border-t border-line max-w-3xl">
-          {localizedMoreWork.map((m, i) => (
-            <li key={m.client}>
-              <Reveal delay={i * 0.03}>
-                <div className="grid grid-cols-12 gap-3 items-baseline border-b border-line py-3.5 text-[14px]">
-                  <span className="col-span-12 sm:col-span-5 text-ink/90">{m.client}</span>
-                  <span className="col-span-7 sm:col-span-4 text-mute">{m.role}</span>
-                  <span className="col-span-5 sm:col-span-3 font-mono text-[11px] text-soft uppercase tracking-[0.14em] text-right">{m.period}</span>
-                </div>
-              </Reveal>
-            </li>
-          ))}
-        </ul>
-      </Block>
 
       {/* ── The combo — six proof points, moved here from the home page ── */}
       <Block>

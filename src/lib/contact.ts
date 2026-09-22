@@ -7,7 +7,7 @@ export const socials = [
   {
     platform: "LinkedIn",
     handle: "aspen-w",
-    href: "https://linkedin.com/in/aspen-w",
+    href: "https://www.linkedin.com/in/aspen-w-9486b321a/",
   },
   {
     platform: "GitHub",

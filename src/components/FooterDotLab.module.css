@@ -1,0 +1,147 @@
+.lab {
+  width: 100%;
+  min-width: 0;
+  max-width: 360px;
+  color: var(--color-ink);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-soft);
+  font-size: 9px;
+  line-height: 1.5;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.heading > span:last-child { font-size: 8px; font-variant-numeric: tabular-nums; }
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  margin-block: 7px 3px;
+}
+
+.ghosts { fill: var(--color-soft); opacity: .2; }
+.dot { fill: var(--color-ink); }
+
+.pattern[data-reassemble="false"] {
+  animation: pattern-arrive 280ms cubic-bezier(.22,.61,.36,1) both;
+}
+
+.pattern[data-reassemble="true"] .dot {
+  animation: reassemble 920ms cubic-bezier(.22,.61,.36,1) var(--scatter-delay) both;
+}
+
+.patterns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.patternButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 5px;
+  border: 0;
+  border-bottom: 1px solid var(--color-line);
+  background: transparent;
+  color: var(--color-soft);
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color 180ms ease, border-color 180ms ease;
+}
+
+.patternButton > svg { flex: 0 0 auto; }
+.patternButton:hover { color: var(--color-ink); }
+.patternButton[aria-pressed="true"] { color: var(--color-ink); border-bottom-color: var(--color-mute); }
+
+.readout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  min-height: 48px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--color-soft);
+  font-size: 9px;
+  line-height: 1.5;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.statusDot {
+  display: inline-block;
+  flex: 0 0 3px;
+  width: 3px;
+  height: 3px;
+  margin-right: 2px;
+  border-radius: 50%;
+  background: var(--color-mute);
+}
+
+.slash { padding-inline: 1px; color: var(--color-soft); opacity: .65; }
+
+.reassemble {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 0 8px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--color-mute);
+  font-size: 10px;
+  line-height: 1.5;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color 180ms ease;
+}
+
+.reassemble:hover { color: var(--color-ink); }
+.reassemble > svg { transition: transform 180ms ease; }
+.reassemble:active > svg { transform: rotate(-30deg); }
+
+.patternButton:focus-visible,
+.reassemble:focus-visible {
+  outline: 1px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+@keyframes pattern-arrive {
+  from { opacity: .2; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes reassemble {
+  0% { transform: translate(0, 0); opacity: 1; }
+  30% { transform: translate(var(--scatter-x), var(--scatter-y)); opacity: .23; }
+  44% { transform: translate(var(--scatter-x), var(--scatter-y)); opacity: .4; }
+  100% { transform: translate(0, 0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pattern, .pattern .dot { animation: none !important; }
+  .patternButton, .reassemble, .reassemble > svg { transition: none; }
+  .reassemble:active > svg { transform: none; }
+}
