@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
 import { designSystem as ds } from "@/lib/work";
-import { DOT_WELL } from "@/lib/tactile";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 
@@ -70,25 +69,14 @@ export function DesignSystem() {
               after the link in the DOM and is positioned, so it would paint
               over the stretched link and swallow clicks on the picture. */}
           <div className="order-1 lg:order-2 pointer-events-none plate-figure border-b border-line lg:border-b-0 lg:border-l">
-            <div
-              className="flex h-8 items-center justify-between gap-3 px-3.5 font-mono text-[10px]"
-              style={{
-                background: "rgba(0,0,0,0.3)",
-                boxShadow: "inset 0 -1px 0 rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.03)",
-              }}
-            >
-              <span className="flex min-w-0 items-center gap-2.5">
-                <span className="flex shrink-0 gap-1" aria-hidden>
-                  <span className="w-[8px] h-[8px] rounded-full" style={DOT_WELL} />
-                  <span className="w-[8px] h-[8px] rounded-full" style={DOT_WELL} />
-                  <span className="w-[8px] h-[8px] rounded-full" style={DOT_WELL} />
-                </span>
-                <span className="truncate tracking-[0.04em] text-soft">
-                  {address.hostname.replace(/^www\./, "")}
-                  {address.pathname}
-                </span>
+            {/* The address line: one hairline under a mono readout — no
+                window dots, no inset bar. */}
+            <div className="flex h-9 items-center justify-between gap-3 px-4 font-mono text-[10px] uppercase tracking-[0.18em] border-b border-line">
+              <span className="truncate text-soft">
+                {address.hostname.replace(/^www\./, "")}
+                <span className="text-soft/55">{address.pathname}</span>
               </span>
-              <span className="shrink-0 uppercase tracking-[0.16em] text-mute">v{ds.version}</span>
+              <span className="shrink-0 text-soft/70">v{ds.version}</span>
             </div>
             <Image
               src={ds.thumb}
