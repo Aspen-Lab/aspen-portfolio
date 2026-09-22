@@ -18,8 +18,6 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 
 const LOCK_SELECTOR =
   'a, button, [role="button"], input, textarea, select, label, summary';
-const TEXT_SELECTOR =
-  "p, h1, h2, h3, h4, h5, h6, li, blockquote, dt, dd, figcaption";
 
 /** Breathing room between a target's box and its registration corners. */
 const PAD = 4;
@@ -124,18 +122,8 @@ export function CursorOrb() {
       }
       lockEl = null;
       bracket.dataset.on = "0";
-      // Over readable text the reticle collapses to a caret bar sized to
-      // the text's line height.
-      const textEl = t?.closest?.(TEXT_SELECTOR);
-      if (textEl && textEl.textContent && textEl.textContent.trim()) {
-        const cs = getComputedStyle(textEl);
-        let lh = parseFloat(cs.lineHeight);
-        if (!Number.isFinite(lh)) lh = parseFloat(cs.fontSize) * 1.2 || 28;
-        lh = Math.max(20, Math.min(64, Math.round(lh)));
-        el.style.setProperty("--caret-h", `${lh}px`);
-        el.dataset.mode = "text";
-        return;
-      }
+      // Over text the crosshair stays a crosshair (the caret bar it used
+      // to become was cut: 「cursor 不要变成竖线」).
       el.dataset.mode = "ball";
     };
 
@@ -185,14 +173,12 @@ export function CursorOrb() {
         <i className="bl" />
       </div>
 
-      {/* The pointer itself: four inward ticks around an open centre,
-          plus the caret bar it collapses to over text. */}
+      {/* The pointer itself: four inward ticks around an open centre. */}
       <div ref={ref} aria-hidden className="cursor-reticle" data-mode="ball" data-vis="0">
         <i className="t n" />
         <i className="t e" />
         <i className="t s" />
         <i className="t w" />
-        <i className="bar" />
       </div>
     </>
   );

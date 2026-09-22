@@ -404,7 +404,6 @@ button:not(:disabled) {
    WIDE     on a card or a CTA the same corners go on the element's box;
             the crosshair stays, because on a 576px plate the corners
             alone lose the pointer's x position
-   TEXT     one 1px bar at the element's line height
    PRESS    corner arms and padding step to 84%, the rest gap halves
 
    Nothing is ever anchored to the pointer while over a target — that is
@@ -444,22 +443,12 @@ html.cursor-orb-active * {
   display: block;
   transition: opacity 180ms var(--ease-arrive);
 }
-.cursor-reticle > .t,
-.cursor-reticle > .bar { background: var(--reticle-ink); }
+.cursor-reticle > .t { background: var(--reticle-ink); }
 
 .cursor-reticle > .n { left: 0; width: 1px; height: var(--l); top: calc(-1 * (var(--g) + var(--l))); }
 .cursor-reticle > .s { left: 0; width: 1px; height: var(--l); top: var(--g); }
 .cursor-reticle > .w { top: 0; height: 1px; width: var(--l); left: calc(-1 * (var(--g) + var(--l))); }
 .cursor-reticle > .e { top: 0; height: 1px; width: var(--l); left: var(--g); }
-
-/* CARET — over readable text */
-.cursor-reticle > .bar {
-  left: 0;
-  width: 1px;
-  height: var(--caret-h, 28px);
-  top: calc(-0.5 * var(--caret-h, 28px));
-  opacity: 0;
-}
 
 /* Registration corners, built like Latent's .vf__reg: an L of two 1px
    bars. --a is the arm length, sized from the target so short chips
@@ -490,8 +479,6 @@ html.cursor-orb-active * {
 /* Modes. On a small control the crosshair withdraws — the corners say
    where the pointer is and a crosshair would only sit on the label. */
 .cursor-reticle[data-mode="lock"] > .t { opacity: 0; }
-.cursor-reticle[data-mode="text"] > .t { opacity: 0; }
-.cursor-reticle[data-mode="text"] > .bar { opacity: 1; }
 
 /* PRESS — a flat 1-2px inset measured 2-4 device px on a 2x display and
    was unreadable; scaling the whole mark is what actually registers. */

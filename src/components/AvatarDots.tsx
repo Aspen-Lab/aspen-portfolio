@@ -151,10 +151,19 @@ export function AvatarDots() {
     const cur = { x: 0, y: 0, seeded: false };
     const vel = { x: 0, y: 0 };
     let amt = 0;              // the field's strength, eased on enter and leave
-    const R = 170;            // reach of the pull, px
-    const PULL = 14;          // px, the most a dot moves toward the pointer
+    const R = 170;            // reach of the field, px
+    const PULL = 12;          // px, the most a dot leans toward the pointer
     const CORE = 40;          // px, the soft centre: dots right under the pointer
-                              // barely move, so they never pile up and brighten
+                              // barely lean, so they never pile up and brighten
+    /* The dance (「点点在 cursor 跳舞」): inside the field every dot also
+       circles its own home — a small orbit whose phase is set by the
+       dot's distance from the pointer, so neighbours turn in sequence and
+       the whole field reads as rings revolving around the cursor. It runs
+       while the pointer is there and eases out when it leaves. Nothing
+       random: the same dot always dances the same way. */
+    const DANCE_AMP = 5;      // px, the orbit's radius at the field's centre
+    const DANCE_HZ = 0.8;     // turns per second
+    const DANCE_PHASE = 0.05; // radians of phase per px of distance
     const FOLLOW = 0.14;      // how fast the smoothed position chases the pointer
     const WAKE = 0.35;        // how much of the pointer's velocity the dots carry
     const onMove = (e: MouseEvent) => {
@@ -260,6 +269,9 @@ export function AvatarDots() {
             const k = (f * PULL) / (dist + CORE);
             ox += dx * k + vel.x * WAKE * f;
             oy += dy * k + vel.y * WAKE * f;
+            const ang = now * 0.001 * DANCE_HZ * TWO_PI + dist * DANCE_PHASE;
+            ox += Math.cos(ang) * DANCE_AMP * f;
+            oy += Math.sin(ang) * DANCE_AMP * f;
           }
         }
 
