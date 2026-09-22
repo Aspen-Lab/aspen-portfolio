@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
 import { designSystem as ds } from "@/lib/work";
-import { CAP_STYLE, DOT_WELL } from "@/lib/tactile";
+import { DOT_WELL } from "@/lib/tactile";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 
@@ -20,11 +20,11 @@ export function DesignSystem() {
   const address = new URL(ds.href);
 
   return (
-    <section id="system" className="container-fluid pt-14 pb-32">
+    <section className="container-fluid">
       <Reveal>
-        <article className="group relative card-material p-2.5 sm:p-3 grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-6 lg:gap-8 items-center">
+        <article className="group relative plate overflow-hidden grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-center">
           {/* Words */}
-          <div className="order-2 lg:order-1 px-3 sm:px-5 pb-5 lg:py-8 flex flex-col">
+          <div className="order-2 lg:order-1 px-5 py-6 sm:px-8 sm:py-8 lg:px-9 flex flex-col">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
               {t("eyebrow", { version: ds.version })}
             </p>
@@ -36,7 +36,7 @@ export function DesignSystem() {
                 data-orb-ball
                 // One link for the whole plate; outline-none! beats the
                 // global :focus-visible so focus draws one ring (the plate's)
-                className="outline-none! after:absolute after:inset-0 after:rounded-[14px] after:content-[''] focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-ink/35"
+                className="outline-none! after:absolute after:inset-0 after:rounded-[2px] after:content-[''] focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-ink/35"
               >
                 {ds.name}
               </a>
@@ -59,8 +59,7 @@ export function DesignSystem() {
 
             <span
               aria-hidden
-              className="pointer-events-none mt-8 self-start inline-flex items-center gap-2 rounded-[9px] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-mute transition-colors duration-200 group-hover:text-ink"
-              style={CAP_STYLE}
+              className="plate-button pointer-events-none mt-8 self-start inline-flex items-center gap-2 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-mute group-hover:text-ink"
             >
               {t("open")}
               <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={1.75} />
@@ -70,7 +69,7 @@ export function DesignSystem() {
           {/* The docs, in a window. pointer-events-none: this block comes
               after the link in the DOM and is positioned, so it would paint
               over the stretched link and swallow clicks on the picture. */}
-          <div className="order-1 lg:order-2 pointer-events-none relative overflow-hidden rounded-[9px] bg-cream photo-frame">
+          <div className="order-1 lg:order-2 pointer-events-none plate-figure border-b border-line lg:border-b-0 lg:border-l">
             <div
               className="flex h-8 items-center justify-between gap-3 px-3.5 font-mono text-[10px]"
               style={{

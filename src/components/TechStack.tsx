@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 import { stack, spectrum, type StackIcon } from "@/lib/work";
-import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE, CAP_STYLE, DOT_WELL } from "@/lib/tactile";
+import { WELL_STYLE, HOVER_CAP_STYLE, CAP_STYLE, DOT_WELL } from "@/lib/tactile";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 
@@ -103,7 +103,7 @@ export function TechStack() {
   const ActiveIcon = cat.icon ? iconMap[cat.icon] : null;
 
   return (
-    <section id="stack" className="container-fluid pt-14 pb-32">
+    <section className="container-fluid">
       <Reveal>
         <p className="text-[18px] text-mute leading-[1.6] max-w-2xl mb-10">
           {t.rich("intro", {
@@ -114,18 +114,13 @@ export function TechStack() {
         </p>
       </Reveal>
 
-      {/* Interactive console — a physical unit: raised plate shell,
-          recessed dots, pressed-well selection, keycap chips. */}
+      {/* Interactive console. The shell is the flat plate now (hairline,
+          no bevel); the selection wells and keycap chips inside are still
+          the tactile language and are next in line. */}
       <Reveal>
-        <div className="rounded-[16px] overflow-hidden" style={TRAY_STYLE}>
+        <div className="plate overflow-hidden">
           {/* Title bar */}
-          <div
-            className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft"
-            style={{
-              background: "rgba(0,0,0,0.16)",
-              boxShadow: "inset 0 -1px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)",
-            }}
-          >
+          <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft border-b border-line">
             <span className="flex items-center gap-2.5">
               <span className="flex gap-1.5">
                 <span className="w-2 h-2 rounded-full" style={DOT_WELL} />

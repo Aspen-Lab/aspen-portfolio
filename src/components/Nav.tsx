@@ -35,7 +35,6 @@ const ITEMS: Item[] = [
    and the active tab sits pressed into a lit recessed well. Hovering an
    inactive tab raises a faint keycap instead — hover lifts, active sinks. */
 import { TRAY_STYLE, WELL_STYLE, HOVER_CAP_STYLE } from "@/lib/tactile";
-import { selectHomeTab } from "@/lib/home-tabs";
 
 export function Nav() {
   const t = useTranslations("Nav");
@@ -63,15 +62,13 @@ export function Nav() {
     };
   }, []);
 
-  /* Already home with another tab open? Next would only rewrite the hash
-     (silently — no event) and the Combo/Stack panel stayed up. Switch the
-     tab ourselves and glide to the panel. Modified clicks pass through. */
+  /* Already home? Next would only rewrite the hash (silently — no event),
+     so glide to the works section ourselves. Modified clicks pass through. */
   const onWorkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (pathname !== "/" || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    selectHomeTab("work");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document.getElementById("home-panel")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    document.getElementById("work")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
   };
 
   return (

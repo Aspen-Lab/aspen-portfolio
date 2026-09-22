@@ -44,7 +44,7 @@ export function SelectedWork() {
     p.status === "coming-soon" ? t("inProgress") : p.date;
 
   return (
-    <section id="work" className="container-fluid pt-8 sm:pt-14 pb-20 sm:pb-32">
+    <section className="container-fluid">
       <div className="lg:grid lg:grid-cols-[1fr_minmax(380px,44%)] lg:gap-12 xl:gap-16 lg:items-start">
         {/* ── The index ── */}
         <ol className="border-t border-line" onPointerLeave={() => setHovered(null)}>

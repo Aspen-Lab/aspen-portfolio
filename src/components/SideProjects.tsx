@@ -8,7 +8,6 @@ import { sideProjects, type SideProject } from "@/lib/work";
 import { CAP_STYLE, DOT_WELL } from "@/lib/tactile";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
-import { TiltCard } from "./TiltCard";
 import { CommitCalendar } from "./CommitCalendar";
 
 /* ─── Intro typewriter ─────────────────────────────────────────────── */
@@ -136,10 +135,10 @@ function ProjectCard({ p, lead }: { p: SideProject; /** Flagship row: larger typ
   const host = p.href ? new URL(p.href).hostname.replace(/^www\./, "") : null;
 
   return (
-    <TiltCard className="h-full">
-      <article className="group relative h-full flex flex-col card-material p-2.5 sm:p-3">
+    <div className="h-full">
+      <article className="group relative h-full flex flex-col plate overflow-hidden">
         {/* Window — title bar + the live site, sunk into the plate */}
-        <div className="relative overflow-hidden rounded-[9px] bg-cream photo-frame">
+        <div className="plate-figure border-b border-line">
           <div
             className="flex h-7 items-center justify-between gap-3 px-3 font-mono text-[9.5px]"
             style={{
@@ -276,7 +275,7 @@ function ProjectCard({ p, lead }: { p: SideProject; /** Flagship row: larger typ
           </div>
         </div>
       </article>
-    </TiltCard>
+    </div>
   );
 }
 
@@ -289,7 +288,7 @@ export function SideProjects() {
   const liveCount = products.filter((p) => p.status === "live").length;
 
   return (
-    <section id="side" className="container-fluid pt-14 pb-32">
+    <section className="container-fluid">
       <SideIntro />
 
       <SectionHead index="01" title={t("productsTitle")} meta={t("productsMeta", { count: liveCount })} />
