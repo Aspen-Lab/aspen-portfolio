@@ -1,20 +1,40 @@
-import Image from "next/image";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import {
+  Activity,
+  Award,
+  Briefcase,
+  Building2,
+  Camera,
+  ChefHat,
+  GraduationCap,
+  Layers,
+  MapPin,
+  Monitor,
+  Music,
+  Rocket,
+  Sun,
+  UserRound,
+} from "lucide-react";
+import { siTiktok } from "simple-icons";
 import { moreWork, awards } from "@/lib/work";
 import type { Locale } from "@/i18n/routing";
 import { pageMeta } from "@/lib/seo";
 import { Reveal } from "@/components/Reveal";
-import { BootSequence } from "@/components/BootSequence";
-import { PageEntrance } from "@/components/PageEntrance";
-import { BootReveal } from "@/components/BootReveal";
+import { SectionHead } from "@/components/SectionHead";
+import { PhotoReel, type Frame } from "@/components/PhotoReel";
 import { Moat } from "@/components/Moat";
-import { TRAY_STYLE, WELL_STYLE, DOT_WELL } from "@/lib/tactile";
 
-/* Engraved groove — replaces flat 1px rules inside the plate. */
-const GROOVE_TOP = {
-  borderTop: "1px solid rgba(0,0,0,0.4)",
-  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.035)",
-} as const;
+/* The About page in the home page's language, with more to touch.
+   It used to boot: a loader, a page-entrance wipe, a bevelled ASPEN_W
+   window with dots and grooves, glyphs in lit wells, sunken photo tiles
+   with an "Inspect" pill that inspected nothing. Aspen: 「about 也是同样
+   的设计，但是 rich in UX and icons visual」. So: the same flat paper,
+   hairlines, folio heads and Newsreader statement as the home page —
+   and, on top of it, a glyph on every head, a dossier with an icon per
+   line, the trajectory's actual org marks, and photo reels whose frames
+   open in a full-size viewfinder. Every fact, photo and caption is the
+   one that was here before. */
 
 export async function generateMetadata({
   params,
@@ -32,66 +52,214 @@ export async function generateMetadata({
   });
 }
 
+/* ─── Data ─────────────────────────────────────────────────────────── */
+
+type Bi = { en: string; cn: string };
 type CapIcon = "design" | "code" | "brand" | "research";
 
-const CAPABILITIES: ReadonlyArray<{
-  name: string;
-  tag: string;
-  desc: string;
-  icon: CapIcon;
-}> = [
+const CAPABILITIES: ReadonlyArray<{ name: Bi; tag: Bi; desc: Bi; icon: CapIcon }> = [
   {
-    name: "Product Design",
-    tag: "0→1 · end-to-end",
-    desc: "Multi-country KYC, automotive HMI, fintech flows — research through shipped UI.",
+    name: { en: "Product Design", cn: "产品设计" },
+    tag: { en: "0→1 · end-to-end", cn: "0→1 · 端到端" },
+    desc: {
+      en: "Multi-country KYC, automotive HMI, fintech flows — research through shipped UI.",
+      cn: "多国 KYC、汽车 HMI、金融科技流程 —— 从研究到上线 UI。",
+    },
     icon: "design",
   },
   {
-    name: "Design Engineering",
-    tag: "React · production",
-    desc: "I ship my own design as PRs — same tokens, components, and stack as the team.",
+    name: { en: "Design Engineering", cn: "设计工程" },
+    tag: { en: "React · production", cn: "React · 生产环境" },
+    desc: {
+      en: "I ship my own design as PRs — same tokens, components, and stack as the team.",
+      cn: "我把自己的设计直接作为 PR 交付 —— token、组件、技术栈和团队保持一致。",
+    },
     icon: "code",
   },
   {
-    name: "Brand & Visual",
-    tag: "identity · motion",
-    desc: "Type, systems, packaging, motion — from CDC packaging to product marks.",
+    name: { en: "Brand & Visual", cn: "品牌与视觉" },
+    tag: { en: "identity · motion", cn: "identity · motion" },
+    desc: {
+      en: "Type, systems, packaging, motion — from CDC packaging to product marks.",
+      cn: "字体、系统、包装、动效 —— 从 CDC 包装到产品标识。",
+    },
     icon: "brand",
   },
   {
-    name: "Research × Psychology",
-    tag: "behavior · cog-sci",
-    desc: "GT Psych dual degree — usability, trust, the gap between said and done.",
+    name: { en: "Research × Psychology", cn: "研究 × 心理学" },
+    tag: { en: "behavior · cog-sci", cn: "behavior · cog-sci" },
+    desc: {
+      en: "GT Psych dual degree — usability, trust, the gap between said and done.",
+      cn: "Georgia Tech 心理学双学位 —— 可用性、信任，以及说出口与真实行为之间的差距。",
+    },
     icon: "research",
   },
 ];
 
-const CAPABILITIES_CN: typeof CAPABILITIES = [
+type Mark = { kind: "img"; src: string; h: number } | { kind: "si"; path: string } | { kind: "text"; text: string };
+
+const TRAJECTORY: ReadonlyArray<{ org: string; role: Bi; period: Bi; mark: Mark }> = [
   {
-    name: "产品设计",
-    tag: "0→1 · 端到端",
-    desc: "多国 KYC、汽车 HMI、金融科技流程 —— 从研究到上线 UI。",
-    icon: "design",
+    org: "Axel · Gordian (YC W19)",
+    role: { en: "Sole Designer · reports to CEO", cn: "唯一设计师 · 直接汇报 CEO" },
+    period: { en: "Dec 2025 — Now", cn: "2025.12 — 至今" },
+    mark: { kind: "img", src: "/logos/axel.svg", h: 12 },
   },
   {
-    name: "设计工程",
-    tag: "React · 生产环境",
-    desc: "我把自己的设计直接作为 PR 交付 —— token、组件、技术栈和团队保持一致。",
-    icon: "code",
+    org: "TikTok · PIPO UED",
+    role: { en: "Product Designer (Intern) · TikTok Pay KYC", cn: "产品设计实习生 · TikTok Pay KYC" },
+    period: { en: "Jun — Sep 2025", cn: "2025.06 — 09" },
+    mark: { kind: "si", path: siTiktok.path },
   },
   {
-    name: "品牌与视觉",
-    tag: "identity · motion",
-    desc: "字体、系统、包装、动效 —— 从 CDC 包装到产品标识。",
-    icon: "brand",
+    org: "Hyundai · HATCI Lab",
+    role: { en: "HMI Designer · IONIQ 6 L2+", cn: "HMI 设计师 · IONIQ 6 L2+" },
+    period: { en: "Jan — May 2025", cn: "2025.01 — 05" },
+    mark: { kind: "img", src: "/logos/hyundai.svg", h: 11 },
   },
   {
-    name: "研究 × 心理学",
-    tag: "behavior · cog-sci",
-    desc: "Georgia Tech 心理学双学位 —— 可用性、信任，以及说出口与真实行为之间的差距。",
-    icon: "research",
+    org: "XING Art",
+    role: { en: "Co-founder & Product Designer · $300K MiraclePlus", cn: "联合创始人 & 产品设计师 · $300K MiraclePlus" },
+    period: { en: "2022 — 2025", cn: "2022 — 2025" },
+    mark: { kind: "text", text: "XA" },
+  },
+  {
+    org: "CDC · NWSS Lab",
+    role: { en: "Product Designer · CryoSave (IDEA Award)", cn: "产品设计师 · CryoSave(IDEA Award)" },
+    period: { en: "Aug — Dec 2023", cn: "2023.08 — 12" },
+    mark: { kind: "text", text: "CDC" },
   },
 ];
+
+const AWARDS_CN = [
+  { title: "iF Design Award", project: "Field of Vision", year: "2025" },
+  { title: "Red Dot Design Award", project: "Field of Vision", year: "2025" },
+  { title: "IDEA Student Award", project: "CryoSave · CDC NWSS", year: "2025" },
+  { title: "Bredendieck Award", project: "Georgia Tech(两次)", year: "" },
+  { title: "Humanitarian Award", project: "", year: "" },
+  { title: "Atlanta Design Festival", project: "入选认可", year: "" },
+];
+
+const MORE_WORK_CN = [
+  { client: "Vulcan Engineering Solutions", role: "UX 设计师 · 结构工程工作流", period: "2025.01 — 05" },
+  { client: "Edison Bike", role: "产品设计师 · Piedmont Park Mammoth 电动货运车", period: "2024.01 — 05" },
+  { client: "Refracted Lab", role: "自由设计师 · Web3 界面", period: "2024.06 — 08" },
+  { client: "上海交通大学", role: "设计研究员 · AI 船舶识别", period: "2024.06 — 08" },
+  { client: "CDC NWSS Lab", role: "产品设计师 · CryoSave 包装系统(IDEA Award)", period: "2023.08 — 12" },
+  { client: "XING Art", role: "联合创始人 & 产品设计师 · MiraclePlus '25, $300K, 1K+ 用户", period: "2022.12 — 2025.09" },
+];
+
+type Photo = { src: string; alt: string; aspect: string; caption?: Bi; priority?: boolean };
+
+const REELS: ReadonlyArray<{ key: string; title: Bi; icon: ReactNode; intro?: Bi; frames: Photo[] }> = [
+  {
+    key: "life",
+    title: { en: "Life Style", cn: "生活方式" },
+    icon: <Camera strokeWidth={1.5} />,
+    intro: {
+      en: "Got my car at 18 · Freshman at Georgia Tech · Dreaming about my future",
+      cn: "18 岁拥有第一辆车 · Georgia Tech 大一 · 认真想象自己的未来",
+    },
+    frames: [
+      { src: "/about/car-georgia-tech.jpg", alt: "Aspen with her first car at 18, downtown Atlanta at night", aspect: "3/4", priority: true,
+        caption: { en: "Got my car at 18 — freshman at GT, dreaming about my future", cn: "18 岁拥有第一辆车 —— GT 大一，认真想象未来" } },
+      { src: "/about/drawing-1.jpg", alt: "Black-and-white photograph of a parking garage alley with trees", aspect: "3/4",
+        caption: { en: "Love photograph — daily life through a lens", cn: "喜欢摄影 —— 用镜头看日常" } },
+      { src: "/about/sketching-bw.png", alt: "Black-and-white photograph of a brutalist tower against cloudy sky", aspect: "16/10",
+        caption: { en: "The everyday, framed in black & white", cn: "把日常放进黑白画面里" } },
+      { src: "/about/sketching-2.png", alt: "Charcoal sketch of an eye in progress", aspect: "3/4",
+        caption: { en: "Somehow good at drawing", cn: "好像还挺会画" } },
+      { src: "/about/cool-stuff-roommate.png", alt: "Multiple charcoal sketches of faces and hands on cream paper", aspect: "4/3",
+        caption: { en: "Enjoy B&W sketching", cn: "喜欢黑白素描" } },
+      { src: "/about/illuminated-dice-1.png", alt: "Electronics workbench with soldering iron, microphone, mixed cups and wires", aspect: "16/10",
+        caption: { en: "Making cool stuff with my roommate", cn: "和室友一起做有意思的东西" } },
+      { src: "/about/illuminated-dice-2.png", alt: "Two glowing dice on a red dice tray", aspect: "1/1" },
+      { src: "/about/workspace-1.png", alt: "LiPo battery and circuit board feeding a glowing die in a red tray, next to a Polaroid", aspect: "1/1",
+        caption: { en: "Wireless illuminated dice for our table game", cn: "给桌游做的无线发光骰子" } },
+    ],
+  },
+  {
+    key: "workspace",
+    title: { en: "My Workspace", cn: "我的工作台" },
+    icon: <Monitor strokeWidth={1.5} />,
+    frames: [
+      { src: "/about/workspace-2.png", alt: "Aspen's desk with dual monitors showing a flip clock and solar system", aspect: "16/10",
+        caption: { en: "My workspace — built to enrich creativity. Less is more.", cn: "我的工作台 —— 为了让创造力更顺。少即是多。" } },
+      { src: "/about/bronze-studio-2.png", alt: "A friend at home holding a Sony camera, taking a photo", aspect: "3/4",
+        caption: { en: "Always someone with a camera in the room", cn: "房间里总有人拿着相机" } },
+      { src: "/about/film-washing-1.png", alt: "Close-up black-and-white photo of someone holding a vintage Edixa Reflex 1000 film camera", aspect: "4/3",
+        caption: { en: "Film cameras — the slower kind of seeing", cn: "胶片相机 —— 一种更慢的观看" } },
+      { src: "/about/film-washing-2.png", alt: "Drawing class with laptop and projector showing arm sketch references on the wall", aspect: "16/10",
+        caption: { en: "Sketching nights — references on the wall, sketchbooks on the table", cn: "素描夜晚 —— 墙上是参考，桌上是本子" } },
+      { src: "/about/film-washing-3.png", alt: "Purple-gloved hand holding a film reel under sink water during developing", aspect: "3/4",
+        caption: { en: "Film washing by hand — PH14 in the basin", cn: "手洗胶片 —— 盆里的 PH14" } },
+      { src: "/about/film-washing-4.png", alt: "Black-and-white film print of a silver SUV parked in front of an old brick building", aspect: "3/4",
+        caption: { en: "The print, after", cn: "冲洗后的成片" } },
+    ],
+  },
+  {
+    key: "music",
+    title: { en: "Love Music", cn: "热爱音乐" },
+    icon: <Music strokeWidth={1.5} />,
+    frames: [
+      { src: "/about/bronze-studio-1.png", alt: "A sunburst acoustic guitar resting on a grey carpet", aspect: "3/4",
+        caption: { en: "Love music", cn: "热爱音乐" } },
+      { src: "/about/designing-pals-2.png", alt: "Three bronze-and-clay monk sculptures in a workshop with pegboard wall", aspect: "3/4",
+        caption: { en: "Working at a Bronze Studio", cn: "在青铜工作室工作" } },
+      { src: "/about/designing-pals-1.png", alt: "Wooden desk with iPad of horse-anatomy refs, sketchbook drawings, red sculpted clay animals", aspect: "16/10",
+        caption: { en: "Designing with reference — desk, sketchbook, and the clay it ends up as", cn: "带着参考做设计 —— 桌面、速写本，以及最后变成的泥稿" } },
+      { src: "/about/neuroscience-1.png", alt: "Three friends in silhouette jumping against a sunset sky", aspect: "3/2" },
+      { src: "/about/neuroscience-2.png", alt: "Portrait of three young men in golden-hour light with mountains behind", aspect: "3/2",
+        caption: { en: "With my pals — last day before they head to their PhDs", cn: "和朋友们 —— 他们去读 PhD 前的最后一天" } },
+    ],
+  },
+  {
+    key: "cooking",
+    title: { en: "Enjoy Cooking", cn: "喜欢做饭" },
+    icon: <ChefHat strokeWidth={1.5} />,
+    frames: [
+      { src: "/about/cooking.png", alt: "Jupyter notebook with PSYC 3803 brain-science course materials and downsampling visualization", aspect: "16/9",
+        caption: { en: "I love neuro-sci — happy in the cog sci dual degree. Yes I am happy.", cn: "我喜欢神经科学 —— 在认知科学/心理学双学位里很开心。真的开心。" } },
+      { src: "/about/rat-apartment.png", alt: "Two plates of steak with asparagus, potatoes, and sauce", aspect: "4/3",
+        caption: { en: "Cooking for me and my girlfriend", cn: "给我和女朋友做饭" } },
+      { src: "/about/miku-switch.png", alt: "A small mouse inside a clear plastic terrarium with moss, near a window screen", aspect: "4/3",
+        caption: { en: "Caught a rat in my apartment — it's cute, but I made it leave eventually", cn: "在公寓里抓到一只小鼠 —— 很可爱，但最后还是请它离开了" } },
+      { src: "/about/drawing-app.png", alt: "Teal Nintendo Switch Lite with hand-drawn Hatsune Miku in marker on the back", aspect: "3/4",
+        caption: { en: "DIY Miku Switch Lite — Xmas gift for my girl", cn: "手绘 Miku Switch Lite —— 给她的圣诞礼物" } },
+      { src: "/about/xing-art-cat.png", alt: "iPad screen showing a stylized anime elf girl in progress in a drawing app", aspect: "16/10",
+        caption: { en: "Drawing with the app I designed", cn: "用我自己设计的 App 画画" } },
+      { src: "/about/nvidia-line.png", alt: "A tabby cat with white belly, looking up at the camera", aspect: "3/4",
+        caption: { en: "My cat — I love him sooooo much", cn: "我的猫 —— 超级超级喜欢他" } },
+    ],
+  },
+  {
+    key: "summer",
+    title: { en: "Unforgettable Summer", cn: "难忘的夏天" },
+    icon: <Sun strokeWidth={1.5} />,
+    frames: [
+      { src: "/about/gtc-1.png", alt: "Crowd of attendees in winter coats lined up at night outside a convention center", aspect: "1/1",
+        caption: { en: "Lined up at 4 AM for a 5090", cn: "凌晨 4 点排队等 5090" } },
+      { src: "/about/jensen-sign.png", alt: "Young man at NVIDIA GTC with conference lanyard, holding a tablet", aspect: "1/1",
+        caption: { en: "At NVIDIA GTC 2025", cn: "在 NVIDIA GTC 2025" } },
+      { src: "/about/if-award-miracleplus.png", alt: "A PC tower at NVIDIA GTC 2025 signed Jensen was here by Jensen Huang", aspect: "16/10",
+        caption: { en: "Jensen signed my PC!", cn: "Jensen 在我的 PC 上签名了！" } },
+      { src: "/about/pitching-2.png", alt: "iF Design Award page for Field of Vision — cane for the blind", aspect: "3/4",
+        caption: { en: "Awarded iF Design — Field of Vision, cane for the blind", cn: "Field of Vision 获得 iF Design Award" } },
+      { src: "/about/pitching-1.png", alt: "MiraclePlus 2025 Spring closing ceremony group photo on stage", aspect: "4/3",
+        caption: { en: "Funded by MiraclePlus — $300K · 2025 Spring closing ceremony", cn: "获得 MiraclePlus $300K 投资 · 2025 春季结营" } },
+      { src: "/about/tiktok-intern.png", alt: "XING Art booth at trade show — three young men with iPad showing in-progress anime drawing", aspect: "16/10",
+        caption: { en: "XING Art alpha test — first time on the floor", cn: "XING Art alpha 测试 —— 第一次带到现场" } },
+      { src: "/about/closing-1.png", alt: "Group of friends at a restaurant table with burgers, salsa decorations on the wall", aspect: "4/3",
+        caption: { en: "Intern at TikTok — best summer crew. GOAT.", cn: "TikTok 实习 —— 最好的夏天同伴" } },
+      { src: "/about/closing-2.png", alt: "Holding ID badge in front of tall modern office buildings, ByteDance / Volcano Engine", aspect: "3/4",
+        caption: { en: "First day on campus — ByteDance Shanghai", cn: "入职第一天 —— 字节跳动上海" } },
+    ],
+  },
+];
+
+/* ─── Pieces ───────────────────────────────────────────────────────── */
+
+const pad = (n: number) => String(n).padStart(2, "0");
 
 function CapabilityGlyph({ icon }: { icon: CapIcon }) {
   const common = {
@@ -101,7 +269,7 @@ function CapabilityGlyph({ icon }: { icon: CapIcon }) {
     strokeWidth: 1.5,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
-    className: "w-[18px] h-[18px]",
+    className: "w-6 h-6",
     "aria-hidden": true,
   };
   switch (icon) {
@@ -136,185 +304,31 @@ function CapabilityGlyph({ icon }: { icon: CapIcon }) {
   }
 }
 
-const TRAJECTORY: ReadonlyArray<{ org: string; role: string; period: string }> = [
-  {
-    org: "Axel · Gordian (YC W19)",
-    role: "Sole Designer · reports to CEO",
-    period: "Dec 2025 — Now",
-  },
-  {
-    org: "TikTok · PIPO UED",
-    role: "Product Designer (Intern) · TikTok Pay KYC",
-    period: "Jun — Sep 2025",
-  },
-  {
-    org: "Hyundai · HATCI Lab",
-    role: "HMI Designer · IONIQ 6 L2+",
-    period: "Jan — May 2025",
-  },
-  {
-    org: "XING Art",
-    role: "Co-founder & Product Designer · $300K MiraclePlus",
-    period: "2022 — 2025",
-  },
-  {
-    org: "CDC · NWSS Lab",
-    role: "Product Designer · CryoSave (IDEA Award)",
-    period: "Aug — Dec 2023",
-  },
-];
-
-const TRAJECTORY_CN: typeof TRAJECTORY = [
-  {
-    org: "Axel · Gordian (YC W19)",
-    role: "唯一设计师 · 直接汇报 CEO",
-    period: "2025.12 — 至今",
-  },
-  {
-    org: "TikTok · PIPO UED",
-    role: "产品设计实习生 · TikTok Pay KYC",
-    period: "2025.06 — 09",
-  },
-  {
-    org: "Hyundai · HATCI Lab",
-    role: "HMI 设计师 · IONIQ 6 L2+",
-    period: "2025.01 — 05",
-  },
-  {
-    org: "XING Art",
-    role: "联合创始人 & 产品设计师 · $300K MiraclePlus",
-    period: "2022 — 2025",
-  },
-  {
-    org: "CDC · NWSS Lab",
-    role: "产品设计师 · CryoSave(IDEA Award)",
-    period: "2023.08 — 12",
-  },
-];
-
-const AWARDS_CN = [
-  { title: "iF Design Award", project: "Field of Vision", year: "2025" },
-  { title: "Red Dot Design Award", project: "Field of Vision", year: "2025" },
-  { title: "IDEA Student Award", project: "CryoSave · CDC NWSS", year: "2025" },
-  { title: "Bredendieck Award", project: "Georgia Tech(两次)", year: "" },
-  { title: "Humanitarian Award", project: "", year: "" },
-  { title: "Atlanta Design Festival", project: "入选认可", year: "" },
-];
-
-const MORE_WORK_CN = [
-  {
-    client: "Vulcan Engineering Solutions",
-    role: "UX 设计师 · 结构工程工作流",
-    period: "2025.01 — 05",
-  },
-  {
-    client: "Edison Bike",
-    role: "产品设计师 · Piedmont Park Mammoth 电动货运车",
-    period: "2024.01 — 05",
-  },
-  {
-    client: "Refracted Lab",
-    role: "自由设计师 · Web3 界面",
-    period: "2024.06 — 08",
-  },
-  {
-    client: "上海交通大学",
-    role: "设计研究员 · AI 船舶识别",
-    period: "2024.06 — 08",
-  },
-  {
-    client: "CDC NWSS Lab",
-    role: "产品设计师 · CryoSave 包装系统(IDEA Award)",
-    period: "2023.08 — 12",
-  },
-  {
-    client: "XING Art",
-    role: "联合创始人 & 产品设计师 · MiraclePlus '25, $300K, 1K+ 用户",
-    period: "2022.12 — 2025.09",
-  },
-];
-
-type FigureProps = {
-  src: string;
-  alt: string;
-  caption?: string;
-  aspect?: string;
-  priority?: boolean;
-};
-
-function Figure({
-  src,
-  alt,
-  caption,
-  aspect = "3/4",
-  priority = false,
-}: FigureProps) {
+/** An org's mark in a hairline square: its own artwork where one exists, its initials where not. */
+function OrgMark({ mark }: { mark: Mark }) {
   return (
-    // w-min: the photo sets the frame's width and the caption wraps under
-    // it. Without it a long one-line caption widened the figure and left
-    // a caption-sized gap beside every portrait photo in the reel.
-    <figure className="group w-min">
-      <div
-        className="relative h-[clamp(240px,38vh,400px)] w-auto overflow-hidden rounded-[8px] bg-cream photo-frame"
-        style={{ aspectRatio: aspect }}
-      >
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          priority={priority}
-          sizes="(max-width: 640px) 80vw, 640px"
-          className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.05]"
-        />
-
-        {/* Terminal viewfinder · corner ticks + inspect hint on hover. */}
-        <span className="pointer-events-none absolute inset-2.5 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <span className="absolute left-0 top-0 h-3 w-3 border-l border-t border-ink/50" />
-          <span className="absolute right-0 top-0 h-3 w-3 border-r border-t border-ink/50" />
-          <span className="absolute left-0 bottom-0 h-3 w-3 border-l border-b border-ink/50" />
-          <span className="absolute right-0 bottom-0 h-3 w-3 border-r border-b border-ink/50" />
-        </span>
-        <span className="pointer-events-none absolute right-3 bottom-3 z-10 font-mono text-[9px] uppercase tracking-[0.22em] text-ink bg-paper/70 backdrop-blur-sm px-2 py-1 rounded-full opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-          ⤢ Inspect
-        </span>
-      </div>
-      {caption && (
-        <figcaption className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-soft leading-[1.7]">
-          <span className="text-soft/50">{"// "}</span>
-          {caption}
-        </figcaption>
+    <span className="grid place-items-center w-9 h-9 shrink-0 border border-line text-mute transition-colors duration-300 group-hover:text-ink group-hover:border-ink/40">
+      {mark.kind === "img" && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={mark.src} alt="" aria-hidden style={{ height: mark.h, width: "auto", filter: "brightness(0) invert(0.8)" }} />
       )}
-    </figure>
+      {mark.kind === "si" && (
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden>
+          <path d={mark.path} />
+        </svg>
+      )}
+      {mark.kind === "text" && (
+        <span className="font-mono text-[9px] tracking-[0.12em]">{mark.text}</span>
+      )}
+    </span>
   );
 }
 
-function SectionTitle({
-  number,
-  title,
-  meta,
-}: {
-  number: string;
-  title: string;
-  meta?: string;
-}) {
-  return (
-    <Reveal>
-      <div className="border-t border-b border-line py-4 mb-14 flex items-baseline justify-between gap-4">
-        <h2 className="type-display text-[26px] sm:text-[32px] flex items-baseline gap-3 sm:gap-4">
-          <span className="font-mono text-soft/70 text-[12px] tracking-[0.2em] uppercase">
-            [A-{number}]
-          </span>
-          {title}
-        </h2>
-        {meta && (
-          <span className="font-mono text-soft/55 text-[10px] tracking-[0.2em] uppercase whitespace-nowrap shrink-0 hidden sm:block">
-            {meta}
-          </span>
-        )}
-      </div>
-    </Reveal>
-  );
+function Block({ children }: { children: ReactNode }) {
+  return <div className="container-fluid pt-16 sm:pt-24">{children}</div>;
 }
+
+/* ─── Page ─────────────────────────────────────────────────────────── */
 
 export default async function About({
   params,
@@ -322,843 +336,220 @@ export default async function About({
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
-  const isCn = locale === "cn";
-  const capabilities = isCn ? CAPABILITIES_CN : CAPABILITIES;
-  const trajectory = isCn ? TRAJECTORY_CN : TRAJECTORY;
-  const localizedAwards = isCn ? AWARDS_CN : awards;
-  const localizedMoreWork = isCn ? MORE_WORK_CN : moreWork;
+  const cn = locale === "cn";
+  const tr = (b: Bi) => (cn ? b.cn : b.en);
+  const localizedAwards = cn ? AWARDS_CN : awards;
+  const localizedMoreWork = cn ? MORE_WORK_CN : moreWork;
+
+  const dossier: { icon: ReactNode; k: string; v: string }[] = [
+    { icon: <UserRound strokeWidth={1.5} />, k: cn ? "角色" : "Role", v: cn ? "设计工程师" : "Design Engineer" },
+    { icon: <Building2 strokeWidth={1.5} />, k: cn ? "公司" : "At", v: "Axel · YC W19" },
+    { icon: <GraduationCap strokeWidth={1.5} />, k: cn ? "教育" : "Edu", v: cn ? "GT — 工业设计 + 心理学" : "GT — ID + Psych" },
+    { icon: <MapPin strokeWidth={1.5} />, k: cn ? "所在地" : "Base", v: "Bellevue, WA" },
+    { icon: <Rocket strokeWidth={1.5} />, k: cn ? "创办" : "Founded", v: "XING Art · $300K" },
+    { icon: <Activity strokeWidth={1.5} />, k: cn ? "状态" : "State", v: cn ? "持续交付" : "Shipping" },
+  ];
+
+  let folio = 0;
+  const next = () => pad(++folio);
 
   return (
-    <>
-      <BootSequence />
-      <PageEntrance>
-      <article className="pb-32">
+    <article className="pb-24 sm:pb-32">
+      {/* ── 00 · Identity: the statement beside the dossier ── */}
+      <section className="container-fluid pt-10 sm:pt-16 lg:pt-20">
+        <div className="lg:grid lg:grid-cols-[1.15fr_1fr] lg:gap-16 xl:gap-24 lg:items-center">
+          <Reveal>
+            <h1 className="type-display text-ink leading-[1.02]" style={{ fontSize: "clamp(40px, 5.2vw, 72px)" }}>
+              {cn ? "一半是设计师，" : "Half designer,"}
+              <br />
+              {cn ? "一半是心理学者，" : "half psychologist,"}
+              <br />
+              <span className="italic font-normal">{cn ? "永远在交付。" : "always shipping."}</span>
+            </h1>
+          </Reveal>
 
-      <BootReveal delay={0}>
-      <section className="container-fluid pt-10 pb-24">
-        {/* Framed system panel — the architectural anchor of the page. */}
-          <div className="rounded-[16px] overflow-hidden" style={TRAY_STYLE}>
-            {/* Window title bar */}
-            <div
-              className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-soft"
-              style={{
-                background: "rgba(0,0,0,0.16)",
-                boxShadow: "inset 0 -1px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)",
-              }}
-            >
-              <span className="flex items-center gap-2.5 min-w-0">
-                <span className="flex gap-1.5 shrink-0">
-                  <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
-                  <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
-                  <span className="w-2 h-2 rounded-full" style={DOT_WELL} />
-                </span>
-                <span className="text-ink truncate">ASPEN_W</span>
-                <span className="text-soft/50 hidden sm:inline">
-                  {"// about.sys"}
-                </span>
+          {/* The dossier — a viewfinder, no box: corners, ticks, readouts, one icon a line */}
+          <Reveal delay={0.08}>
+            <div className="relative mt-12 lg:mt-0 px-6 py-9 sm:px-8 sm:py-10">
+              <span className="reg-mark tl" />
+              <span className="reg-mark tr" />
+              <span className="reg-mark br" />
+              <span className="reg-mark bl" />
+              <span className="vf-tick top" />
+              <span className="vf-tick bottom" />
+              <span className="vf-tick left" />
+              <span className="vf-tick right" />
+              <span className="absolute left-8 top-3 font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
+                ASPEN_W <span className="text-soft/50">·</span> {cn ? "档案" : "dossier"}
               </span>
-              <span className="flex items-center gap-2 shrink-0">
-                <span
-                  className="relative flex items-center justify-center w-[11px] h-[11px] rounded-full"
-                  style={DOT_WELL}
-                >
-                  <span className="absolute w-1 h-1 rounded-full bg-ink opacity-40 animate-ping" />
-                  <span
-                    className="relative w-1 h-1 rounded-full"
-                    style={{
-                      background: "#F4F4F2",
-                      boxShadow: "0 0 5px rgba(244,244,242,0.9), 0 0 12px rgba(244,244,242,0.3)",
-                    }}
-                  />
+              <span className="absolute right-8 top-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
+                <span aria-hidden className="relative flex w-1.5 h-1.5">
+                  <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
+                  <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
                 </span>
-                {isCn ? "在线" : "Online"}
+                {cn ? "在线" : "Online"}
               </span>
-            </div>
 
-            {/* Body grid — meta rail × main column */}
-            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr]">
-              {/* Left rail — diagnostic key/value index */}
-              <dl
-                className="font-mono text-[11px] uppercase tracking-[0.13em]"
-                style={{ boxShadow: "inset -1px 0 0 rgba(0,0,0,0.3), inset 0 -1px 0 rgba(0,0,0,0.2)" }}
-              >
-                {(
-                  [
-                    [isCn ? "角色" : "Role", isCn ? "设计工程师" : "Design Engineer"],
-                    [isCn ? "公司" : "At", "Axel · YC W19"],
-                    [isCn ? "教育" : "Edu", isCn ? "GT — 工业设计 + 心理学" : "GT — ID + Psych"],
-                    [isCn ? "所在地" : "Base", isCn ? "Bellevue, WA" : "Bellevue, WA"],
-                    [isCn ? "创办" : "Founded", "XING Art · $300K"],
-                    [isCn ? "状态" : "State", isCn ? "持续交付" : "Shipping"],
-                  ] as const
-                ).map(([k, v]) => (
-                  <div
-                    key={k}
-                    className="flex items-baseline justify-between gap-3 px-4 sm:px-5 py-3 border-b border-line/50 last:border-b-0"
-                  >
-                    <dt className="text-soft/55">{k}</dt>
-                    <dd className="text-mute text-right">{v}</dd>
+              <dl className="mt-3 border-t border-line">
+                {dossier.map((d) => (
+                  <div key={d.k} className="group flex items-center gap-4 py-3.5 border-b border-line">
+                    <span aria-hidden className="text-soft transition-colors duration-300 group-hover:text-ink [&>svg]:w-4 [&>svg]:h-4">
+                      {d.icon}
+                    </span>
+                    <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft w-20 shrink-0">{d.k}</dt>
+                    <dd className="ml-auto text-right text-[14px] text-ink/90">{d.v}</dd>
                   </div>
                 ))}
               </dl>
+              <div className="mt-4 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-soft/55">
+                <span>LAT 47.6101 · LON −122.2015</span>
+                <span>{cn ? "REC · 1995 — 至今" : "REC · 1995 — PRESENT"}</span>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
-              {/* Main — identity headline; the facts now live in the bands below */}
-              <div className="flex items-center p-6 sm:p-9 lg:p-12">
-                <h1
-                  className="type-display text-ink leading-[1.02]"
-                  style={{ fontSize: "clamp(32px, 4.2vw, 58px)" }}
-                >
-                  {isCn ? "一半是设计师，" : "Half designer,"}
-                  <br />
-                  {isCn ? "一半是心理学者，" : "half psychologist,"}
-                  <br />
-                  <span className="italic font-normal">
-                    {isCn ? "永远在交付。" : "always shipping."}
+      {/* ── Capabilities ── */}
+      <Block>
+        <SectionHead folio={next()} title={cn ? "能力" : "Capabilities"} icon={<Layers strokeWidth={1.5} />} meta={pad(CAPABILITIES.length)} />
+        <ul className="grid grid-cols-1 sm:grid-cols-2 border-t border-l border-line">
+          {CAPABILITIES.map((c, i) => (
+            <li key={c.icon} className="group border-b border-r border-line p-6 sm:p-8">
+              <Reveal delay={i * 0.05}>
+                <div className="flex items-start gap-5">
+                  <span className="grid place-items-center w-12 h-12 shrink-0 border border-line text-mute transition-colors duration-300 group-hover:text-ink group-hover:border-ink/40">
+                    <CapabilityGlyph icon={c.icon} />
                   </span>
-                </h1>
-              </div>
-            </div>
-
-            {/* Capabilities band — what I do, in the diagnostic-rail idiom */}
-            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr]" style={GROOVE_TOP}>
-              <div
-                className="px-4 sm:px-5 py-4 md:py-6 font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block"
-                style={{ boxShadow: "inset -1px 0 0 rgba(0,0,0,0.3), inset 0 -1px 0 rgba(0,0,0,0.2)" }}
-              >
-                <span className="text-soft/55">
-                  {isCn ? "能力" : "Capabilities"}
-                </span>
-                <span className="text-soft/35 md:mt-1.5 md:block">[ 04 · stack ]</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2">
-                {capabilities.map((c, i) => (
-                  <div
-                    key={c.name}
-                    className={`group/cap p-5 sm:p-6 border-line/50 ${i % 2 === 0 ? "sm:border-r" : ""} ${
-                      i < CAPABILITIES.length - (CAPABILITIES.length % 2 === 0 ? 2 : 1)
-                        ? "border-b"
-                        : "border-b sm:border-b-0"
-                    }`}
-                  >
-                    <div className="flex items-start gap-3.5">
-                      <span
-                        className="shrink-0 grid place-items-center w-9 h-9 rounded-[9px] text-mute transition-colors duration-300 group-hover/cap:text-ink"
-                        style={WELL_STYLE}
-                      >
-                        <CapabilityGlyph icon={c.icon} />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-baseline justify-between gap-3">
-                          <h3 className="font-display text-[16px] sm:text-[17px] tracking-[-0.01em] text-ink">
-                            {c.name}
-                          </h3>
-                          <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-soft/50 whitespace-nowrap shrink-0">
-                            {c.tag}
-                          </span>
-                        </div>
-                        <p className="mt-2 text-[13.5px] leading-[1.6] text-mute max-w-[42ch]">
-                          {c.desc}
-                        </p>
-                      </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <h3 className="font-display font-semibold text-[17px] sm:text-[18px] tracking-[-0.01em] text-ink">{tr(c.name)}</h3>
+                      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-soft/60 whitespace-nowrap shrink-0">{tr(c.tag)}</span>
                     </div>
+                    <p className="mt-2.5 text-[14px] leading-[1.65] text-mute max-w-[44ch]">{tr(c.desc)}</p>
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+      </Block>
 
-            {/* Trajectory band — experience timeline, most recent first */}
-            <div className="grid grid-cols-1 md:grid-cols-[210px_1fr]" style={GROOVE_TOP}>
-              <div
-                className="px-4 sm:px-5 py-4 md:py-6 font-mono text-[11px] uppercase tracking-[0.13em] flex items-baseline justify-between md:block"
-                style={{ boxShadow: "inset -1px 0 0 rgba(0,0,0,0.3), inset 0 -1px 0 rgba(0,0,0,0.2)" }}
-              >
-                <span className="text-soft/55">
-                  {isCn ? "轨迹" : "Trajectory"}
-                </span>
-                <span className="text-soft/35 md:mt-1.5 md:block">[ 05 · log ]</span>
-              </div>
-              <ol className="relative py-1">
-                {/* Continuous timeline rail */}
-                <span
-                  aria-hidden
-                  className="absolute left-[1.55rem] sm:left-[1.85rem] top-6 bottom-6 w-px bg-line"
-                />
-                {trajectory.map((e, i) => (
-                  <li
-                    key={e.org}
-                    className={`relative flex items-baseline justify-between gap-4 pl-11 sm:pl-14 pr-5 sm:pr-6 py-3.5 ${
-                      i < TRAJECTORY.length - 1 ? "border-b border-line/50" : ""
-                    }`}
-                  >
-                    {/* Node — current role pulses like the title-bar status dot */}
-                    <span
-                      aria-hidden
-                      className="absolute left-[1.55rem] sm:left-[1.85rem] top-[1.3rem] -translate-x-1/2"
-                    >
-                      {i === 0 ? (
-                        <span className="relative flex w-[9px] h-[9px]">
+      {/* ── Trajectory ── */}
+      <Block>
+        <SectionHead folio={next()} title={cn ? "轨迹" : "Trajectory"} icon={<Briefcase strokeWidth={1.5} />} meta={cn ? `${pad(TRAJECTORY.length)} 站` : `${pad(TRAJECTORY.length)} stops`} />
+        <ol className="border-t border-line">
+          {TRAJECTORY.map((e, i) => (
+            <li key={e.org}>
+              <Reveal delay={i * 0.04}>
+                <div className="group flex items-center gap-5 sm:gap-6 py-5 border-b border-line">
+                  <OrgMark mark={e.mark} />
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-center gap-3 text-[15px] sm:text-[16px] text-ink tracking-[-0.005em]">
+                      {e.org}
+                      {i === 0 && (
+                        <span aria-hidden className="relative flex w-1.5 h-1.5">
                           <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />
-                          <span
-                            className="relative w-[9px] h-[9px] rounded-full bg-ink"
-                            style={{
-                              boxShadow:
-                                "0 0 6px rgba(244,244,242,0.85), 0 0 14px rgba(244,244,242,0.3), 0 0 0 3px #212121",
-                            }}
-                          />
+                          <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
                         </span>
-                      ) : (
-                        <span
-                          className="block w-[9px] h-[9px] rounded-full"
-                          style={{ ...DOT_WELL, boxShadow: `${DOT_WELL.boxShadow}, 0 0 0 3px #212121` }}
-                        />
                       )}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="text-ink text-[14.5px] tracking-[-0.005em]">
-                        {e.org}
-                      </span>
-                      <span className="block text-mute text-[13px] leading-[1.5] mt-0.5">
-                        {e.role}
-                      </span>
-                    </span>
-                    <span className="font-mono text-[10.5px] uppercase tracking-[0.15em] text-soft/55 whitespace-nowrap shrink-0 pt-0.5">
-                      {e.period}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </div>
+                    </p>
+                    <p className="mt-1 text-[13.5px] leading-[1.5] text-mute">{tr(e.role)}</p>
+                  </div>
+                  <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-soft whitespace-nowrap shrink-0">
+                    {tr(e.period)}
+                  </span>
+                </div>
+              </Reveal>
+            </li>
+          ))}
+        </ol>
+      </Block>
 
-            {/* Footer coordinate strip */}
-            <div
-              className="flex items-center justify-between gap-4 px-4 sm:px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] text-soft/55"
-              style={{
-                background: "rgba(0,0,0,0.16)",
-                boxShadow: "inset 0 1px 0 rgba(0,0,0,0.35), inset 0 2px 0 rgba(255,255,255,0.03)",
-              }}
-            >
-              <span>LAT 47.6101 · LON −122.2015</span>
-              <span className="hidden sm:inline">
-                {isCn ? "REC · 1995 — 至今" : "REC · 1995 — PRESENT"}
-              </span>
-              <span>EOF</span>
-            </div>
-          </div>
-      </section>
-      </BootReveal>
+      {/* ── The reels ── */}
+      {REELS.map((r) => (
+        <Block key={r.key}>
+          <SectionHead
+            folio={next()}
+            title={tr(r.title)}
+            icon={r.icon}
+            meta={cn ? `${pad(r.frames.length)} 张影像` : `${pad(r.frames.length)} frames`}
+          />
+          {r.intro && (
+            <Reveal>
+              <p className="font-mono uppercase tracking-[0.18em] text-[11px] text-soft mb-10 max-w-md">{tr(r.intro)}</p>
+            </Reveal>
+          )}
+          <Reveal>
+            <PhotoReel
+              label={tr(r.title)}
+              frames={r.frames.map<Frame>((f) => ({
+                src: f.src,
+                alt: f.alt,
+                aspect: f.aspect,
+                priority: f.priority,
+                caption: f.caption ? tr(f.caption) : undefined,
+              }))}
+            />
+          </Reveal>
+        </Block>
+      ))}
 
-      {/* 01 — Life Style */}
-      <BootReveal delay={0.09}>
-      <section className="container-fluid mt-8">
-        <SectionTitle
-          number="01"
-          title={isCn ? "生活方式" : "Life Style"}
-          meta={isCn ? "模块 · 08 张影像 · 已加载" : "Module · 08 frames · loaded"}
-        />
-
+      {/* ── The line ── */}
+      <section className="container-fluid pt-20 sm:pt-28">
         <Reveal>
-          <p className="font-mono uppercase tracking-[0.18em] text-[11px] text-soft mb-12 max-w-md">
-            {isCn
-              ? "18 岁拥有第一辆车 · Georgia Tech 大一 · 认真想象自己的未来"
-              : "Got my car at 18 · Freshman at Georgia Tech · Dreaming about my future"}
-          </p>
-        </Reveal>
-
-        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/car-georgia-tech.jpg"
-                alt="Aspen with her first car at 18, downtown Atlanta at night"
-                aspect="3/4"
-                caption={
-                  isCn
-                    ? "18 岁拥有第一辆车 —— GT 大一，认真想象未来"
-                    : "Got my car at 18 — freshman at GT, dreaming about my future"
-                }
-                priority
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/drawing-1.jpg"
-                alt="Black-and-white photograph of a parking garage alley with trees"
-                aspect="3/4"
-                caption={
-                  isCn
-                    ? "喜欢摄影 —— 用镜头看日常"
-                    : "Love photograph — daily life through a lens"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/sketching-bw.png"
-                alt="Black-and-white photograph of a brutalist tower against cloudy sky"
-                aspect="16/10"
-                caption={
-                  isCn
-                    ? "把日常放进黑白画面里"
-                    : "The everyday, framed in black & white"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/sketching-2.png"
-                alt="Charcoal sketch of an eye in progress"
-                aspect="3/4"
-                caption={isCn ? "好像还挺会画" : "Somehow good at drawing"}
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/cool-stuff-roommate.png"
-                alt="Multiple charcoal sketches of faces and hands on cream paper"
-                aspect="4/3"
-                caption={isCn ? "喜欢黑白素描" : "Enjoy B&W sketching"}
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/illuminated-dice-1.png"
-                alt="Electronics workbench with soldering iron, microphone, mixed cups and wires"
-                aspect="16/10"
-                caption={
-                  isCn
-                    ? "和室友一起做有意思的东西"
-                    : "Making cool stuff with my roommate"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/illuminated-dice-2.png"
-                alt="Two glowing dice on a red dice tray"
-                aspect="1/1"
-              />
-            </Reveal>
-          </div>
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/workspace-1.png"
-                alt="LiPo battery and circuit board feeding a glowing die in a red tray, next to a Polaroid"
-                aspect="1/1"
-                caption={
-                  isCn
-                    ? "给桌游做的无线发光骰子"
-                    : "Wireless illuminated dice for our table game"
-                }
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-      </BootReveal>
-
-      {/* 02 — My Workspace */}
-      <BootReveal delay={0.17}>
-      <section className="container-fluid mt-32">
-        <SectionTitle
-          number="02"
-          title={isCn ? "我的工作台" : "My Workspace"}
-          meta={isCn ? "模块 · 06 张影像 · 已加载" : "Module · 06 frames · loaded"}
-        />
-
-        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/workspace-2.png"
-                alt="Aspen's desk with dual monitors showing a flip clock and solar system"
-                aspect="16/10"
-                caption={
-                  isCn
-                    ? "我的工作台 —— 为了让创造力更顺。少即是多。"
-                    : "My workspace — built to enrich creativity. Less is more."
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/bronze-studio-2.png"
-                alt="A friend at home holding a Sony camera, taking a photo"
-                aspect="3/4"
-                caption={
-                  isCn
-                    ? "房间里总有人拿着相机"
-                    : "Always someone with a camera in the room"
-                }
-              />
-            </Reveal>
-          </div>
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/film-washing-1.png"
-                alt="Close-up black-and-white photo of someone holding a vintage Edixa Reflex 1000 film camera"
-                aspect="4/3"
-                caption={
-                  isCn
-                    ? "胶片相机 —— 一种更慢的观看"
-                    : "Film cameras — the slower kind of seeing"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/film-washing-2.png"
-                alt="Drawing class with laptop and projector showing arm sketch references on the wall"
-                aspect="16/10"
-                caption={
-                  isCn
-                    ? "素描夜晚 —— 墙上是参考，桌上是本子"
-                    : "Sketching nights — references on the wall, sketchbooks on the table"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/film-washing-3.png"
-                alt="Purple-gloved hand holding a film reel under sink water during developing"
-                aspect="3/4"
-                caption={
-                  isCn
-                    ? "手洗胶片 —— 盆里的 PH14"
-                    : "Film washing by hand — PH14 in the basin"
-                }
-              />
-            </Reveal>
-          </div>
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/film-washing-4.png"
-                alt="Black-and-white film print of a silver SUV parked in front of an old brick building"
-                aspect="3/4"
-                caption={isCn ? "冲洗后的成片" : "The print, after"}
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-      </BootReveal>
-
-      {/* 03 — Love Music */}
-      <BootReveal delay={0.25}>
-      <section className="container-fluid mt-32">
-        <SectionTitle
-          number="03"
-          title={isCn ? "热爱音乐" : "Love Music"}
-          meta={isCn ? "模块 · 05 张影像 · 已加载" : "Module · 05 frames · loaded"}
-        />
-
-        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/bronze-studio-1.png"
-                alt="A sunburst acoustic guitar resting on a grey carpet"
-                aspect="3/4"
-                caption={isCn ? "热爱音乐" : "Love music"}
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/designing-pals-2.png"
-                alt="Three bronze-and-clay monk sculptures in a workshop with pegboard wall"
-                aspect="3/4"
-                caption={isCn ? "在青铜工作室工作" : "Working at a Bronze Studio"}
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/designing-pals-1.png"
-                alt="Wooden desk with iPad of horse-anatomy refs, sketchbook drawings, red sculpted clay animals"
-                aspect="16/10"
-                caption={
-                  isCn
-                    ? "带着参考做设计 —— 桌面、速写本，以及最后变成的泥稿"
-                    : "Designing with reference — desk, sketchbook, and the clay it ends up as"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/neuroscience-1.png"
-                alt="Three friends in silhouette jumping against a sunset sky"
-                aspect="3/2"
-              />
-            </Reveal>
-          </div>
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/neuroscience-2.png"
-                alt="Portrait of three young men in golden-hour light with mountains behind"
-                aspect="3/2"
-                caption={
-                  isCn
-                    ? "和朋友们 —— 他们去读 PhD 前的最后一天"
-                    : "With my pals — last day before they head to their PhDs"
-                }
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-      </BootReveal>
-
-      {/* 04 — Enjoy Cooking */}
-      <BootReveal delay={0.33}>
-      <section className="container-fluid mt-32">
-        <SectionTitle
-          number="04"
-          title={isCn ? "喜欢做饭" : "Enjoy Cooking"}
-          meta={isCn ? "模块 · 07 张影像 · 已加载" : "Module · 07 frames · loaded"}
-        />
-
-        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/cooking.png"
-                alt="Jupyter notebook with PSYC 3803 brain-science course materials and downsampling visualization"
-                aspect="16/9"
-                caption={
-                  isCn
-                    ? "我喜欢神经科学 —— 在认知科学/心理学双学位里很开心。真的开心。"
-                    : "I love neuro-sci — happy in the cog sci dual degree. Yes I am happy."
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/rat-apartment.png"
-                alt="Two plates of steak with asparagus, potatoes, and sauce"
-                aspect="4/3"
-                caption={
-                  isCn
-                    ? "给我和女朋友做饭"
-                    : "Cooking for me and my girlfriend"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/miku-switch.png"
-                alt="A small mouse inside a clear plastic terrarium with moss, near a window screen"
-                aspect="4/3"
-                caption={
-                  isCn
-                    ? "在公寓里抓到一只小鼠 —— 很可爱，但最后还是请它离开了"
-                    : "Caught a rat in my apartment — it's cute, but I made it leave eventually"
-                }
-              />
-            </Reveal>
-          </div>
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/drawing-app.png"
-                alt="Teal Nintendo Switch Lite with hand-drawn Hatsune Miku in marker on the back"
-                aspect="3/4"
-                caption={
-                  isCn
-                    ? "手绘 Miku Switch Lite —— 给她的圣诞礼物"
-                    : "DIY Miku Switch Lite — Xmas gift for my girl"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/xing-art-cat.png"
-                alt="iPad screen showing a stylized anime elf girl in progress in a drawing app"
-                aspect="16/10"
-                caption={
-                  isCn
-                    ? "用我自己设计的 App 画画"
-                    : "Drawing with the app I designed"
-                }
-              />
-            </Reveal>
-          </div>
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/nvidia-line.png"
-                alt="A tabby cat with white belly, looking up at the camera"
-                aspect="3/4"
-                caption={
-                  isCn ? "我的猫 —— 超级超级喜欢他" : "My cat — I love him sooooo much"
-                }
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-      </BootReveal>
-
-      {/* 05 — Unforgettable Summer */}
-      <BootReveal delay={0.41}>
-      <section className="container-fluid mt-32">
-        <SectionTitle
-          number="05"
-          title={isCn ? "难忘的夏天" : "Unforgettable Summer"}
-          meta={isCn ? "模块 · 09 张影像 · 已加载" : "Module · 09 frames · loaded"}
-        />
-
-        <div className="flex items-start gap-5 sm:gap-7 overflow-x-auto no-scrollbar snap-x pb-3 pr-[clamp(1.25rem,4vw,3rem)]">
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/gtc-1.png"
-                alt="Crowd of attendees in winter coats lined up at night outside a convention center"
-                aspect="1/1"
-                caption={isCn ? "凌晨 4 点排队等 5090" : "Lined up at 4 AM for a 5090"}
-              />
-            </Reveal>
-          </div>
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/jensen-sign.png"
-                alt="Young man at NVIDIA GTC with conference lanyard, holding a tablet"
-                aspect="1/1"
-                caption={isCn ? "在 NVIDIA GTC 2025" : "At NVIDIA GTC 2025"}
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/if-award-miracleplus.png"
-                alt="A PC tower at NVIDIA GTC 2025 signed Jensen was here by Jensen Huang"
-                aspect="16/10"
-                caption={isCn ? "Jensen 在我的 PC 上签名了！" : "Jensen signed my PC!"}
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/pitching-2.png"
-                alt="iF Design Award page for Field of Vision — cane for the blind"
-                aspect="3/4"
-                caption={
-                  isCn
-                    ? "Field of Vision 获得 iF Design Award"
-                    : "Awarded iF Design — Field of Vision, cane for the blind"
-                }
-              />
-            </Reveal>
-          </div>
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/pitching-1.png"
-                alt="MiraclePlus 2025 Spring closing ceremony group photo on stage"
-                aspect="4/3"
-                caption={
-                  isCn
-                    ? "获得 MiraclePlus $300K 投资 · 2025 春季结营"
-                    : "Funded by MiraclePlus — $300K · 2025 Spring closing ceremony"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/tiktok-intern.png"
-                alt="XING Art booth at trade show — three young men with iPad showing in-progress anime drawing"
-                aspect="16/10"
-                caption={
-                  isCn
-                    ? "XING Art alpha 测试 —— 第一次带到现场"
-                    : "XING Art alpha test — first time on the floor"
-                }
-              />
-            </Reveal>
-          </div>
-
-          <div className="shrink-0 snap-start">
-            <Reveal>
-              <Figure
-                src="/about/closing-1.png"
-                alt="Group of friends at a restaurant table with burgers, salsa decorations on the wall"
-                aspect="4/3"
-                caption={
-                  isCn
-                    ? "TikTok 实习 —— 最好的夏天同伴"
-                    : "Intern at TikTok — best summer crew. GOAT."
-                }
-              />
-            </Reveal>
-          </div>
-          <div className="shrink-0 snap-start">
-            <Reveal delay={0.05}>
-              <Figure
-                src="/about/closing-2.png"
-                alt="Holding ID badge in front of tall modern office buildings, ByteDance / Volcano Engine"
-                aspect="3/4"
-                caption={
-                  isCn
-                    ? "入职第一天 —— 字节跳动上海"
-                    : "First day on campus — ByteDance Shanghai"
-                }
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-      </BootReveal>
-
-      <BootReveal delay={0.49}>
-      <section className="container-fluid mt-32">
           <div className="border-t border-line pt-12 max-w-3xl">
-            <p
-              className="font-display font-light italic text-ink leading-[1.05] tracking-[-0.015em]"
-              style={{ fontSize: "clamp(28px, 4.5vw, 56px)" }}
-            >
-              {isCn
-                ? "“我在等你看见我的潜力。”"
-                : "“I'm waiting for you to find my potential.”"}
+            <p className="type-display italic text-ink leading-[1.05]" style={{ fontSize: "clamp(30px, 4.5vw, 60px)" }}>
+              {cn ? "“我在等你看见我的潜力。”" : "“I'm waiting for you to find my potential.”"}
             </p>
             <p className="mt-6 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              {isCn ? "—— Aspen, 21 岁" : "— Aspen, 21 yrs"}
+              {cn ? "—— Aspen, 21 岁" : "— Aspen, 21 yrs"}
             </p>
           </div>
+        </Reveal>
       </section>
-      </BootReveal>
 
-      <BootReveal delay={0.57}>
-      <section className="container-fluid mt-32">
-          <div className="border-t border-line pt-6 mb-10">
-            <span className="font-mono text-soft/70 text-[11px] tracking-[0.24em] uppercase">
-              [A-06]
-            </span>
-            <p className="mt-2 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              {isCn ? "奖项与认可" : "Awards & recognition"}
-            </p>
-          </div>
-        <ul className="space-y-3 text-[14px] max-w-3xl">
+      {/* ── Awards ── */}
+      <Block>
+        <SectionHead folio={next()} title={cn ? "奖项与认可" : "Awards & recognition"} icon={<Award strokeWidth={1.5} />} meta={pad(localizedAwards.length)} />
+        <ul className="border-t border-line max-w-3xl">
           {localizedAwards.map((a, i) => (
-            <Reveal key={a.title + a.project} delay={i * 0.03}>
-              <li className="grid grid-cols-12 gap-3 items-baseline border-b border-line/60 pb-3">
-                <span className="col-span-12 sm:col-span-5 text-ink/90">
-                  {a.title}
-                </span>
-                <span className="col-span-7 sm:col-span-5 text-mute">
-                  {a.project}
-                </span>
-                <span className="col-span-5 sm:col-span-2 font-mono text-[11px] text-soft uppercase tracking-[0.14em] text-right">
-                  {a.year}
-                </span>
-              </li>
-            </Reveal>
+            <li key={a.title + a.project}>
+              <Reveal delay={i * 0.03}>
+                <div className="grid grid-cols-12 gap-3 items-baseline border-b border-line py-3.5 text-[14px]">
+                  <span className="col-span-12 sm:col-span-5 text-ink/90">{a.title}</span>
+                  <span className="col-span-7 sm:col-span-5 text-mute">{a.project}</span>
+                  <span className="col-span-5 sm:col-span-2 font-mono text-[11px] text-soft uppercase tracking-[0.14em] text-right tabular-nums">{a.year}</span>
+                </div>
+              </Reveal>
+            </li>
           ))}
         </ul>
-      </section>
-      </BootReveal>
+      </Block>
 
-      <BootReveal delay={0.65}>
-      <section className="container-fluid mt-20">
-          <div className="border-t border-line pt-6 mb-10">
-            <span className="font-mono text-soft/70 text-[11px] tracking-[0.24em] uppercase">
-              [A-07]
-            </span>
-            <p className="mt-2 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              {isCn ? "更多过往作品" : "Selected past work"}
-            </p>
-          </div>
-        <ul className="space-y-3 text-[14px] max-w-3xl">
+      {/* ── Past work ── */}
+      <Block>
+        <SectionHead folio={next()} title={cn ? "更多过往作品" : "Selected past work"} icon={<Briefcase strokeWidth={1.5} />} meta={pad(localizedMoreWork.length)} />
+        <ul className="border-t border-line max-w-3xl">
           {localizedMoreWork.map((m, i) => (
-            <Reveal key={m.client} delay={i * 0.03}>
-              <li className="grid grid-cols-12 gap-3 items-baseline border-b border-line/60 pb-3">
-                <span className="col-span-12 sm:col-span-5 text-ink/90">
-                  {m.client}
-                </span>
-                <span className="col-span-7 sm:col-span-4 text-mute">
-                  {m.role}
-                </span>
-                <span className="col-span-5 sm:col-span-3 font-mono text-[11px] text-soft uppercase tracking-[0.14em] text-right">
-                  {m.period}
-                </span>
-              </li>
-            </Reveal>
+            <li key={m.client}>
+              <Reveal delay={i * 0.03}>
+                <div className="grid grid-cols-12 gap-3 items-baseline border-b border-line py-3.5 text-[14px]">
+                  <span className="col-span-12 sm:col-span-5 text-ink/90">{m.client}</span>
+                  <span className="col-span-7 sm:col-span-4 text-mute">{m.role}</span>
+                  <span className="col-span-5 sm:col-span-3 font-mono text-[11px] text-soft uppercase tracking-[0.14em] text-right">{m.period}</span>
+                </div>
+              </Reveal>
+            </li>
           ))}
         </ul>
-      </section>
-      </BootReveal>
+      </Block>
 
-      {/* [A-08] The combo — six proof points. It used to be a home tab;
-          the home page is sharper with four, and this is where someone
-          reading the whole story wants it anyway. */}
-      <BootReveal delay={0.73}>
-      <section className="container-fluid mt-20">
-          <div className="border-t border-line pt-6 mb-10">
-            <span className="font-mono text-soft/70 text-[11px] tracking-[0.24em] uppercase">
-              [A-08]
-            </span>
-            <p className="mt-2 font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
-              {isCn ? "组合技" : "The combo"}
-            </p>
-          </div>
+      {/* ── The combo — six proof points, moved here from the home page ── */}
+      <Block>
+        <SectionHead folio={next()} title={cn ? "组合技" : "The combo"} icon={<Layers strokeWidth={1.5} />} meta="06" />
         <Moat inPage />
-      </section>
-      </BootReveal>
+      </Block>
     </article>
-    </PageEntrance>
-    </>
   );
 }

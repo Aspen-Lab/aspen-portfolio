@@ -9,10 +9,13 @@ export function SectionHead({
   folio,
   title,
   meta,
+  icon,
 }: {
   folio: string;
   title: string;
   meta?: string;
+  /** An optional glyph beside the title — the About page's heads carry one. */
+  icon?: React.ReactNode;
 }) {
   return (
     <header className="flex items-end justify-between gap-6 border-t border-line pt-5 mb-10 sm:mb-14">
@@ -20,7 +23,12 @@ export function SectionHead({
         <span className="font-mono text-[10px] tracking-[0.2em] text-soft tabular-nums">
           {folio}
         </span>
-        <h2 className="type-display text-[30px] sm:text-[36px] leading-[1.05] text-ink">
+        <h2 className="type-display text-[30px] sm:text-[36px] leading-[1.05] text-ink flex items-center gap-4">
+          {icon && (
+            <span aria-hidden className="text-soft [&>svg]:w-6 [&>svg]:h-6 sm:[&>svg]:w-7 sm:[&>svg]:h-7 translate-y-[1px]">
+              {icon}
+            </span>
+          )}
           {title}
         </h2>
       </div>
