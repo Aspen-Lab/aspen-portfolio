@@ -122,24 +122,24 @@ export function StackToolIcon({ kind, index }: { kind: StackIcon; index: number 
       aria-hidden="true"
       style={{
         display: "inline-flex",
-        width: 44,
-        minWidth: 44,
+        width: 36,
+        minWidth: 36,
         flexShrink: 0,
         alignItems: "center",
-        justifyContent: "center",
-        gap: 6,
+        justifyContent: "flex-start",
+        gap: 4,
       }}
     >
       {marks.map((mark, i) => {
         if ("path" in mark) {
           return (
-            <svg key={i} width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+            <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
               <path d={mark.path} />
             </svg>
           );
         }
         const Icon = mark.icon;
-        return <Icon key={i} size={18} strokeWidth={1.5} aria-hidden="true" focusable="false" />;
+        return <Icon key={i} size={16} strokeWidth={1.5} aria-hidden="true" focusable="false" />;
       })}
     </span>
   );

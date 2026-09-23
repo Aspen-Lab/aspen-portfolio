@@ -1,6 +1,6 @@
 import styles from "./HeroEntrance.module.css";
 
-/** A short reveal, rendered with the hero so it never waits for hydration. */
+/** Draw, converge, then open — present at first paint without hydration. */
 export function HeroEntrance() {
   return (
     <div className={styles.entrance} data-hero-entrance aria-hidden="true">
@@ -21,7 +21,7 @@ export function HeroEntrance() {
           stroke="currentColor"
           strokeWidth="1.35"
         >
-          <path d="M5 24C5 9 27 23 27 8" />
+          <path className={styles.curveTrace} pathLength="1" d="M5 24C5 9 27 23 27 8" />
           <path d="M5 24V8M27 8v16" opacity=".35" />
           <circle cx="5" cy="8" r="2" fill="#0f0f10" />
           <circle cx="27" cy="24" r="2" fill="#0f0f10" />
@@ -39,7 +39,7 @@ export function HeroEntrance() {
           strokeLinecap="square"
           strokeLinejoin="miter"
         >
-          <path d="m10 8-7 8 7 8M22 8l7 8-7 8M18.5 5l-5 22" />
+          <path className={styles.codeTrace} pathLength="1" d="m10 8-7 8 7 8M22 8l7 8-7 8M18.5 5l-5 22" />
         </svg>
 
         <svg
@@ -52,7 +52,7 @@ export function HeroEntrance() {
           strokeWidth="1.5"
         >
           <path className={styles.letter} pathLength="1" d="M6 39 20 8l14 31M11 28h18" />
-          <path d="M0 8V0h8M32 0h8v8M0 40v8h8M32 48h8v-8" opacity=".28" />
+          <path className={styles.registration} pathLength="1" d="M0 8V0h8M32 0h8v8M0 40v8h8M32 48h8v-8" opacity=".28" />
         </svg>
       </div>
     </div>

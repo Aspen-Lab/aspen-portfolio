@@ -206,7 +206,7 @@ export function HeroWidgets() {
           word rise was tried here and cut; the line fades up as one.) */}
       <p
         className="hero-fade-up text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
-        style={{ ...enterDelay(0.62), color: "rgba(160,160,165,0.72)" }}
+        style={{ ...enterDelay(0.94), color: "rgba(160,160,165,0.72)" }}
       >
         {t.rich("bio", {
           lead: (chunks: ReactNode) => <span className="font-medium text-ink/90">{chunks}</span>,
@@ -250,7 +250,7 @@ export function HeroWidgets() {
       </p>
 
       {/* Toolbox — usage depth and a concrete scope for each tool. */}
-      <div className="hero-fade-up mt-8 sm:mt-9" style={enterDelay(0.76)}>
+      <div className="hero-fade-up mt-8 sm:mt-9" style={enterDelay(1.1)}>
         <div className="max-sm:overflow-x-auto no-scrollbar" role="group" aria-label={t("invLabel")}>
           <div className="flex items-center gap-2 w-max">
             {TOOLS.map((name, i) => (
@@ -290,7 +290,7 @@ export function HeroWidgets() {
       </div>
 
       {/* Companies — infinite scrolling ticker */}
-      <div className="hero-fade-up mt-9 sm:mt-10 -mx-4 sm:mx-0" style={enterDelay(0.86)}>
+      <div className="hero-fade-up mt-9 sm:mt-10 -mx-4 sm:mx-0" style={enterDelay(1.26)}>
         <div
           className="logo-ticker-wrap overflow-hidden"
           style={{

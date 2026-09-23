@@ -277,7 +277,7 @@ button {
   to   { opacity: 1; }
 }
 .hero-rise {
-  animation: hero-rise 1.05s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
+  animation: hero-rise 1.16s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
 }
 .hero-fade-up {
   animation: hero-fade-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
@@ -412,12 +412,29 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   display: grid;
   grid-template-columns: repeat(3, 2px);
   gap: 3px;
-  transition: transform 100ms ease;
+  transition: transform 70ms linear;
 }
-.cursor-dots i { width: 2px; height: 2px; border-radius: 50%; background: currentColor; }
-.cursor-dots i:nth-child(2n) { opacity: .55; }
+.cursor-dots i {
+  --x: 0;
+  --y: 0;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .58;
+  transition: transform 90ms cubic-bezier(.2,.8,.2,1), opacity 70ms linear;
+}
+.cursor-dots i:nth-child(3n + 1) { --x: -1; }
+.cursor-dots i:nth-child(3n) { --x: 1; }
+.cursor-dots i:nth-child(-n + 3) { --y: -1; }
+.cursor-dots i:nth-child(n + 7) { --y: 1; }
+.cursor-dots i:nth-child(2n) { opacity: .85; }
 .cursor-dots i:nth-child(5) { opacity: 0; }
-.cursor-dots[data-pressed="true"] > span { transform: scale(.78); }
+.cursor-dots[data-interactive="true"] i {
+  transform: translate(calc(var(--x) * 2px), calc(var(--y) * 2px));
+  opacity: 1;
+}
+.cursor-dots[data-pressed="true"] > span { transform: scale(.72); }
 
 /* Monochrome focus ring — replaces the UA default everywhere. */
 :focus-visible {

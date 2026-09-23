@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useSyncExternalStore } from "react";
 
-// A small dot matrix stays at the actual pointer position. Hover only
-// changes its contrast; no target brackets, snapping, springs or lag.
+// The matrix follows the actual pointer. Its cells open on a target
+// and contract on press; the pointer itself never eases or snaps.
 const INTERACTIVE = 'a, button, [role="button"], input, textarea, select, label, summary';
 
 const FINE = "(pointer: fine)";

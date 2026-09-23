@@ -12,52 +12,14 @@ import dynamic from "next/dynamic";
 const BuildScene = dynamic(() => import("./stack/BuildScenes").then((m) => m.BuildScene));
 const ExploreScene = dynamic(() => import("./stack/ExploreScenes").then((m) => m.ExploreScene));
 import { StackCategoryIcon, StackToolIcon } from "./stack/StackIcons";
+import { STACK_CN, TOOL_ROLES } from "./stack/stack-copy";
 import styles from "./TechStack.module.css";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-const pad = (n: number) => String(n).padStart(2, "0");
 function splitLabel(label: string) {
   const [name, ...rest] = label.split(" · ");
   return { name, caption: rest.join(" · ") };
 }
-
-const STACK_CN: ReadonlyArray<{
-  label: string;
-  note: string;
-  linkLabel?: string;
-}> = [
-  {
-    label: "前端 · 日常主力",
-    note: "helloaxel.com · Lumen · 这个作品集 · Pado",
-    linkLabel: "看 Lumen",
-  },
-  {
-    label: "邮件工程",
-    note: "Axel 的 28 个交易类邮件模板 —— 从 onboarding 到 cancellation",
-  },
-  {
-    label: "后端与数据",
-    note: "Peer(开源论文晨报) · Pado",
-    linkLabel: "看 Peer",
-  },
-  {
-    label: "AI · 三层架构",
-    note: "Tier 0 / 1 / 2 —— 按任务匹配成本和能力",
-    linkLabel: "Peer 管线",
-  },
-  {
-    label: "游戏",
-    note: "和 Skyler 做 2D Metroidvania · 每天 1–2 小时，Hollow-Knight stack",
-  },
-  {
-    label: "设计",
-    note: "每个项目开始的地方 —— Figma 是我的工作台",
-  },
-  {
-    label: "工具链 · 胶水",
-    note: "每个 repo 的 CLAUDE.md · MCP chain · Vercel preview as handoff",
-  },
-] as const;
 
 const SPECTRUM_CN = ["设计", "前端", "模板", "后端", "游戏"];
 
@@ -71,10 +33,6 @@ const SCENE_CAPTIONS: Record<StackIcon, { en: string; cn: string }> = {
   tooling: { en: "Connect the tools. Keep the path to a PR short.", cn: "连接工具，让想法更快成为 PR。" },
 };
 const SPECTRUM_ICONS: StackIcon[] = ["design", "frontend", "email", "backend", "game"];
-
-function Bracket() {
-  return <span aria-hidden className={styles.bracket}><i /><i /><i /><i /></span>;
-}
 
 function StackScene({ kind, cn, playing }: { kind: StackIcon; cn: boolean; playing: boolean }) {
   return kind === "frontend" || kind === "email" || kind === "backend"
@@ -92,6 +50,7 @@ export function TechStack() {
   const [pageVisible, setPageVisible] = useState(true);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const scene = useRef<HTMLElement>(null);
+  const sceneViewport = useRef<HTMLDivElement>(null);
   const inView = useInView(scene, { amount: 0.5 });
   const loadScene = useInView(scene, { once: true, margin: "400px 0px" });
 
@@ -102,8 +61,8 @@ export function TechStack() {
     return () => document.removeEventListener("visibilitychange", update);
   }, []);
 
-  const localizedStack = stack.map((item, i) => {
-    const copy = cn ? STACK_CN[i] : undefined;
+  const localizedStack = stack.map((item) => {
+    const copy = cn ? STACK_CN[item.icon ?? "frontend"] : undefined;
     return {
       ...item,
       label: copy?.label ?? item.label,
@@ -113,8 +72,13 @@ export function TechStack() {
   });
   const cat = localizedStack[active];
   const kind = cat.icon ?? "frontend";
-  const { name, caption } = splitLabel(cat.label);
+  const { name } = splitLabel(cat.label);
   const playing = inView && pageVisible && !reduce;
+
+  function selectTab(index: number) {
+    setActive(index);
+    sceneViewport.current?.scrollTo({ left: 0 });
+  }
 
   function moveTab(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next: number;
@@ -126,14 +90,14 @@ export function TechStack() {
       default: return;
     }
     event.preventDefault();
-    setActive(next);
+    selectTab(next);
     tabs.current[next]?.focus();
   }
 
   return (
     <section className={`container-fluid ${styles.section}`}>
       <Reveal>
-        <p className="text-[18px] sm:text-[20px] text-mute leading-[1.6] max-w-2xl">
+        <p className={styles.intro}>
           {t.rich("intro", { ink: (chunks: ReactNode) => <span className="text-ink">{chunks}</span> })}
         </p>
       </Reveal>
@@ -151,21 +115,20 @@ export function TechStack() {
                   type="button"
                   role="tab"
                   id={`${id}-tab-${i}`}
+                  aria-label={label.name}
                   aria-selected={on}
                   aria-controls={`${id}-panel`}
                   tabIndex={on ? 0 : -1}
-                  onFocus={() => setActive(i)}
-                  onClick={() => setActive(i)}
+                  onFocus={() => selectTab(i)}
+                  onClick={() => selectTab(i)}
                   onKeyDown={(event) => moveTab(event, i)}
                   className={styles.tab}
                 >
-                  {on && <motion.span className={styles.selection} layoutId={`${id}-bracket`} transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 34 }}><Bracket /></motion.span>}
-                  <span className={styles.categoryIcon}><StackCategoryIcon kind={category.icon ?? "frontend"} size={23} /></span>
+                  <span className={styles.categoryIcon}><StackCategoryIcon kind={category.icon ?? "frontend"} size={20} /></span>
                   <span className={styles.tabCopy}>
                     <span className={styles.tabName}>{label.name}</span>
                     {label.caption && <span className={styles.tabCaption}>{label.caption}</span>}
                   </span>
-                  <span className={styles.tabIndex}>{pad(i + 1)}</span>
                 </button>
               );
             })}
@@ -175,20 +138,18 @@ export function TechStack() {
 
         <Reveal delay={0.08}>
           <div className={styles.panel} role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-tab-${active}`} tabIndex={0}>
-            <Bracket />
-            <div className={styles.readout}>
-              <span>{pad(active + 1)} <span className={styles.slash}>/</span> {pad(stack.length)}</span>
-              <span>{cn ? "工作方式" : "In practice"}<span className={styles.readoutDot} /></span>
-            </div>
             <div className={styles.panelHeading}>
               <h3 className={`type-display ${styles.title}`}>{name}</h3>
-              {caption && <span className={styles.caption}>{caption}</span>}
+              <span className={styles.caption}>{cn ? `${cat.items.length} 个工具` : `${cat.items.length} tools`}</span>
             </div>
 
             <figure ref={scene} className={styles.figure}>
-              <div key={`${kind}-${replay}`} className={styles.scene}>
-                {loadScene && <StackScene kind={kind} cn={cn} playing={playing} />}
+              <div ref={sceneViewport} className={styles.sceneViewport} tabIndex={0} role="group" aria-label={cn ? `${name}工作流程示意，可横向滚动` : `${name} workflow illustration; scroll horizontally on small screens`}>
+                <div key={`${kind}-${replay}`} className={styles.scene}>
+                  {loadScene && <StackScene kind={kind} cn={cn} playing={playing} />}
+                </div>
               </div>
+              <span className={styles.scrollHint} aria-hidden>{cn ? "横向滑动，查看完整流程" : "Swipe to explore the workflow"}</span>
               <figcaption className={styles.sceneFooter}>
                 <span>{SCENE_CAPTIONS[kind][cn ? "cn" : "en"]}</span>
                 {!reduce && <button className={styles.replay} type="button" onClick={() => setReplay((value) => value + 1)} aria-label={cn ? `重播${name}演示` : `Replay ${name} demo`}><RotateCcw size={13} aria-hidden /><span>{cn ? "重播" : "Replay"}</span></button>}
@@ -199,7 +160,7 @@ export function TechStack() {
               {cat.items.map((item, index) => (
                 <li key={item} className={styles.tool}>
                   <span className={styles.toolIcon}><StackToolIcon kind={kind} index={index} /></span>
-                  <span>{item}</span>
+                  <span className={styles.toolCopy}><span>{item}</span><small>{TOOL_ROLES[kind][cn ? "cn" : "en"][index]}</small></span>
                 </li>
               ))}
             </ul>

@@ -3,10 +3,11 @@
 import { useEffect, useRef } from "react";
 import { AVATAR_TONES } from "@/lib/avatar-ascii";
 import styles from "./AvatarDots.module.css";
+import { PORTRAIT_FLOW_RADIUS, stepPortraitParticle, separatePortraitParticles, type PortraitParticle } from "@/lib/portrait-motion";
 
 /**
- * A portrait assembled from dots, with a slow breath and a local pointer
- * field. Facial detail stays visible throughout the breathing cycle.
+ * A fine-dot portrait with independent particles flowing around the pointer.
+ * Outside hover the portrait is stationary and rendering sleeps.
  */
 export function AvatarDots() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -65,7 +66,7 @@ export function AvatarDots() {
     // Each dot also remembers the background-grid node it comes from: the
     // page opens as a plain 22px dot grid, and those dots fly together
     // into the portrait.
-    type Dot = {
+    type Dot = PortraitParticle & {
       hx: number; hy: number;   // home pixel position
       sx: number; sy: number;   // start: the background grid node it leaves
       delay: number;            // ms before this dot sets off
@@ -80,9 +81,13 @@ export function AvatarDots() {
     const EYE_R = { x: cssW * 0.615, y: cssH * 0.425 };
 
     const dots: Dot[] = [];
+    const rows: Dot[][] = Array.from({ length: TH }, () => []);
     for (let y = 0; y < TH; y++) {
       for (let x = 0; x < TW; x++) {
-        const v = 1 - grid[y][x];
+        const tone = grid[y][x];
+        const neighbors = (grid[y][Math.max(0, x - 1)] + grid[y][Math.min(TW - 1, x + 1)]
+          + grid[Math.max(0, y - 1)][x] + grid[Math.min(TH - 1, y + 1)][x]) / 4;
+        const v = Math.max(0, Math.min(1, 1 - tone + (neighbors - tone) * 0.7));
         const bb = (v - 0.12) / 0.88;
         if (bb <= 0.02) continue;
         const hx = x * pitch + pitch / 2;
@@ -90,17 +95,19 @@ export function AvatarDots() {
         const centerDistance = Math.hypot(hx - FACE_X, hy - FACE_Y);
         const contrast = 1 + Math.max(0, 1 - centerDistance / (cssW * 0.62)) * 1.05;
         const eyeDistance = Math.min(Math.hypot(hx - EYE_L.x, hy - EYE_L.y), Math.hypot(hx - EYE_R.x, hy - EYE_R.y));
-        const eyeDetail = eyeDistance < 52 ? (1 - eyeDistance / 52) ** 2 * 0.3 : 0;
-        const alpha = Math.min(0.95, Math.min(0.91, bb * 0.64 * contrast) + eyeDetail);
+        const eyeDetail = eyeDistance < 52 ? (1 - eyeDistance / 52) ** 2 * 0.18 : 0;
+        const alpha = Math.min(0.95, Math.min(0.91, Math.pow(bb, 0.88) * 0.74 * contrast) + eyeDetail);
         // The face resolves from its centre outward, so the eyes arrive first
         const r = Math.hypot(hx - FACE_X, hy - FACE_Y) / maxR;
-        dots.push({
-          hx, hy,
+        const faceDot = {
+          hx, hy, ox: 0, oy: 0, vx: 0, vy: 0,
           sx: Math.round(hx / CELL) * CELL,
           sy: Math.round(hy / CELL) * CELL,
-          delay: 120 + r * 620 + Math.random() * 90,
+          delay: 520 + Math.round(r * 10) * 44,
           alpha,
-        });
+        };
+        dots.push(faceDot);
+        rows[y].push(faceDot);
       }
     }
 
@@ -111,11 +118,11 @@ export function AvatarDots() {
       for (let x = CELL / 2; x < cssW; x += CELL) nodes.push({ x, y });
     }
     const GRID_A = 0.05;        // matches the CSS backdrop grid
-    const ASSEMBLY = 1500;      // ms: last dot lands
+    const ASSEMBLY = 1900;      // ms: last dot lands
     const easeOutQuint = (u: number) => 1 - Math.pow(1 - u, 5);
 
     // A few quiet dots finish the outer edge of the portrait.
-    const strays: { x: number; y: number; a: number }[] = [];
+    const strays: (PortraitParticle & { a: number })[] = [];
     for (let tries = 0; tries < 2400 && strays.length < 34; tries++) {
       const ux = Math.random();
       const uy = Math.random();
@@ -127,15 +134,15 @@ export function AvatarDots() {
       const d = Math.sqrt(ex * ex + ey * ey);
       if (d < 0.62 || d > 1.35) continue;
       strays.push({
-        x: ux * cssW,
-        y: uy * cssH,
+        hx: ux * cssW,
+        hy: uy * cssH,
+        ox: 0, oy: 0, vx: 0, vy: 0,
         a: 0.06 + Math.random() * 0.13,
       });
     }
 
-    // Rasterize the settled portrait once. Breathing still uses the same
-    // transform/opacity; pointer interaction and assembly retain individual dots.
-    // The tiny radius pulse is below a device pixel; cache its base size.
+    // Rasterize the settled portrait once; the stationary grid needs no
+    // ongoing redraw. Assembly and grid gestures retain individual dots.
     const portrait = document.createElement("canvas");
     portrait.width = canvas.width;
     portrait.height = canvas.height;
@@ -156,83 +163,80 @@ export function AvatarDots() {
     const TWO_PI = Math.PI * 2;
     const start = performance.now();
     let raf = 0;
-    let lastDraw = 0;
     let inView = true;
 
-    // The pointer stirs a local wave, never attracts or gathers the dots.
-    const mouse = { x: -9999, y: -9999 };
-    const cur = { x: 0, y: 0, seeded: false };
-    const vel = { x: 0, y: 0 };
-    let amt = 0;
-    let lastMovement = -Infinity;
-    const R = 132;
-    const WAVE = 4.5;
-    // Read geometry once per drawing frame, not once per mouse event.
+    // The pointer tracks directly; each particle keeps its own velocity.
+    const pointer = { x: -9999, y: -9999, vx: 0, vy: 0, active: false };
+    const active = new Set<PortraitParticle>();
+    let previousFrame = 0;
+    let previousInput = 0;
     let pendingPointer: { x: number; y: number } | null = null;
-    const onMove = (e: MouseEvent) => {
-      if (reduce || !inView || document.hidden) return;
-      pendingPointer = { x: e.clientX, y: e.clientY };
+    const wake = () => {
+      if (!raf && inView && !document.hidden) raf = requestAnimationFrame(frame);
+    };
+    const onMove = (event: PointerEvent) => {
+      if (reduce || event.pointerType === "touch" || !inView || document.hidden) return;
+      pendingPointer = { x: event.clientX, y: event.clientY };
+      wake();
     };
     const onLeave = () => {
       pendingPointer = null;
-      mouse.x = -9999;
-      mouse.y = -9999;
+      pointer.active = false;
+      pointer.vx = pointer.vy = 0;
+      if (active.size) wake();
     };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    const onOut = (event: MouseEvent) => { if (!event.relatedTarget) onLeave(); };
-    window.addEventListener("mouseout", onOut);
+    const onOut = (event: PointerEvent) => { if (!event.relatedTarget) onLeave(); };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerout", onOut);
     window.addEventListener("scroll", onLeave, { passive: true });
+    window.addEventListener("blur", onLeave);
 
     const frame = (now: number) => {
+      raf = 0;
       if (!inView || document.hidden) return;
-      // A calm portrait needs only 30 draws per second.
-      if (!reduce && now - lastDraw < 1000 / 30) {
-        raf = requestAnimationFrame(frame);
-        return;
-      }
-      lastDraw = reduce ? now : now - ((now - lastDraw) % (1000 / 30));
       const t = now - start;
-      const globalReveal = reduce ? 1 : Math.max(0, Math.min(1, t / 900));
-      const breath = reduce ? 0 : (1 - Math.cos(Math.max(0, t - ASSEMBLY) / 6200 * TWO_PI)) / 2;
-      const breathLight = reduce ? 1 : 0.92 + breath * 0.08;
-      ctx.clearRect(0, 0, cssW, cssH);
-
+      const dt = Math.min(1 / 30, previousFrame ? (now - previousFrame) / 1000 : 1 / 60);
+      previousFrame = now;
+      const edgeReveal = reduce ? 1 : Math.max(0, Math.min(1, (t - 1450) / 380));
+      pointer.vx *= Math.exp(-dt * 18);
+      pointer.vy *= Math.exp(-dt * 18);
       if (pendingPointer) {
         const rect = canvas.getBoundingClientRect();
-        if (rect.width) {
+        if (rect.width && rect.height) {
           const x = (pendingPointer.x - rect.left) * (cssW / rect.width);
           const y = (pendingPointer.y - rect.top) * (cssH / rect.height);
-          if (Math.hypot(x - mouse.x, y - mouse.y) > 0.2) lastMovement = now;
-          mouse.x = x;
-          mouse.y = y;
-          if (mouse.x < -R || mouse.x > cssW + R || mouse.y < -R || mouse.y > cssH + R) onLeave();
-        }
+          const inside = x >= 0 && x <= cssW && y >= 0 && y <= cssH;
+          const elapsed = Math.max(16, now - previousInput) / 1000;
+          pointer.vx = pointer.active ? Math.max(-700, Math.min(700, (x - pointer.x) / elapsed)) : 0;
+          pointer.vy = pointer.active ? Math.max(-700, Math.min(700, (y - pointer.y) / elapsed)) : 0;
+          pointer.x = x; pointer.y = y; pointer.active = inside && !reduce;
+          previousInput = now;
+        } else pointer.active = false;
         pendingPointer = null;
       }
 
-      // Position follows immediately. Only the disturbance fades, so a
-      // stationary pointer releases the dots and returns to the cached face.
-      if (!reduce) {
-        const active = mouse.x > -9000;
-        if (active) {
-          vel.x = cur.seeded ? Math.max(-18, Math.min(18, mouse.x - cur.x)) : 0;
-          vel.y = cur.seeded ? Math.max(-18, Math.min(18, mouse.y - cur.y)) : 0;
-          cur.x = mouse.x;
-          cur.y = mouse.y;
-          cur.seeded = true;
+      if (pointer.active) {
+        const first = Math.max(0, Math.floor((pointer.y - PORTRAIT_FLOW_RADIUS) / pitch));
+        const last = Math.min(TH - 1, Math.ceil((pointer.y + PORTRAIT_FLOW_RADIUS) / pitch));
+        for (let row = first; row <= last; row++) {
+          for (const d of rows[row]) {
+            if (Math.hypot(d.hx - pointer.x, d.hy - pointer.y) < PORTRAIT_FLOW_RADIUS) active.add(d);
+          }
         }
-        const energy = active ? Math.max(0, 1 - (now - lastMovement) / 480) : 0;
-        amt += (energy - amt) * 0.32;
-        if (energy === 0 && amt < 0.005) {
-          amt = 0;
-          cur.seeded = false;
+        for (const s of strays) {
+          if (Math.hypot(s.hx - pointer.x, s.hy - pointer.y) < PORTRAIT_FLOW_RADIUS) active.add(s);
         }
       }
+      for (const d of active) {
+        if (!stepPortraitParticle(d, pointer, t / 1000, dt)) active.delete(d);
+      }
+      if (pointer.active) separatePortraitParticles(active);
+      ctx.clearRect(0, 0, cssW, cssH);
 
       // The assembly: grid first, then the face gathers out of it.
-      const assembling = !reduce && t < ASSEMBLY + 400;
+      const assembling = !reduce && t < ASSEMBLY + 100;
       if (assembling) {
-        const gridFade = Math.max(0, 1 - Math.max(0, t - 80) / 900);
+        const gridFade = Math.max(0, 1 - Math.max(0, t - 160) / 1400);
         if (gridFade > 0.01) {
           ctx.fillStyle = `rgba(244,244,242,${(GRID_A * gridFade).toFixed(3)})`;
           for (const n of nodes) {
@@ -243,89 +247,94 @@ export function AvatarDots() {
         }
       }
 
-      // Expand around the face instead of scaling the headline or backdrop.
-      ctx.save();
-      ctx.translate(FACE_X, FACE_Y - breath * 3);
-      ctx.scale(1 + breath * 0.018, 1 + breath * 0.018);
-      ctx.translate(-FACE_X, -FACE_Y);
-      const pointerActive = !reduce && cur.seeded && amt > 0.005;
-      if (!assembling && !pointerActive) cachePortrait();
-      if (!assembling && !pointerActive && portraitReady) {
-        ctx.globalAlpha = breathLight;
+      if (!assembling) cachePortrait();
+      if (!assembling && portraitReady) {
         ctx.drawImage(portrait, 0, 0, cssW, cssH);
-        ctx.globalAlpha = 1;
+        if (active.size) {
+          // Cover the previous homes and current positions, so a fast sweep
+          // can leave a brief curved wake without clipping displaced dots.
+          let minX = cssW, minY = cssH, maxX = 0, maxY = 0;
+          for (const d of active) {
+            minX = Math.min(minX, d.hx, d.hx + d.ox);
+            minY = Math.min(minY, d.hy, d.hy + d.oy);
+            maxX = Math.max(maxX, d.hx, d.hx + d.ox);
+            maxY = Math.max(maxY, d.hy, d.hy + d.oy);
+          }
+          const left = Math.floor((minX - pitch) / pitch) * pitch;
+          const top = Math.floor((minY - pitch) / pitch) * pitch;
+          const right = Math.ceil((maxX + pitch) / pitch) * pitch;
+          const bottom = Math.ceil((maxY + pitch) / pitch) * pitch;
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(left, top, right - left, bottom - top);
+          ctx.clip();
+          ctx.clearRect(left, top, right - left, bottom - top);
+          const firstRow = Math.max(0, Math.floor(top / pitch));
+          const lastRow = Math.min(TH - 1, Math.ceil(bottom / pitch));
+          for (let row = firstRow; row <= lastRow; row++) {
+            for (const d of rows[row]) {
+              if (d.hx < left || d.hx > right) continue;
+              ctx.fillStyle = `rgba(244,244,242,${d.alpha.toFixed(3)})`;
+              ctx.beginPath();
+              ctx.arc(d.hx + d.ox, d.hy + d.oy, dot, 0, TWO_PI);
+              ctx.fill();
+            }
+          }
+          ctx.restore();
+        }
       } else for (const d of dots) {
-        // Assembly: travel from the grid node to the face, easing out.
-        const u = reduce ? 1 : Math.max(0, Math.min(1, (t - d.delay) / 900));
+        const u = reduce ? 1 : Math.max(0, Math.min(1, (t - d.delay) / 820));
         const e = easeOutQuint(u);
         const ax = d.sx + (d.hx - d.sx) * e;
         const ay = d.sy + (d.hy - d.sy) * e;
-        const reveal = e;
-        const alpha = d.alpha * reveal * breathLight;
-
+        const alpha = d.alpha * e;
         if (alpha <= 0.003) continue;
-
-        // A radial ripple plus a small lateral ripple: no pull toward the
-        // cursor and no slow positional chasing. Facial structure stays put.
-        let ox = 0;
-        let oy = 0;
-        if (pointerActive && reveal > 0.2) {
-          const dx = ax - cur.x;
-          const dy = ay - cur.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < R * R && d2 > 1) {
-            const dist = Math.sqrt(d2);
-            const edge = 1 - dist / R;
-            const f = edge * edge * (3 - 2 * edge) * amt;
-            const phase = (now - lastMovement) * 0.014 - dist * 0.065;
-            const radial = Math.sin(phase) * WAVE * f;
-            const lateral = Math.cos(phase * 0.8) * 2 * f;
-            ox = (dx * radial - dy * lateral) / dist + vel.x * 0.08 * f;
-            oy = (dy * radial + dx * lateral) / dist + vel.y * 0.08 * f;
-          }
-        }
-
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(ax + ox, ay + oy, dot * (1 + breath * 0.025), 0, TWO_PI);
+        ctx.arc(ax, ay, dot, 0, TWO_PI);
         ctx.fill();
       }
-      ctx.restore();
 
       for (const s of strays) {
-        if (!reduce && t < ASSEMBLY) continue;
-        const alpha = s.a * breathLight * globalReveal;
+        if (!reduce && t < 1450) continue;
+        const alpha = s.a * edgeReveal;
         if (alpha <= 0.003) continue;
         ctx.fillStyle = `rgba(244,244,242,${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, dot, 0, TWO_PI);
+        ctx.arc(s.hx + s.ox, s.hy + s.oy, dot, 0, TWO_PI);
         ctx.fill();
       }
 
-      if (!reduce) raf = requestAnimationFrame(frame);
+      if (!reduce && (assembling || active.size > 0)) wake();
     };
 
     const syncPlayback = () => {
       cancelAnimationFrame(raf);
-      if (inView && !document.hidden) raf = requestAnimationFrame(frame);
+      raf = 0;
+      if (inView && !document.hidden) wake();
+    };
+    const clearHover = () => {
+      pendingPointer = null;
+      pointer.active = false;
+      pointer.vx = pointer.vy = 0;
+      for (const d of active) d.ox = d.oy = d.vx = d.vy = 0;
+      active.clear();
+      previousFrame = 0;
     };
     const onMotionChange = () => {
       reduce = motionPreference.matches;
-      onLeave();
-      cur.seeded = false;
-      amt = 0;
-      vel.x = 0;
-      vel.y = 0;
+      clearHover();
       syncPlayback();
     };
+    const onVisibility = () => { clearHover(); syncPlayback(); };
     const observer = new IntersectionObserver(([entry]) => {
       inView = entry.isIntersecting;
-      if (!inView) onLeave();
+      if (!inView) clearHover();
       syncPlayback();
     });
     observer.observe(canvas);
     motionPreference.addEventListener("change", onMotionChange);
-    document.addEventListener("visibilitychange", syncPlayback);
+    document.addEventListener("visibilitychange", onVisibility);
     syncPlayback();
     return () => {
       cancelAnimationFrame(raf);
@@ -333,10 +342,11 @@ export function AvatarDots() {
       portrait.width = 0;
       portrait.height = 0;
       motionPreference.removeEventListener("change", onMotionChange);
-      document.removeEventListener("visibilitychange", syncPlayback);
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseout", onOut);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerout", onOut);
       window.removeEventListener("scroll", onLeave);
+      window.removeEventListener("blur", onLeave);
     };
   }, []);
 

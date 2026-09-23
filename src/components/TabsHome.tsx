@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ArrowUp } from "lucide-react";
 import { projects, sideProjects, designSystem } from "@/lib/work";
 import { Hero } from "./Hero";
 import { SectionHead } from "./SectionHead";
@@ -74,14 +73,6 @@ export function TabsHome() {
         <TechStack />
       </Block>
 
-      <div className="container-fluid py-14 sm:py-20">
-        <div className="flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[14px] text-mute">{t("closerLook")}</p>
-          <a href="#work" className="inline-flex min-h-11 items-center gap-3 self-start font-mono text-[11px] tracking-[0.06em] text-ink hover:underline underline-offset-4 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-ink">
-            {t("backToWork")}<ArrowUp aria-hidden size={14} strokeWidth={1.5} />
-          </a>
-        </div>
-      </div>
     </>
   );
 }
