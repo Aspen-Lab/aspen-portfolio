@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
 type ChapterNavProps = {
   chapters: string[];
@@ -16,6 +16,8 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
   const [active, setActive] = useState(0);
   const cn = useLocale() === "cn";
   const [past, setPast] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const mobileNavRef = useRef<HTMLDivElement>(null);
 
   /* Scroll-spy by position, not by intersection. The markers are thin
      divider rows, and an observer band only fires while one is inside
@@ -60,14 +62,20 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
       `[data-chapter="${idx}"]`
     ) as HTMLElement | null;
     if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - 96;
-    window.scrollTo({ top, behavior: "smooth" });
+    const mobileNav = mobileNavRef.current;
+    // offsetHeight is zero when the mobile bar is hidden on desktop.
+    const offset = mobileNav && mobileNav.offsetHeight > 0
+      ? (Number.parseFloat(window.getComputedStyle(mobileNav).top) || 0) + mobileNav.offsetHeight + 24
+      : 96;
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top, behavior: reduce ? "instant" : "smooth" });
   };
 
   return (
     <>
       {/* Mobile: horizontal sticky bar (lg-) */}
-      <div className="lg:hidden sticky top-24 min-[420px]:top-16 z-30 bg-paper/90 backdrop-blur-md border-y border-line/80 -mx-[max(1.25rem,4vw)]">
+      <div ref={mobileNavRef} className="lg:hidden sticky top-24 min-[420px]:top-16 z-30 mt-16 bg-paper/90 backdrop-blur-md border-y border-line/80 -mx-[max(1.25rem,4vw)]">
         <div className="container-fluid flex items-center gap-7 overflow-x-auto no-scrollbar py-3.5">
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft shrink-0">
             {cn ? "章节" : "Chapters"}
@@ -77,7 +85,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
               key={c}
               type="button"
               onClick={() => handleJump(i)}
-              className={`relative flex items-baseline gap-2 py-1 whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-200 ${
+              className={`relative flex items-baseline gap-2 py-1 whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-200 motion-reduce:transition-none ${
                 active === i ? "text-ink" : "text-soft hover:text-mute"
               }`}
             >
@@ -91,7 +99,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
                 <motion.span
                   layoutId="chapter-nav-indicator-mobile"
                   className="absolute -bottom-3.5 left-0 right-0 h-px bg-ink"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
             </button>
@@ -103,7 +111,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
       <nav
         aria-label={cn ? "章节导航" : "Chapter navigation"}
         inert={past}
-        className={`hidden lg:block fixed right-5 xl:right-7 top-1/2 -translate-y-1/2 z-30 pointer-events-none transition-opacity duration-300 ${
+        className={`hidden lg:block fixed right-5 xl:right-7 top-1/2 -translate-y-1/2 z-30 pointer-events-none transition-opacity duration-300 motion-reduce:transition-none ${
           past ? "opacity-0" : "opacity-100"
         }`}
       >
@@ -125,17 +133,17 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
                   onClick={() => handleJump(i)}
                   className="group relative flex items-center gap-3 cursor-pointer pointer-events-auto"
                 >
-                  {/* Label — always shown for active, hover-reveal for others */}
+                  {/* Label — always shown for active, hover/focus-reveal for others */}
                   <motion.span
                     initial={false}
                     animate={{
                       opacity: isActive ? 1 : 0,
                     }}
                     whileHover={{ opacity: 1 }}
-                    transition={{ duration: 0.25 }}
+                    transition={{ duration: reduceMotion ? 0 : 0.25 }}
                     className={`font-mono text-[10px] uppercase tracking-[0.22em] whitespace-nowrap leading-none ${
                       isActive ? "text-ink" : "text-mute"
-                    } group-hover:!opacity-100`}
+                    } group-hover:!opacity-100 group-focus-visible:!opacity-100`}
                   >
                     <span className="opacity-55 mr-2 tabular-nums">
                       {String(i + 1).padStart(2, "0")}
@@ -146,12 +154,12 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
                   {/* Dot */}
                   <motion.span
                     animate={{ scale: isActive ? 1.5 : 1 }}
-                    transition={{
+                    transition={reduceMotion ? { duration: 0 } : {
                       type: "spring",
                       stiffness: 350,
                       damping: 24,
                     }}
-                    className={`relative shrink-0 w-1.5 h-1.5 rounded-full transition-colors duration-300 z-10 ${
+                    className={`relative shrink-0 w-1.5 h-1.5 rounded-full transition-colors duration-300 motion-reduce:transition-none z-10 ${
                       isActive
                         ? "bg-ink"
                         : "bg-soft/40 group-hover:bg-mute"

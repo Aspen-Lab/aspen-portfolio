@@ -67,9 +67,12 @@ export default async function LocaleLayout({
   return (
     <html lang={htmlLang(locale)} className={`${GeistSans.variable} ${GeistMono.variable} ${newsreader.variable}`}>
       <body className="min-h-screen flex flex-col bg-paper text-ink antialiased">
+        <a href="#main-content" className="skip-link">
+          {locale === "cn" ? "跳到正文" : "Skip to content"}
+        </a>
         <NextIntlClientProvider>
           <Nav />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-1 scroll-mt-28">{children}</main>
           <Footer />
           <CursorOrb />
         </NextIntlClientProvider>

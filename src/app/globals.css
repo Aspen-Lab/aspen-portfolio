@@ -19,6 +19,24 @@ body {
   color: var(--color-ink);
 }
 
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 12px;
+  left: 20px;
+  padding: 12px 18px;
+  border: 1px solid var(--color-ink);
+  border-radius: 2px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: 14px;
+  transform: translateY(calc(-100% - 20px));
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 body {
   font-family: var(--font-sans);
   font-feature-settings: "ss01", "tnum";

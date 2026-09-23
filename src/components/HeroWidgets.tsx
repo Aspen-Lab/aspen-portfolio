@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, FocusEventHandler, ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import {
@@ -153,11 +153,12 @@ function CompanyItem({ name, node, echo }: { name: string; node: ReactNode; echo
 /* Tool marks share a readable explanation below. Hover previews it;
    selecting a tool keeps its explanation available on touch screens. */
 
-function InventorySlot({ name, index, active, selected, label, descriptionId, onEnter, onLeave, onFocus, onBlur, onSelect }: {
+function InventorySlot({ name, index, active, selected, label, descriptionId, onEnter, onLeave, onFocus, onBlur, onPointerDown, onSelect }: {
   name: string; index: number; active: boolean;
   selected: boolean; label: string; descriptionId?: string;
   onEnter: () => void; onLeave: () => void;
-  onFocus: () => void; onBlur: () => void; onSelect: () => void;
+  onFocus: FocusEventHandler<HTMLButtonElement>; onBlur: () => void;
+  onPointerDown: () => void; onSelect: () => void;
 }) {
   return (
     <button
@@ -169,6 +170,7 @@ function InventorySlot({ name, index, active, selected, label, descriptionId, on
       onMouseLeave={onLeave}
       onFocus={onFocus}
       onBlur={onBlur}
+      onPointerDown={onPointerDown}
       onClick={onSelect}
       aria-label={label}
       aria-pressed={selected}
@@ -197,7 +199,7 @@ export function HeroWidgets() {
   const [focusedTool, setFocusedTool] = useState<string | null>(null);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const descriptionId = useId();
-  const tip = hoveredTool ?? focusedTool ?? selectedTool;
+  const tip = focusedTool ?? hoveredTool ?? selectedTool;
 
   return (
     <div className="mt-8 sm:mt-10">
@@ -264,8 +266,9 @@ export function HeroWidgets() {
                 descriptionId={tip === name ? descriptionId : undefined}
                 onEnter={() => setHoveredTool(name)}
                 onLeave={() => setHoveredTool(null)}
-                onFocus={() => setFocusedTool(name)}
+                onFocus={(event) => setFocusedTool(event.currentTarget.matches(":focus-visible") ? name : null)}
                 onBlur={() => setFocusedTool(null)}
+                onPointerDown={() => setFocusedTool(null)}
                 onSelect={() => setSelectedTool(selectedTool === name ? null : name)}
               />
             ))}

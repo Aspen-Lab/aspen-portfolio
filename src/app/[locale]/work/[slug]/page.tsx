@@ -219,11 +219,7 @@ export default async function CaseStudy({
         </Reveal>
       )}
 
-      {chapters.length > 1 && (
-        <div className="mt-16">
-          <ChapterNav chapters={chapters} />
-        </div>
-      )}
+      {chapters.length > 1 && <ChapterNav chapters={chapters} />}
 
       <div className={chapters.length > 1 ? "mt-12" : "mt-24"}>
         {sections.map((s, i) => {
