@@ -17,21 +17,21 @@ function AiScene({ cn }: SceneProps) {
       <rect className={styles.surface} x="48" y="97" width="122" height="66" rx="7" />
       <path className={styles.stroke} d="M64 119H94M64 129H113M64 139H103" />
       <path className={styles.stroke} d="m138 124 6 6-6 6" />
-      <text className={styles.label} x="48" y="187">{cn ? "任务输入" : "TASK INPUT"}</text>
+      <text className={styles.label} x="48" y="187">{cn ? "任务输入" : "Task input"}</text>
 
       <g>
         <rect className={styles.surface} x="249" y="22" width="142" height="52" rx="7" />
         <text className={styles.tier} x="263" y="52">0</text>
         <path className={styles.line} d="M286 34V62" />
         <text className={styles.nodeTitle} x="301" y="44">{cn ? "规则" : "Rules"}</text>
-        <text className={styles.small} x="301" y="60">{cn ? "明确的任务" : "deterministic"}</text>
+        <text className={styles.small} x="301" y="60">TF-IDF</text>
       </g>
       <g className={styles.localNode}>
         <rect className={styles.activeSurface} x="249" y="104" width="142" height="52" rx="7" />
         <text className={styles.tier} x="263" y="134">1</text>
         <path className={styles.line} d="M286 116V144" />
         <text className={styles.nodeTitle} x="301" y="126">{cn ? "本地模型" : "Local"}</text>
-        <text className={styles.small} x="301" y="142">{cn ? "设备内处理" : "on-device"}</text>
+        <text className={styles.small} x="301" y="142">Ollama</text>
       </g>
       <g>
         <rect className={styles.surface} x="249" y="190" width="142" height="52" rx="7" />
@@ -47,7 +47,7 @@ function AiScene({ cn }: SceneProps) {
         <circle className={styles.inkFill} cx="572" cy="141" r="9" />
         <path d="m568 141 3 3 5-6" fill="none" stroke="#1b1b1d" strokeWidth="1.3" />
       </g>
-      <text className={styles.label} x="472" y="187">{cn ? "匹配能力，再输出" : "ROUTE → RESPOND"}</text>
+      <text className={styles.label} x="472" y="187">{cn ? "匹配能力，再输出" : "Route → respond"}</text>
       <circle className={styles.routerDot} cx="214" cy="130" r="3" />
     </>
   );
@@ -76,15 +76,15 @@ function GameScene({ cn }: SceneProps) {
       </g>
       <ellipse className={styles.landing} cx="227" cy="146" rx="23" ry="3" fill="#eeeee4" fillOpacity=".23" />
       <path className={styles.collider} d="M209 93H246V146H209Z" />
-      <text className={styles.label} x="30" y="244">{cn ? "场景 / 碰撞 / 动作" : "SCENE / COLLIDER / MOTION"}</text>
+      <text className={styles.label} x="30" y="244">{cn ? "场景 / 碰撞 / 动作" : "Scene / collider / motion"}</text>
 
       <path className={styles.divider} d="M385 34V226" />
       <text className={styles.label} x="423" y="34">PLAYMAKER / FSM</text>
       <path className={styles.route} d="M458 93H500Q529 93 529 116V129M529 163V190H454V163M454 129V93" />
       <path className={styles.fsmTrace} pathLength="1" d="M458 93H500Q529 93 529 116V129M529 163V190H454V163M454 129V93" />
-      <rect className={styles.activeSurface} x="417" y="61" width="79" height="33" rx="16" />
+      <rect className={`${styles.activeSurface} ${styles.gameIdle}`} x="417" y="61" width="79" height="33" rx="16" />
       <rect className={styles.surface} x="501" y="129" width="82" height="34" rx="17" />
-      <rect className={styles.surface} x="410" y="129" width="81" height="34" rx="17" />
+      <rect className={`${styles.surface} ${styles.gameJump}`} x="410" y="129" width="81" height="34" rx="17" />
       <text className={styles.stateText} x="456.5" y="82">IDLE</text>
       <text className={styles.stateText} x="542" y="150">RUN</text>
       <text className={styles.stateText} x="450.5" y="150">JUMP</text>
@@ -113,16 +113,18 @@ function DesignScene({ cn }: SceneProps) {
         <rect x="326" y="103" width="52" height="21" rx="3" className={styles.surface} />
         <text x="334" y="117" className={styles.small}>Aspen</text>
       </g>
-      <text className={styles.label} x="40" y="19">BÉZIER / 02</text>
+      <text className={styles.label} x="40" y="19">{cn ? "贝塞尔曲线" : "Bézier curve"}</text>
 
       <path className={styles.divider} d="M389 27V236" />
-      <text className={styles.label} x="426" y="30">{cn ? "字形 / 布局" : "TYPE / LAYOUT"}</text>
+      <text className={styles.label} x="426" y="30">{cn ? "字形 / 布局" : "Type / layout"}</text>
       <g className={styles.typeSpecimen}>
         <text className={styles.serif} x="421" y="129">Ag</text>
         <path className={styles.controlLine} d="M423 68H595M423 130H595" />
         <path className={styles.line} d="M423 63V135M595 63V135" />
         <circle className={styles.handle} cx="423" cy="130" r="2.5" />
         <circle className={styles.handle} cx="595" cy="130" r="2.5" />
+        <text className={styles.small} x="602" y="72">cap</text>
+        <text className={styles.small} x="602" y="134">base</text>
       </g>
       <g className={styles.layoutSpecimen}>
         <rect className={styles.surface} x="425" y="167" width="63" height="63" rx="4" />
@@ -140,7 +142,7 @@ function ToolingScene({ cn }: SceneProps) {
   return (
     <>
       <path className={styles.route} d="M181 129H222M270 129H286Q301 129 301 112V70Q301 57 317 57H332M270 129H332M270 129H286Q301 129 301 145V188Q301 203 317 203H332M463 57H477Q491 57 491 74V117Q491 130 504 130H521M463 129H521M463 203H477Q491 203 491 189V144Q491 130 504 130H521" />
-      <path className={styles.toolingTrace} pathLength="1" d="M181 129H222M270 129H332M463 129H521" />
+      <path className={styles.toolingTrace} pathLength="1" d="M181 129H222M270 129H286Q301 129 301 112V70Q301 57 317 57H332M463 57H477Q491 57 491 74V117Q491 130 504 130H521" />
 
       <g>
         <rect className={styles.surface} x="24" y="67" width="157" height="126" rx="7" />
@@ -152,7 +154,7 @@ function ToolingScene({ cn }: SceneProps) {
         <path className={styles.stroke} d="M40 139H111M50 151H154M50 163H133M40 175H92" />
         <path className={styles.codeCaret} d="M96 170V179" />
       </g>
-      <text className={styles.label} x="24" y="220">{cn ? "编辑器 / 项目上下文" : "EDITOR / CONTEXT"}</text>
+      <text className={styles.label} x="24" y="220">{cn ? "编辑器 / 项目上下文" : "Editor / context"}</text>
 
       <circle className={styles.hub} cx="246" cy="129" r="24" />
       <text className={styles.stateText} x="246" y="134">MCP</text>
@@ -181,7 +183,7 @@ function ToolingScene({ cn }: SceneProps) {
         <path className={styles.stroke} d="M566 125H604M566 135H593M566 145H582" />
         <path className={styles.stroke} d="m590 155 4 4 8-9" />
       </g>
-      <text className={styles.label} x="521" y="71">PR / PREVIEW</text>
+      <text className={styles.label} x="521" y="71">PR / preview</text>
       <text className={styles.small} x="521" y="199">{cn ? "可评审的结果" : "ready to review"}</text>
     </>
   );

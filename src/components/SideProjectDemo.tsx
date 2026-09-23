@@ -1,16 +1,15 @@
 "use client";
 
-import { PeerDemo, PadoDemo } from "./demos/PeerPadoDemos";
-import { PlayDemo, CardFlowDemo } from "./demos/PlayCardFlowDemos";
-import { SkylerDemo, TyphoonDemo } from "./demos/ArchiveMapDemos";
+import dynamic from "next/dynamic";
 
+// Captions/types can be imported without downloading every animated scene.
 const scenes = {
-  peer: PeerDemo,
-  pado: PadoDemo,
-  aspenplay: PlayDemo,
-  cardflow: CardFlowDemo,
-  skyler: SkylerDemo,
-  typhoon: TyphoonDemo,
+  peer: dynamic(() => import("./demos/PeerPadoDemos").then((m) => m.PeerDemo)),
+  pado: dynamic(() => import("./demos/PeerPadoDemos").then((m) => m.PadoDemo)),
+  aspenplay: dynamic(() => import("./demos/PlayCardFlowDemos").then((m) => m.PlayDemo)),
+  cardflow: dynamic(() => import("./demos/PlayCardFlowDemos").then((m) => m.CardFlowDemo)),
+  skyler: dynamic(() => import("./demos/ArchiveMapDemos").then((m) => m.SkylerDemo)),
+  typhoon: dynamic(() => import("./demos/ArchiveMapDemos").then((m) => m.TyphoonDemo)),
 };
 
 export type SideDemoId = keyof typeof scenes;

@@ -6,7 +6,7 @@
   color: #f4f4f2;
   pointer-events: none;
   user-select: none;
-  animation: finish 1.35s linear both;
+  animation: finish 1.8s linear both;
 }
 
 .shutter {
@@ -15,8 +15,8 @@
   width: 100%;
   height: calc(50% + 1px);
   background: rgba(15, 15, 16, 0.985);
-  animation-duration: 0.86s;
-  animation-delay: 0.44s;
+  animation-duration: 1.06s;
+  animation-delay: 0.68s;
   animation-timing-function: cubic-bezier(0.76, 0, 0.14, 1);
   animation-fill-mode: both;
 }
@@ -44,14 +44,32 @@
   right: 6%;
   top: 50%;
   height: 1px;
-  animation: guideAcross 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: guideAcross 1.08s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+.horizontalGuide::before,
+.horizontalGuide::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #aaa9a5;
+}
+.horizontalGuide::before { left: 0; }
+.horizontalGuide::after { right: 0; }
+
+.curveTrace, .codeTrace, .registration { stroke-dasharray: 1; }
+.curveTrace { animation: drawMark 0.48s 0.07s cubic-bezier(.22,1,.36,1) both; }
+.codeTrace { animation: drawMark 0.42s 0.17s cubic-bezier(.22,1,.36,1) both; }
+.registration { animation: drawMark 0.36s 0.45s ease-out both; }
 
 .verticalGuide {
   top: 12%;
   bottom: 12%;
   width: 1px;
-  animation: guideDown 0.72s 0.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: guideDown 1.04s 0.12s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .leftGuide {
@@ -81,7 +99,7 @@
 .design,
 .code {
   top: 16px;
-  animation-duration: 0.54s;
+  animation-duration: 0.76s;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   animation-fill-mode: both;
 }
@@ -89,22 +107,24 @@
 .design {
   left: 4px;
   animation-name: designArrives;
+  animation-delay: 0.04s;
 }
 
 .code {
   right: 4px;
   animation-name: codeArrives;
+  animation-delay: 0.1s;
 }
 
 .mark {
   top: 8px;
   left: 36px;
-  animation: markArrives 0.55s 0.28s ease both;
+  animation: markArrives 0.82s 0.48s ease both;
 }
 
 .letter {
   stroke-dasharray: 1;
-  animation: drawMark 0.36s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: drawMark 0.52s 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes openTop {
@@ -132,19 +152,19 @@
 
 @keyframes designArrives {
   0% { opacity: 0; transform: translateX(-8px); }
-  20%, 45% { opacity: 1; transform: translateX(0); }
+  20%, 48% { opacity: 1; transform: translateX(0); }
   100% { opacity: 0; transform: translateX(28px) scale(0.75); }
 }
 
 @keyframes codeArrives {
   0% { opacity: 0; transform: translateX(8px); }
-  20%, 45% { opacity: 1; transform: translateX(0); }
+  20%, 48% { opacity: 1; transform: translateX(0); }
   100% { opacity: 0; transform: translateX(-28px) scale(0.75); }
 }
 
 @keyframes markArrives {
   0% { opacity: 0; transform: scale(0.9); }
-  28%, 58% { opacity: 1; transform: scale(1); }
+  26%, 66% { opacity: 1; transform: scale(1); }
   100% { opacity: 0; transform: scale(1.04); }
 }
 

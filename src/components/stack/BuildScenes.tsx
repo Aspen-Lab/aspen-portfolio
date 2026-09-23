@@ -42,7 +42,7 @@ function FrontendScene({ cn }: { cn: boolean }) {
         <circle cx="356" cy="31" r="2" className={styles.dimFill} />
         <circle cx="364" cy="31" r="2" className={styles.dimFill} />
         <circle cx="372" cy="31" r="2" className={styles.dimFill} />
-        <text x="485" y="34" textAnchor="middle" className={styles.micro}>{cn ? "运行中的组件" : "COMPONENT PREVIEW"}</text>
+        <text x="485" y="34" textAnchor="middle" className={styles.micro}>{cn ? "组件预览" : "Component preview"}</text>
         <g className={styles.frontendResult}>
           <rect x="359" y="58" width="252" height="93" rx="2" fill="#d6d4ca" />
           <path d="M359 131 423 91l43 27 47-41 98 69v5H359Z" fill="#b0afa6" />
@@ -59,7 +59,7 @@ function FrontendScene({ cn }: { cn: boolean }) {
           </g>
         </g>
       </g>
-      <text x="309" y="158" textAnchor="middle" className={styles.tiny}>JSX</text>
+      <text x="309" y="158" textAnchor="middle" className={styles.tiny}>{cn ? "渲染" : "render"}</text>
     </>
   );
 }
@@ -89,11 +89,11 @@ function EmailScene({ cn }: { cn: boolean }) {
         <text x="214" y="176" className={styles.codeBright}>Hello, traveler</text>
         <text x="214" y="200" className={styles.code}>{"{% endif %}"}</text>
       </g>
-      <Flow d="M414 130H441" delay={1000} />
+      <Flow d="M414 130H441" delay={600} />
       <g className={styles.emailResult}>
         <rect x="450" y="17" width="177" height="227" rx="3" fill="#e8e6dc" />
         <path d="M464 39h24" fill="none" stroke="#252522" strokeWidth="2" />
-        <text x="613" y="42" textAnchor="end" className={styles.paperMicro}>INBOX</text>
+        <text x="613" y="42" textAnchor="end" className={styles.paperMicro}>{cn ? "收件箱" : "Inbox"}</text>
         <path d="M464 54h149" fill="none" stroke="#c8c6bc" />
         <text x="464" y="82" className={styles.emailGreeting}>{cn ? "你好，Traveler。" : "Hello, Traveler."}</text>
         <path d="M465 97h125m-125 9h102" stroke="#aaa89f" strokeWidth="2" />
@@ -102,7 +102,7 @@ function EmailScene({ cn }: { cn: boolean }) {
         <rect x="464" y="197" width="149" height="28" rx="2" fill="#292925" />
         <text x="538" y="215" textAnchor="middle" className={styles.emailButton}>{cn ? "查看详情" : "View details"}</text>
       </g>
-      <text x="86" y="219" textAnchor="middle" className={styles.micro}>{cn ? "示例数据" : "SAMPLE PAYLOAD"}</text>
+      <text x="86" y="219" textAnchor="middle" className={styles.micro}>{cn ? "示例数据" : "Sample payload"}</text>
     </>
   );
 }
@@ -137,7 +137,7 @@ function BackendScene({ cn }: { cn: boolean }) {
           </g>
         ))}
       </g>
-      <Flow d="M449 130H501" delay={1400} />
+      <Flow d="M449 130H501" delay={950} />
       <path d="m496 126 5 4-5 4" className={styles.glyph} />
       <g className={styles.databaseResult}>
         <rect x="510" y="51" width="116" height="167" rx="4" className={styles.surface} />
@@ -145,9 +145,9 @@ function BackendScene({ cn }: { cn: boolean }) {
         <path d="M521 63h8v8h-8Zm4 0v8m-4-4h8" className={styles.glyph} />
         <text x="537" y="70" className={styles.filename}>papers</text>
         <path d="M542 80V218M510 112H626M510 146H626M510 180H626" className={styles.rule} />
-        {[0, 1, 2, 3].map((i) => <g key={i}><rect x="522" y={94 + i * 34} width="9" height="3" fill="#898a80" /><path d={"M553 " + (95 + i * 34) + "h" + (i % 2 === 0 ? 54 : 41)} className={styles.placeholder} /><path d={"M553 " + (103 + i * 34) + "h" + (i % 2 === 0 ? 29 : 47)} className={styles.placeholder} opacity=".4" /></g>)}
+        {[0, 1, 2, 3].map((i) => <g key={i}><text x="518" y={101 + i * 34} className={styles.micro}>{String(i + 1).padStart(2, "0")}</text><path d={"M553 " + (95 + i * 34) + "h" + (i % 2 === 0 ? 54 : 41)} className={styles.placeholder} /><path d={"M553 " + (103 + i * 34) + "h" + (i % 2 === 0 ? 29 : 47)} className={styles.placeholder} opacity=".4" /></g>)}
       </g>
-      <text x="568" y="241" textAnchor="middle" className={styles.micro}>{cn ? "结构化存储" : "STRUCTURED"}</text>
+      <text x="568" y="241" textAnchor="middle" className={styles.micro}>{cn ? "结构化存储" : "Indexed records"}</text>
     </>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { useLocale } from "next-intl";
-import { ArrowUpRight, ArrowLeftRight, Fingerprint, GraduationCap, GitPullRequest } from "lucide-react";
+import { ArrowUpRight, ArrowLeftRight, Fingerprint, GitPullRequest } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { CapabilityRadar } from "./CapabilityRadar";
 import { CommitCalendar } from "./CommitCalendar";
@@ -15,36 +15,29 @@ function PersonalityCard({ cn }: { cn: boolean }) {
   const cardId = useId();
   return (
     <div className={styles.personality}>
-      <div className={styles.smallHeading}><Fingerprint size={15} strokeWidth={1.4} /><span>{cn ? "关于我 / 不止一种面貌" : "PERSONAL FILE / MORE THAN ONE SIDE"}</span></div>
+      <div className={styles.personalHeader}>
+        <span>{cn ? "关于我" : "A little about me"}</span>
+        <button type="button" className={styles.flipButton} aria-controls={cardId} aria-pressed={flipped} onClick={() => setFlipped((value) => !value)}>
+          <ArrowLeftRight size={13} strokeWidth={1.5} aria-hidden />
+          {cn ? (flipped ? "看性格" : "看背景") : (flipped ? "Personality" : "Background")}
+        </button>
+      </div>
       <div id={cardId} className={styles.cardStage} data-flipped={flipped}>
         <div className={styles.cardTurn}>
           <div className={styles.cardFace} aria-hidden={flipped}>
-            <svg className={styles.fingerprint} viewBox="0 0 240 240" fill="none" aria-hidden>
-              {[102, 82, 62, 42].map((r) => <circle key={r} cx="120" cy="120" r={r} />)}
-              <path d="M18 120h204M120 18v204M48 48l144 144M48 192 192 48" />
-              <path d="M120 42 187 159H53Z" strokeWidth="2" />
-              <circle cx="120" cy="120" r="4" fill="currentColor" />
-            </svg>
-            <span className={styles.faceLabel}>{cn ? "性格 / 自我描述" : "PERSONALITY / SELF-DESCRIBED"}</span>
+            <Fingerprint className={styles.fingerprint} size={112} strokeWidth={.55} aria-hidden />
+            <span className={styles.faceLabel}>{cn ? "性格 · 自我描述" : "Personality, self-described"}</span>
             <p className={styles.personalityType}>INFJ<span>-A</span></p>
             <p className={styles.faceCopy}>{cn ? "一个人，也有很多面。" : "One mind. Many ways to make."}</p>
-            <span className={styles.faceFoot}>{cn ? "设计 · 工程 · 生活里的小实验" : "DESIGN · ENGINEERING · LITTLE EXPERIMENTS"}</span>
+            <span className={styles.faceFoot}>{cn ? "设计、工程，还有生活里的小实验。" : "Design, engineering & little experiments."}</span>
           </div>
           <div className={`${styles.cardFace} ${styles.cardBack}`} aria-hidden={!flipped}>
-            <GraduationCap className={styles.educationMark} size={84} strokeWidth={0.65} aria-hidden />
-            <span className={styles.faceLabel}>{cn ? "背景 / 两种视角" : "BACKGROUND / TWO PERSPECTIVES"}</span>
+            <span className={styles.faceLabel}>{cn ? "教育背景" : "Education"}</span>
             <p className={styles.educationTitle}>{cn ? <>工业设计<br /><span>× 心理学</span></> : <>Industrial design<br /><span>× Psychology</span></>}</p>
             <p className={styles.school}>Georgia Tech</p>
-            <span className={styles.faceFoot}>{cn ? "关注人，也关心东西如何运作。" : "ATTENTION TO PEOPLE. CURIOSITY ABOUT THINGS."}</span>
+            <span className={styles.faceFoot}>{cn ? "关注人，也关心东西如何运作。" : "Attention to people. Curiosity about things."}</span>
           </div>
         </div>
-      </div>
-      <div className={styles.cardActions}>
-        <span>{flipped ? "02 / 02" : "01 / 02"}</span>
-        <button type="button" aria-controls={cardId} aria-pressed={flipped} onClick={() => setFlipped((value) => !value)}>
-          <ArrowLeftRight size={14} strokeWidth={1.5} aria-hidden />
-          {cn ? (flipped ? "翻回性格卡" : "翻面，看看背景") : (flipped ? "Back to personality" : "Flip for the backstory")}
-        </button>
       </div>
       <p className={styles.personalNote}>{cn ? "认真做产品，也认真做些好玩的东西。" : "Serious about the work. Still making things for the fun of it."}</p>
     </div>
@@ -85,7 +78,7 @@ export function Workshop() {
           </Reveal>
           <Reveal delay={0.12}>
             <div className={styles.activity}>
-              <p className={styles.smallHeading}>{cn ? "持续动手 / 提交记录" : "STILL MAKING / COMMIT ACTIVITY"}</p>
+              <p className={styles.smallHeading}>{cn ? "持续动手" : "Still making"}</p>
               <CommitCalendar />
             </div>
           </Reveal>

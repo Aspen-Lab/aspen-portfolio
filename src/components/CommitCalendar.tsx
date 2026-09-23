@@ -1,25 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import activity from "@/data/commit-activity.json";
+import styles from "./CommitCalendar.module.css";
 
 type Contrib = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 };
 
-const LEVEL_BG = [
-  "bg-line",
-  "bg-ink/15",
-  "bg-ink/35",
-  "bg-ink/60",
-  "bg-ink",
-] as const;
-
-/* Flat cells: five steps of ink on the line colour, square, no glow — a
-   printed chart, not an LED wall. */
-
-const CELL = 12;
-const GAP = 3;
-const COL = CELL + GAP;
+const CELL_STEP = 10;
 const PUBLIC_HANDLE = "Aspen-Lab";
 
 /* Real activity: a dated snapshot of non-merge commits under Aspen's git
@@ -55,158 +43,102 @@ function buildDays(): Contrib[] {
 
 export function CommitCalendar() {
   const t = useTranslations("Commits");
-  // The route segment is "cn", which Intl doesn't know — map it to zh-CN.
-  const intlLocale = useLocale() === "cn" ? "zh-CN" : "en";
+  const cn = useLocale() === "cn";
+  const intlLocale = cn ? "zh-CN" : "en";
   const days = useMemo(() => buildDays(), []);
-  const total = days.reduce((s, d) => s + d.count, 0);
-  const activeDays = days.filter((d) => d.count > 0).length;
-  const peak = days.reduce((m, d) => Math.max(m, d.count), 0);
+  const total = days.reduce((sum, day) => sum + day.count, 0);
+  const activeDays = days.filter(day => day.count > 0).length;
+  const peak = Math.max(0, ...days.map(day => day.count));
   const updated = new Intl.DateTimeFormat(intlLocale, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
+    year: "numeric", month: "short", day: "numeric", timeZone: "UTC",
   }).format(new Date(`${activity.updated}T00:00:00Z`));
 
   return (
-    <div>
-      <div className="flex items-end justify-between flex-wrap gap-y-3 mb-7">
-        <div>
-          <p className="flex items-baseline gap-4 flex-wrap">
-            <span className="type-display text-[64px] sm:text-[80px] leading-none text-ink tabular-nums">
-              {total.toLocaleString("en")}
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
-              {t("total", { days: WINDOW_DAYS })}
-            </span>
-          </p>
-          <p className="mt-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-soft tabular-nums">
-            {t("active", { active: activeDays, peak })}
-          </p>
-          <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-soft/60 tabular-nums">
-            {t("updated", { date: updated })}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="plate-button inline-flex items-center px-2.5 py-1 font-mono text-[9.5px] uppercase tracking-[0.22em] text-soft whitespace-nowrap">
-            {t("badge")}
-          </span>
-          <a
-            href={`https://github.com/${PUBLIC_HANDLE}`}
-            target="_blank"
-            rel="noreferrer"
-            className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft hover:text-ink transition-colors"
-          >
-            github.com/{PUBLIC_HANDLE} →
-          </a>
+    <section className={styles.activity} aria-label={cn ? "代码提交记录" : "Commit activity"}>
+      <div className={styles.summary}>
+        <p className={styles.total}><strong>{total.toLocaleString("en")}</strong><span>{t("total", { days: WINDOW_DAYS })}</span></p>
+        <a className={styles.github} href={`https://github.com/${PUBLIC_HANDLE}`} target="_blank" rel="noreferrer" aria-label={cn ? "Aspen-Lab 的 GitHub" : "Aspen-Lab on GitHub"}>GitHub <span aria-hidden>↗</span></a>
+      </div>
+      <div className={styles.body}>
+        <CalendarGrid days={days} monthLocale={intlLocale} cn={cn} cellTitle={(count, date) => t("cell", {count, date})} />
+        <div className={styles.context}>
+          <dl className={styles.stats}>
+            <div><dt>{cn ? "活跃天数" : "Active days"}</dt><dd>{activeDays}</dd></div>
+            <div><dt>{cn ? "单日最多" : "Peak / day"}</dt><dd>{peak}</dd></div>
+          </dl>
+          <div className={styles.legend} aria-label={cn ? "颜色越亮，当天提交越多" : "Brighter cells mean more commits"}>
+            <span>{t("less")}</span>
+            {([0,1,2,3,4] as const).map(level => <i key={level} data-level={level} aria-hidden />)}
+            <span>{t("more")}</span>
+          </div>
         </div>
       </div>
-
-      <div className="overflow-x-auto pb-2 -mx-1 px-1 no-scrollbar">
-        <CalendarGrid
-          days={days}
-          monthLocale={intlLocale}
-          cellTitle={(count, date) => t("cell", { count, date })}
-        />
-
-        <div className="mt-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-soft">
-          <span>{t("less")}</span>
-          {([0, 1, 2, 3, 4] as const).map((level) => (
-            <div
-              key={level}
-              className={LEVEL_BG[level]}
-              style={{ width: CELL, height: CELL }}
-              aria-hidden
-            />
-          ))}
-          <span>{t("more")}</span>
-        </div>
-      </div>
-    </div>
+      <div className={styles.provenance}><span>{t("updated", { date: updated })}</span><span>{t("badge")}</span></div>
+    </section>
   );
 }
 
-function CalendarGrid({
-  days,
-  monthLocale,
-  cellTitle,
-}: {
-  days: Contrib[];
-  monthLocale: string;
-  cellTitle: (count: number, date: string) => string;
+function CalendarGrid({ days, monthLocale, cn, cellTitle }: {
+  days: Contrib[]; monthLocale: string; cn: boolean; cellTitle: (count: number, date: string) => string;
 }) {
-  if (days.length === 0) return null;
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [tabStop, setTabStop] = useState(Math.max(0, days.length - 1));
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [focused, setFocused] = useState<number | null>(null);
+  if (!days.length) return null;
 
-  const firstDay = new Date(days[0].date);
-  const padDays = firstDay.getUTCDay();
-  const cells: (Contrib | null)[] = [
-    ...new Array<null>(padDays).fill(null),
-    ...days,
-  ];
+  const pad = new Date(`${days[0].date}T00:00:00Z`).getUTCDay();
+  const weeks = Math.ceil((days.length + pad) / 7);
+  const cells = Array.from({ length: weeks * 7 }, (_, index) => days[index - pad] ?? null);
+  const months: { text: string; column: number }[] = [];
+  let lastMonth = -1;
+  for (let column = 0; column < weeks; column++) {
+    const day = cells.slice(column * 7, column * 7 + 7).find(Boolean);
+    if (!day) continue;
+    const date = new Date(`${day.date}T00:00:00Z`);
+    if (date.getUTCMonth() === lastMonth) continue;
+    lastMonth = date.getUTCMonth();
+    months.push({ text: date.toLocaleString(monthLocale, { month: "short", timeZone: "UTC" }), column });
+  }
+  const formatDate = (date: string) => new Date(`${date}T00:00:00Z`).toLocaleDateString(monthLocale, { month: "short", day: "numeric", timeZone: "UTC" });
+  const selected = hovered ?? focused;
+  const day = selected === null ? null : days[selected];
 
-  const weeks: (Contrib | null)[][] = [];
-  for (let i = 0; i < cells.length; i += 7) {
-    const week = cells.slice(i, i + 7);
-    while (week.length < 7) week.push(null);
-    weeks.push(week);
+  function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    const shifts: Record<string, number> = { ArrowUp: -1, ArrowDown: 1, ArrowLeft: -7, ArrowRight: 7 };
+    let next: number;
+    if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = days.length - 1;
+    else if (event.key in shifts) next = Math.max(0, Math.min(days.length - 1, index + shifts[event.key]));
+    else return;
+    event.preventDefault();
+    setHovered(null);
+    refs.current[next]?.focus();
   }
 
-  const monthLabels: { month: string; weekIndex: number }[] = [];
-  let lastMonth = -1;
-  weeks.forEach((week, wi) => {
-    const first = week.find((d) => d !== null);
-    if (!first) return;
-    const date = new Date(first.date);
-    const m = date.getUTCMonth();
-    if (m !== lastMonth) {
-      monthLabels.push({
-        month: date.toLocaleString(monthLocale, { month: "short", timeZone: "UTC" }),
-        weekIndex: wi,
-      });
-      lastMonth = m;
-    }
-  });
-
   return (
-    <>
-      <div
-        className="relative h-4 mb-1.5"
-        style={{ width: weeks.length * COL }}
-      >
-        {monthLabels.map(({ month, weekIndex }) => (
-          <span
-            key={`${month}-${weekIndex}`}
-            className="absolute font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft"
-            style={{ left: weekIndex * COL }}
-          >
-            {month}
-          </span>
-        ))}
+    <div className={styles.chart}>
+      <div className={styles.months} style={{ width: weeks * CELL_STEP }} aria-hidden>
+        {months.map(({text, column}) => <span key={column} style={{left:column * CELL_STEP}}>{text}</span>)}
       </div>
-
-      <div className="flex gap-[3px]">
-        {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-col gap-[3px]">
-            {week.map((d, di) =>
-              d === null ? (
-                <div
-                  key={di}
-                  style={{ width: CELL, height: CELL }}
-                  aria-hidden
-                />
-              ) : (
-                <div
-                  key={di}
-                  className={LEVEL_BG[d.level]}
-                  style={{ width: CELL, height: CELL }}
-                  title={cellTitle(d.count, d.date)}
-                />
-              ),
-            )}
-          </div>
-        ))}
+      <div className={styles.grid} style={{ gridTemplateColumns: `repeat(${weeks}, ${CELL_STEP}px)` }} role="group" aria-label={cn ? "按天查看提交记录，方向键切换" : "Daily commits; use arrow keys to explore"} onPointerLeave={() => setHovered(null)}>
+        {cells.map((cell, index) => cell ? (
+          <button key={cell.date} type="button" className={styles.day} data-selected={selected === index - pad}
+            ref={element => { refs.current[index - pad] = element; }}
+            tabIndex={tabStop === index - pad ? 0 : -1}
+            aria-label={cellTitle(cell.count, cell.date)}
+            onPointerEnter={event => { if(event.pointerType !== "touch") setHovered(index - pad); }}
+            onFocus={() => { setHovered(null); setFocused(index - pad); setTabStop(index - pad); }}
+            onBlur={() => setFocused(null)}
+            onClick={() => { setFocused(index - pad); setTabStop(index - pad); }}
+            onKeyDown={event => navigate(event, index - pad)}>
+            <i data-level={cell.level} />
+          </button>
+        ) : <span key={`empty-${index}`} aria-hidden />)}
       </div>
-    </>
+      <div className={styles.readout} data-active={day !== null} aria-hidden>
+        {day ? <><span>{formatDate(day.date)}</span><strong>{cn ? `${day.count} 次` : `${day.count} ${day.count === 1 ? "commit" : "commits"}`}</strong></> : <span>{formatDate(days[0].date)} — {formatDate(days[days.length - 1].date)}</span>}
+      </div>
+    </div>
   );
 }

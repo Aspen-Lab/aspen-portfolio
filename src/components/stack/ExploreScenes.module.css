@@ -3,6 +3,7 @@
   width: 100%;
   height: auto;
   overflow: visible;
+  filter: grayscale(1);
   color: #e8e7df;
   font-family: var(--font-geist-sans), sans-serif;
   shape-rendering: geometricPrecision;
@@ -17,7 +18,7 @@
 .divider { fill: none; stroke: #363637; stroke-width: .8; }
 .inkFill { fill: #e8e7df; }
 .dimFill { fill: #777773; }
-.label { fill: #90908b; font-family: var(--font-geist-mono), monospace; font-size: 10px; letter-spacing: 1px; }
+.label { fill: #90908b; font-family: var(--font-geist-mono), monospace; font-size: 10px; letter-spacing: .3px; }
 .small { fill: #90908b; font-family: var(--font-geist-mono), monospace; font-size: 9px; letter-spacing: .1px; }
 .nodeTitle { fill: #e4e3da; font-size: 15px; font-weight: 450; }
 .tier { fill: #b8b7ae; font-family: var(--font-geist-mono), monospace; font-size: 19px; font-weight: 300; }
@@ -54,20 +55,32 @@
 .toolName { fill: #d6d5cb; font-size: 13px; letter-spacing: -.15px; }
 
 .scene[data-playing="true"] .trace,
-.scene[data-playing="true"] .toolingTrace { animation: path-arrive 2200ms cubic-bezier(.3,.3,.2,1) both; }
-.scene[data-playing="true"] .arrive { animation: result-arrive 2600ms ease-out both; }
-.scene[data-playing="true"] .localNode { animation: local-emphasis 2400ms ease-out both; }
-.scene[data-playing="true"] .routerDot { animation: route-ready 1600ms ease-out both; }
-.scene[data-playing="true"] .player { animation: platform-jump 2300ms cubic-bezier(.3,.7,.4,1) both; }
-.scene[data-playing="true"] .landing { animation: landing-contact 2400ms ease-out both; }
-.scene[data-playing="true"] .collider { animation: collider-arrive 2600ms ease-out both; }
-.scene[data-playing="true"] .fsmTrace { animation: path-arrive 2400ms linear both; }
-.scene[data-playing="true"] .stateDot { animation: route-ready 2600ms ease-out both; }
-.scene[data-playing="true"] .designCursor { animation: cursor-arrive 2600ms cubic-bezier(.22,.61,.36,1) both; }
-.scene[data-playing="true"] .typeSpecimen { animation: specimen-arrive 1600ms ease-out both; }
-.scene[data-playing="true"] .layoutSpecimen { animation: specimen-arrive 2200ms ease-out both; }
-.scene[data-playing="true"] .codeCaret { animation: caret-ready 2100ms steps(1, end) both; }
-.scene[data-playing="true"] .toolNodes { animation: specimen-arrive 1800ms ease-out both; }
+.scene[data-playing="true"] .toolingTrace { animation: path-arrive 1200ms cubic-bezier(.3,.3,.2,1) both; }
+.scene[data-playing="true"] .arrive { animation: result-arrive 1550ms ease-out both; }
+.scene[data-playing="true"] .localNode { animation: local-emphasis 1450ms ease-out both; }
+.scene[data-playing="true"] .routerDot { animation: route-ready 950ms ease-out both; }
+.scene[data-playing="true"] .player { animation: platform-jump 1450ms cubic-bezier(.3,.7,.4,1) both; }
+.scene[data-playing="true"] .landing { animation: landing-contact 1450ms ease-out both; }
+.scene[data-playing="true"] .collider { animation: collider-arrive 1550ms ease-out both; }
+.scene[data-playing="true"] .fsmTrace { animation: path-arrive 1450ms linear both; }
+.scene[data-playing="true"] .stateDot { animation: route-ready 1550ms ease-out both; }
+.scene[data-playing="true"] .designCursor { animation: cursor-arrive 1550ms cubic-bezier(.22,.61,.36,1) both; }
+.scene[data-playing="true"] .typeSpecimen { animation: specimen-arrive 950ms ease-out both; }
+.scene[data-playing="true"] .layoutSpecimen { animation: specimen-arrive 1200ms ease-out both; }
+.scene[data-playing="true"] .codeCaret { animation: caret-ready 1300ms steps(1, end) both; }
+.scene[data-playing="true"] .toolNodes { animation: specimen-arrive 1100ms ease-out both; }
+
+.scene[data-playing="true"] .gameIdle { animation: state-idle 1450ms linear both; }
+.scene[data-playing="true"] .gameJump { animation: state-jump 1450ms linear both; }
+
+@keyframes state-idle {
+  0%, 14%, 86%, 100% { fill: #29292c; stroke: #d0d0ca; }
+  15%, 85% { fill: #1b1b1d; stroke: #414143; }
+}
+@keyframes state-jump {
+  0%, 14%, 86%, 100% { fill: #1b1b1d; stroke: #414143; }
+  15%, 85% { fill: #29292c; stroke: #d0d0ca; }
+}
 
 @keyframes path-arrive {
   0%, 8% { stroke-dashoffset: 1; }

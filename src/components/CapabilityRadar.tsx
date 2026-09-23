@@ -75,8 +75,7 @@ const disciplines: Discipline[] = [
   },
 ];
 
-const points = [[50, 8], [82, 27], [82, 65], [50, 84], [18, 65], [18, 27]];
-const polygon = points.map(([x, y]) => `${x},${y}`).join(" ");
+const points = [[50, 12], [82, 30], [82, 68], [50, 86], [18, 68], [18, 30]];
 
 function DisciplineIcon({ index }: { index: number }) {
   return (
@@ -114,23 +113,26 @@ export function CapabilityRadar() {
   return (
     <figure className={styles.figure}>
       <figcaption className={styles.caption}>
-        <span>{cn ? "我的工作范围" : "WHERE I TAKE OWNERSHIP"}</span>
+        <span>{cn ? "我的工作范围" : "Areas of ownership"}</span>
         <span className={styles.count}>06</span>
       </figcaption>
 
       <div className={styles.map}>
         <svg className={styles.connections} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-          <polygon points={polygon} fill="currentColor" fillOpacity=".025" stroke="currentColor" strokeOpacity=".18" strokeWidth=".25" />
-          {points.map(([x, y], i) => <line key={i} x1="50" y1="46" x2={x} y2={y} className={styles.spoke} data-active={active === i} />)}
-          <path d="M18 27 82 65M82 27 18 65" stroke="currentColor" strokeOpacity=".045" strokeWidth=".25" />
+          {points.map(([x, y], i) => (
+            <line key={i} x1={50 + (x - 50) * 0.55} y1={48 + (y - 48) * 0.55}
+              x2={x} y2={y} vectorEffect="non-scaling-stroke"
+              className={styles.spoke} data-active={active === i} />
+          ))}
         </svg>
 
         <div className={styles.center} aria-hidden="true">
-          <span className={styles.centerOverline}>{cn ? "双向协作" : "ONE PRACTICE"}</span>
-          <span className={styles.centerTitle}>{cn ? "设计" : "Design"}</span>
-          <span className={styles.centerBridge}>↔</span>
-          <span className={styles.centerTitle}>{cn ? "代码" : "Code"}</span>
-          <span className={styles.centerFoot}>{cn ? "由我交付" : "SHIPPED BY ME"}</span>
+          <span className={styles.centerWords}>
+            <span className={styles.centerTitle}>{cn ? "设计" : "Design"}</span>
+            <span className={styles.centerBridge}>↔</span>
+            <span className={styles.centerTitle}>{cn ? "代码" : "Code"}</span>
+          </span>
+          <span className={styles.centerFoot}>{cn ? "同一个实践" : "One practice"}</span>
         </div>
 
         <div role="tablist" aria-label={cn ? "工作领域，使用方向键切换" : "Disciplines; use arrow keys to explore"} className={styles.tabs}>
@@ -148,6 +150,7 @@ export function CapabilityRadar() {
               onClick={() => setActive(i)}
               onKeyDown={(event) => navigate(event, i)}
               className={styles.node}
+              data-position={i === 0 ? "top" : "around"}
               style={{ left: `${points[i][0]}%`, top: `${points[i][1]}%` }}
             >
               <span className={styles.icon}><DisciplineIcon index={i} /></span>

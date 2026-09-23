@@ -1,24 +1,25 @@
 .figure { width: 100%; min-width: 0; color: var(--color-ink); container-type: inline-size; }
-.caption { display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 10px var(--font-mono); letter-spacing: .13em; color: var(--color-mute); }
-.count { color: var(--color-soft); }
-.map { position: relative; height: clamp(308px, 66cqw, 350px); margin: 17px 0 10px; }
+.caption { display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 11px/18px var(--font-sans); color: var(--color-mute); }
+.count { color: var(--color-soft); font: 10px var(--font-mono); }
+.map { position: relative; height: 288px; margin: 20px 0 12px; }
 .connections { position: absolute; inset: 0; height: 100%; width: 100%; overflow: visible; }
-.spoke { stroke: currentColor; stroke-opacity: .13; stroke-width: .25; transition: stroke-opacity 220ms, stroke-width 220ms; }
-.spoke[data-active="true"] { stroke-opacity: .8; stroke-width: .4; }
+.spoke { stroke: currentColor; stroke-opacity: .13; stroke-width: .75; transition: stroke-opacity 140ms linear; }
+.spoke[data-active="true"] { stroke-opacity: .55; }
 .tabs { position: absolute; inset: 0; }
-.node { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 116px; min-height: 66px; transform: translate(-50%, -22px); background: none; border: 0; padding: 0; cursor: pointer; color: var(--color-mute); outline: none; }
-.icon { display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; border: 1px solid var(--color-line); background: var(--color-paper); transition: color 200ms, border-color 200ms, background-color 200ms, transform 200ms; }
-.nodeLabel { display: block; font: 11px/1.4 var(--font-sans); letter-spacing: -.01em; text-align: center; text-wrap: balance; transition: color 200ms; }
+.node { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 7px; width: 116px; min-height: 60px; transform: translate(-50%, -18px); background: none; border: 0; padding: 0; cursor: pointer; color: var(--color-mute); outline: none; }
+.node[data-position="top"] { flex-direction: column-reverse; transform: translate(-50%, -43px); }
+.icon { display: grid; place-items: center; width: 36px; height: 36px; flex: 0 0 36px; border: 1px solid transparent; border-radius: 50%; transition: color 140ms linear, border-color 140ms linear; }
+.icon svg { width: 20px; height: 20px; }
+.nodeLabel { display: block; font: 11px/16px var(--font-sans); letter-spacing: -.01em; text-align: center; text-wrap: balance; transition: color 140ms linear; }
 .node[aria-selected="true"] { color: var(--color-ink); }
-.node[aria-selected="true"] .icon { border-color: var(--color-mute); background-color: var(--color-cream); }
-.node:hover .icon { color: var(--color-ink); border-color: var(--color-soft); transform: translateY(-2px); }
-.node:focus-visible .icon { outline: 2px solid var(--color-ink); outline-offset: 4px; }
-.center { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); width: 136px; display: flex; flex-direction: column; align-items: center; text-align: center; background: var(--color-paper); padding: 13px 0; pointer-events: none; }
-.centerOverline, .centerFoot { font: 8px var(--font-mono); letter-spacing: .14em; color: var(--color-soft); }
-.centerOverline { margin-bottom: 10px; }
-.centerFoot { margin-top: 11px; }
-.centerTitle { font: 36px/.9 var(--font-newsreader), Georgia, serif; letter-spacing: -.04em; }
-.centerBridge { font: 23px/.9 var(--font-sans); color: var(--color-mute); margin: 4px 0 7px; }
+.node[aria-selected="true"] .icon { border-color: rgb(244 244 242 / 28%); }
+.node:hover .icon { color: var(--color-ink); border-color: rgb(244 244 242 / 18%); }
+.node:focus-visible .icon { outline: 1px solid var(--color-ink); outline-offset: 4px; }
+.center { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; text-align: center; pointer-events: none; white-space: nowrap; }
+.centerWords { display: flex; align-items: center; gap: 8px; }
+.centerTitle { font: 25px/1 var(--font-newsreader), Georgia, serif; letter-spacing: -.035em; }
+.centerBridge { font: 15px/1 var(--font-sans); color: var(--color-soft); }
+.centerFoot { margin-top: 7px; font: 9px/14px var(--font-sans); color: var(--color-soft); }
 .evidence { border-top: 1px solid var(--color-line); padding-top: 17px; min-height: 224px; outline: none; }
 .evidence:focus-visible { outline: 1px solid var(--color-soft); outline-offset: 6px; }
 .evidenceMeta { display: flex; justify-content: space-between; gap: 12px; font: 9px/1.4 var(--font-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--color-soft); }
@@ -32,19 +33,17 @@
 .caseLinks a:hover { text-decoration: underline; }
 .caseLinks a:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 :global(html[lang="zh-CN"]) .centerTitle, :global(html[lang="zh-CN"]) .evidenceTitle { font-family: var(--font-display); font-weight: 350; }
-:global(html[lang="zh-CN"]) .centerTitle { font-size: 30px; line-height: 1; }
+:global(html[lang="zh-CN"]) .centerTitle { font-size: 22px; line-height: 1; }
 :global(html[lang="zh-CN"]) .evidenceTitle { font-size: 25px; }
 
 @container (max-width: 380px) {
-  .map { margin-top: 21px; }
-  .node { width: 92px; }
-  .nodeLabel { font-size: 10px; max-width: 90px; }
-  .center { width: 98px; }
-  .centerTitle { font-size: 30px; }
-  .centerOverline, .centerFoot { font-size: 6.5px; letter-spacing: .08em; }
-  .centerOverline { margin-bottom: 9px; }
-  .centerFoot { margin-top: 10px; }
-  .centerBridge { font-size: 20px; }
+  .map { height: 276px; margin-top: 20px; }
+  .node { width: 86px; }
+  .nodeLabel { font-size: 10px; max-width: 86px; }
+  .centerTitle { font-size: 21px; }
+  .centerWords { gap: 6px; }
+  .centerBridge { font-size: 13px; }
+  .centerFoot { font-size: 8px; }
   .evidence { min-height: 258px; }
   .evidenceMeta > span:last-child { display: none; }
   .evidenceTitle { font-size: 26px; }
@@ -52,5 +51,4 @@
 
 @media (prefers-reduced-motion: reduce) {
   .spoke, .icon, .nodeLabel { transition: none; }
-  .node:hover .icon { transform: none; }
 }

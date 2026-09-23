@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState, type KeyboardEvent } from "react";
 import Image from "next/image";
 import { useLocale } from "next-intl";
 import { ArrowUpRight, Cat, Dices, Film, Gamepad2 } from "lucide-react";
@@ -49,8 +49,28 @@ const artifacts = [
 export function PersonalArtifacts() {
   const locale = useLocale() === "cn" ? "cn" : "en";
   const [selected, setSelected] = useState(0);
+  const [displayed, setDisplayed] = useState(0);
+  const ready = useRef(new Set<number>());
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const figureId = useId();
-  const current = artifacts[selected];
+  const current = artifacts[displayed];
+
+  function select(index: number) {
+    setSelected(index);
+    if (ready.current.has(index)) setDisplayed(index);
+  }
+
+  function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next: number;
+    if (event.key === "ArrowRight") next = (index + 1) % artifacts.length;
+    else if (event.key === "ArrowLeft") next = (index + artifacts.length - 1) % artifacts.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = artifacts.length - 1;
+    else return;
+    event.preventDefault();
+    select(next);
+    tabs.current[next]?.focus();
+  }
 
   return (
     <div className={styles.collection}>
@@ -62,44 +82,58 @@ export function PersonalArtifacts() {
         </Link>
       </div>
 
-      <div className={styles.selectors} role="group" aria-label={locale === "cn" ? "选择一张生活照片" : "Choose a personal photo"}>
+      <div className={styles.selectors} role="tablist" aria-label={locale === "cn" ? "选择一张生活照片" : "Choose a personal photo"}>
+        <span className={styles.selectionLine} style={{transform: `translateX(${selected * 100}%)`}} aria-hidden />
         {artifacts.map((artifact, index) => {
           const Icon = artifact.icon;
           return (
             <button
               key={artifact.key}
               type="button"
+              role="tab"
+              id={`${figureId}-tab-${index}`}
               className={styles.selector}
-              aria-pressed={selected === index}
+              aria-selected={selected === index}
               aria-controls={figureId}
-              onClick={() => setSelected(index)}
+              tabIndex={selected === index ? 0 : -1}
+              ref={element => { tabs.current[index] = element; }}
+              onClick={() => select(index)}
+              onKeyDown={event => navigate(event, index)}
             >
-              <Icon size={16} strokeWidth={1.4} aria-hidden="true" />
+              <Icon size={14} strokeWidth={1.4} aria-hidden="true" />
               <span>{artifact.label[locale]}</span>
             </button>
           );
         })}
       </div>
 
-      <figure id={figureId} className={styles.figure}>
-        <div className={styles.frame}>
-          <span className={styles.frameNumber} aria-hidden="true">0{selected + 1}</span>
-          <div key={current.key} className={styles.photograph}>
-            <Image
-              src={current.src}
-              alt={current.alt[locale]}
-              fill
-              sizes="(max-width: 640px) 240px, 320px"
-              className={styles.image}
-            />
+      <div id={figureId} className={styles.panel} role="tabpanel" tabIndex={0} aria-labelledby={`${figureId}-tab-${selected}`} aria-busy={selected !== displayed}>
+        <figure className={styles.figure}>
+          <div className={styles.frame}>
+            {artifacts.map((artifact, index) => (
+              <div key={artifact.key} className={styles.photograph} data-visible={displayed === index} aria-hidden={displayed !== index}>
+                <Image
+                  src={artifact.src}
+                  alt={artifact.alt[locale]}
+                  fill
+                  sizes="156px"
+                  className={styles.image}
+                  onLoad={() => {
+                    ready.current.add(index);
+                    if (selected === index) setDisplayed(index);
+                  }}
+                />
+              </div>
+            ))}
           </div>
-          <span className={styles.frameLabel} aria-hidden="true">ASPEN / PERSONAL</span>
-        </div>
-        <figcaption className={styles.caption} aria-live="polite" aria-atomic="true">
-          <h3 className={styles.title}>{current.title[locale]}</h3>
-          <p>{current.caption[locale]}</p>
-        </figcaption>
-      </figure>
+          <figcaption className={styles.caption} aria-live="polite" aria-atomic="true">
+            <div key={current.key} className={styles.captionCopy}>
+              <h3 className={styles.title}>{current.title[locale]}</h3>
+              <p>{current.caption[locale]}</p>
+            </div>
+          </figcaption>
+        </figure>
+      </div>
     </div>
   );
 }

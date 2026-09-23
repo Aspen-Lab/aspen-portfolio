@@ -583,6 +583,12 @@ export type StackCategory = {
 
 export const stack: StackCategory[] = [
   {
+    icon: "design",
+    label: "Design",
+    items: ["Figma + Figma MCP", "Framer", "Rhino + Keyshot", "Adobe CS"],
+    note: "Where every project starts — Figma is the desk",
+  },
+  {
     icon: "frontend",
     label: "Frontend · daily driver",
     items: [
@@ -638,12 +644,6 @@ export const stack: StackCategory[] = [
     label: "Game",
     items: ["Unity + C#", "PlayMaker FSM", "Hollow-Knight stack"],
     note: "2D Metroidvania w/ Skyler · 1–2h/day, Hollow-Knight stack",
-  },
-  {
-    icon: "design",
-    label: "Design",
-    items: ["Figma + Figma MCP", "Framer", "Rhino + Keyshot", "Adobe CS"],
-    note: "Where every project starts — Figma is the desk",
   },
   {
     icon: "tooling",

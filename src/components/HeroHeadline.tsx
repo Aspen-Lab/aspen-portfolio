@@ -55,7 +55,7 @@ type Props = {
 /* One idea, one scale: the statement is the whole hero. (A "Hi! I'm
    Aspen." greeting used to sit above it; cut 2026-09-21.) */
 export function HeroHeadline({ line2, line3a, line3Italic, line3b }: Props) {
-  const BASE = 0.38;
+  const BASE = 0.68;
   const disciplines = line2.split("❤️");
 
   return (
@@ -79,7 +79,7 @@ export function HeroHeadline({ line2, line3a, line3Italic, line3b }: Props) {
             </span>
           ) : line2}
         </MaskLine>
-        <MaskLine delay={BASE + 0.12}>
+        <MaskLine delay={BASE + 0.16}>
           {line3a}
           <span
             className="italic font-normal leverage-gradient"
