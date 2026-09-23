@@ -2,7 +2,6 @@ import { useTranslations } from "next-intl";
 import { AvatarDots } from "./AvatarDots";
 import { HeroHeadline } from "./HeroHeadline";
 import { HeroWidgets } from "./HeroWidgets";
-import { HeroPlayground } from "./HeroPlayground";
 import { HeroEntrance } from "./HeroEntrance";
 
 /* Flat paper, one texture. The hero carried a radial backlight and a
@@ -41,9 +40,6 @@ export function Hero() {
       <div className="container-fluid relative flex flex-col justify-center pt-7 sm:pt-6 pb-10 sm:pb-14 sm:min-h-[calc(100svh-64px-58px)]">
         <AvatarDots />
 
-        <div className="relative z-10 mb-5 sm:mb-7">
-          <HeroPlayground />
-        </div>
         <div className="relative z-10 max-w-6xl">
           <HeroHeadline
             line2={t("headlineLine2")}
