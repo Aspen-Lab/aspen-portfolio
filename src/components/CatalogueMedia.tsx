@@ -104,7 +104,7 @@ export function CatalogueMedia({
             unoptimized={cover.src === "/work/tiktok.png"}
             alt={desktop ? "" : cover.alt ?? ""}
             fill
-            sizes={desktop ? "(min-width: 1440px) 580px, 44vw" : "(min-width: 1024px) 1px, (min-width: 640px) 90vw, calc(100vw - 40px)"}
+            sizes={desktop ? "(min-width: 1440px) 580px, 44vw" : "(min-width: 768px) 44vw, calc(100vw - 40px)"}
             loading={active && inView ? "eager" : "lazy"}
             style={{ objectFit: cover.fit ?? "cover", objectPosition: cover.position }}
           />

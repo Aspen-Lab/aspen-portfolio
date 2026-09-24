@@ -75,7 +75,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
   return (
     <>
       {/* Mobile: horizontal sticky bar (lg-) */}
-      <div ref={mobileNavRef} className="lg:hidden sticky top-24 min-[420px]:top-16 z-30 mt-16 bg-paper/90 backdrop-blur-md border-y border-line/80 -mx-[max(1.25rem,4vw)]">
+      <div ref={mobileNavRef} className="lg:hidden sticky top-24 sm:top-16 z-30 mt-16 bg-paper/90 backdrop-blur-md border-y border-line/80 -mx-[max(1.25rem,4vw)]">
         <div className="container-fluid flex items-center gap-7 overflow-x-auto no-scrollbar py-3.5">
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft shrink-0">
             {cn ? "章节" : "Chapters"}

@@ -1,0 +1,59 @@
+.catalogue { min-width: 0; }
+.index { border-top: 1px solid var(--color-line); }
+.entry { min-width: 0; border-bottom: 1px solid var(--color-line); }
+.inlinePreview { padding-top: 24px; margin-bottom: 20px; }
+.coverLink { touch-action: manipulation; }
+.description { display: block; padding-bottom: 26px; touch-action: manipulation; }
+.withoutCover { padding-top: 26px; }
+.rowContent {
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 12px;
+}
+.name { font-size: 30px; line-height: 1.1; text-wrap: balance; overflow-wrap: anywhere; }
+.meta { line-height: 1.75; text-wrap: pretty; overflow-wrap: anywhere; }
+.status { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.rowArrow { color: var(--color-mute); transition: color 180ms ease, transform 180ms ease; }
+.description:focus-visible .rowArrow { color: var(--color-ink); transform: translate(2px, -2px); }
+.preview { display: none; }
+
+/* At tablet widths, keep the picture attached to its project. This also
+   applies to larger touch screens, where hovering is not an available action. */
+@media (min-width: 768px) {
+  .index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 0; }
+  .entry { border-top: 1px solid var(--color-line); border-bottom: 0; }
+  .inlinePreview { padding-top: 26px; }
+  .description { padding-bottom: 32px; }
+  .name { font-size: 32px; }
+}
+
+/* Shared previews belong to a layout that can actually use hover. */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .catalogue { display: grid; grid-template-columns: 1fr minmax(380px, 44%); gap: 48px; align-items: start; }
+  .index { display: block; border-top: 1px solid var(--color-line); }
+  .entry { border-top: 0; border-bottom: 1px solid var(--color-line); }
+  .inlinePreview { display: none; }
+  .description { padding-block: 32px; }
+  .rowContent { grid-template-columns: 2.25rem minmax(0, 1fr) auto; column-gap: 20px; }
+  .name { font-size: 40px; }
+  .meta { max-width: 44ch; }
+  .rowArrow { opacity: 0; }
+  .description[data-current="true"] .rowArrow,
+  .description:focus-visible .rowArrow { opacity: 1; color: var(--color-ink); }
+  .preview { display: block; position: sticky; top: 138px; }
+}
+
+@media (min-width: 1280px) and (hover: hover) and (pointer: fine) {
+  .catalogue { gap: 64px; }
+}
+
+@media (hover: hover) {
+  .description:hover .rowArrow { color: var(--color-ink); transform: translate(2px, -2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rowArrow { transition: none; }
+  .description:hover .rowArrow,
+  .description:focus-visible .rowArrow { transform: none; }
+}

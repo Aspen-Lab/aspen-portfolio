@@ -4,18 +4,18 @@ import { useState, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { useReducedMotion } from "motion/react";
+import { ArrowUpRight } from "lucide-react";
 import { CatalogueMedia } from "./CatalogueMedia";
 import { demoCaption, type SideDemoId } from "./SideProjectDemo";
+import styles from "./CatalogueIndex.module.css";
 
 /* The catalogue: a ruled index with one sticky viewfinder plate.
    Built for the works, then generalised so the side projects read as
    their peer — same rows, same plate, same readout, one component
    (Aspen: 「和作品平级」). On the left every entry is a row with a folio
-   numeral, its name at 40px in the display serif, a subtitle, and one
-   mono line, with one figure on the right. Hovering a row dims the
-   others to 0.42 and crossfades the plate to that entry's cover, framed
-   by Latin registration marks with a mono readout beneath. Under lg
-   there is no hover, so each row carries its own cover band. */
+   numeral, its name in the display serif, and a mono readout. A fine
+   pointer gets one sticky preview. Phones and touch tablets get a
+   preview on every card, with two columns where there is room. */
 
 export type CatalogueCover = {
   src: string;
@@ -80,6 +80,7 @@ function RowShell({
   className,
   style,
   onEnter,
+  current,
   ariaLabel,
   children,
 }: {
@@ -87,10 +88,20 @@ function RowShell({
   className: string;
   style: React.CSSProperties;
   onEnter: () => void;
+  current?: boolean;
   ariaLabel?: string;
   children: ReactNode;
 }) {
-  const common = { className, style, onPointerEnter: onEnter, onFocus: onEnter, "aria-label": ariaLabel };
+  const common = {
+    className,
+    style,
+    onPointerEnter: (event: React.PointerEvent<HTMLElement>) => {
+      if (event.pointerType === "mouse") onEnter();
+    },
+    onFocus: onEnter,
+    "data-current": current,
+    "aria-label": ariaLabel,
+  };
   if (!row.href) return <div {...common}>{children}</div>;
   if (row.external) {
     return (
@@ -109,38 +120,26 @@ function RowShell({
 export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
   const reduce = useReducedMotion();
   const cn = useLocale() === "cn";
-  const [hovered, setHovered] = useState<number | null>(null);
-  const [last, setLast] = useState(0);
+  const [active, setActive] = useState(0);
   const [replays, setReplays] = useState<Record<string, number>>({});
   const replay = (key: string) => setReplays((previous) => ({ ...previous, [key]: (previous[key] ?? 0) + 1 }));
-  const active = hovered ?? last;
-  const enter = (i: number) => {
-    setHovered(i);
-    setLast(i);
-  };
-  const current = rows[active];
+  const current = rows[active] ?? rows[0];
+  if (!current) return null;
 
   return (
-    <div className="lg:grid lg:grid-cols-[1fr_minmax(380px,44%)] lg:gap-12 xl:gap-16 lg:items-start">
+    <div className={styles.catalogue}>
       {/* ── The index ── */}
-      <ol
-        className="border-t border-line"
-        onPointerLeave={() => setHovered(null)}
-        onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget)) setHovered(null);
-        }}
-      >
+      <ol className={styles.index}>
         {rows.map((row, i) => {
-          const dimmed = hovered !== null && hovered !== i;
           return (
-            <li key={row.key} className="border-b border-line">
+            <li key={row.key} className={styles.entry}>
               {/* Keep replay beside the picture and outside its project link. */}
-              {row.cover && <div className="lg:hidden pt-6 sm:pt-7 mb-5">
+              {row.cover && <div className={styles.inlinePreview}>
                 <RowShell
                   row={row}
-                  onEnter={() => enter(i)}
+                  onEnter={() => setActive(i)}
                   ariaLabel={`${row.name} — ${cn ? "查看项目" : "View project"}`}
-                  className="plate block relative overflow-hidden aspect-[16/10]"
+                  className={`plate block relative overflow-hidden aspect-[16/10] ${styles.coverLink}`}
                   style={row.cover.bg ? { backgroundColor: row.cover.bg } : {}}
                 >
                   <CatalogueMedia cover={row.cover} replay={replays[row.key]} />
@@ -149,19 +148,17 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
               </div>}
               <RowShell
                 row={row}
-                onEnter={() => enter(i)}
-                className={`group block pb-6 sm:pb-7 lg:py-8 ${row.cover ? "" : "pt-6 sm:pt-7"}`}
-                style={{
-                  opacity: dimmed ? 0.58 : 1,
-                  transition: reduce ? "none" : `opacity 360ms ${EASE}`,
-                }}
+                onEnter={() => setActive(i)}
+                current={active === i}
+                className={`${styles.description} ${!row.cover ? styles.withoutCover : ""}`}
+                style={{}}
               >
-                <div className="grid grid-cols-[2.25rem_1fr_auto] sm:grid-cols-[3.5rem_1fr_auto] gap-x-3 sm:gap-x-5 items-baseline">
+                <div className={styles.rowContent}>
                   <span className="font-mono text-[10px] tracking-[0.2em] text-soft tabular-nums">
                     {folio(i)}
                   </span>
                   <div className="min-w-0">
-                    <h3 className="type-display text-[30px] sm:text-[38px] lg:text-[40px] leading-[1.05] text-ink">
+                    <h3 className={`type-display text-ink ${styles.name}`}>
                       {row.name}
                     </h3>
                     {row.sub && (
@@ -169,12 +166,13 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
                         {row.sub}
                       </p>
                     )}
-                    <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-soft truncate">
+                    <p className={`mt-3 font-mono text-[10px] uppercase tracking-[0.12em] text-soft ${styles.meta}`}>
                       {row.meta}
                     </p>
                   </div>
-                  <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-soft tabular-nums whitespace-nowrap">
+                  <span className={`${styles.status} font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-soft tabular-nums whitespace-nowrap`}>
                     {row.right}
+                    {row.href && <ArrowUpRight size={15} strokeWidth={1.25} aria-hidden className={styles.rowArrow} />}
                   </span>
                 </div>
               </RowShell>
@@ -184,7 +182,7 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
       </ol>
 
       {/* ── The viewfinder — one plate, the active entry's cover ── */}
-      <aside className="hidden lg:block sticky top-[138px]">
+      <aside className={styles.preview}>
         <div className="group/preview plate relative overflow-hidden aspect-[16/10]">
           {rows.map((row, i) => (
             <div

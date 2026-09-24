@@ -51,25 +51,28 @@ export function Nav() {
     };
   }, []);
 
-  /* Already home? Next would only rewrite the hash (silently — no event),
-     so glide to the works section ourselves. Modified clicks pass through. */
+  /* Already home? Keep the URL in sync while scrolling to the works section.
+     Modified clicks pass through. */
   const onWorkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (pathname !== "/" || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
+    if (window.location.hash !== "#work") {
+      window.history.pushState(null, "", `${window.location.pathname}${window.location.search}#work`);
+    }
     const reduceNow = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.getElementById("work")?.scrollIntoView({ behavior: reduceNow ? "auto" : "smooth" });
   };
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ease-out border-b ${
+      className={`sticky top-0 z-40 h-24 sm:h-16 transition-[background-color,border-color,backdrop-filter] duration-300 ease-out border-b ${
         lifted ? "backdrop-blur-md bg-paper/80 border-line" : "bg-transparent border-transparent"
       }`}
     >
-      <div className="container-fluid min-h-16 py-3 min-[420px]:py-0 min-[420px]:h-16 flex flex-wrap min-[420px]:flex-nowrap items-center justify-between gap-3 sm:gap-6">
+      <div className="container-fluid grid h-full grid-rows-[44px_44px] content-center items-center sm:flex sm:justify-between sm:gap-6">
         <Link
           href="/"
-          className="group flex items-center gap-3 shrink-0 whitespace-nowrap font-display text-[17px] min-[381px]:text-[18px] sm:text-[20px] tracking-[-0.01em] text-ink"
+          className="group flex min-h-11 items-center gap-3 shrink-0 justify-self-start whitespace-nowrap touch-manipulation font-display text-[17px] min-[381px]:text-[18px] sm:text-[20px] tracking-[-0.01em] text-ink"
         >
           <Logo />
           <span
@@ -84,8 +87,8 @@ export function Nav() {
           </span>
         </Link>
 
-        <div className="flex items-center justify-between min-[420px]:justify-start max-[419px]:w-full gap-5 sm:gap-8 min-w-0">
-          <nav className="flex items-center gap-4 sm:gap-7">
+        <div className="flex min-w-0 items-center justify-between gap-2 sm:justify-start sm:gap-6">
+          <nav className="flex shrink-0 items-center gap-1 sm:gap-5">
             {ITEMS.map((item) => {
               const active = item.match(pathname);
               return (
@@ -94,7 +97,7 @@ export function Nav() {
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   onClick={item.key === "work" ? onWorkClick : undefined}
-                  className={`relative whitespace-nowrap py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors duration-200 ${
+                  className={`relative inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap px-0 sm:px-1 touch-manipulation font-mono text-[11px] uppercase tracking-[0.18em] transition-colors duration-200 ${
                     active ? "text-ink" : "text-soft hover:text-ink"
                   }`}
                 >
@@ -102,7 +105,7 @@ export function Nav() {
                     <motion.span
                       layoutId="nav-bracket"
                       aria-hidden
-                      className="pointer-events-none absolute -inset-x-2.5 -inset-y-0.5"
+                      className="pointer-events-none absolute inset-x-0 inset-y-1.5"
                       transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 34 }}
                     >
                       <span className="reg-mark tl" style={{ width: 7, height: 7, left: 0, top: 0 }} />

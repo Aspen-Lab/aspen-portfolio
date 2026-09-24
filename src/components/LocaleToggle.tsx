@@ -18,21 +18,24 @@ export function LocaleToggle() {
 
   const switchTo = (next: Locale) => {
     if (next === locale) return;
-    router.replace(pathname, { locale: next });
+    const hash = window.location.hash;
+    const href = `${pathname}${window.location.search}${hash}`;
+    // Translated content changes height; follow its anchor when one is present.
+    router.replace(href, { locale: next, scroll: Boolean(hash) });
   };
 
   return (
-    <div role="group" aria-label="Language" className="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[0.18em]">
+    <div role="group" aria-label={locale === "cn" ? "语言" : "Language"} className="flex shrink-0 items-center font-mono text-[10px] uppercase tracking-[0.18em]">
       {(Object.keys(labels) as Locale[]).map((code, i) => {
         const active = code === locale;
         return (
-          <span key={code} className="flex items-center gap-2.5">
-            {i > 0 && <span aria-hidden className="w-px h-3 bg-line" />}
+          <span key={code} className="flex items-center">
+            {i > 0 && <span aria-hidden className="mx-1 w-px h-3 bg-line" />}
             <button
               type="button"
               onClick={() => switchTo(code)}
               aria-pressed={active}
-              className={`whitespace-nowrap py-1 transition-colors duration-200 cursor-pointer ${
+              className={`inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap touch-manipulation transition-colors duration-200 cursor-pointer ${
                 active ? "text-ink" : "text-soft hover:text-ink"
               }`}
             >
