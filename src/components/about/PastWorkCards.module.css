@@ -66,9 +66,31 @@
   aspect-ratio: 1.22;
   padding: 19px 20px 16px;
   border: 1px solid var(--color-line);
-  border-radius: 5px;
+  border-radius: 2px;
   background: var(--color-cream);
+  transition: border-color 200ms ease;
 }
+
+/* Registration corners frame the drawing on hover. */
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 220ms ease, inset 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  background:
+    linear-gradient(var(--study-line), var(--study-line)) left top / 10px 1px no-repeat,
+    linear-gradient(var(--study-line), var(--study-line)) left top / 1px 10px no-repeat,
+    linear-gradient(var(--study-line), var(--study-line)) right top / 10px 1px no-repeat,
+    linear-gradient(var(--study-line), var(--study-line)) right top / 1px 10px no-repeat,
+    linear-gradient(var(--study-line), var(--study-line)) left bottom / 10px 1px no-repeat,
+    linear-gradient(var(--study-line), var(--study-line)) left bottom / 1px 10px no-repeat,
+    linear-gradient(var(--study-line), var(--study-line)) right bottom / 10px 1px no-repeat,
+    linear-gradient(var(--study-line), var(--study-line)) right bottom / 1px 10px no-repeat;
+}
+.card:hover .stage { border-color: var(--study-line); }
+.card:hover .stage::before { opacity: 1; inset: 8px; }
 
 .studyLabel,
 .disclaimer {
@@ -211,6 +233,69 @@
   border: 0;
 }
 
+
+/* ── Motion ── lines draw in when the card enters the view; each study then
+   keeps a quiet loop or two. Everything waits while the card is off screen
+   (data-inview, set by an IntersectionObserver) and stops for reduced motion.
+   --d staggers a study's pieces. */
+.motion { animation-play-state: paused; }
+.card[data-inview="true"] .motion { animation-play-state: running; }
+
+.draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: study-draw 1.1s cubic-bezier(0.16, 1, 0.3, 1) calc(0.1s + var(--d, 0) * 0.12s) forwards; }
+@keyframes study-draw { to { stroke-dashoffset: 0; } }
+
+.pop { transform-box: fill-box; transform-origin: center; animation: study-pop 420ms cubic-bezier(0.34, 1.4, 0.64, 1) calc(var(--d, 0) * 0.12s) both; }
+@keyframes study-pop { from { opacity: 0; transform: scale(0); } }
+
+.flow { animation: study-flow 1.4s linear infinite; }
+@keyframes study-flow { to { stroke-dashoffset: -16; } }
+
+.spin { transform-box: fill-box; transform-origin: center; animation: study-spin 2.6s linear infinite; }
+.spinSlow { transform-box: fill-box; transform-origin: center; animation: study-spin 14s linear infinite; }
+@keyframes study-spin { to { transform: rotate(-360deg); } }
+
+.bob { animation: study-bob 2.2s ease-in-out infinite; }
+@keyframes study-bob { 50% { transform: translateY(5px); } }
+
+.float { animation: study-float 4.2s ease-in-out infinite; }
+@keyframes study-float { 50% { transform: translateY(-3px); } }
+
+.breathe { transform-box: fill-box; transform-origin: center; animation: study-breathe 3.2s ease-in-out infinite; }
+@keyframes study-breathe { 50% { transform: scale(1.035); } }
+
+.ring { fill: none; stroke: var(--color-ink); stroke-width: 1; }
+.pulse { transform-box: fill-box; transform-origin: center; animation: study-pulse 2.6s ease-out infinite; }
+@keyframes study-pulse { from { opacity: .8; transform: scale(1); } to { opacity: 0; transform: scale(2.1); } }
+
+.tick { stroke-dasharray: 1; stroke-dashoffset: 1; animation: study-tick 4s ease-in-out 1.2s infinite; }
+@keyframes study-tick { 0% { stroke-dashoffset: 1; } 18%, 82% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+
+.brush { stroke-dasharray: 1; stroke-dashoffset: 1; animation: study-brush 5.6s cubic-bezier(0.45, 0, 0.55, 1) 0.3s infinite; }
+@keyframes study-brush { 0% { stroke-dashoffset: 1; } 40%, 78% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -1; } }
+
+.blink { animation: study-blink 2.4s steps(1, end) calc(var(--d, 0) * 0.3s) infinite; }
+@keyframes study-blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: .2; } }
+
+.sweep { transform-box: view-box; transform-origin: 300px 200px; animation: study-sweep 3.6s ease-in-out infinite alternate; }
+@keyframes study-sweep { from { transform: rotate(-16deg); } to { transform: rotate(9deg); } }
+
+.rise { transform-box: fill-box; transform-origin: center; animation: study-rise 3s ease-out calc(var(--d, 0) * 0.33s) infinite; }
+@keyframes study-rise { from { opacity: 0; transform: translateY(4px) scale(.6); } 30% { opacity: .9; } to { opacity: 0; transform: translateY(-16px) scale(1.4); } }
+
+.level { transform-box: fill-box; transform-origin: 50% 100%; animation: study-level 4s ease-in-out infinite; }
+@keyframes study-level { 50% { transform: scaleY(.72); } }
+
+.twinkle { transform-box: fill-box; transform-origin: center; animation: study-twinkle 3.2s ease-in-out calc(var(--d, 0) * 0.25s) infinite; }
+@keyframes study-twinkle { 50% { transform: scale(.72) rotate(45deg); opacity: .6; } }
+
+.travel { offset-rotate: 0deg; animation: study-travel 2.8s cubic-bezier(0.45, 0, 0.55, 1) 1s infinite; }
+@keyframes study-travel { from { offset-distance: 0%; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } to { offset-distance: 100%; opacity: 0; } }
+
+/* Hover: the canvas layers fan out a little. */
+.layerBack, .layerMid { transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1); }
+.card:hover .layerBack { transform: translate(8px, -6px); }
+.card:hover .layerMid { transform: translate(4px, -3px); }
+
 @keyframes study-arrive {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
@@ -232,5 +317,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .drawing { animation: none; }
-  .remix { transition: none; }
+  .remix, .stage, .stage::before, .layerBack, .layerMid { transition: none; }
+  .motion { animation: none !important; }
+  .draw, .tick, .brush { stroke-dasharray: none; stroke-dashoffset: 0; }
+  .travel { display: none; }
 }

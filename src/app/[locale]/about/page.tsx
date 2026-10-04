@@ -21,7 +21,7 @@ import { SectionHead } from "@/components/SectionHead";
 import { PhotoReel, type Frame } from "@/components/PhotoReel";
 import { Moat } from "@/components/Moat";
 
-import { AboutProfile } from "@/components/about/AboutProfile";
+import { AboutHero } from "@/components/about/AboutHero";
 import { CapabilityCards } from "@/components/about/CapabilityCards";
 import { AwardCards } from "@/components/about/AwardCards";
 import { PastWorkCards } from "@/components/about/PastWorkCards";
@@ -80,8 +80,8 @@ const CAPABILITIES: ReadonlyArray<{ name: Bi; tag: Bi; desc: Bi; icon: CapIcon }
     name: { en: "Research × Psychology", cn: "研究 × 心理学" },
     tag: { en: "behavior · cog-sci", cn: "behavior · cog-sci" },
     desc: {
-      en: "GT Psych dual degree — usability, trust, the gap between said and done.",
-      cn: "Georgia Tech 心理学双学位 —— 可用性、信任，以及说出口与真实行为之间的差距。",
+      en: "Psychology at Georgia Tech, paused to join Axel — usability, trust, the gap between said and done.",
+      cn: "Georgia Tech 心理学（为加入 Axel 暂停）—— 可用性、信任，以及说出口与真实行为之间的差距。",
     },
     icon: "research",
   },
@@ -89,12 +89,19 @@ const CAPABILITIES: ReadonlyArray<{ name: Bi; tag: Bi; desc: Bi; icon: CapIcon }
 
 type Mark = { kind: "img"; src: string; h: number } | { kind: "si"; path: string } | { kind: "text"; text: string };
 
-const TRAJECTORY: ReadonlyArray<{ org: string; role: Bi; period: Bi; mark: Mark }> = [
+const TRAJECTORY: ReadonlyArray<{ org: string; role: Bi; period: Bi; mark: Mark; badge?: Bi }> = [
   {
     org: "Axel · Gordian (YC W19)",
     role: { en: "Founding Design Engineer · Full-time", cn: "创始设计工程师 · 全职" },
     period: { en: "Dec 2025 — Now", cn: "2025.12 — 至今" },
     mark: { kind: "img", src: "/logos/axel.svg", h: 12 },
+  },
+  {
+    org: "Georgia Tech",
+    role: { en: "BS Psychology · paused to join Axel full-time", cn: "心理学学士 · 为全职加入 Axel 暂停" },
+    period: { en: "2023 — Paused", cn: "2023 — 暂停" },
+    mark: { kind: "img", src: "/logos/georgiatech.svg", h: 15 },
+    badge: { en: "Paused", cn: "暂停" },
   },
   {
     org: "TikTok · PIPO UED",
@@ -294,24 +301,8 @@ export default async function About({
 
   return (
     <article className={`${styles.page} pb-24 sm:pb-32`}>
-      <section className="container-fluid pt-10 sm:pt-16 lg:pt-20">
-        <div className={styles.hero}>
-          <Reveal>
-            <p className={styles.eyebrow}>ASPEN W. <span>/</span> {cn ? "创始设计工程师" : "FOUNDING DESIGN ENGINEER"}</p>
-            <h1 className={`type-display ${styles.headline}`}>
-              {cn ? "设计有章法，" : "Design with intent."}<br />
-              {cn ? "代码能落地，" : "Build with care."}<br />
-              <span className="italic font-normal">{cn ? "好奇不设限。" : "Stay curious."}</span>
-            </h1>
-            <p className={styles.intro}>
-              {cn
-                ? "在 Axel，把设计写成前端 PR，也把工程反馈带回设计。从产品体验到品牌、广告和邮件，亲手构思、实现、测试。"
-                : "At Axel, I turn design into frontend PRs and bring engineering feedback back into design. From product to brand, campaigns, and email — I design, build, and test."}
-            </p>
-            <a href="#about-capabilities" className={styles.explore}>{cn ? "认识我的不同面" : "A few sides of me"}<ArrowDown size={15} aria-hidden /></a>
-          </Reveal>
-          <Reveal delay={0.08}><AboutProfile cn={cn} /></Reveal>
-        </div>
+      <section className="container-fluid pt-6 sm:pt-10 lg:pt-12">
+        <AboutHero cn={cn} />
         <nav className={styles.jumpNav} aria-label={cn ? "关于页面导航" : "On this page"}>
           {[
             { id: "about-capabilities", label: cn ? "能力与小实验" : "Capabilities & play" },
@@ -352,6 +343,11 @@ export default async function About({
                       {i === 0 && (
                         <span aria-hidden className="relative flex w-1.5 h-1.5">
                           <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
+                        </span>
+                      )}
+                      {e.badge && (
+                        <span className="px-1.5 py-0.5 border border-line rounded-[2px] font-mono text-[9px] uppercase tracking-[0.12em] text-mute">
+                          {tr(e.badge)}
                         </span>
                       )}
                     </p>

@@ -7,6 +7,29 @@ import styles from "./AwardCards.module.css";
 
 type AwardItem = { title: string; project: string; year: string };
 
+/* The studies are drawn in 1-bit, like the portrait above them: every
+   tone is a pattern of square pixels on a 3-unit grid (four of four cells
+   lit, two, one, one in sixteen), with hairline edges on top. Each pattern
+   sits on an opaque ground, so a face hides what is behind it like paper. */
+const PIXEL = 2.4;
+
+function Patterns({ id }: { id: string }) {
+  const pattern = (key: string, size: number, cells: ReadonlyArray<readonly [number, number]>) => (
+    <pattern id={`${id}-${key}`} width={size} height={size} patternUnits="userSpaceOnUse">
+      <rect className={styles.pixelGround} width={size} height={size} />
+      {cells.map(([x, y]) => <rect key={`${x}-${y}`} className={styles.pixel} x={x} y={y} width={PIXEL} height={PIXEL} />)}
+    </pattern>
+  );
+  return (
+    <defs>
+      {pattern("light", 6, [[0, 0], [3, 0], [0, 3], [3, 3]])}
+      {pattern("mid", 6, [[0, 0], [3, 3]])}
+      {pattern("dark", 6, [[0, 0]])}
+      {pattern("faint", 12, [[0, 0]])}
+    </defs>
+  );
+}
+
 /** These are independent geometric studies, never representations of awards. */
 function AbstractShape({ kind }: { kind: number }) {
   if (kind === 0) {
@@ -49,7 +72,7 @@ function AbstractShape({ kind }: { kind: number }) {
     return (
       <g>
         {Array.from({ length: 6 }, (_, i) => (
-          <g key={i} className={styles.terraceSlice} style={{ "--slice": i } as CSSProperties} transform={`translate(0 ${22 - i * 8})`}>
+          <g key={i} className={styles.terraceSlice} style={{ "--slice": i } as CSSProperties} transform={`translate(0 ${24 - i * 6})`}>
             <path className={styles.paperDark} d="m112 115 85-49 91 52v9l-85 49-91-52Z" />
             <path className={i === 5 ? styles.paperLight : styles.paperMid} d="m112 115 85-49 91 52-85 49Z" />
             <path className={styles.edge} d="m112 115 91 52 85-49" />
@@ -113,6 +136,13 @@ function AbstractShape({ kind }: { kind: number }) {
 function AwardCard({ item, index, cn }: { item: AwardItem; index: number; cn: boolean }) {
   const [alternate, setAlternate] = useState(false);
   const visualId = useId();
+  const patternId = `study${visualId.replace(/[^a-zA-Z0-9]/g, "")}`;
+  const paints = {
+    "--p-light": `url(#${patternId}-light)`,
+    "--p-mid": `url(#${patternId}-mid)`,
+    "--p-dark": `url(#${patternId}-dark)`,
+    "--p-faint": `url(#${patternId}-faint)`,
+  } as CSSProperties;
 
   return (
     <li className={styles.card} data-alternate={alternate}>
@@ -121,7 +151,8 @@ function AwardCard({ item, index, cn }: { item: AwardItem; index: number; cn: bo
           <span>{cn ? "抽象视觉" : "Abstract study"}</span>
           <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
         </div>
-        <svg id={visualId} viewBox="0 0 400 240" className={styles.artwork} aria-hidden="true" focusable="false">
+        <svg id={visualId} viewBox="0 0 400 240" className={styles.artwork} style={paints} aria-hidden="true" focusable="false">
+          <Patterns id={patternId} />
           <path className={styles.floorLine} d="M55 209H345" />
           <g className={styles.sculpture}>
             <AbstractShape kind={index % 6} />

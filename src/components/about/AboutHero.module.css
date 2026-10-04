@@ -1,0 +1,177 @@
+/* ── Canvas ── a dot grid that fades out at the edges, bleeding into the
+   page gutters, with one frame on it. The inspect layer speaks a design
+   tool's colours (selection blue, redline red, a collaborator's purple) so
+   it never reads as part of the type. */
+.canvas {
+  --sel: #4C8DFF;
+  --redline: #FF5C39;
+  --peer: #A259FF;
+  position: relative;
+  margin-inline: calc(-1 * clamp(1.25rem, 4vw, 3rem));
+  padding: 6px clamp(1.25rem, 4vw, 3rem) clamp(18px, 2vw, 28px);
+}
+.canvas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--color-ink) 17%, transparent) 1px, transparent 1.4px);
+  background-size: 22px 22px;
+  background-position: center;
+  mask-image: radial-gradient(ellipse 72% 78% at 50% 52%, #000 34%, transparent 82%);
+  transition: opacity 260ms var(--ease-arrive);
+}
+.canvas[data-inspect="off"]::before { opacity: .35; }
+.canvas > * { position: relative; }
+
+/* Frame label row · name on the left, live size and the inspect switch on the right. */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 6px; }
+.frameName { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; font: 10px/1.6 var(--font-mono); letter-spacing: .11em; color: var(--color-mute); }
+.frameName > span { color: var(--color-soft); }
+.frameName > svg { color: var(--color-soft); }
+.barEnd { display: flex; align-items: center; gap: 18px; }
+.frameSize { font: 10px/1 var(--font-mono); letter-spacing: .06em; color: var(--color-soft); font-variant-numeric: tabular-nums; }
+
+.inspect { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding-inline: 2px; font: 10px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--color-mute); cursor: pointer; transition: color 180ms; }
+.inspect:hover, .inspect[aria-pressed="true"] { color: var(--color-ink); }
+.inspect:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 4px; }
+.switch { position: relative; width: 24px; height: 13px; border: 1px solid var(--color-line); border-radius: 999px; background: var(--color-paper); transition: background-color 200ms, border-color 200ms; }
+.switch > span { position: absolute; top: 2px; left: 2px; width: 7px; height: 7px; border-radius: 50%; background: var(--color-mute); transition: transform 220ms var(--ease-arrive), background-color 200ms; }
+.inspect[aria-pressed="true"] .switch { border-color: var(--sel); background: color-mix(in srgb, var(--sel) 22%, var(--color-paper)); }
+.inspect[aria-pressed="true"] .switch > span { transform: translateX(11px); background: #fff; }
+
+/* ── Frame ── a raised sheet on the canvas: one hairline, a long soft shadow. */
+.frame {
+  position: relative;
+  padding: clamp(46px, 4.6vw, 68px) clamp(22px, 5vw, 72px) clamp(40px, 4vw, 60px);
+  border-radius: 2px;
+  background: var(--color-cream);
+  box-shadow: 0 0 0 1px var(--color-line), 0 40px 90px -50px rgba(0, 0, 0, .9);
+}
+
+.headline { font-size: clamp(36px, 7vw, 100px); line-height: 1; letter-spacing: -.022em; color: var(--color-ink); }
+/* Full-width CJK punctuation ends each Chinese line; pull in its empty
+   half so the caret and the selection hug the glyphs. */
+.punct { margin-right: -.42em; }
+.line { display: block; }
+.word { position: relative; display: inline-block; white-space: nowrap; cursor: default; }
+
+/* The inspect layer. It fades as one; the type underneath never moves. */
+.anno { transition: opacity 260ms var(--ease-arrive); }
+.canvas[data-inspect="off"] .anno { opacity: 0; }
+
+.overlay { position: absolute; inset: 0; pointer-events: none; animation: overlay-in 560ms var(--ease-arrive) 260ms backwards; }
+@keyframes overlay-in { from { opacity: 0; transform: scale(.985); } }
+
+/* Selection · follows the line under the pointer, with its spec above and
+   its live size beside it (below on the last line, where there is room). */
+.selection { position: absolute; border: 1px solid var(--sel); transition: left 440ms var(--ease-arrive), top 440ms var(--ease-arrive), width 440ms var(--ease-arrive), height 440ms var(--ease-arrive); }
+.selection > i { position: absolute; width: 7px; height: 7px; border: 1px solid var(--sel); background: #fff; }
+.selection > i:nth-of-type(1) { top: -4px; left: -4px; }
+.selection > i:nth-of-type(2) { top: -4px; right: -4px; }
+.selection > i:nth-of-type(3) { bottom: -4px; left: -4px; }
+.selection > i:nth-of-type(4) { bottom: -4px; right: -4px; }
+.specTag, .sizeTag, .redTag { position: absolute; padding: 3px 6px; border-radius: 2px; color: #fff; font: 500 10px/1.2 var(--font-mono); letter-spacing: .03em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.specTag { bottom: calc(100% + 7px); left: -1px; background: var(--sel); }
+.sizeTag { top: 50%; left: calc(100% + 12px); transform: translateY(-50%); background: var(--sel); }
+.sizeTag[data-place="below"] { top: calc(100% + 9px); left: 50%; transform: translateX(-50%); }
+
+/* Redline · the distance from the frame's edge to the selection, on hover. */
+.measure { position: absolute; left: 0; height: 0; border-top: 1px solid var(--redline); opacity: 0; transition: opacity 200ms, top 440ms var(--ease-arrive), width 440ms var(--ease-arrive); }
+.measure::before, .measure::after { content: ""; position: absolute; top: -5px; width: 1px; height: 9px; background: var(--redline); }
+.measure::before { left: 0; }
+.measure::after { right: 0; }
+.measure[data-show="on"] { opacity: 1; }
+.redTag { bottom: 6px; left: 50%; transform: translateX(-50%); background: var(--redline); }
+
+/* Line two · the same words in an editor: a caret and where they go.
+   The comment steps aside while the selection's size tag needs the room. */
+.caret { display: inline-block; width: max(2px, .03em); height: .74em; margin-left: .06em; vertical-align: -.03em; background: var(--sel); animation: caret 1.06s steps(1, end) infinite; }
+.canvas[data-inspect="off"] .caret { animation: none; }
+.comment { position: absolute; top: 56%; left: calc(100% + 26px); font: 400 12px/1 var(--font-mono); font-style: normal; letter-spacing: 0; color: var(--color-soft); white-space: nowrap; }
+.canvas[data-active="1"] .comment { opacity: 0; }
+@keyframes caret { 50% { opacity: 0; } }
+
+/* Line three · a collaborator, still exploring. */
+.cursor { position: absolute; top: .44em; left: calc(100% + .14em); display: flex; align-items: flex-start; gap: 1px; font-style: normal; pointer-events: none; animation: drift 7.5s ease-in-out infinite; }
+.cursor > svg { width: 16px; height: 16px; fill: var(--peer); stroke: #fff; stroke-width: 1.1; stroke-linejoin: round; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .45)); }
+.cursor > span { margin-top: 13px; padding: 4px 8px; border-radius: 2px 10px 10px 10px; background: var(--peer); color: #fff; font: 500 11px/1 var(--font-sans); letter-spacing: 0; box-shadow: 0 4px 12px -4px rgba(0, 0, 0, .5); }
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  30% { transform: translate(22px, -12px); }
+  62% { transform: translate(8px, 10px); }
+}
+
+/* ── Under the frame ── a dithered portrait against the story, then the
+   field notes as one full-width row. The portrait gives the page a face
+   after a hero that is all type. */
+.story { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(28px, 4.4vw, 64px); margin-top: clamp(16px, 2vw, 28px); }
+.portrait { margin: 0; border: 1px solid var(--color-line); border-radius: 2px; background: var(--color-cream); }
+.portraitBar { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--color-line); font: 9px/1.5 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--color-mute); }
+.portraitBar > span:last-child { color: var(--color-soft); }
+.portraitCanvas { display: block; width: 100%; aspect-ratio: 1; color: var(--color-ink); }
+
+.storyText { display: flex; flex-direction: column; justify-content: space-between; gap: 32px; padding-top: 2px; }
+.lead { max-width: 27ch; font-size: clamp(25px, 2.6vw, 36px); line-height: 1.2; color: var(--color-ink); text-wrap: balance; }
+.sub { max-width: 52ch; margin-top: 18px; font-size: 15px; line-height: 1.8; color: var(--color-mute); }
+
+/* The decision log · two stops on one track: the degree that paused and the
+   role it paused for, with the month between them. */
+.decision { padding-top: 16px; border-top: 1px solid var(--color-line); }
+.decisionHead { margin-bottom: 14px; font: 9px/1.5 var(--font-mono); letter-spacing: .13em; color: var(--color-mute); }
+.track { display: grid; grid-template-columns: max-content minmax(64px, 1fr) max-content; align-items: start; column-gap: 16px; }
+.track::before {
+  content: attr(data-date);
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  place-items: center;
+  height: 23px;
+  font: 9px/1 var(--font-mono);
+  letter-spacing: .1em;
+  color: var(--color-soft);
+  background: linear-gradient(to right, var(--color-line) 0 calc(50% - 32px), transparent calc(50% - 32px) calc(50% + 32px), var(--color-line) calc(50% + 32px)) center / 100% 1px no-repeat;
+}
+.track > li:first-child { grid-column: 1; grid-row: 1; }
+.track > li:last-child { grid-column: 3; grid-row: 1; }
+.stop { display: grid; grid-template-columns: 23px auto; gap: 12px; }
+.node { display: grid; place-items: center; width: 23px; height: 23px; border: 1px solid var(--color-line); border-radius: 50%; background: var(--color-paper); color: var(--color-mute); }
+.nodeNow { border-color: color-mix(in srgb, var(--color-ink) 50%, transparent); color: var(--color-ink); }
+.stopTitle { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 23px; font-size: 14px; line-height: 1.45; color: var(--color-ink); }
+.stopMeta { margin-top: 3px; font-size: 12px; line-height: 1.6; color: var(--color-mute); }
+.badge { padding: 2px 6px; border: 1px solid var(--color-line); border-radius: 2px; font: 9px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--color-mute); }
+.badgeNow { border-color: color-mix(in srgb, var(--color-ink) 40%, transparent); color: var(--color-ink); }
+
+.explore { display: inline-flex; align-items: center; gap: 18px; min-height: 44px; margin-top: 20px; color: var(--color-ink); font-size: 12px; border-bottom: 1px solid var(--color-line); }
+.explore svg { transition: transform 180ms; }
+.explore:hover svg { transform: translateY(3px); }
+.explore:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 5px; }
+
+.factsRow { margin-top: clamp(28px, 3.6vw, 44px); }
+
+@media (max-width: 1100px) {
+  .track { grid-template-columns: minmax(0, 1fr); }
+  .track::before { grid-column: 1; grid-row: 2; justify-items: start; height: 30px; padding-left: 36px; background: linear-gradient(var(--color-line), var(--color-line)) 11px 0 / 1px 100% no-repeat; }
+  .track > li:last-child { grid-column: 1; grid-row: 3; }
+}
+@media (max-width: 1023px) {
+  .story { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+}
+@media (max-width: 760px) {
+  .comment, .frameSize { display: none; }
+}
+@media (max-width: 600px) {
+  .frameName { gap: 8px; font-size: 9px; letter-spacing: .05em; }
+  .frame { padding: 52px 18px 56px; }
+  .headline { font-size: 9.4vw; }
+  .sizeTag, .measure { display: none; }
+  .specTag { padding: 2px 5px; font-size: 9px; }
+  .canvas::before { background-size: 18px 18px; }
+  .story { grid-template-columns: minmax(0, 1fr); }
+  .portrait { width: min(100%, 320px); }
+  .sub { font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .caret, .cursor, .overlay { animation: none; }
+  .selection, .measure, .anno, .switch > span, .explore svg, .canvas::before { transition: none; }
+}

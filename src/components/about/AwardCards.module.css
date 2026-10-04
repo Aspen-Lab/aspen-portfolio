@@ -11,7 +11,7 @@
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--color-line);
-  border-radius: 8px;
+  border-radius: 2px;
   background: var(--color-paper);
 }
 
@@ -41,24 +41,27 @@
 .visualCaption > span:last-child { color: var(--color-mute); font-variant-numeric: tabular-nums; }
 .artwork { display: block; width: 100%; height: 100%; overflow: visible; }
 .floorLine { fill: none; stroke: var(--color-line); stroke-width: .8; }
-.shadow { fill: var(--color-ink); opacity: .045; }
-.paperLight { fill: color-mix(in srgb, var(--color-ink) 88%, var(--color-paper)); stroke: color-mix(in srgb, var(--color-ink) 35%, transparent); stroke-width: .5; }
-.paperMid { fill: color-mix(in srgb, var(--color-ink) 45%, var(--color-paper)); stroke: color-mix(in srgb, var(--color-ink) 28%, transparent); stroke-width: .5; }
-.paperDark { fill: color-mix(in srgb, var(--color-ink) 18%, var(--color-paper)); stroke: color-mix(in srgb, var(--color-ink) 20%, transparent); stroke-width: .5; }
-.edge { fill: none; stroke: var(--color-ink); stroke-opacity: .3; stroke-width: .55; }
+/* 1-bit paints · each tone is a pixel pattern (see Patterns), never a grey. */
+.pixel { fill: var(--color-ink); }
+.pixelGround { fill: color-mix(in srgb, var(--color-cream) 55%, var(--color-paper)); }
+.shadow { fill: var(--p-faint); }
+.paperLight { fill: var(--p-light); stroke: var(--color-ink); stroke-opacity: .55; stroke-width: .6; }
+.paperMid { fill: var(--p-mid); stroke: var(--color-ink); stroke-opacity: .45; stroke-width: .6; }
+.paperDark { fill: var(--p-dark); stroke: var(--color-ink); stroke-opacity: .35; stroke-width: .6; }
+.edge { fill: none; stroke: var(--color-ink); stroke-opacity: .6; stroke-width: .6; }
 .band, .bandThin, .bandDark { fill: none; stroke-width: 12px; }
-.band { stroke: color-mix(in srgb, var(--color-ink) 78%, var(--color-paper)); }
-.bandThin { stroke: color-mix(in srgb, var(--color-ink) 45%, var(--color-paper)); stroke-width: 8px; }
-.bandDark { stroke: color-mix(in srgb, var(--color-ink) 17%, var(--color-paper)); }
-.core { fill: color-mix(in srgb, var(--color-ink) 78%, var(--color-paper)); }
-.coreHighlight { fill: var(--color-ink); opacity: .7; }
+.band { stroke: var(--p-light); }
+.bandThin { stroke: var(--p-mid); stroke-width: 8px; }
+.bandDark { stroke: var(--p-dark); }
+.core { fill: var(--p-light); stroke: var(--color-ink); stroke-opacity: .6; stroke-width: .6; }
+.coreHighlight { fill: var(--color-ink); }
 .frameLight, .frameDark { fill: none; stroke-width: 5; }
-.frameLight { stroke: color-mix(in srgb, var(--color-ink) 76%, var(--color-paper)); }
-.frameDark { stroke: color-mix(in srgb, var(--color-ink) 24%, var(--color-paper)); }
+.frameLight { stroke: var(--p-light); }
+.frameDark { stroke: var(--p-dark); }
 .ribbonBack, .ribbonFront, .ribbonEdge { fill: none; stroke-linecap: butt; }
-.ribbonBack { stroke: color-mix(in srgb, var(--color-ink) 28%, var(--color-paper)); stroke-width: 21px; }
-.ribbonFront { stroke: color-mix(in srgb, var(--color-ink) 82%, var(--color-paper)); stroke-width: 18px; }
-.ribbonEdge { stroke: var(--color-ink); stroke-opacity: .22; stroke-width: 1px; }
+.ribbonBack { stroke: var(--p-dark); stroke-width: 21px; }
+.ribbonFront { stroke: var(--p-light); stroke-width: 18px; }
+.ribbonEdge { stroke: var(--color-ink); stroke-opacity: .4; stroke-width: .8px; }
 
 .sculpture {
   transform-origin: 200px 128px;

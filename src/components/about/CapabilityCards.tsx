@@ -1,16 +1,21 @@
 "use client";
 
-import { useId, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import styles from "./CapabilityCards.module.css";
 
 type StudyKind = "design" | "code" | "brand" | "research";
 type CapabilityItem = { icon: StudyKind; name: string; tag: string; desc: string };
 type CapabilityCardsProps = { cn: boolean; items: ReadonlyArray<CapabilityItem> };
 
+const cx = (...names: Array<string | false | undefined>) => names.filter(Boolean).join(" ");
+/** Stagger index for a study's loops (read as --i in the CSS). */
+const at = (index: number) => ({ "--i": index }) as CSSProperties;
+
 function Choice({ active, onClick, children, label }: { active: boolean; onClick: () => void; children: ReactNode; label?: string }) {
   return <button type="button" aria-pressed={active} aria-label={label} onClick={onClick} className={styles.choice}>{children}</button>;
 }
 
+/** Product design · a list a reader scans row by row; the tiles move one after another when the layout changes. */
 function LayoutStudy({ cn }: { cn: boolean }) {
   const [columns, setColumns] = useState(false);
   return (
@@ -19,15 +24,15 @@ function LayoutStudy({ cn }: { cn: boolean }) {
         <svg viewBox="0 0 320 114" className={styles.visual}>
           <path d="M31 3v108m258-108v108" className={styles.guide} />
           {[0, 1, 2].map((i) => (
-            <g key={i} className={styles.layoutTile} style={{ transform: columns ? "translate(" + (39 + i * 83) + "px, 8px)" : "translate(39px," + (8 + i * 34) + "px)" }}>
-              <rect width={columns ? 76 : 242} height={columns ? 98 : 29} rx="3" className={styles.tile} />
+            <g key={i} className={styles.layoutTile} style={{ transform: columns ? "translate(" + (39 + i * 83) + "px, 8px)" : "translate(39px," + (8 + i * 34) + "px)", transitionDelay: `${i * 50}ms` }}>
+              <rect width={columns ? 76 : 242} height={columns ? 98 : 29} rx="3" className={cx(styles.tile, styles.scan, styles.motion)} style={{ ...at(i), transitionDelay: `${i * 50}ms` }} />
               <g className={styles.layoutSymbol} style={{ transform: columns ? "translate(38px, 33px)" : "translate(17px, 14px)" }}>
                 {i === 0 && <circle r="7" className={styles.symbolFill} />}
                 {i === 1 && <path d="m0-8 8 14H-8Z" className={styles.symbolFill} />}
                 {i === 2 && <rect x="-6" y="-6" width="12" height="12" className={styles.symbolFill} transform="rotate(45)" />}
               </g>
               <path d={columns ? "M17 64h42m-42 12h27" : "M39 11h131m-131 8h87"} className={styles.contentLine} />
-              {!columns && <path d="M217 14h10m-4-4 4 4-4 4" className={styles.contentLine} />}
+              {!columns && <path d="M217 14h10m-4-4 4 4-4 4" className={cx(styles.contentLine, styles.nudge, styles.motion)} style={at(i)} />}
             </g>
           ))}
         </svg>
@@ -40,23 +45,41 @@ function LayoutStudy({ cn }: { cn: boolean }) {
   );
 }
 
+/** Design engineering · one component through its states: the spinner turns, the bar fills, the check draws. */
 function StateStudy({ cn }: { cn: boolean }) {
   const [state, setState] = useState<"idle" | "loading" | "done">("idle");
   const text = state === "idle" ? (cn ? "准备开始" : "Ready when you are") : state === "loading" ? (cn ? "正在构建…" : "Putting it together…") : (cn ? "可以探索了" : "Ready to explore");
+  const progress = state === "idle" ? 1 : state === "loading" ? 0.46 : 0;
   return (
     <>
       <div className={styles.canvas} aria-hidden="true">
         <svg viewBox="0 0 320 114" className={styles.visual}>
           <path d="M30 55h27m206 0h27" className={styles.guide} />
           <rect x="58" y="16" width="204" height="73" rx="6" className={styles.tile} />
-          <g className={styles.stateGlyph} transform="translate(81 44)">
-            {state === "idle" && <path d="m-3-7 10 7-10 7Z" className={styles.symbolFill} />}
-            {state === "loading" && <><circle r="8" className={styles.guide} /><path d="M0-8A8 8 0 0 1 8 0" className={styles.brightLine} /></>}
-            {state === "done" && <><circle r="9" className={styles.guide} /><path d="m-5 0 3 3 7-7" className={styles.brightLine} /></>}
+          <g key={state} className={styles.stateGlyph} transform="translate(81 44)">
+            {state === "idle" && (
+              <>
+                <circle r="10" className={cx(styles.ring, styles.pulse, styles.motion)} />
+                <path d="m-3-7 10 7-10 7Z" className={styles.symbolFill} />
+              </>
+            )}
+            {state === "loading" && (
+              <>
+                <circle r="8" className={styles.guide} />
+                <circle r="8" pathLength={1} className={cx(styles.brightLine, styles.arc, styles.spin, styles.motion)} />
+              </>
+            )}
+            {state === "done" && (
+              <>
+                <circle r="9" className={cx(styles.guide, styles.pop)} />
+                <path pathLength={1} d="m-5 0 3 3 7-7" className={cx(styles.brightLine, styles.check)} />
+              </>
+            )}
           </g>
-          <text x="100" y="48" className={styles.stateText}>{text}</text>
+          <text key={`text-${state}`} x="100" y="48" className={cx(styles.stateText, styles.fadeIn)}>{text}</text>
           <path d="M77 69h166" className={styles.guide} />
-          <path d={state === "idle" ? "M77 69h0" : state === "loading" ? "M77 69h89" : "M77 69h166"} className={styles.stateProgress} />
+          <path pathLength={1} d="M77 69h166" className={styles.stateProgress} style={{ strokeDashoffset: progress }} />
+          {state === "loading" && <circle cx="153" cy="69" r="2" className={cx(styles.symbolFill, styles.blink, styles.motion)} />}
           <text x="160" y="108" textAnchor="middle" className={styles.codeReadout}>{"<Button state=\"" + state + "\" />"}</text>
         </svg>
       </div>
@@ -69,16 +92,44 @@ function StateStudy({ cn }: { cn: boolean }) {
   );
 }
 
+/** Brand & visual · a specimen on its metrics, with brackets that measure its live width. */
 function TypeStudy({ cn }: { cn: boolean }) {
   const [serif, setSerif] = useState(true);
   const [spaced, setSpaced] = useState(false);
+  const specimen = useRef<SVGTextElement>(null);
+  const [span, setSpan] = useState<{ x: number; w: number } | null>(null);
+
+  useEffect(() => {
+    const measure = () => {
+      const box = specimen.current?.getBBox();
+      if (box?.width) setSpan({ x: box.x, w: box.width });
+    };
+    measure();
+    // letter-spacing eases over 300ms; read the settled width after it.
+    const timer = window.setTimeout(measure, 340);
+    document.fonts?.ready.then(measure);
+    return () => window.clearTimeout(timer);
+  }, [serif, spaced]);
+
+  const xHeight = serif ? 44 : 39;
   return (
     <>
       <div className={styles.canvas} aria-hidden="true">
         <svg viewBox="0 0 320 114" className={styles.visual}>
           <path d="M35 24h250M35 85h250" className={styles.guide} />
+          <path d={`M35 ${xHeight}h250`} className={cx(styles.guide, styles.dashed, styles.metric)} />
+          <text x="36" y="21" className={styles.metricLabel}>CAP</text>
+          <text x="36" y={xHeight - 3} className={cx(styles.metricLabel, styles.metric)}>X</text>
+          <text x="36" y="82" className={styles.metricLabel}>BASE</text>
           <path d="M57 19v10m206-10v10M57 80v10m206-10v10" className={styles.contentLine} />
-          <text x="160" y="84" textAnchor="middle" className={styles.specimen} style={{ fontFamily: serif ? "var(--font-newsreader), Georgia, serif" : "var(--font-sans)", letterSpacing: spaced ? "14px" : "-4px", fontWeight: serif ? 350 : 450 } as CSSProperties}>Aa</text>
+          <text ref={specimen} x="160" y="84" textAnchor="middle" className={styles.specimen} style={{ fontFamily: serif ? "var(--font-newsreader), Georgia, serif" : "var(--font-sans)", letterSpacing: spaced ? "14px" : "-4px", fontWeight: serif ? 350 : 450 } as CSSProperties}>Aa</text>
+          {span && (
+            <g className={styles.measure}>
+              <path d={`M${span.x} 94v8M${span.x + span.w} 94v8`} className={styles.brightLine} />
+              <path d={`M${span.x} 98H${span.x + span.w}`} className={styles.contentLine} />
+              <text x="160" y="110" textAnchor="middle" className={styles.codeReadout}>W {Math.round(span.w)}</text>
+            </g>
+          )}
           <text x="42" y="108" className={styles.codeReadout}>{serif ? "SERIF" : "SANS"}</text>
           <text x="278" y="108" textAnchor="end" className={styles.codeReadout}>{spaced ? (cn ? "疏" : "OPEN") : (cn ? "密" : "TIGHT")}</text>
         </svg>
@@ -92,8 +143,13 @@ function TypeStudy({ cn }: { cn: boolean }) {
   );
 }
 
+/** Research × psychology · where attention goes: a scanpath of fixations over the content or the action. */
 function FocusStudy({ cn }: { cn: boolean }) {
   const [action, setAction] = useState(false);
+  const fixations = action
+    ? [[96, 30], [168, 56], [206, 84], [226, 86], [214, 84]]
+    : [[72, 30], [118, 29], [160, 33], [204, 35], [120, 57], [226, 58]];
+  const scanpath = `M${fixations.map(([x, y]) => `${x} ${y}`).join("L")}`;
   return (
     <>
       <div className={styles.canvas} aria-hidden="true">
@@ -108,6 +164,13 @@ function FocusStudy({ cn }: { cn: boolean }) {
           <g className={styles.focusGroup} opacity={action ? 1 : .45}>
             <rect x="186" y="75" width="66" height="20" rx="2" fill="var(--color-ink)" fillOpacity=".13" />
             <path d="M199 85h29m-4-4 4 4-4 4" className={styles.brightLine} />
+          </g>
+          <g key={String(action)}>
+            <path d={scanpath} className={cx(styles.guide, styles.dashed)} />
+            {fixations.map(([x, y], index) => (
+              <circle key={`${x}-${y}`} cx={x} cy={y} r={2.5 + (index % 3)} className={cx(styles.fixation, styles.motion)} style={at(index)} />
+            ))}
+            <circle r="3" className={cx(styles.gaze, styles.motion)} style={{ offsetPath: `path("${scanpath}")` }} />
           </g>
           <rect x={action ? 179 : 58} y={action ? 69 : 17} width={action ? 80 : 198} height={action ? 32 : 28} rx="4" className={styles.focusOutline} />
           <path d={action ? "M259 85H289" : "M256 31H289"} className={styles.focusLeader} />
@@ -131,9 +194,22 @@ function Study({ kind, cn }: { kind: StudyKind; cn: boolean }) {
 
 export function CapabilityCards({ cn, items }: CapabilityCardsProps) {
   const id = useId();
+  const grid = useRef<HTMLDivElement>(null);
+
+  // Loops run only while their card is on screen.
+  useEffect(() => {
+    const cards = grid.current?.querySelectorAll<HTMLElement>("article");
+    if (!cards?.length) return;
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) (entry.target as HTMLElement).dataset.inview = String(entry.isIntersecting);
+    }, { threshold: 0.3 });
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className={styles.root}>
-      <div className={styles.grid}>
+      <div ref={grid} className={styles.grid}>
         {items.map((item, index) => (
           <article key={item.icon} className={styles.card} aria-labelledby={id + "-" + item.icon}>
             <div className={styles.study}>
