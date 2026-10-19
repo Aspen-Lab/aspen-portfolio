@@ -1,6 +1,8 @@
 /* A Latent ledger: hairlines, mono numbers, one short ink rule per entry.
    The chart sheets are flat cards with a hairline grid and one accent.
-   No gradient fills anywhere. */
+   No gradient fills anywhere. Everything that moves moves by transform
+   or opacity (and the stroke offset of a few small paths), so neither
+   hover nor arrival ever lays the page out again. */
 .wrap {
   --accent-ink: var(--accent, var(--color-ink));
   container-type: inline-size;
@@ -28,22 +30,30 @@
   padding-top: 16px;
   border-top: 1px solid var(--color-line);
 }
-.entry::before {
+/* Two rules over the hairline: a short one that draws in on arrival, and
+   a full-width one that runs out from it under the pointer. Both are
+   scaled, never resized. */
+.entry::before,
+.entry::after {
   content: "";
   position: absolute;
   top: -1px;
   left: 0;
-  width: 2.25rem;
   height: 1px;
   background: var(--color-ink);
   transform: scaleX(0);
   transform-origin: left;
-  transition:
-    transform 760ms var(--ease-arrive) calc(var(--stagger) + 120ms),
-    width 520ms var(--ease-arrive);
+  pointer-events: none;
+}
+.entry::before {
+  width: 2.25rem;
+  transition: transform 760ms var(--ease-arrive) calc(var(--stagger) + 120ms);
+}
+.entry::after {
+  width: 100%;
+  transition: transform 520ms var(--ease-arrive);
 }
 .item[data-in="true"] .entry::before { transform: none; }
-.item:hover .entry::before { width: 100%; }
 
 .head {
   display: flex;
@@ -51,22 +61,28 @@
   gap: 12px;
   height: 16px;
 }
+/* Ink at a lower opacity reads as the soft grey, and lifts to full ink
+   under the pointer without repainting a colour */
+.num,
+.icon {
+  color: var(--color-ink);
+  opacity: 0.44;
+  transition: opacity 220ms ease;
+}
 .num {
-  color: var(--color-soft);
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1;
   letter-spacing: 0.16em;
   font-variant-numeric: tabular-nums;
-  transition: color 220ms ease;
 }
-.icon {
-  display: inline-flex;
-  color: var(--color-soft);
-  transition: color 220ms ease;
+.icon { display: inline-flex; }
+
+@media (hover: hover) {
+  .item:hover .entry::after { transform: none; }
+  .item:hover .num,
+  .item:hover .icon { opacity: 1; }
 }
-.item:hover .num,
-.item:hover .icon { color: var(--color-ink); }
 
 .label {
   margin-top: 12px;
@@ -153,7 +169,19 @@
 .ink { fill: var(--color-ink); }
 .dot { fill: var(--color-ink); }
 .focus { fill: var(--accent-ink); }
-.trace { fill: none; stroke: rgb(244 244 242 / 30%); stroke-width: 1; }
+
+/* The loop: the way out in brighter ink than the way back */
+.route { fill: none; stroke: rgb(244 244 242 / 62%); stroke-width: 1.2; }
+.trace { fill: none; stroke: rgb(244 244 242 / 26%); stroke-width: 1; }
+.chevron {
+  fill: none;
+  stroke: rgb(244 244 242 / 70%);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.chevron.dim { stroke: rgb(244 244 242 / 34%); }
+.station { fill: var(--color-cream); stroke: var(--color-ink); stroke-width: 1.2; }
 
 .panel {
   fill: var(--color-paper);
@@ -167,59 +195,94 @@
 .band { fill: rgb(244 244 242 / 4.5%); }
 .mid { fill: none; stroke: rgb(244 244 242 / 20%); stroke-width: 1; stroke-dasharray: 2 4; }
 
+.leader { stroke: rgb(244 244 242 / 55%); stroke-width: 1; stroke-dasharray: 2 3; }
+
+/* The hexagon on its own layer: a box turned as a whole, which the
+   compositor does without painting the sheet. The turn rides on
+   transform; the centring rides on translate, so the two never fight. */
+.ring {
+  position: absolute;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.ring svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.item[data-in="true"] .ring { animation: turn 24s linear infinite; }
 .hex {
   fill: none;
   stroke: rgb(244 244 242 / 55%);
   stroke-width: 1;
   stroke-dasharray: 3 4;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: turn 24s linear infinite;
 }
 @keyframes turn { to { transform: rotate(360deg); } }
-.leader { stroke: rgb(244 244 242 / 55%); stroke-width: 1; stroke-dasharray: 2 3; }
 
 /* The switch on the preview: off until the change lands, then on in the
-   accent — the one thing on the sheet that carries it. */
-.track {
-  fill: transparent;
-  stroke: rgb(244 244 242 / 32%);
-  stroke-width: 1;
-  transition: fill 260ms ease, stroke 260ms ease;
+   accent — the one thing on the sheet that carries it. Only opacity and
+   the knob's slide change. */
+.track { fill: none; stroke: rgb(244 244 242 / 32%); stroke-width: 1; }
+.trackOn { fill: var(--accent-ink); }
+.knobOff { fill: rgb(244 244 242 / 45%); }
+.knobOn { fill: var(--color-paper); }
+.trackOn,
+.knobOn,
+.knobOff {
+  transition: opacity 260ms ease;
   transition-delay: calc(var(--stagger) + var(--d, 0ms));
 }
+.trackOn,
+.knobOn { opacity: 0; }
 .knob {
-  fill: rgb(244 244 242 / 45%);
-  transition: transform 420ms var(--ease-arrive), fill 260ms ease;
+  transition: transform 420ms var(--ease-arrive);
   transition-delay: calc(var(--stagger) + var(--d, 0ms));
 }
-.item[data-in="true"] .track { fill: var(--accent-ink); stroke: var(--accent-ink); }
-.item[data-in="true"] .knob { fill: var(--color-paper); transform: translateX(12px); }
+.item[data-in="true"] .trackOn,
+.item[data-in="true"] .knobOn { opacity: 1; }
+.item[data-in="true"] .knobOff { opacity: 0; }
+.item[data-in="true"] .knob { transform: translateX(12px); }
 
-/* Labels on the sheet: one tag per sheet, the axis words on the third */
+/* ── Words on the sheet ── names in plain sans; the focus's tag and the
+   axis names in mono, as on the big charts. */
 .tag,
+.note,
 .word {
   position: absolute;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.note {
+  color: var(--color-mute);
+  font-size: 12px;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+.note[data-align="start"] { translate: 0 -50%; }
+.note[data-align="center"] { translate: -50% -50%; }
+.note[data-align="end"] { translate: -100% -50%; }
+.note[data-tone="axis"],
+.word {
+  color: var(--color-soft);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.2;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  white-space: nowrap;
-  pointer-events: none;
 }
 .tag {
   padding: 4px 7px 3px;
   border: 1px solid rgb(244 244 242 / 55%);
   background: var(--color-paper);
   color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 .tag[data-side="above"] { translate: -50% -100%; }
 .tag[data-side="below"] { translate: -50% 0; }
 .tag[data-side="left"] { translate: -100% -50%; }
-.word { color: var(--color-soft); letter-spacing: 0.16em; }
-/* Placed by its centre line; the transform carries the shift as well as
-   the turn, so the two never compound in the wrong order. */
+/* Placed by its top end; the transform carries the shift as well as the
+   turn, so the two never compound in the wrong order. */
 .wordY {
   writing-mode: vertical-rl;
   transform: translateX(-50%) rotate(180deg);
@@ -237,17 +300,20 @@
 .pop,
 .grow,
 .rise,
-.tag {
+.ring,
+.tag,
+.note {
   transition-delay: calc(var(--stagger) + var(--d, 0ms));
 }
 .draw {
   stroke-dasharray: 1 1;
   stroke-dashoffset: 1;
   transition-property: stroke-dashoffset;
-  transition-duration: 1700ms;
+  transition-duration: var(--t, 1200ms);
   transition-timing-function: linear;
 }
-.fade { opacity: 0; transition-property: opacity; transition-duration: 420ms; transition-timing-function: ease; }
+.fade,
+.ring { opacity: 0; transition-property: opacity; transition-duration: 420ms; transition-timing-function: ease; }
 .pop,
 .grow,
 .rise {
@@ -260,7 +326,8 @@
 .pop { transform-origin: center; transform: scale(0.2); }
 .grow { transform-origin: left center; transform: scaleX(0); }
 .rise { transform-origin: center bottom; transform: scaleY(0); }
-.tag {
+.tag,
+.note {
   opacity: 0;
   transform: translateY(3px);
   transition-property: opacity, transform;
@@ -273,11 +340,14 @@
 .item[data-in="true"] .pop,
 .item[data-in="true"] .grow,
 .item[data-in="true"] .rise { opacity: var(--o, 1); transform: none; }
-.item[data-in="true"] .tag { opacity: 1; transform: none; }
+.item[data-in="true"] .ring,
+.item[data-in="true"] .tag,
+.item[data-in="true"] .note { opacity: 1; transform: none; }
 
 /* Reduced motion: the finished drawing, nothing turning */
 @media (prefers-reduced-motion: reduce) {
   .entry::before,
+  .entry::after,
   .num,
   .icon,
   .draw,
@@ -285,8 +355,12 @@
   .pop,
   .grow,
   .rise,
+  .ring,
   .tag,
-  .track,
+  .note,
+  .trackOn,
+  .knobOn,
+  .knobOff,
   .knob { transition: none; }
   .entry::before { transform: none; }
   .draw { stroke-dashoffset: 0; }
@@ -294,8 +368,12 @@
   .pop,
   .grow,
   .rise { opacity: var(--o, 1); transform: none; }
-  .tag { opacity: 1; transform: none; }
-  .track { fill: var(--accent-ink); stroke: var(--accent-ink); }
-  .knob { fill: var(--color-paper); transform: translateX(12px); }
-  .hex { animation: none; }
+  .ring,
+  .tag,
+  .note { opacity: 1; transform: none; }
+  .trackOn,
+  .knobOn { opacity: 1; }
+  .knobOff { opacity: 0; }
+  .knob { transform: translateX(12px); }
+  .item[data-in="true"] .ring { animation: none; }
 }

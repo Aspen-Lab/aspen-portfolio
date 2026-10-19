@@ -16,35 +16,90 @@
   cursor: help;
 }
 
-/* The viewfinder: the picture dims around the region (one flat shadow,
-   clipped by the frame) and four corner marks hold it. */
+/* The viewfinder. Every piece is as big as the frame and moves by
+   transform alone, so the glide stays on the compositor: no layout, no
+   repaint of the picture under it. The dim is one flat group: its pieces
+   are opaque and overlap, and the group's opacity dims them evenly, so
+   there is no seam where two panels meet. */
 .spot {
   position: absolute;
+  inset: 0;
   z-index: 2;
-  border-radius: 6px;
-  outline: 1px solid rgb(244 244 242 / 22%);
-  box-shadow: 0 0 0 200vmax rgb(10 10 11 / 58%);
   opacity: 0;
   pointer-events: none;
-  transition:
-    left 460ms var(--ease-arrive),
-    top 460ms var(--ease-arrive),
-    width 460ms var(--ease-arrive),
-    height 460ms var(--ease-arrive),
-    opacity 220ms ease;
+  will-change: opacity;
+  transition: opacity 220ms ease;
 }
 .spot[data-on="true"] { opacity: 1; }
 
+.dim {
+  position: absolute;
+  inset: 0;
+  opacity: 0.58;
+}
+.panel,
+.piece {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  transition: transform 460ms var(--ease-arrive);
+}
+.panel { background: rgb(10 10 11); }
+
+/* Where each piece stands, from the region on the viewfinder (--x, --y,
+   --w, --h, in per cent of the frame). Left and right panels run the full
+   height, top and bottom the full width; edges are pinned at a corner and
+   scaled to their side; fills and marks sit on their corner point. */
+.panel[data-side="top"] { transform: translateY(calc(var(--y) * 1% - 100%)); }
+.panel[data-side="right"] { transform: translateX(calc((var(--x) + var(--w)) * 1%)); }
+.panel[data-side="bottom"] { transform: translateY(calc((var(--y) + var(--h)) * 1%)); }
+.panel[data-side="left"] { transform: translateX(calc(var(--x) * 1% - 100%)); }
+.piece[data-edge="top"] { transform: translate(calc(var(--x) * 1%), calc(var(--y) * 1%)) scaleX(calc(var(--w) / 100)); }
+.piece[data-edge="right"] { transform: translate(calc((var(--x) + var(--w)) * 1%), calc(var(--y) * 1%)) scaleY(calc(var(--h) / 100)); }
+.piece[data-edge="bottom"] { transform: translate(calc(var(--x) * 1%), calc((var(--y) + var(--h)) * 1%)) scaleX(calc(var(--w) / 100)); }
+.piece[data-edge="left"] { transform: translate(calc(var(--x) * 1%), calc(var(--y) * 1%)) scaleY(calc(var(--h) / 100)); }
+.piece[data-corner="tl"] { transform: translate(calc(var(--x) * 1%), calc(var(--y) * 1%)); }
+.piece[data-corner="tr"] { transform: translate(calc((var(--x) + var(--w)) * 1%), calc(var(--y) * 1%)); }
+.piece[data-corner="br"] { transform: translate(calc((var(--x) + var(--w)) * 1%), calc((var(--y) + var(--h)) * 1%)); }
+.piece[data-corner="bl"] { transform: translate(calc(var(--x) * 1%), calc((var(--y) + var(--h)) * 1%)); }
+
+/* The hairline round the region, drawn just outside it. Inside the group
+   it reads as the old 22% outline over the dim. */
+.edge {
+  position: absolute;
+  background: rgb(100 100 99);
+}
+.edge[data-side="top"] { left: 0; top: -1px; width: 100%; height: 1px; }
+.edge[data-side="bottom"] { left: 0; top: 0; width: 100%; height: 1px; }
+.edge[data-side="left"] { left: -1px; top: 0; width: 1px; height: 100%; }
+.edge[data-side="right"] { left: 0; top: 0; width: 1px; height: 100%; }
+
+/* The region's rounded corners: each fill sits on its corner point */
+.fill {
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  overflow: visible;
+  fill: rgb(10 10 11);
+}
+.fill[data-c="tr"] { transform: rotate(90deg); }
+.fill[data-c="br"] { transform: rotate(180deg); }
+.fill[data-c="bl"] { transform: rotate(270deg); }
+
+/* The four marks, each on its corner point */
 .corner {
   position: absolute;
   width: 12px;
   height: 12px;
   border: 0 solid var(--color-ink);
 }
-.tl { left: -1px; top: -1px; border-left-width: 1.5px; border-top-width: 1.5px; border-top-left-radius: 6px; }
-.tr { right: -1px; top: -1px; border-right-width: 1.5px; border-top-width: 1.5px; border-top-right-radius: 6px; }
-.br { right: -1px; bottom: -1px; border-right-width: 1.5px; border-bottom-width: 1.5px; border-bottom-right-radius: 6px; }
-.bl { left: -1px; bottom: -1px; border-left-width: 1.5px; border-bottom-width: 1.5px; border-bottom-left-radius: 6px; }
+.corner[data-c="tl"] { left: -1px; top: -1px; border-left-width: 1.5px; border-top-width: 1.5px; border-top-left-radius: 6px; }
+.corner[data-c="tr"] { left: -11px; top: -1px; border-right-width: 1.5px; border-top-width: 1.5px; border-top-right-radius: 6px; }
+.corner[data-c="br"] { left: -11px; top: -11px; border-right-width: 1.5px; border-bottom-width: 1.5px; border-bottom-right-radius: 6px; }
+.corner[data-c="bl"] { left: -1px; top: -11px; border-left-width: 1.5px; border-bottom-width: 1.5px; border-bottom-left-radius: 6px; }
 
 /* Numbered markers: a flat disc with a hairline, a slow ping so the
    picture reads as something to point at. */
@@ -64,7 +119,21 @@
   font-size: 11px;
   line-height: 1;
   cursor: help;
-  transition: background-color 200ms ease, color 200ms ease, opacity 220ms ease, transform 300ms var(--ease-arrive);
+  transition: opacity 220ms ease, transform 300ms var(--ease-arrive);
+}
+/* Lit, the disc turns ink: an ink disc with the number in paper fades in
+   over it, so the change is an opacity, not a repaint */
+.marker::before {
+  content: attr(data-n);
+  position: absolute;
+  inset: -1px;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  opacity: 0;
+  transition: opacity 200ms ease;
 }
 .marker::after {
   content: "";
@@ -76,11 +145,8 @@
   animation: ping 3.2s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
   animation-delay: calc(var(--i) * 260ms);
 }
-.marker[data-on="true"] {
-  background: var(--color-ink);
-  color: var(--color-paper);
-  transform: scale(1.08);
-}
+.marker[data-on="true"] { transform: scale(1.08); }
+.marker[data-on="true"]::before { opacity: 1; }
 .marker[data-dim="true"] { opacity: 0.35; }
 .frame[data-active="true"] .marker::after { animation: none; }
 
@@ -119,6 +185,7 @@
    keeps the spare height at the bottom, so titles and copy share one
    baseline across the row instead of the short notes' rows stretching. */
 .note {
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-content: start;
@@ -129,22 +196,35 @@
   border-top: 1px solid var(--color-line);
   text-align: left;
   cursor: pointer;
-  transition: opacity 220ms ease, border-color 220ms ease;
+  transition: opacity 220ms ease;
 }
-.note[data-on="true"] { border-top-color: var(--color-ink); }
+.note::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-ink);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+.note[data-on="true"]::before { opacity: 1; }
 .note[data-dim="true"] { opacity: 0.45; }
 .note:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 
+/* Ink at 43% reads as the soft grey; lit, it is full ink */
 .num {
   grid-row: span 2;
   padding-top: 3px;
-  color: var(--color-soft);
+  color: var(--color-ink);
+  opacity: 0.43;
   font-family: var(--font-mono);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  transition: color 220ms ease;
+  transition: opacity 220ms ease;
 }
-.note[data-on="true"] .num { color: var(--color-ink); }
+.note[data-on="true"] .num { opacity: 1; }
 .title {
   color: var(--color-ink);
   font-size: 15px;
@@ -165,8 +245,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .spot,
+  .panel,
+  .piece,
   .marker,
+  .marker::before,
   .note,
+  .note::before,
   .num { transition: none; }
   .marker::after { animation: none; }
 }

@@ -60,7 +60,7 @@
   50% { opacity: 1; }
 }
 
-.route { display: none; }
+.track { display: none; }
 
 /* Phones: the trip runs down a dotted rail, one stop per line. */
 .steps {
@@ -82,7 +82,8 @@
   transition: opacity 420ms ease;
 }
 .step + .step { margin-top: 18px; }
-.step::before {
+.step::before,
+.step::after {
   content: "";
   position: absolute;
   top: 5px;
@@ -92,10 +93,16 @@
   border: 1.5px solid rgb(244 244 242 / 45%);
   border-radius: 999px;
   background: var(--color-cream);
-  transition: background-color 300ms ease, border-color 300ms ease;
+}
+/* Reached, the stop fills: an ink disc fades in over the open one */
+.step::after {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  opacity: 0;
+  transition: opacity 300ms ease;
 }
 .step[data-on="true"] { opacity: 1; }
-.step[data-on="true"]::before { border-color: var(--color-ink); background: var(--color-ink); }
+.step[data-on="true"]::after { opacity: 1; }
 
 .label {
   color: var(--color-ink);
@@ -116,11 +123,15 @@
    under them, one column per stop. */
 @media (min-width: 640px) {
   .card { padding: 30px 32px 34px; }
+  .track {
+    position: relative;
+    display: block;
+    margin-top: 26px;
+  }
   .route {
     display: block;
     width: 100%;
     height: auto;
-    margin-top: 26px;
     overflow: visible;
   }
   .steps {
@@ -132,7 +143,8 @@
     text-align: center;
   }
   .steps::before,
-  .step::before { display: none; }
+  .step::before,
+  .step::after { display: none; }
   .step + .step { margin-top: 0; }
 }
 
@@ -146,20 +158,46 @@
 .dots { stroke: rgb(244 244 242 / 24%); }
 .flown { stroke: rgb(244 244 242 / 85%); }
 
-.halo {
-  fill: none;
-  stroke: rgb(244 244 242 / 0%);
-  stroke-width: 1.2;
-  transition: stroke 400ms ease;
+/* The layers over the arc: each as big as it, with the arc's own units */
+.layer,
+.lit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
 }
+.window,
+.hold,
+.flight {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+/* Clipped at the sides only, so the arc's top and the dots' caps show */
+.window {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+.flight { transform-origin: 0 0; }
+
 .dot {
   fill: var(--color-cream);
   stroke: rgb(244 244 242 / 40%);
   stroke-width: 1.8;
-  transition: fill 300ms ease, stroke 300ms ease;
 }
-.stop[data-on="true"] .dot { fill: var(--color-ink); stroke: var(--color-ink); }
-.stop[data-on="true"][data-end="true"] .halo { stroke: rgb(244 244 242 / 30%); }
+.lit {
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.lit[data-on="true"] { opacity: 1; }
+.dotOn { fill: var(--color-ink); stroke: var(--color-ink); stroke-width: 1.8; }
+.halo {
+  fill: none;
+  stroke: rgb(244 244 242 / 30%);
+  stroke-width: 1.2;
+}
 
 .plane {
   fill: var(--color-cream);
@@ -171,8 +209,7 @@
 @media (prefers-reduced-motion: reduce) {
   .badge,
   .step,
-  .step::before,
-  .halo,
-  .dot { transition: none; }
+  .step::after,
+  .lit { transition: none; }
   .badge[data-on="true"] { animation: none; }
 }

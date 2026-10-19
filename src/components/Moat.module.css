@@ -7,22 +7,105 @@
   --dash: rgb(244 244 242 / 55%);
 }
 
+/* ── The selector: six labels on fixed columns, one bracket ──
+   Columns of a fixed width put each label at a known offset, so the
+   bracket moves on a translate alone. Hover and the active label differ
+   in opacity only. */
+.tabs {
+  --col: 20px;
+  --gap: 24px;
+  position: relative;
+  display: grid;
+  grid-auto-columns: var(--col);
+  grid-auto-flow: column;
+  column-gap: var(--gap);
+  width: max-content;
+}
+@media (min-width: 640px) {
+  .tabs { --gap: 32px; }
+}
+.tab {
+  position: relative;
+  padding: 6px 0 6px 0.18em;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.46;
+  cursor: pointer;
+  outline: none;
+  transition: opacity 160ms ease;
+}
+.tab:hover,
+.tab:focus-visible,
+.tab[aria-pressed="true"] { opacity: 1; }
+.bracket {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: -10px;
+  width: calc(var(--col) + 20px);
+  transform: translateX(calc(var(--active, 0) * (var(--col) + var(--gap))));
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bracket { transition: transform 460ms cubic-bezier(0.3, 1.25, 0.45, 1); }
+}
+
 /* ── The frame: eight viewfinder marks (global .reg-mark / .vf-tick) ── */
 .frame {
   position: relative;
-  display: grid;
-  gap: 34px;
-  padding: 38px 24px 40px;
+  padding: 38px 16px 40px;
 }
 @media (min-width: 640px) {
   .frame { padding: 46px 40px 48px; }
 }
+
+/* ── The six entries, stacked in one cell ──
+   The frame holds the tallest, so it never changes height on a switch.
+   The one leaving fades where it stands, then (unseen) drops back to the
+   offset the next arrival rises from. */
+.entries { display: grid; }
+.entry {
+  display: grid;
+  grid-area: 1 / 1;
+  align-content: start;
+  gap: 34px;
+  min-width: 0;
+}
 @media (min-width: 1024px) {
-  .frame {
+  .entry {
     grid-template-columns: minmax(0, 1fr) minmax(0, 470px);
+    align-content: center;
     align-items: center;
     gap: 56px;
   }
+}
+.entry[data-on="false"] {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .entry {
+    transition:
+      opacity 340ms var(--ease-arrive) 90ms,
+      transform 520ms var(--ease-arrive) 90ms,
+      visibility 0s;
+  }
+  .entry[data-on="false"] {
+    transform: translateY(14px);
+    transition:
+      opacity 160ms ease,
+      transform 0s linear 160ms,
+      visibility 0s linear 160ms;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .entry { transition: opacity 120ms ease, visibility 0s; }
+  .entry[data-on="false"] { transition: opacity 120ms ease, visibility 0s linear 120ms; }
 }
 
 /* ── The claim ── */
@@ -114,7 +197,7 @@
   flex-direction: column;
   gap: 22px;
   min-height: 340px;
-  padding: 20px 20px 18px;
+  padding: 18px 16px 16px;
   border: 1px solid var(--color-line);
   border-radius: 4px;
   background: var(--color-cream);
@@ -144,7 +227,7 @@
 }
 .note {
   color: var(--color-mute);
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.5;
   text-wrap: balance;
 }
@@ -275,8 +358,6 @@
   stroke: var(--dash);
   stroke-width: 1;
   stroke-dasharray: 3 4;
-  transform-box: fill-box;
-  transform-origin: center;
 }
 .dot {
   fill: var(--focus);
@@ -449,12 +530,12 @@
   .stepTag { justify-self: start; }
 }
 
-/* ── A count, one cell per item ── */
+/* ── A count, one cell per item, in tens ── */
 .count {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   column-gap: 18px;
-  row-gap: 10px;
+  row-gap: 12px;
   align-items: end;
 }
 .figure {
@@ -469,19 +550,33 @@
 }
 .countLabel {
   color: var(--color-mute);
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.4;
+  text-wrap: balance;
 }
+/* Four tens to a row; each ten is five by two */
 .cells {
   display: grid;
-  grid-template-columns: repeat(14, minmax(0, 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px 9px;
 }
-.cells > span {
-  aspect-ratio: 4 / 3;
+.ten {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-content: start;
+  gap: 3px;
+}
+.ten > span {
+  aspect-ratio: 1;
   border-radius: 1px;
-  background: var(--color-ink);
-  opacity: 0.5;
+  background: rgb(244 244 242 / 52%);
+}
+/* A narrow sheet: the figure and its label share a line, the tens take
+   the full width under them. */
+@container (max-width: 380px) {
+  .count { align-items: center; }
+  .figure { grid-row: auto; font-size: 40px; }
+  .cells { grid-column: 1 / -1; }
 }
 
 /* ── The awards ── */
@@ -524,48 +619,51 @@
 }
 
 /* ── Drawing in ──
-   Nothing draws until the panel is on screen; then each entry draws as it
-   mounts: bars grow from the axis, the chain's line runs through its
-   stations, the path drops down its rail, the focus lands last. All of it
-   lives behind no-preference, so with reduced motion every sheet is simply
-   drawn and the hexagons hold still. */
+   Nothing draws until the panel is on screen; then the entry on show
+   draws, and each one after it draws as it is chosen (its animations
+   start when it turns on): bars grow from the axis, the chain's line runs
+   through its stations, the path drops down its rail, the tens light in
+   turn, the focus lands last. Only transform and opacity move. The
+   hexagons turn on the entry on show and hold still on the others. All of
+   it lives behind no-preference, so with reduced motion every sheet is
+   simply drawn and the hexagons hold still. */
 @media (prefers-reduced-motion: no-preference) {
-  .hex { animation: turn 24s linear infinite; }
+  /* The whole mark turns, not the polygon inside it: an outer <svg> is a
+     box the compositor can rotate, and the round dot looks the same at
+     any angle. */
+  .mark { animation: turn 24s linear infinite paused; }
+  .entry[data-on="true"] .mark { animation-play-state: running; }
 
   .panel[data-run="false"] :is(.fill, .lineLit) { transform: scaleX(0); }
   .panel[data-run="false"] .path::before { transform: scaleY(0); }
   .panel[data-run="false"] :is(.ghost, .focus, .chevron, .station, .step, .award) { opacity: 0; }
-  .panel[data-run="false"] .cells > span { opacity: 0.1; }
+  .panel[data-run="false"] .ten { opacity: 0.2; }
 
-  .panel[data-run="true"] .fill {
+  .panel[data-run="true"] .entry[data-on="true"] .fill {
     animation: grow 820ms var(--ease-arrive) both;
     animation-delay: calc(140ms + var(--i, 0) * 130ms);
   }
-  .panel[data-run="true"] .ghost { animation: fade 420ms ease both 720ms; }
-  .panel[data-run="true"] .bars .focus { animation: fade 440ms ease both 820ms; }
-
-  .panel[data-run="true"] .lineLit { animation: grow 1100ms cubic-bezier(0.45, 0, 0.25, 1) both 160ms; }
-  .panel[data-run="true"] .station {
+  .panel[data-run="true"] .entry[data-on="true"] .ghost { animation: fade 420ms ease both 720ms; }
+  .panel[data-run="true"] .entry[data-on="true"] .bars .focus { animation: fade 440ms ease both 820ms; }
+  .panel[data-run="true"] .entry[data-on="true"] .lineLit { animation: grow 1100ms cubic-bezier(0.45, 0, 0.25, 1) both 160ms; }
+  .panel[data-run="true"] .entry[data-on="true"] .station {
     animation: rise 420ms var(--ease-arrive) both;
-    animation-delay: calc(160ms + var(--i, 0) * 340ms);
+    animation-delay: calc(160ms + var(--i, 0) * 230ms);
   }
-  .panel[data-run="true"] .chevron {
+  .panel[data-run="true"] .entry[data-on="true"] .chevron {
     animation: fade 300ms ease both;
-    animation-delay: calc(330ms + var(--i, 0) * 340ms);
+    animation-delay: calc(300ms + var(--i, 0) * 230ms);
   }
-
-  .panel[data-run="true"] .path::before { animation: drop 900ms var(--ease-arrive) both 100ms; }
-  .panel[data-run="true"] .step {
+  .panel[data-run="true"] .entry[data-on="true"] .path::before { animation: drop 900ms var(--ease-arrive) both 100ms; }
+  .panel[data-run="true"] .entry[data-on="true"] .step {
     animation: rise 440ms var(--ease-arrive) both;
     animation-delay: calc(140ms + var(--i, 0) * 150ms);
   }
-
-  .panel[data-run="true"] .cells > span {
-    animation: lit 260ms ease both;
-    animation-delay: calc(900ms + var(--i, 0) * 34ms);
+  .panel[data-run="true"] .entry[data-on="true"] .ten {
+    animation: lit 320ms ease both;
+    animation-delay: calc(700ms + var(--i, 0) * 90ms);
   }
-
-  .panel[data-run="true"] .award {
+  .panel[data-run="true"] .entry[data-on="true"] .award {
     animation: slide 420ms var(--ease-arrive) both;
     animation-delay: calc(120ms + var(--i, 0) * 100ms);
   }
@@ -577,4 +675,4 @@
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
 @keyframes slide { from { opacity: 0; transform: translateX(8px); } }
 @keyframes turn { to { transform: rotate(360deg); } }
-@keyframes lit { from { opacity: 0.1; } }
+@keyframes lit { from { opacity: 0.2; } }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { useLocale } from "next-intl";
 import styles from "./LoopDiagram.module.css";
@@ -18,7 +18,11 @@ import styles from "./LoopDiagram.module.css";
    lane and it takes the focus: its last stop (what the lane delivers)
    takes the accent, a dashed hexagon and a boxed tag on a dashed leader,
    and the other lane steps back. Off screen the packets stop; with
-   reduced motion they rest in the stops. Flat fills only. */
+   reduced motion they rest in the stops. Flat fills only.
+   A hover only sets the lane's state: the legend and the track are
+   memoised and never re-render, and everything the state changes is a
+   fade or a transform (a brighter line, port or ring fades in over the
+   resting one), so pointing never repaints the sheet. */
 
 type LaneId = "forward" | "reverse";
 
@@ -99,6 +103,7 @@ const PACKETS = 4;
 const ROWS = 9;
 const CELL = 28;
 const HEX = 18;
+const RING = HEX + 1; // half the ring's box
 
 function hexagon(r: number) {
   return Array.from({ length: 6 }, (_, k) => {
@@ -106,6 +111,84 @@ function hexagon(r: number) {
     return `${(r * Math.cos(a)).toFixed(1)},${(r * Math.sin(a)).toFixed(1)}`;
   }).join(" ");
 }
+
+/* The lane's legend: number, title, one line. */
+const Head = memo(function Head({ lane, i }: { lane: Lane; i: number }) {
+  return (
+    <span className={styles.head}>
+      <span aria-hidden className={styles.num}>
+        {String(i + 1).padStart(2, "0")}
+      </span>
+      <span className={styles.title}>{lane.title}</span>
+      <span className={styles.text}>{lane.text}</span>
+      <span className="sr-only">{lane.detail}</span>
+    </span>
+  );
+});
+
+/* The lane itself: grid, line, ports, stops, packets, the focus and the
+   stop names. It reads its state from the lane's data-state. */
+const Track = memo(function Track({ lane }: { lane: Lane }) {
+  const reverse = lane.id === "reverse";
+  // Left to right as drawn; the reverse lane is read from the right
+  const drawn = reverse ? [...lane.stops].reverse() : lane.stops;
+  // The focus is what the lane delivers: its last stop
+  const focus = reverse ? 0 : drawn.length - 1;
+  return (
+    <span aria-hidden className={styles.track}>
+      <svg className={styles.grid}>
+        {Array.from({ length: 11 }, (_, k) => {
+          const x = `${(((k + 1) / 12) * 100).toFixed(3)}%`;
+          return <line key={`v${k}`} x1={x} x2={x} y1="0" y2="100%" />;
+        })}
+        {Array.from({ length: ROWS }, (_, k) => (
+          <line key={`h${k}`} x1="0" x2="100%" y1={k * CELL + 0.5} y2={k * CELL + 0.5} />
+        ))}
+      </svg>
+
+      <span className={styles.line} />
+      <span className={styles.port} data-end={reverse ? "end" : "start"} data-kind="out" />
+      <span className={styles.port} data-end={reverse ? "start" : "end"} data-kind="in" />
+      <svg className={styles.arrow} data-end={reverse ? "start" : "end"} viewBox="0 0 6 10">
+        <path d="M0.5 0.5 L5.5 5 L0.5 9.5" />
+      </svg>
+
+      {drawn.map((label, k) => (
+        <span key={label} className={styles.stop} style={{ ["--x" as string]: STOP_X[k] }} />
+      ))}
+
+      <span className={styles.flow}>
+        {Array.from({ length: PACKETS }, (_, k) => (
+          <span key={k} className={styles.rail} style={{ ["--k" as string]: k }}>
+            <span className={styles.packet} />
+          </span>
+        ))}
+      </span>
+
+      <span className={styles.focus} style={{ ["--x" as string]: STOP_X[focus] }}>
+        <span className={styles.focusDot} />
+        <span className={styles.mark}>
+          {/* The ring turns as a whole element, so the turn is the compositor's */}
+          <svg className={styles.ring} width={RING * 2} height={RING * 2} viewBox={`${-RING} ${-RING} ${RING * 2} ${RING * 2}`}>
+            <polygon points={hexagon(HEX)} className={styles.hex} />
+          </svg>
+          <svg className={styles.lead} width="1" height="1">
+            <line x1="0" x2="0" y1={HEX} y2="35" className={styles.leader} />
+          </svg>
+        </span>
+      </span>
+
+      <span className={styles.labels}>
+        {drawn.map((label, k) => (
+          <span key={label} className={styles.cell} data-focus={k === focus}>
+            <span className={styles.label}>{label}</span>
+            {k === focus && <span className={styles.tag}>{label}</span>}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+});
 
 export function LoopDiagram() {
   const cn = useLocale() === "cn";
@@ -143,73 +226,7 @@ export function LoopDiagram() {
           <div className={styles.lanes}>
             {copy.lanes.map((lane, i) => {
               const reverse = lane.id === "reverse";
-              // Left to right as drawn; the reverse lane is read from the right
-              const drawn = reverse ? [...lane.stops].reverse() : lane.stops;
-              // The focus is what the lane delivers: its last stop
-              const focus = reverse ? 0 : drawn.length - 1;
               const state = shown === null ? "idle" : shown === lane.id ? "on" : "off";
-
-              const head = (
-                <span className={styles.head}>
-                  <span aria-hidden className={styles.num}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className={styles.title}>{lane.title}</span>
-                  <span className={styles.text}>{lane.text}</span>
-                  <span className="sr-only">{lane.detail}</span>
-                </span>
-              );
-
-              const track = (
-                <span aria-hidden className={styles.track}>
-                  <svg className={styles.grid}>
-                    {Array.from({ length: 11 }, (_, k) => {
-                      const x = `${(((k + 1) / 12) * 100).toFixed(3)}%`;
-                      return <line key={`v${k}`} x1={x} x2={x} y1="0" y2="100%" />;
-                    })}
-                    {Array.from({ length: ROWS }, (_, k) => (
-                      <line key={`h${k}`} x1="0" x2="100%" y1={k * CELL + 0.5} y2={k * CELL + 0.5} />
-                    ))}
-                  </svg>
-
-                  <span className={styles.line} />
-                  <span className={styles.port} data-end={reverse ? "end" : "start"} data-kind="out" />
-                  <span className={styles.port} data-end={reverse ? "start" : "end"} data-kind="in" />
-                  <svg className={styles.arrow} data-end={reverse ? "start" : "end"} viewBox="0 0 6 10">
-                    <path d="M0.5 0.5 L5.5 5 L0.5 9.5" />
-                  </svg>
-
-                  {drawn.map((label, k) => (
-                    <span key={label} className={styles.stop} style={{ ["--x" as string]: STOP_X[k] }} />
-                  ))}
-
-                  <span className={styles.flow}>
-                    {Array.from({ length: PACKETS }, (_, k) => (
-                      <span key={k} className={styles.rail} style={{ ["--k" as string]: k }}>
-                        <span className={styles.packet} />
-                      </span>
-                    ))}
-                  </span>
-
-                  <span className={styles.focus} style={{ ["--x" as string]: STOP_X[focus] }}>
-                    <span className={styles.focusDot} />
-                    <svg className={styles.mark} width="1" height="1">
-                      <polygon points={hexagon(HEX)} className={styles.hex} />
-                      <line x1="0" x2="0" y1={HEX} y2="35" className={styles.leader} />
-                    </svg>
-                  </span>
-
-                  <span className={styles.labels}>
-                    {drawn.map((label, k) => (
-                      <span key={label} className={styles.cell} data-focus={k === focus}>
-                        <span className={styles.label}>{label}</span>
-                        {k === focus && <span className={styles.tag}>{label}</span>}
-                      </span>
-                    ))}
-                  </span>
-                </span>
-              );
-
               return (
                 <button
                   key={lane.id}
@@ -226,13 +243,13 @@ export function LoopDiagram() {
                 >
                   {reverse ? (
                     <>
-                      {track}
-                      {head}
+                      <Track lane={lane} />
+                      <Head lane={lane} i={i} />
                     </>
                   ) : (
                     <>
-                      {head}
-                      {track}
+                      <Head lane={lane} i={i} />
+                      <Track lane={lane} />
                     </>
                   )}
                 </button>

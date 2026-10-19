@@ -10,7 +10,7 @@ type Copy = {
 export const STACK_CN: Record<StackIcon, Copy> = {
   design: { label: "设计", note: "每个项目开始的地方，Figma 是我的工作台。" },
   frontend: { label: "前端 · 日常主力", note: "helloaxel.com、Lumen、这个作品集与 Pado。", linkLabel: "看 Lumen" },
-  email: { label: "邮件工程", note: "Axel 的 28 个交易类邮件模板，从入门引导到取消服务。" },
+  email: { label: "邮件工程", note: "Axel 的 79 个交易类邮件模板，从入门引导到取消服务。" },
   backend: { label: "后端与数据", note: "Peer 开源论文晨报与 Pado。", linkLabel: "看 Peer" },
   ai: { label: "AI · 三层架构", note: "按任务匹配规则、本地模型与云端模型。", linkLabel: "Peer 管线" },
   game: { label: "游戏", note: "和 Skyler 一起制作 2D Metroidvania，每天投入 1–2 小时。" },

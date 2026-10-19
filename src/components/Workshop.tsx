@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { useLocale } from "next-intl";
-import { ArrowUpRight, ArrowLeftRight, Fingerprint, GitPullRequest } from "lucide-react";
+import { ArrowUpRight, ArrowLeftRight, Fingerprint, GitPullRequest, TrendingUp } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { CapabilityRadar } from "./CapabilityRadar";
 import { CommitCalendar } from "./CommitCalendar";
@@ -68,10 +68,17 @@ export function Workshop() {
           <Reveal delay={0.08}>
             <div className={styles.impact}>
               <div className={styles.smallHeading}><span>{cn ? "AXEL / 一起做出来的增长" : "AXEL / GROWTH WE BUILT THROUGH"}</span><ArrowUpRight size={14} aria-hidden /></div>
+              {/* Axel's figures as of the latest update (src/lib/axel.ts):
+                  two counts from zero, and revenue, which has no figure to
+                  publish, only a direction. */}
               <div className={styles.metrics}>
                 <div><p><span>0 →</span> 30M</p><span>GMV</span></div>
-                <div><p><span>0 →</span> 100K+</p><span>{cn ? "用户" : "USERS"}</span></div>
+                <div><p><span>0 →</span> 150K</p><span>{cn ? "用户" : "USERS"}</span></div>
               </div>
+              <p className={styles.revenue}>
+                <span>{cn ? "收入" : "REVENUE"}</span>
+                <span><TrendingUp size={15} strokeWidth={1.5} aria-hidden />{cn ? "快速增长中" : "Growing fast"}</span>
+              </p>
               <p className={styles.impactCopy}>{cn ? "团队的业务里程碑。我的贡献：产品体验、生产级前端 PR，以及支持增长的品牌和营销触点。" : "Team milestones. My contribution: product experiences, production frontend PRs, and the brand and marketing touchpoints around them."}</p>
               <Link href="/work/axel" className={styles.caseLink}>{cn ? "看看我在 Axel 交付了什么" : "See what I ship at Axel"}<ArrowUpRight size={14} strokeWidth={1.5} aria-hidden /></Link>
             </div>

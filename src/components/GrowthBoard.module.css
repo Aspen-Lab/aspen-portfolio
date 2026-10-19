@@ -1,0 +1,407 @@
+/* Latent's sheet on the dark page: a flat card on a second sheet, hairline
+   rules, mono tags, one accent. No gradient fills; every mark is a flat
+   fill or a hairline. Only transform and opacity ever animate. */
+.wrap {
+  --accent-ink: var(--accent, var(--color-ink));
+  --hair: rgb(244 244 242 / 55%);
+  --pad-x: 16px;
+  position: relative;
+  isolation: isolate;
+  margin: 0 10px 10px 0;
+}
+.wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(10px, 10px);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: #131314;
+}
+.sheet {
+  position: relative;
+  padding: 20px var(--pad-x) 26px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+
+/* ── Two halves, a hairline between them, each led by a boxed tag ── */
+.pathBand {
+  position: relative;
+  margin-top: 30px;
+  padding-top: 24px;
+}
+.pathBand::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(var(--pad-x) * -1);
+  right: calc(var(--pad-x) * -1);
+  border-top: 1px solid rgb(244 244 242 / 8%);
+}
+.boxTag {
+  display: inline-block;
+  padding: 5px 8px 4px;
+  border: 1px solid rgb(244 244 242 / 16%);
+  color: var(--color-mute);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.3;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ── The figures: two and one on a phone, a row from a tablet up,
+   revenue's column set wider so the row keeps its own rhythm ── */
+.figs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 30px 20px;
+  margin-top: 22px;
+}
+.fig {
+  display: grid;
+  align-content: start;
+  row-gap: 10px;
+}
+.fig[data-trend="true"] { grid-column: 1 / -1; }
+
+.value {
+  grid-row: 1;
+  height: 1.1em;
+  color: var(--color-ink);
+  font-size: 44px;
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.label {
+  grid-row: 2;
+  color: var(--color-mute);
+  font-size: 14px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+/* Chinese lines break at their spaces and commas, not mid-word */
+.label,
+.stage,
+.work {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.note {
+  display: block;
+  color: var(--color-soft);
+}
+
+/* The odometer. Each digit is a slot over a reel of 0 up to the digit;
+   at rest the reel is turned to the digit. The slot is cut just around a
+   digit's height (Geist's digits run 0.17em to 0.92em down a 1.1em line),
+   so mid-roll it shows one digit sliding past, not two. Its top and its
+   line height are set so a digit in it stands exactly where plain text
+   would, level with the K or M beside it. */
+.digit {
+  --slot: 0.86em;
+  display: inline-block;
+  height: var(--slot);
+  margin-top: 0.12em;
+  overflow: hidden;
+  vertical-align: top;
+}
+.reel {
+  display: block;
+  transform: translateY(calc(var(--d) * var(--slot) * -1));
+}
+.reel > span {
+  display: block;
+  height: var(--slot);
+  line-height: var(--slot);
+}
+
+/* Revenue: a box as tall as a capital, standing on the baseline like the
+   numbers beside it; the line runs corner to corner. */
+.trend {
+  position: relative;
+  display: inline-block;
+  width: 1.5em;
+  height: 0.7em;
+}
+.glyph {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.base,
+.rise {
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+}
+.base {
+  stroke: rgb(244 244 242 / 22%);
+  stroke-width: 1;
+  transform-origin: 0 50%;
+}
+.rise {
+  stroke: var(--accent-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  transform-origin: 0 100%;
+}
+
+/* The focus, on the tip: a dot, the dashed hexagon, a leader to the tag */
+.tip {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 0;
+  height: 0;
+}
+.dot {
+  position: absolute;
+  top: -4.5px;
+  left: -4.5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--accent-ink);
+}
+.spin {
+  position: absolute;
+  top: -16px;
+  left: -16px;
+  width: 32px;
+  height: 32px;
+  animation: turn 24s linear infinite paused;
+  will-change: transform;
+}
+.wrap[data-live="true"] .spin { animation-play-state: running; }
+.hex {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.hex polygon {
+  fill: none;
+  stroke: var(--hair);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.leader {
+  position: absolute;
+  top: -1px;
+  overflow: visible;
+  transform-origin: 0 50%;
+}
+.leader line {
+  stroke: var(--hair);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+.tag {
+  position: absolute;
+  top: 0;
+  translate: 0 -50%;
+  padding: 5px 8px 4px;
+  border: 1px solid var(--hair);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@keyframes turn { to { transform: rotate(360deg); } }
+
+/* ── The traveler's path. Phones: down a dashed rail, one stop a line ── */
+.path {
+  position: relative;
+  margin-top: 22px;
+}
+.rail {
+  position: absolute;
+  top: 6px;
+  bottom: 0;
+  left: 0;
+  width: 12px;
+  overflow: hidden;
+}
+.line {
+  position: absolute;
+  inset: 0;
+}
+.dash {
+  position: absolute;
+  top: 0;
+  bottom: 6px;
+  left: 5.5px;
+  border-left: 1px dashed rgb(244 244 242 / 32%);
+}
+.arrow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  overflow: visible;
+  transform: rotate(90deg);
+}
+.arrow path {
+  fill: none;
+  stroke: rgb(244 244 242 / 55%);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.stops {
+  display: grid;
+  row-gap: 22px;
+  padding: 0 0 22px 30px;
+}
+.stop { position: relative; }
+.ring {
+  position: absolute;
+  top: 1px;
+  left: -30px;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid rgb(244 244 242 / 40%);
+  border-radius: 999px;
+  background: var(--color-cream);
+}
+.lit {
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 999px;
+  background: var(--color-ink);
+}
+.stage {
+  color: var(--color-ink);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+.work {
+  margin-top: 4px;
+  color: var(--color-mute);
+  font-size: 14px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* ── From a tablet up: the path runs across, a stop at the head of each
+   column, the arrow past the last ── */
+@media (min-width: 640px) {
+  .wrap { --pad-x: 32px; }
+  .sheet { padding: 26px var(--pad-x) 30px; }
+  .figs { gap: 34px 28px; margin-top: 26px; }
+  .value { font-size: clamp(48px, 5.2vw, 60px); }
+  .pathBand { margin-top: 36px; padding-top: 26px; }
+  .path { margin-top: 26px; }
+  .rail {
+    top: 0;
+    right: 0;
+    bottom: auto;
+    width: auto;
+    height: 12px;
+  }
+  .dash {
+    top: 5.5px;
+    right: 6px;
+    bottom: auto;
+    left: 6px;
+    border-top: 1px dashed rgb(244 244 242 / 32%);
+    border-left: 0;
+  }
+  .arrow {
+    right: 0;
+    left: auto;
+    transform: none;
+  }
+  .stops {
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    column-gap: 28px;
+    padding: 0;
+  }
+  .stop { padding-top: 30px; }
+  .ring { top: 0; left: 0; }
+}
+@media (min-width: 720px) {
+  .figs {
+    grid-template-columns: none;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+  }
+  .fig[data-trend="true"] { grid-column: span 2; }
+}
+
+/* ── Arriving. "armed" is the start, set only on a half that is off
+   screen; "run" plays it to the finished sheet. Each stop lights as the
+   line reaches it. ── */
+@media (prefers-reduced-motion: no-preference) {
+  [data-state="armed"] .reel { transform: none; }
+  [data-state="armed"] .label,
+  [data-state="armed"] .stage,
+  [data-state="armed"] .work { opacity: 0; transform: translateY(6px); }
+  [data-state="armed"] .base { transform: scaleX(0); }
+  [data-state="armed"] .rise { transform: scale(0); }
+  [data-state="armed"] .dot { opacity: 0; transform: scale(0.3); }
+  [data-state="armed"] .spin,
+  [data-state="armed"] .tag { opacity: 0; }
+  [data-state="armed"] .leader { transform: scaleX(0); }
+  [data-state="armed"] .tag { transform: translateY(4px); }
+  [data-state="armed"] .line { transform: translateY(-100%); }
+  [data-state="armed"] .lit { opacity: 0; transform: scale(0.3); }
+
+  [data-state="run"] .reel {
+    transition: transform 1400ms var(--ease-arrive) calc(120ms + var(--i) * 150ms + var(--j) * 80ms);
+  }
+  [data-state="run"] .label {
+    transition:
+      opacity 600ms ease calc(260ms + var(--i) * 150ms),
+      transform 700ms var(--ease-arrive) calc(260ms + var(--i) * 150ms);
+  }
+  [data-state="run"] .base { transition: transform 520ms var(--ease-arrive) 360ms; }
+  [data-state="run"] .rise { transition: transform 900ms var(--ease-arrive) 560ms; }
+  [data-state="run"] .dot {
+    transition: opacity 200ms ease 1240ms, transform 460ms var(--ease-arrive) 1240ms;
+  }
+  /* The tip's ring fades in, it never scales: the hexagon keeps turning */
+  [data-state="run"] .spin { transition: opacity 360ms ease 1340ms; }
+  [data-state="run"] .leader { transition: transform 420ms var(--ease-arrive) 1420ms; }
+  [data-state="run"] .tag {
+    transition: opacity 300ms ease 1580ms, transform 520ms var(--ease-arrive) 1580ms;
+  }
+
+  [data-state="run"] .line { transition: transform 1500ms cubic-bezier(0.45, 0, 0.25, 1) 140ms; }
+  [data-state="run"] .lit {
+    transition:
+      opacity 220ms ease calc(200ms + var(--i) * 460ms),
+      transform 460ms var(--ease-arrive) calc(200ms + var(--i) * 460ms);
+  }
+  [data-state="run"] .stage,
+  [data-state="run"] .work {
+    transition:
+      opacity 520ms ease calc(260ms + var(--i) * 460ms),
+      transform 640ms var(--ease-arrive) calc(260ms + var(--i) * 460ms);
+  }
+  [data-state="run"] .work { transition-delay: calc(330ms + var(--i) * 460ms); }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 640px) {
+  [data-state="armed"] .line { transform: translateX(-100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin { animation: none; will-change: auto; }
+}

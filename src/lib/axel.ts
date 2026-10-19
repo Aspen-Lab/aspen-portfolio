@@ -12,7 +12,7 @@ export const axelProject: Project = {
   date: "ongoing",
   category: "Travel · Fintech",
   summary:
-    "Founding Design Engineer at Axel (YC W19), building through the team's growth from 0 to 30M GMV and 100K+ users. I own product design and frontend delivery, shipping PRs alongside brand, campaign and email work that supports growth.",
+    "Founding Design Engineer at Axel (YC W19), building through the team's growth from 0 to 30M GMV and 150K users, with revenue growing fast. I own product design and frontend delivery, shipping PRs alongside brand, campaign and email work that supports growth.",
   tags: ["Design engineering", "Frontend PRs", "Brand & growth"],
   // The helloaxel.com hero as published in Render's customer story
   // (render.com/customers/axel). Pinned to the top: the frames crop only
@@ -35,34 +35,43 @@ export const axelProject: Project = {
   liveUrl: "https://helloaxel.com",
   metrics: [
     { label: "Axel GMV · from 0 · team milestone", value: "30M" },
-    { label: "Axel users · from 0 · team milestone", value: "100K+" },
+    { label: "Axel users · from 0 · team milestone", value: "150K" },
     { label: "My primary deliverable", value: "PRs" },
-    { label: "Transactional email templates", value: "28" },
+    { label: "Transactional email templates", value: "79" },
   ],
   sections: [
     {
       chapter: "Building Axel",
       heading: "A founding role, from product decisions to production",
       body: "Since December 2025, I've worked full-time as Axel's **Founding Design Engineer**, reporting directly to the CEO. I take product problems from early exploration through interface design, frontend implementation, testing and engineering review. My remit also covers the brand and the creative work that brings people into the product.",
-      // The four areas of the role as one Latent-style chart. The dots are
-      // a drawing, not data — except the last entry: 28 dots, 28 templates.
-      morph: {
-        states: [
-          { kicker: "Product design", title: "Journeys, booking and membership", text: "User journeys, interaction design and the details of booking and membership experiences.", layout: "scatter", tag: "Booking · Membership", axis: "Journey exploration", from: "Explore", to: "Decide" },
-          { kicker: "Frontend engineering", title: "Delivered as pull requests", text: "Production React, reusable components, responsive layouts, interaction states and motion—delivered as PRs.", layout: "curve", tag: "PR + preview", axis: "Design to production", from: "Problem", to: "Shipped" },
-          { kicker: "Brand & campaigns", title: "From the ad to the product", text: "Visual identity, core advertising campaign creative and the landing pages that connect them to the product.", layout: "clusters", tag: "One visual language", axis: "Acquisition to product", from: "First touch", to: "In the app", groups: ["Ad", "Landing page", "Product"] },
-          { kicker: "Email & testing", title: "28 transactional templates", text: "Transactional email design and implementation, product QA and iterative testing.", layout: "grid", tag: "Customer.io + Liquid", axis: "Lifecycle email", from: "Onboarding", to: "Cancellation" },
+      // What the role covers, drawn on the chain from problem to production:
+      // each area spans the stages the copy says it covers.
+      span: {
+        stages: ["Explore", "Design", "Build", "Test", "Ship"],
+        total: "One role, problem to production",
+        rows: [
+          { kicker: "Product design", title: "Journeys, booking and membership", text: "User journeys, interaction design and the details of booking and membership experiences.", from: 0, to: 1, items: ["Journeys", "Booking", "Membership"] },
+          { kicker: "Frontend engineering", title: "Delivered as pull requests", text: "Production React, reusable components, responsive layouts, interaction states and motion—delivered as PRs.", from: 2, to: 4, items: ["React", "States & motion", "PRs"] },
+          { kicker: "Brand & campaigns", title: "From the ad to the product", text: "Visual identity, core advertising campaign creative and the landing pages that connect them to the product.", from: 0, to: 2, items: ["Identity", "Campaigns", "Landing pages"] },
+          { kicker: "Email & testing", title: "79 transactional templates", text: "Transactional email design and implementation, product QA and iterative testing.", from: 1, to: 4, items: ["79 templates", "QA", "Customer.io + Liquid"] },
         ],
       },
     },
     {
       chapter: "Building Axel",
       heading: "Building through 0 → 30M GMV",
-      body: "Axel grew from **0 to 30M GMV** and **0 to 100K+ users**. My contribution spans the experience people discover, the product they use and the communications they receive: product design, frontend PRs, brand, campaigns and email. I work with the team to turn growth priorities into changes we can ship, test and refine.",
-      dotField: {
-        items: [
+      body: "Axel grew from **0 to 30M GMV** and **0 to 150K users**, and revenue is growing fast. My contribution spans the experience people discover, the product they use and the communications they receive: product design, frontend PRs, brand, campaigns and email. I work with the team to turn growth priorities into changes we can ship, test and refine.",
+      // Where Axel is now, and where along a traveler's path my work sits.
+      growth: {
+        figures: [
+          { value: "150K", label: "Users, from 0" },
           { value: "30M", label: "GMV, from 0" },
-          { value: "100K+", label: "Users, from 0" },
+          { value: "", label: "Revenue", note: "Growing fast" },
+        ],
+        journey: [
+          { stage: "Discover", work: "Brand, ad campaigns and landing pages" },
+          { stage: "Search & book", work: "Product design and frontend PRs" },
+          { stage: "After booking", work: "79 transactional email templates" },
         ],
         tag: "Team milestones",
       },
@@ -136,7 +145,7 @@ export const axelProject: Project = {
     {
       chapter: "Brand & growth",
       heading: "Email is part of the product",
-      body: "I design and maintain **28 transactional email templates** in **Customer.io and Liquid**, from onboarding to cancellation. The work combines visual design with implementation: using real event data, handling missing values and checking how messages render. Email carries the same care as the interface because it is often where people learn what happened and what to do next.",
+      body: "I design and maintain **79 transactional email templates** in **Customer.io and Liquid**, from onboarding to cancellation. The work combines visual design with implementation: using real event data, handling missing values and checking how messages render. Email carries the same care as the interface because it is often where people learn what happened and what to do next.",
       visual: "email-render",
     },
   ],
@@ -149,7 +158,7 @@ export const axelProjectCn: Project = {
   period: "2025 年 12 月 — 至今",
   category: "旅行 · 金融科技",
   summary:
-    "作为 Axel（YC W19）的 Founding Design Engineer，参与团队从 0 到 30M GMV、100K+ 用户的增长。我负责产品设计与前端交付，直接提交 PR，同时覆盖品牌、核心广告 campaign 和邮件体验。",
+    "作为 Axel（YC W19）的 Founding Design Engineer，参与团队从 0 到 30M GMV、150K 用户的增长，收入仍在快速增长。我负责产品设计与前端交付，直接提交 PR，同时覆盖品牌、核心广告 campaign 和邮件体验。",
   tags: ["设计工程", "前端 PR 交付", "品牌与增长"],
   coverNotes: [
     { box: [36.5, 15.5, 27.5, 14.5], at: [34, 22.5], title: "一个承诺", text: "标题只说一件事：最低价。紧接着的结果卡片就是证明。" },
@@ -160,32 +169,40 @@ export const axelProjectCn: Project = {
   ],
   metrics: [
     { label: "Axel GMV · 从 0 起步的团队成果", value: "30M" },
-    { label: "Axel 用户数 · 从 0 起步的团队成果", value: "100K+" },
+    { label: "Axel 用户数 · 从 0 起步的团队成果", value: "150K" },
     { label: "我的主要交付物", value: "PRs" },
-    { label: "交易类邮件模板", value: "28" },
+    { label: "交易类邮件模板", value: "79" },
   ],
   sections: [
     {
       chapter: "共建 Axel",
       heading: "从产品决策到生产代码的创始岗位",
       body: "自 2025 年 12 月起，我全职担任 Axel 的 **Founding Design Engineer（创始设计工程师）**，直接向 CEO 汇报。我把产品问题从早期探索推进到界面设计、前端实现、测试和工程评审，同时负责品牌与增长创意，让产品内外的体验保持一致。",
-      morph: {
-        states: [
-          { kicker: "产品设计", title: "旅程、预订与会员", text: "用户旅程、交互设计，以及预订和会员体验中的具体细节。", layout: "scatter", tag: "预订 · 会员", axis: "旅程探索", from: "探索", to: "决策" },
-          { kicker: "前端工程", title: "直接以 PR 交付", text: "生产级 React、可复用组件、响应式布局、交互状态与动效，直接以 PR 交付。", layout: "curve", tag: "PR + 预览", axis: "从设计到上线", from: "问题", to: "上线" },
-          { kicker: "品牌与广告", title: "从广告到产品", text: "品牌视觉、核心广告 campaign 创意，以及连接广告和产品的落地页。", layout: "clusters", tag: "同一套视觉语言", axis: "从获客到产品", from: "第一次接触", to: "进入应用", groups: ["广告", "落地页", "产品"] },
-          { kicker: "邮件与测试", title: "28 个交易类邮件模板", text: "交易类邮件设计与实现、产品 QA，以及持续的测试迭代。", layout: "grid", tag: "Customer.io + Liquid", axis: "生命周期邮件", from: "注册", to: "取消" },
+      span: {
+        stages: ["探索", "设计", "实现", "测试", "上线"],
+        total: "一个岗位，从问题到上线",
+        rows: [
+          { kicker: "产品设计", title: "旅程、预订与会员", text: "用户旅程、交互设计，以及预订和会员体验中的具体细节。", from: 0, to: 1, items: ["用户旅程", "预订", "会员"] },
+          { kicker: "前端工程", title: "直接以 PR 交付", text: "生产级 React、可复用组件、响应式布局、交互状态与动效，直接以 PR 交付。", from: 2, to: 4, items: ["React", "状态与动效", "PR"] },
+          { kicker: "品牌与广告", title: "从广告到产品", text: "品牌视觉、核心广告 campaign 创意，以及连接广告和产品的落地页。", from: 0, to: 2, items: ["品牌视觉", "广告 campaign", "落地页"] },
+          { kicker: "邮件与测试", title: "79 个交易类邮件模板", text: "交易类邮件设计与实现、产品 QA，以及持续的测试迭代。", from: 1, to: 4, items: ["79 个模板", "QA", "Customer.io + Liquid"] },
         ],
       },
     },
     {
       chapter: "共建 Axel",
       heading: "参与从 0 到 30M GMV 的增长",
-      body: "Axel 的 GMV 从 **0 增长到 30M**，用户数从 **0 增长到 100K+**。我的贡献贯穿用户发现产品、使用产品和接收沟通的过程：产品设计、前端 PR、品牌、广告 campaign 与邮件。我和团队一起把增长目标拆成可以交付、测试和持续改进的具体工作。",
-      dotField: {
-        items: [
+      body: "Axel 的 GMV 从 **0 增长到 30M**，用户数从 **0 增长到 150K**，收入也在快速增长。我的贡献贯穿用户发现产品、使用产品和接收沟通的过程：产品设计、前端 PR、品牌、广告 campaign 与邮件。我和团队一起把增长目标拆成可以交付、测试和持续改进的具体工作。",
+      growth: {
+        figures: [
+          { value: "150K", label: "用户，从 0 起步" },
           { value: "30M", label: "GMV，从 0 起步" },
-          { value: "100K+", label: "用户，从 0 起步" },
+          { value: "", label: "收入", note: "快速增长中" },
+        ],
+        journey: [
+          { stage: "发现", work: "品牌、广告 campaign 与落地页" },
+          { stage: "搜索与预订", work: "产品设计与前端 PR" },
+          { stage: "预订之后", work: "79 个交易类邮件模板" },
         ],
         tag: "团队成果",
       },
@@ -258,7 +275,7 @@ export const axelProjectCn: Project = {
     {
       chapter: "品牌与增长",
       heading: "邮件也是产品的一部分",
-      body: "我在 **Customer.io 和 Liquid** 中设计并维护 **28 个交易类邮件模板**，覆盖从 onboarding 到取消的用户流程。这项工作同时包含视觉与实现：接入真实事件数据、处理缺失值、检查渲染效果。用户经常通过邮件了解发生了什么、下一步该怎么做，因此我用与产品界面相同的标准打磨邮件体验。",
+      body: "我在 **Customer.io 和 Liquid** 中设计并维护 **79 个交易类邮件模板**，覆盖从 onboarding 到取消的用户流程。这项工作同时包含视觉与实现：接入真实事件数据、处理缺失值、检查渲染效果。用户经常通过邮件了解发生了什么、下一步该怎么做，因此我用与产品界面相同的标准打磨邮件体验。",
       visual: "email-render",
     },
   ],

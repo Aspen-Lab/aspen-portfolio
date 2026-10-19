@@ -75,7 +75,7 @@
 }
 .sheet[data-state="missing"] .thumb { transform: translateX(100%); }
 
-/* The hairline that runs out the dwell time, as under MorphChart's entries */
+/* The hairline that runs out the dwell time */
 .run {
   position: absolute;
   left: 0;
@@ -88,6 +88,8 @@
 }
 @keyframes run { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
+/* Ink at 63% reads as the muted grey on the toggle; chosen or pointed at,
+   full ink. A fade, not a repaint. */
 .seg {
   position: relative;
   display: inline-flex;
@@ -95,15 +97,16 @@
   justify-content: center;
   gap: 9px;
   padding: 8px 16px;
-  color: var(--color-mute);
+  color: var(--color-ink);
   font-size: 13.5px;
   line-height: 1.2;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 220ms ease;
+  opacity: 0.63;
+  transition: opacity 220ms ease;
 }
-.seg[data-on="true"] { color: var(--color-ink); }
-.seg:hover { color: var(--color-ink); }
+.seg[data-on="true"] { opacity: 1; }
+.seg:hover { opacity: 1; }
 .seg:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 2px; border-radius: 2px; }
 
 /* A filled dot for data that arrived, an empty ring for data that did not */
@@ -167,15 +170,17 @@
 }
 .sheet[data-state="missing"] .row[data-focus="true"]::before { opacity: 1; transform: none; }
 
+/* Ink at 28% reads as the faint grey; the focus line's number lights */
 .num {
-  color: rgb(113 113 119 / 70%);
+  color: var(--color-ink);
+  opacity: 0.28;
   font-size: 10.5px;
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
   user-select: none;
-  transition: color 300ms ease;
+  transition: opacity 300ms ease;
 }
-.sheet[data-state="missing"] .row[data-focus="true"] .num { color: var(--color-ink); }
+.sheet[data-state="missing"] .row[data-focus="true"] .num { opacity: 1; }
 
 .src {
   min-width: 0;
@@ -198,75 +203,103 @@
 .src [data-k="v"] { color: var(--color-ink); }
 .src [data-k="s"] { color: rgb(244 244 242 / 78%); }
 
-/* The variable that went missing steps back under a wavy rule */
+/* The variable that went missing steps back under a wavy rule. It fades
+   to 40% (the soft grey); the rule is a copy of the name, drawn as only
+   its underline, that fades in over it (ink at 40% is the old 45%). */
 .src [data-k="miss"],
 .src [data-k="city"] {
+  position: relative;
   color: var(--color-ink);
-  text-decoration: underline wavy transparent;
+  transition: opacity 320ms ease;
+}
+.src [data-k="miss"]::after {
+  content: attr(data-t);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: transparent;
+  text-decoration: underline wavy var(--color-ink);
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
-  transition: color 320ms ease, text-decoration-color 320ms ease;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
 }
-.sheet[data-state="missing"] .src [data-k="miss"] {
-  color: var(--color-soft);
-  text-decoration-color: rgb(244 244 242 / 45%);
-}
-.sheet[data-state="missing"] .src [data-k="city"] { color: var(--color-soft); }
+.sheet[data-state="missing"] .src [data-k="miss"],
+.sheet[data-state="missing"] .src [data-k="city"] { opacity: 0.4; }
+.sheet[data-state="missing"] .src [data-k="miss"]::after { opacity: 1; }
 
 /* ── The fallback: the one accent on the sheet ── */
 .fallback {
   position: relative;
   display: inline-block;
-  margin: 0;
   text-indent: 0;
   line-height: 1.45;
   white-space: nowrap;
   opacity: 0.5;
-  transition: opacity 320ms ease, margin 460ms var(--ease-arrive);
+  transition: opacity 320ms ease, transform 460ms var(--ease-arrive);
 }
-.fallback [data-k] { transition: color 320ms ease; }
 /* The line opens a little around the token to make room for the ring's
-   points, so it never touches the pipe or the braces */
-.sheet[data-state="missing"] .fallback { margin: 0 7px; opacity: 1; }
-.sheet[data-state="missing"] .fallback [data-k] { color: var(--accent-ink); }
+   points, so it never touches the pipe or the braces: the token slides
+   7px over and the closing braces 14px, by transform, so nothing on the
+   line is laid out again */
+.sheet[data-state="missing"] .fallback { opacity: 1; transform: translateX(7px); }
+.src [data-after] {
+  display: inline-block;
+  text-indent: 0;
+  transition: transform 460ms var(--ease-arrive);
+}
+.sheet[data-state="missing"] .src [data-after] { transform: translateX(14px); }
+/* The accent copy of the token, faded in over its syntax colours */
+.lit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--accent-ink);
+  white-space: pre;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+}
+.fallback [data-k] { transition: opacity 320ms ease; }
+.sheet[data-state="missing"] .lit { opacity: 1; }
+.sheet[data-state="missing"] .fallback [data-k] { opacity: 0; }
 
-.ring {
+/* The ring and its leader are elements of their own, so they scale and
+   fade on the compositor */
+.ring,
+.lead {
   position: absolute;
   overflow: visible;
   pointer-events: none;
+  opacity: 0;
+}
+.ring {
+  transform: scale(0.94);
+  transition: opacity 280ms ease, transform 520ms var(--ease-arrive);
+}
+.lead {
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: opacity 200ms ease, transform 320ms var(--ease-arrive);
 }
 .hex {
   fill: none;
   stroke: rgb(244 244 242 / 55%);
   stroke-width: 1;
   stroke-dasharray: 3 4;
-  opacity: 0;
-  transform: scale(0.94);
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: opacity 280ms ease, transform 520ms var(--ease-arrive);
 }
 .leader {
   stroke: rgb(244 244 242 / 55%);
   stroke-width: 1;
   stroke-dasharray: 2 3;
-  opacity: 0;
-  transform: scaleY(0);
-  transform-box: fill-box;
-  transform-origin: bottom;
-  transition: opacity 200ms ease, transform 320ms var(--ease-arrive);
 }
-.sheet[data-state="missing"] .hex {
-  opacity: 1;
-  transform: none;
-  animation: march 14s linear infinite;
-}
-.sheet[data-state="missing"] .leader {
+.sheet[data-state="missing"] .ring { opacity: 1; transform: none; }
+.sheet[data-state="missing"] .lead {
   opacity: 1;
   transform: none;
   transition-delay: 140ms;
 }
-@keyframes march { to { stroke-dashoffset: -70; } }
 
 .tag {
   position: absolute;
@@ -339,9 +372,11 @@
 .sky [data-px="p"] { opacity: 0.7; }
 .sky [data-px="s"] {
   opacity: 0.32;
-  animation: twinkle 4.4s steps(1, end) infinite;
+  animation: twinkle 4.4s steps(1, end) infinite paused;
   animation-delay: var(--d);
 }
+/* Off screen the stars hold still */
+.sheet[data-run="true"] .sky [data-px="s"] { animation-play-state: running; }
 @keyframes twinkle {
   0%, 62%, 100% { opacity: 0.32; }
   70% { opacity: 0.9; }
@@ -361,19 +396,34 @@
 @media (min-width: 640px) { .headline { font-size: 25px; } }
 .line,
 .ghost { grid-area: 1 / 1; }
+.line { position: relative; }
 .ghost { visibility: hidden; }
+/* The words after the slot, each a box that can slide */
+.part { display: inline-block; }
 
-/* Both readings in one cell; the cell takes the width of the one in use */
+/* Both readings in one slot: the one in use sets the width, the other
+   stands over it, out of the flow, while it fades. Each is seen through a
+   window clipped at its sides, which the script slides along with the
+   words after the slot while the line closes up. */
 .slot {
-  display: inline-grid;
-  vertical-align: bottom;
+  position: relative;
+  display: inline-block;
   white-space: nowrap;
-  clip-path: inset(-0.5em 0 -0.5em 0);
-  transition: width 520ms var(--ease-arrive);
 }
+.window {
+  display: inline-block;
+  overflow-x: clip;
+  overflow-y: visible;
+  vertical-align: top;
+}
+.window[data-on="false"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.hold { display: inline-block; }
 .word {
-  grid-area: 1 / 1;
-  justify-self: start;
+  display: inline-block;
   text-decoration: underline dotted rgb(244 244 242 / 40%);
   text-decoration-thickness: 1.5px;
   text-underline-offset: 0.2em;
@@ -455,15 +505,16 @@
   .row[data-focus="true"]::before,
   .num,
   .src [data-k="miss"],
+  .src [data-k="miss"]::after,
   .src [data-k="city"],
+  .src [data-after],
   .fallback,
+  .lit,
   .fallback [data-k],
-  .hex,
-  .leader,
+  .ring,
+  .lead,
   .tag,
-  .slot,
   .word { transition: none; }
   .run,
-  .sheet[data-state="missing"] .hex,
   .sky [data-px="s"] { animation: none; }
 }

@@ -22,8 +22,8 @@ import { Chart } from "@/components/Chart";
 import { UserFlow } from "@/components/UserFlow";
 import { RouteFlow } from "@/components/RouteFlow";
 import { AnnotatedImage } from "@/components/AnnotatedImage";
-import { MorphChart } from "@/components/MorphChart";
-import { DotField } from "@/components/DotField";
+import { SpanChart } from "@/components/SpanChart";
+import { GrowthBoard } from "@/components/GrowthBoard";
 import { Touchpoints } from "@/components/Touchpoints";
 import { EmailRender } from "@/components/EmailRender";
 import styles from "./case.module.css";
@@ -338,14 +338,14 @@ export default async function CaseStudy({
                   {/* Every drawing sits right under the text it draws; the
                       callout follows them all as the footnote, and a pull
                       quote closes the section. */}
-                  {s.morph && (
+                  {s.span && (
                     <div className="mt-14">
-                      <MorphChart states={s.morph.states} />
+                      <SpanChart stages={s.span.stages} total={s.span.total} rows={s.span.rows} />
                     </div>
                   )}
-                  {s.dotField && (
+                  {s.growth && (
                     <div className="mt-12">
-                      <DotField items={s.dotField.items} tag={s.dotField.tag} />
+                      <GrowthBoard figures={s.growth.figures} journey={s.growth.journey} tag={s.growth.tag} />
                     </div>
                   )}
                   {s.chart && (

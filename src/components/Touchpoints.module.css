@@ -71,6 +71,9 @@
   text-align: center;
   cursor: pointer;
   border-radius: 4px;
+  /* Each column keeps its layer, so stepping back is a fade on the
+     compositor and the drawing is never rasterised again on a hover */
+  will-change: opacity;
   transition: opacity 260ms ease;
 }
 .hit[data-dim="true"] { opacity: 0.38; }
@@ -91,14 +94,30 @@
   display: block;
   width: var(--w);
   border-radius: 9px;
+  will-change: transform;
   transition: transform 360ms var(--ease-arrive);
 }
 .hit[data-lift="true"] .frame { transform: translateY(-2px); }
+/* Lifted, the frame's edge brightens: a brighter hairline over the drawn
+   one fades in (46% over the 30% edge reads as the 62% it used to turn
+   to), with the frame's own corner radius in each direction. */
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(244 244 242 / 46%);
+  border-radius: var(--rx) / var(--ry);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+.hit[data-lift="true"] .frame::after { opacity: 1; }
 .svg { display: block; width: 100%; height: auto; overflow: visible; }
 
 /* Where the rail plugs into a frame */
 .port {
   position: absolute;
+  z-index: 1;
   left: 50%;
   bottom: -3px;
   width: 6px;
@@ -106,21 +125,30 @@
   margin-left: -3px;
   border: 1px solid rgb(244 244 242 / 45%);
   background: var(--color-cream);
-  transition: background-color 300ms ease, border-color 300ms ease;
 }
-.hit[data-lit="true"] .port { border-color: var(--color-ink); background: var(--color-ink); }
+.port::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: var(--color-ink);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.hit[data-lit="true"] .port::after { opacity: 1; }
 
 .rail { display: block; width: 100%; height: 30px; }
 @media (min-width: 900px) { .rail { height: 36px; } }
 
+/* Ink at 40% reads as the soft grey on the sheet; lit, it is full ink */
 .num {
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1;
   letter-spacing: 0.16em;
-  color: var(--color-soft);
+  color: var(--color-ink);
+  opacity: 0.4;
   font-variant-numeric: tabular-nums;
-  transition: color 220ms ease;
+  transition: opacity 220ms ease;
 }
 .label {
   margin-top: 7px;
@@ -130,7 +158,7 @@
   line-height: 1.3;
   letter-spacing: -0.005em;
 }
-.hit[data-on="true"] .num { color: var(--color-ink); }
+.hit[data-on="true"] .num { opacity: 1; }
 
 /* The note under the label. Two-up it stays in the accessible name only
    and the shared caption below shows it; four-up every column keeps room
@@ -207,29 +235,59 @@
   stroke-width: 1;
   stroke-dasharray: 3 4;
 }
+/* Stems and nodes change once per landing, under the dot: they switch
+   rather than fade, so the sheet-wide drawing is repainted once, not for
+   every frame of a fade */
 .stem {
   stroke: rgb(244 244 242 / 28%);
   stroke-width: 1;
   stroke-dasharray: 2 3;
-  transition: stroke 300ms ease;
 }
 .stem[data-on="true"] { stroke: rgb(244 244 242 / 70%); }
 .node {
   fill: var(--color-cream);
   stroke: rgb(244 244 242 / 42%);
   stroke-width: 1;
-  transition: fill 300ms ease, stroke 300ms ease;
 }
 .node[data-on="true"] { fill: var(--color-ink); stroke: var(--color-ink); }
-.dot { fill: var(--accent-ink); }
+
+/* The focus rides the rail on its own layer, placed by a transform from
+   the script; the hexagon turns as a whole element, on the compositor,
+   and only while the sheet is on screen. */
+.focus {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  will-change: transform;
+  animation: appear 500ms ease both;
+}
+.fade { position: absolute; top: 0; left: 0; }
+.dot {
+  position: absolute;
+  top: -4.5px;
+  left: -4.5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--accent-ink);
+}
 .hex {
+  position: absolute;
+  top: -12.5px;
+  left: -12.5px;
+  overflow: visible;
+  animation: turn 24s linear infinite paused;
+}
+.sheet[data-run="true"] .hex { animation-play-state: running; }
+.hex polygon {
   fill: none;
   stroke: rgb(244 244 242 / 55%);
   stroke-width: 1;
   stroke-dasharray: 3 4;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: turn 24s linear infinite;
 }
 @keyframes turn { to { transform: rotate(360deg); } }
 
@@ -242,9 +300,7 @@
   stroke: rgb(244 244 242 / 30%);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
-  transition: stroke 300ms ease;
 }
-.hit[data-lift="true"] .edge { stroke: rgb(244 244 242 / 62%); }
 .inner {
   fill: none;
   stroke: rgb(244 244 242 / 12%);
@@ -315,9 +371,10 @@
 .blink {
   fill: var(--color-ink);
   opacity: 0.55;
-  animation: blink 6s steps(1, end) infinite;
+  animation: blink 6s steps(1, end) infinite paused;
   animation-delay: var(--d, 0s);
 }
+.sheet[data-run="true"] .blink { animation-play-state: running; }
 @keyframes blink {
   0% { opacity: 0.55; }
   46% { opacity: 1; }
@@ -349,14 +406,13 @@
 @media (prefers-reduced-motion: reduce) {
   .hit,
   .frame,
-  .port,
+  .frame::after,
+  .port::after,
   .num,
   .note,
-  .caption > p,
-  .stem,
-  .node,
-  .edge { transition: none; }
+  .caption > p { transition: none; }
   .links,
+  .focus,
   .hex,
   .blink,
   .hit[data-lit="true"] .sign { animation: none; }

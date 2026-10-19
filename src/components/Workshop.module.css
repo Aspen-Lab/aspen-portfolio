@@ -11,13 +11,20 @@
 .evidence { min-width: 0; }
 .smallHeading { display: flex; justify-content: space-between; align-items: center; gap: 12px; font: 10px/1.6 var(--font-mono); letter-spacing: .12em; color: var(--color-soft); }
 .impact { border-top: 1px solid var(--color-line); padding-top: 17px; }
-.metrics { display: grid; grid-template-columns: 1fr 1.18fr; gap: 18px; margin: 25px 0 16px; }
+.metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 25px 0 0; }
 .metrics > div + div { border-left: 1px solid var(--color-line); padding-left: 20px; }
 .metrics p { white-space: nowrap; font: 39px/1.12 var(--font-newsreader), Georgia, serif; letter-spacing: -.04em; }
 .metrics p span { color: var(--color-soft); font: 13px var(--font-mono); letter-spacing: -.02em; vertical-align: middle; }
 .metrics > div > span { display: block; margin-top: 9px; color: var(--color-mute); font: 10px var(--font-mono); letter-spacing: .13em; }
-.impactCopy { color: var(--color-mute); font-size: 12px; line-height: 1.75; max-width: 430px; }
-.caseLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 5px; color: var(--color-ink); font-size: 12px; }
+/* Revenue has a direction and no published figure: one hairline row under
+   the two counts, its label in their voice, the direction in body type. */
+.revenue { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 18px 0 16px; padding-top: 12px; border-top: 1px solid var(--color-line); }
+.revenue > span:first-child { color: var(--color-mute); font: 10px var(--font-mono); letter-spacing: .13em; }
+.revenue > span:last-child { display: inline-flex; align-items: center; gap: 8px; color: var(--color-ink); font-size: 15px; line-height: 1.4; }
+.revenue svg { color: var(--accent, var(--color-ink)); }
+.metrics > div > span:lang(zh), .revenue > span:first-child:lang(zh) { font-size: 12px; letter-spacing: .06em; }
+.impactCopy { color: var(--color-mute); font-size: 14.5px; line-height: 1.7; max-width: 440px; text-wrap: pretty; }
+.caseLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 5px; color: var(--color-ink); font-size: 14px; }
 .caseLink svg { transition: transform 180ms ease; }
 .caseLink:hover svg { transform: translate(2px, -2px); }
 .activity { margin-top: 25px; border-top: 1px solid var(--color-line); padding-top: 17px; }
@@ -25,8 +32,9 @@
 .personalGrid { display: grid; grid-template-columns: 1.08fr 1fr; gap: 64px; border-top: 1px solid var(--color-line); margin-top: 56px; padding-top: 32px; }
 .personality { max-width: 420px; }
 .personalHeader { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 32px; margin-bottom: 12px; color: var(--color-mute); font-size: 11px; }
-.flipButton { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; color: var(--color-mute); font-size: 11px; transition: color 140ms; }
-.flipButton:hover { color: var(--color-ink); }
+/* Hover lifts opacity, not color, so it never repaints the label */
+.flipButton { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; color: var(--color-ink); opacity: .64; font-size: 11px; transition: opacity 140ms; }
+.flipButton:hover, .flipButton:focus-visible { opacity: 1; }
 .flipButton:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 .flipButton svg { transition: transform 240ms cubic-bezier(.2,.8,.2,1); }
 .flipButton[aria-pressed="true"] svg { transform: rotate(180deg); }
@@ -45,7 +53,7 @@
 .educationTitle { position: relative; font: 29px/1.08 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; margin-top: 16px; }
 .educationTitle span { color: #babbb4; }
 .school { font-size: 11px; color: #c0c1ba; margin-top: 11px; }
-.personalNote { max-width: 350px; color: var(--color-mute); font-size: 12px; line-height: 1.7; margin-top: 13px; }
+.personalNote { max-width: 420px; color: var(--color-mute); font-size: 14.5px; line-height: 1.65; margin-top: 13px; text-wrap: balance; }
 @media (max-width: 1150px) {
   .intro, .practiceGrid, .personalGrid { gap: 36px; }
   .metrics p { font-size: 34px; }
@@ -65,7 +73,7 @@
   .metrics p span { font-size: 11px; }
 }
 @media (max-width: 359px) {
-  .metrics { grid-template-columns: 1fr 1.15fr; gap: 9px; }
+  .metrics { gap: 9px; }
   .metrics > div + div { padding-left: 10px; }
   .metrics p { font-size: 28px; }
   .metrics p span { font-size: 9px; }

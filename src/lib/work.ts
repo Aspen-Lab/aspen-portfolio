@@ -10,22 +10,16 @@ export type ImageNote = {
   text: string;
 };
 
-/** One entry of a MorphChart: the list copy, how the dots arrange, and
-    the sheet's labels for that arrangement. */
-export type MorphState = {
+/** One area of a SpanChart: the list copy and the stages it covers. */
+export type SpanRow = {
   kicker: string;
   title: string;
   text: string;
-  layout: "scatter" | "curve" | "clusters" | "grid";
-  /** The boxed tag on the focus dot. */
-  tag: string;
-  /** The sheet's vertical title. */
-  axis: string;
-  /** The x axis, start and end. */
-  from: string;
-  to: string;
-  /** Labels under the three clusters ("clusters" only). */
-  groups?: string[];
+  /** First and last stage index it covers (inclusive). */
+  from: number;
+  to: number;
+  /** Short items written on the bar. */
+  items: string[];
 };
 
 export type Project = {
@@ -96,10 +90,14 @@ export type Project = {
     };
     /** Code-drawn figures: the design⇄engineering lanes, the brand touchpoints chain, the email render check. */
     visual?: "loop-diagram" | "touchpoints" | "email-render";
-    /** A Latent-style list + plotted sheet whose dots rearrange per entry. */
-    morph?: { states: MorphState[] };
-    /** Figures that count up beside a field of dots lighting from none to all. */
-    dotField?: { items: { value: string; label: string }[]; tag: string };
+    /** Areas of work as spans on a stage axis (what the role covers). */
+    span?: { stages: string[]; total: string; rows: SpanRow[] };
+    /** Current figures above a traveler's path with the work at each step. */
+    growth?: {
+      figures: { value: string; label: string; note?: string }[];
+      journey: { stage: string; work: string }[];
+      tag: string;
+    };
     statGrid?: {
       items: {
         value: string;
@@ -652,7 +650,7 @@ export const stack: StackCategory[] = [
       "No-fake-defaults pattern",
       "MJML thinking",
     ],
-    note: "28 transactional templates at Axel — onboarding to cancellation",
+    note: "79 transactional templates at Axel — onboarding to cancellation",
   },
   {
     icon: "backend",
@@ -743,8 +741,8 @@ export const capabilities: Capability[] = [
     label: { en: "Email", cn: "邮件" },
     value: 80,
     hint: {
-      en: "28 transactional templates at Axel, onboarding to cancellation — Customer.io and Liquid.",
-      cn: "Axel 的 28 个交易类邮件模板，从 onboarding 到 cancellation —— Customer.io 与 Liquid。",
+      en: "79 transactional templates at Axel, onboarding to cancellation — Customer.io and Liquid.",
+      cn: "Axel 的 79 个交易类邮件模板，从 onboarding 到 cancellation —— Customer.io 与 Liquid。",
     },
   },
   {
@@ -1032,7 +1030,7 @@ export const combos: Combo[] = [
     index: "03",
     title: "Frontend, shipped as PRs",
     proof: "Founding Design Engineer · Axel",
-    body: "Product design through production frontend, delivered as reviewable PRs. At Axel, I connect design and engineering in both directions and carry the experience across branding, campaigns and 28 transactional email templates.",
+    body: "Product design through production frontend, delivered as reviewable PRs. At Axel, I connect design and engineering in both directions and carry the experience across branding, campaigns and 79 transactional email templates.",
   },
   {
     index: "04",

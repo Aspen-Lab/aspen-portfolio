@@ -1,6 +1,15 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type CSSProperties,
+} from "react";
 import { animate, motion, useInView, useMotionValue, useMotionValueEvent, useReducedMotion } from "motion/react";
 import { useLocale } from "next-intl";
 import styles from "./Touchpoints.module.css";
@@ -17,7 +26,11 @@ import styles from "./Touchpoints.module.css";
    that frame's sign flickers on. Point at or focus a frame and the dot
    goes there, the frame lifts and its note shows while the others step
    back. Reduced motion parks the dot at the end of the chain, the email.
-   The frames are a drawing, not screenshots, and imply no measurements. */
+   The frames are a drawing, not screenshots, and imply no measurements.
+   Pointing is cheap: the drawings are memoised, so a hover re-renders the
+   labels and never the night skies; the dot is its own layer, moved by
+   transform along the rail, and everything that changes on a hover is a
+   transform or an opacity. Off screen the loops stop. */
 
 // ── The pixel grid every frame is drawn on (frame units; a column is 220) ──
 const P = 2.5;
@@ -422,11 +435,15 @@ function EmailFrame({ id }: { id: string }) {
   );
 }
 
+/* Each stop's frame: its width on the 220 column, its height and corner
+   radius (frame units, for the lift outline drawn over it), its drawing. */
 const STOPS = [
   {
     id: "ad",
     w: 176,
-    Draw: AdFrame,
+    h: 220,
+    r: 7,
+    Draw: memo(AdFrame),
     label: { en: "Ad", cn: "广告" },
     note: {
       en: "Core campaign creative, where the visual direction starts.",
@@ -436,7 +453,9 @@ const STOPS = [
   {
     id: "landing",
     w: 220,
-    Draw: LandingFrame,
+    h: 150,
+    r: 6,
+    Draw: memo(LandingFrame),
     label: { en: "Landing page", cn: "落地页" },
     note: {
       en: "Connects the ad to what a traveler sees next.",
@@ -446,7 +465,9 @@ const STOPS = [
   {
     id: "product",
     w: 110,
-    Draw: ProductFrame,
+    h: 224,
+    r: 17,
+    Draw: memo(ProductFrame),
     label: { en: "Product", cn: "产品" },
     note: {
       en: "Inside the app, the same night continues.",
@@ -456,11 +477,13 @@ const STOPS = [
   {
     id: "email",
     w: 172,
-    Draw: EmailFrame,
+    h: 220,
+    r: 7,
+    Draw: memo(EmailFrame),
     label: { en: "Email", cn: "邮件" },
     note: {
-      en: "28 transactional templates, from onboarding to cancellation.",
-      cn: "28 个交易类邮件模板，从 onboarding 到取消。",
+      en: "79 transactional templates, from onboarding to cancellation.",
+      cn: "79 个交易类邮件模板，从 onboarding 到取消。",
     },
   },
 ];
@@ -479,10 +502,13 @@ function phrases(text: string) {
 // ── The rail ──
 
 type Pt = { x: number; y: number };
+/** A straight run, or a quarter turn: centre + a·cos θ + b·sin θ. */
+type Seg = { len: number; line: [Pt, Pt] } | { len: number; arc: { c: Pt; a: Pt; b: Pt; r: number } };
 type Geo = {
   w: number;
   h: number;
   d: string;
+  segs: Seg[];
   nodes: (Pt & { at: number })[];
   stems: { x: number; y1: number; y2: number }[];
 };
@@ -502,28 +528,45 @@ function rail(pts: Pt[], marks: Pt[]) {
     return turn === 0 ? 0 : Math.min(R, len(a, b) / 2, len(b, c) / 2);
   });
   let d = `M${f(pts[0].x)} ${f(pts[0].y)}`;
+  // The same path as runs and turns, so the dot can be placed on it with a
+  // little arithmetic instead of asking the browser to measure the path
+  const segs: Seg[] = [];
+  let from = pts[0];
+  const run = (to: Pt) => {
+    segs.push({ len: len(from, to), line: [from, to] });
+    from = to;
+  };
   for (let k = 1; k < pts.length - 1; k++) {
     const [a, b, c] = [pts[k - 1], pts[k], pts[k + 1]];
     const r = radii[k];
     if (r === 0) {
       d += ` L${f(b.x)} ${f(b.y)}`;
+      run(b);
       continue;
     }
     const u = { x: Math.sign(b.x - a.x), y: Math.sign(b.y - a.y) };
     const v = { x: Math.sign(c.x - b.x), y: Math.sign(c.y - b.y) };
     const sweep = u.x * v.y - u.y * v.x > 0 ? 1 : 0;
     d += ` L${f(b.x - u.x * r)} ${f(b.y - u.y * r)} A${r} ${r} 0 0 ${sweep} ${f(b.x + v.x * r)} ${f(b.y + v.y * r)}`;
+    const p0 = { x: b.x - u.x * r, y: b.y - u.y * r };
+    run(p0);
+    segs.push({
+      len: (Math.PI / 2) * r,
+      arc: { c: { x: p0.x + v.x * r, y: p0.y + v.y * r }, a: { x: -v.x * r, y: -v.y * r }, b: { x: u.x * r, y: u.y * r }, r },
+    });
+    from = { x: b.x + v.x * r, y: b.y + v.y * r };
   }
   const last = pts[pts.length - 1];
   d += ` L${f(last.x)} ${f(last.y)}`;
+  run(last);
 
   // distance to the start of each run, corners taken as arcs
   const starts: number[] = [];
-  let run = 0;
+  let walked = 0;
   for (let k = 0; k < pts.length - 1; k++) {
-    run -= radii[k] * (2 - Math.PI / 2);
-    starts.push(run);
-    run += len(pts[k], pts[k + 1]);
+    walked -= radii[k] * (2 - Math.PI / 2);
+    starts.push(walked);
+    walked += len(pts[k], pts[k + 1]);
   }
   const nodes = marks.map((m) => {
     for (let k = 0; k < pts.length - 1; k++) {
@@ -537,7 +580,28 @@ function rail(pts: Pt[], marks: Pt[]) {
     }
     return { ...m, at: 0 };
   });
-  return { d, nodes };
+  return { d, segs, nodes };
+}
+
+/** The point at a distance along the rail. */
+function pointAt(segs: Seg[], dist: number): Pt {
+  let rest = Math.max(dist, 0);
+  for (let k = 0; k < segs.length; k++) {
+    const s = segs[k];
+    if (rest > s.len && k < segs.length - 1) {
+      rest -= s.len;
+      continue;
+    }
+    const t = s.len > 0 ? Math.min(rest / s.len, 1) : 0;
+    if ("line" in s) {
+      const [p, q] = s.line;
+      return { x: p.x + (q.x - p.x) * t, y: p.y + (q.y - p.y) * t };
+    }
+    const { c, a, b } = s.arc;
+    const th = (t * Math.PI) / 2;
+    return { x: c.x + a.x * Math.cos(th) + b.x * Math.sin(th), y: c.y + a.y * Math.cos(th) + b.y * Math.sin(th) };
+  }
+  return { x: 0, y: 0 };
 }
 
 function hexagon(r: number) {
@@ -553,8 +617,108 @@ const onClient = () => true;
 const onServer = () => false;
 
 const DWELL = 2600;
+const HEX = 12.5; // half the hexagon's box, a little over its 11.5 radius
 const SPEED = 150; // px a second: slow, a walk along the rail
 const EASE = [0.45, 0, 0.2, 1] as const;
+
+/** Hands a stop's measured parts to the rail. */
+type Register = (part: "item" | "stage" | "rail", i: number, el: HTMLElement | null) => void;
+
+/* One stop: its frame on a stage, the rail's socket, the label and note. */
+const Stop = memo(
+  function Stop({
+    i,
+    cn,
+    uid,
+    on,
+    lit,
+    lift,
+    dim,
+    pressed,
+    point,
+    pin,
+    register,
+  }: {
+    i: number;
+    cn: boolean;
+    uid: string;
+    on: boolean;
+    lit: boolean;
+    lift: boolean;
+    dim: boolean;
+    pressed: boolean;
+    point: (i: number | null) => void;
+    pin: (i: number) => void;
+    register: Register;
+  }) {
+    const s = STOPS[i];
+    return (
+      <li ref={(el) => register("item", i, el)} className={styles.item}>
+        <button
+          type="button"
+          className={styles.hit}
+          data-on={on}
+          data-lit={lit}
+          data-lift={lift}
+          data-dim={dim}
+          aria-pressed={pressed}
+          onPointerEnter={(e) => e.pointerType === "mouse" && point(i)}
+          onFocus={() => point(i)}
+          onBlur={() => point(null)}
+          onClick={() => pin(i)}
+        >
+          <span ref={(el) => register("stage", i, el)} className={styles.stage}>
+            <span
+              className={styles.frame}
+              style={{
+                ["--w" as string]: `${(s.w / BASE) * 100}%`,
+                ["--rx" as string]: `${(s.r / s.w) * 100}%`,
+                ["--ry" as string]: `${(s.r / s.h) * 100}%`,
+              }}
+            >
+              <s.Draw id={`${uid}-${s.id}`} />
+              <span aria-hidden className={styles.port} />
+            </span>
+          </span>
+          <span ref={(el) => register("rail", i, el)} aria-hidden className={styles.rail} />
+          <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
+          <span className={styles.label}>{cn ? s.label.cn : s.label.en}</span>
+          <span className={styles.note}>{cn ? phrases(s.note.cn) : s.note.en}</span>
+        </button>
+      </li>
+    );
+  },
+);
+
+/* Two-up, the notes would each get a sliver: they share one line */
+const Caption = memo(function Caption({ at, cn }: { at: number; cn: boolean }) {
+  return (
+    <div aria-hidden className={styles.caption}>
+      {STOPS.map((s, i) => (
+        <p key={s.id} data-on={i === at}>
+          <span className={styles.capNum}>{String(i + 1).padStart(2, "0")}</span>
+          {cn ? s.note.cn : s.note.en}
+        </p>
+      ))}
+    </div>
+  );
+});
+
+/* The rail, a stem up to each frame and a node under each; only a landing
+   changes it, never a hover. */
+const Links = memo(function Links({ geo, lit }: { geo: Geo; lit: number }) {
+  return (
+    <svg aria-hidden className={styles.links} width={geo.w} height={geo.h} viewBox={`0 0 ${geo.w} ${geo.h}`}>
+      <path d={geo.d} className={styles.line} />
+      {geo.stems.map((s, i) => (
+        <line key={i} x1={s.x} x2={s.x} y1={s.y1} y2={s.y2} className={styles.stem} data-on={i === lit} />
+      ))}
+      {geo.nodes.map((n, i) => (
+        <circle key={i} cx={n.x} cy={n.y} r={3.5} className={styles.node} data-on={i <= lit} />
+      ))}
+    </svg>
+  );
+});
 
 export function Touchpoints() {
   const cn = useLocale() === "cn";
@@ -565,11 +729,12 @@ export function Touchpoints() {
   const stages = useRef<(HTMLSpanElement | null)[]>([]);
   const rails = useRef<(HTMLSpanElement | null)[]>([]);
   const items = useRef<(HTMLLIElement | null)[]>([]);
-  const path = useRef<SVGPathElement>(null);
-  const dot = useRef<SVGGElement>(null);
+  const dot = useRef<HTMLSpanElement>(null);
   const laid = useRef<Geo | null>(null);
   const lap = useRef(false);
   const asked = useRef(false);
+  const stepNow = useRef(0);
+  const pinnedNow = useRef<number | null>(null);
   const inView = useInView(sheet, { amount: 0.4 });
 
   const [geo, setGeo] = useState<Geo | null>(null);
@@ -591,10 +756,10 @@ export function Touchpoints() {
   const fade = useMotionValue(1);
 
   const place = () => {
-    const p = path.current;
-    if (!p || !dot.current) return;
-    const { x, y } = p.getPointAtLength(dist.get());
-    dot.current.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)})`);
+    const g = laid.current;
+    if (!g || !dot.current) return;
+    const { x, y } = pointAt(g.segs, dist.get());
+    dot.current.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
   };
   useMotionValueEvent(dist, "change", place);
 
@@ -640,11 +805,12 @@ export function Touchpoints() {
           pts.push({ x: r[r.length - 1].x, y: r[0].y });
         }
       });
-      const { d, nodes } = rail(pts, cols);
+      const { d, segs, nodes } = rail(pts, cols);
       setGeo({
         w: box.width,
         h: box.height,
         d,
+        segs,
         nodes,
         stems: cols.map((c) => ({ x: c.x, y1: c.bottom + 3, y2: c.y - 4.5 })),
       });
@@ -712,85 +878,74 @@ export function Touchpoints() {
     return () => clearTimeout(t);
   }, [running, step, landed]);
 
-  const point = (i: number | null) => {
+  useEffect(() => {
+    stepNow.current = step;
+  }, [step]);
+
+  // Stable, so the memoised stops only re-render when their own state moves
+  const point = useCallback((i: number | null) => {
     setHover(i);
-    if (i === null || i === step) return;
+    if (i === null || i === stepNow.current) return;
     asked.current = true;
+    stepNow.current = i;
     setStep(i);
-  };
+  }, []);
   // A second tap on the pinned frame lets go
-  const pin = (i: number) => {
-    const next = pinned === i ? null : i;
+  const pin = useCallback((i: number) => {
+    const next = pinnedNow.current === i ? null : i;
+    pinnedNow.current = next;
     setPinned(next);
     if (next === null) setHover(null);
-    else if (next !== step) {
+    else if (next !== stepNow.current) {
       asked.current = true;
+      stepNow.current = next;
       setStep(next);
     }
-  };
+  }, []);
+  const leave = useCallback(() => point(null), [point]);
+  const register = useCallback<Register>((part, i, el) => {
+    if (part === "item") items.current[i] = el as HTMLLIElement | null;
+    else if (part === "stage") stages.current[i] = el as HTMLSpanElement | null;
+    else rails.current[i] = el as HTMLSpanElement | null;
+  }, []);
 
   return (
     <div className={styles.wrap}>
-      <figure ref={sheet} className={styles.sheet}>
+      <figure ref={sheet} className={styles.sheet} data-run={inView && !calm}>
         <p className={styles.tag}>{cn ? "同一套视觉语言" : "One visual language"}</p>
 
-        <ol ref={list} className={styles.row} onPointerLeave={() => point(null)}>
+        <ol ref={list} className={styles.row} onPointerLeave={leave}>
           {STOPS.map((s, i) => (
-            <li key={s.id} ref={(el) => void (items.current[i] = el)} className={styles.item}>
-              <button
-                type="button"
-                className={styles.hit}
-                data-on={i === at}
-                data-lit={i === lit}
-                data-lift={i === target}
-                data-dim={target !== null && i !== target}
-                aria-pressed={pinned === i}
-                onPointerEnter={(e) => e.pointerType === "mouse" && point(i)}
-                onFocus={() => point(i)}
-                onBlur={() => point(null)}
-                onClick={() => pin(i)}
-              >
-                <span ref={(el) => void (stages.current[i] = el)} className={styles.stage}>
-                  <span className={styles.frame} style={{ ["--w" as string]: `${(s.w / BASE) * 100}%` }}>
-                    <s.Draw id={`${uid}-${s.id}`} />
-                    <span aria-hidden className={styles.port} />
-                  </span>
-                </span>
-                <span ref={(el) => void (rails.current[i] = el)} aria-hidden className={styles.rail} />
-                <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
-                <span className={styles.label}>{cn ? s.label.cn : s.label.en}</span>
-                <span className={styles.note}>{cn ? phrases(s.note.cn) : s.note.en}</span>
-              </button>
-            </li>
+            <Stop
+              key={s.id}
+              i={i}
+              cn={cn}
+              uid={uid}
+              on={i === at}
+              lit={i === lit}
+              lift={i === target}
+              dim={target !== null && i !== target}
+              pressed={pinned === i}
+              point={point}
+              pin={pin}
+              register={register}
+            />
           ))}
         </ol>
 
-        {/* Two-up, the notes would each get a sliver: they share one line */}
-        <div aria-hidden className={styles.caption}>
-          {STOPS.map((s, i) => (
-            <p key={s.id} data-on={i === at}>
-              <span className={styles.capNum}>{String(i + 1).padStart(2, "0")}</span>
-              {cn ? s.note.cn : s.note.en}
-            </p>
-          ))}
-        </div>
-
+        <Caption at={at} cn={cn} />
+        {geo && <Links geo={geo} lit={lit} />}
+        {/* The dot rides over the rail on its own layer: a transform a frame,
+            never a repaint of the sheet */}
         {geo && (
-          <svg aria-hidden className={styles.links} width={geo.w} height={geo.h} viewBox={`0 0 ${geo.w} ${geo.h}`}>
-            <path ref={path} d={geo.d} className={styles.line} />
-            {geo.stems.map((s, i) => (
-              <line key={i} x1={s.x} x2={s.x} y1={s.y1} y2={s.y2} className={styles.stem} data-on={i === lit} />
-            ))}
-            {geo.nodes.map((n, i) => (
-              <circle key={i} cx={n.x} cy={n.y} r={3.5} className={styles.node} data-on={i <= lit} />
-            ))}
-            <motion.g style={{ opacity: fade }}>
-              <g ref={dot}>
-                <polygon points={hexagon(11.5)} className={styles.hex} />
-                <circle r={4.5} className={styles.dot} />
-              </g>
-            </motion.g>
-          </svg>
+          <span ref={dot} aria-hidden className={styles.focus}>
+            <motion.span className={styles.fade} style={{ opacity: fade }}>
+              <svg className={styles.hex} width={HEX * 2} height={HEX * 2} viewBox={`${-HEX} ${-HEX} ${HEX * 2} ${HEX * 2}`}>
+                <polygon points={hexagon(11.5)} />
+              </svg>
+              <span className={styles.dot} />
+            </motion.span>
+          </span>
         )}
       </figure>
     </div>

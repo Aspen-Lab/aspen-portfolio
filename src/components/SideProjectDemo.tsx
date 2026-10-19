@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import dynamic from "next/dynamic";
 
 // Captions/types can be imported without downloading every animated scene.
@@ -31,7 +32,24 @@ export function demoCaption(id: SideDemoId, cn: boolean) {
   return captions[id][cn ? 1 : 0];
 }
 
-export function SideProjectDemo({ id, playing, cn }: { id: SideDemoId; playing: boolean; cn: boolean }) {
+/* A scene is built once, when its plate comes within reach
+   (CatalogueMedia), and is never rendered again: React draws it with
+   `playing` on, and one attribute on this wrapper holds every animation
+   inside at rest — each scene's last frame — until it should move. So
+   starting and stopping a scene on hover is a style change on one
+   element, not a re-render of two drawings. Turning it back on restarts
+   the scene from its first frame. */
+export const SideProjectDemo = memo(function SideProjectDemo({ id, playing, cn }: { id: SideDemoId; playing: boolean; cn: boolean }) {
   const Scene = scenes[id];
-  return <div className="absolute inset-0" data-side-demo={id} aria-hidden><Scene playing={playing} cn={cn} /></div>;
-}
+  const scene = useMemo(() => <Scene playing cn={cn} />, [Scene, cn]);
+  return (
+    <div
+      className="absolute inset-0 [&[data-run=false]_*]:animate-none!"
+      data-side-demo={id}
+      data-run={playing}
+      aria-hidden
+    >
+      {scene}
+    </div>
+  );
+});

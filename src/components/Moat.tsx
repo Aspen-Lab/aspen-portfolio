@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { motion, AnimatePresence, useInView, useReducedMotion } from "motion/react";
+import { useInView } from "motion/react";
 import {
   PencilRuler,
   TrendingUp,
@@ -14,7 +14,8 @@ import {
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 import { combos } from "@/lib/work";
-import type { Combo } from "@/lib/work";
+import type { Combo, Project } from "@/lib/work";
+import { axelProject, axelProjectCn } from "@/lib/axel";
 import { Reveal } from "./Reveal";
 import styles from "./Moat.module.css";
 
@@ -24,9 +25,12 @@ import styles from "./Moat.module.css";
    a dashed hexagon and a boxed tag on a dashed leader. Every figure on a
    sheet is one the copy already states; where there is no number (the
    delivery chain, the founding path, the awards) the sheet draws the
-   order of things, not a measurement. Flat fills only; no gradients. */
+   order of things, not a measurement. Flat fills only; no gradients.
 
-const ease = [0.22, 1, 0.36, 1] as const;
+   All six stay mounted, stacked in one cell; choosing one only flips a
+   data attribute, and the swap is a CSS cross-fade of opacity and
+   transform, so it can be interrupted midway and nothing is torn down or
+   rebuilt. */
 
 const ICONS: ComponentType<SVGProps<SVGSVGElement>>[] = [
   PencilRuler,
@@ -56,7 +60,7 @@ const COMBOS_CN: Combo[] = [
     index: "03",
     title: "前端，直接以 PR 交付",
     proof: "Axel 创始设计工程师",
-    body: "从产品设计到生产环境前端，以可审阅的 PR 交付。在 Axel，我在设计与工程之间双向打通，并把体验延伸到品牌、营销活动和 28 个交易类邮件模板。",
+    body: "从产品设计到生产环境前端，以可审阅的 PR 交付。在 Axel，我在设计与工程之间双向打通，并把体验延伸到品牌、营销活动和 79 个交易类邮件模板。",
   },
   {
     index: "04",
@@ -291,20 +295,31 @@ function Sheet({ kicker, foot, children }: { kicker: string; foot?: ReactNode; c
   );
 }
 
-/* A count drawn as what it counts: one cell per template, lit in turn. */
+/* A count drawn as what it counts: one cell per template, set in tens
+   (five by two, like a counting frame) so the number reads at a glance:
+   79 is seven full tens and one a cell short. The tens light in turn. */
 function Count({ n, label }: { n: number; label: string }) {
   return (
     <div className={styles.count}>
       <p className={styles.figure}>{n}</p>
       <p className={styles.countLabel}>{label}</p>
       <span aria-hidden className={styles.cells}>
-        {Array.from({ length: n }, (_, i) => (
-          <span key={i} style={v({ "--i": i })} />
+        {Array.from({ length: Math.ceil(n / 10) }, (_, t) => (
+          <span key={t} className={styles.ten} style={v({ "--i": t })}>
+            {Array.from({ length: Math.min(10, n - t * 10) }, (_, k) => (
+              <span key={k} />
+            ))}
+          </span>
         ))}
       </span>
     </div>
   );
 }
+
+/* The role as src/lib/axel.ts draws it: one chain from problem to
+   production, the same stages and wording as the case study. */
+const roleSpan = (p: Project) => p.sections?.find((s) => s.span)?.span;
+const ROLE = { en: roleSpan(axelProject), cn: roleSpan(axelProjectCn) };
 
 function Widget({ index, cn }: { index: number; cn: boolean }) {
   switch (index) {
@@ -346,15 +361,25 @@ function Widget({ index, cn }: { index: number; cn: boolean }) {
         </Sheet>
       );
 
-    case 2:
+    case 2: {
+      // The claim is "design through production frontend, delivered as
+      // reviewable PRs" at Axel: the chain is that role's own stages, and
+      // what comes out of the last one is the PR.
+      const role = cn ? ROLE.cn : ROLE.en;
       return (
         <Sheet
-          kicker={cn ? "交付链路" : "Delivery chain"}
-          foot={<Count n={28} label={cn ? "Axel 的交易类邮件模板" : "Transactional email templates at Axel"} />}
+          kicker={role?.total ?? (cn ? "从问题到上线" : "Problem to production")}
+          foot={
+            <Count
+              n={79}
+              label={cn ? "Axel 的交易类邮件模板，从 onboarding 到取消" : "Transactional email templates at Axel, onboarding to cancellation"}
+            />
+          }
         >
-          <Chain stops={["Figma", "tokens", "Tailwind", "Vercel"]} tag={cn ? "可审阅的 PR" : "Reviewable PR"} />
+          {role && <Chain stops={role.stages} tag={cn ? "可审阅的 PR" : "Reviewable PR"} />}
         </Sheet>
       );
+    }
 
     case 3:
       return (
@@ -414,6 +439,31 @@ function Widget({ index, cn }: { index: number; cn: boolean }) {
   }
 }
 
+/* ─── One entry ──────────────────────────────────────────────────────
+   The claim and its sheet. Memoized: a switch re-renders only the entry
+   leaving and the entry arriving, and each of those only flips `data-on`
+   and `inert` on its root. */
+
+const Entry = memo(function Entry({ combo, index, cn, on }: { combo: Combo; index: number; cn: boolean; on: boolean }) {
+  const Icon = ICONS[index];
+  return (
+    <div id={`combo-${combo.index}`} className={styles.entry} data-on={on} inert={!on}>
+      <div className={styles.copy}>
+        <div className={styles.label}>
+          <span className={styles.icon}>
+            <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
+          </span>
+          <span className={styles.title}>{combo.title}</span>
+        </div>
+        <p className={`type-display ${styles.proof}`}>{combo.proof}</p>
+        <p className={styles.body}>{combo.body}</p>
+      </div>
+
+      <Widget index={index} cn={cn} />
+    </div>
+  );
+});
+
 /* ─── Main section ─────────────────────────────────────────────────── */
 
 /* Lives at the bottom of /about now — it used to own a home tab, but the
@@ -422,15 +472,12 @@ function Widget({ index, cn }: { index: number; cn: boolean }) {
 export function Moat({ inPage = false }: { inPage?: boolean }) {
   const cn = useLocale() === "cn";
   const t = useTranslations("Moat");
-  const reduce = useReducedMotion();
   const panel = useRef<HTMLDivElement>(null);
   // The sheets draw themselves once the panel is on screen; after that,
   // each entry draws as it is chosen.
   const inView = useInView(panel, { once: true, amount: 0.35 });
   const [active, setActive] = useState(0);
   const localizedCombos = cn ? COMBOS_CN : combos;
-  const combo = localizedCombos[active];
-  const Icon = ICONS[active];
 
   return (
     <section id="combo" className={inPage ? "pb-8 scroll-mt-28" : "container-fluid pt-14 pb-32 scroll-mt-28"}>
@@ -444,81 +491,55 @@ export function Moat({ inPage = false }: { inPage?: boolean }) {
       </Reveal>
 
       {/* Numbered selector — six mono labels on the paper; the active one is
-          held by a registration bracket that glides between them. */}
+          held by a registration bracket that glides between them. The
+          labels sit on fixed columns, so the bracket's place is a plain
+          translate off one custom property; hover is CSS alone. An entry
+          is chosen by click, tap or keyboard, never by passing over it. */}
       <Reveal delay={0.05}>
-        <div className="overflow-x-auto no-scrollbar mb-10 -mx-1 px-1 pb-1">
-          <div className="inline-flex items-center gap-6 sm:gap-8 w-max">
-            {localizedCombos.map((c, i) => {
-              const on = active === i;
-              return (
-                <button
-                  key={c.index}
-                  type="button"
-                  aria-pressed={on}
-                  aria-label={`${c.index} · ${c.title}`}
-                  onClick={() => setActive(i)}
-                  onPointerEnter={(e) => e.pointerType === "mouse" && setActive(i)}
-                  className={`relative shrink-0 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] tabular-nums cursor-pointer outline-none transition-colors duration-200 focus-visible:text-ink ${
-                    on ? "text-ink" : "text-soft hover:text-ink"
-                  }`}
-                >
-                  {on && (
-                    <motion.span
-                      layoutId="combo-bracket"
-                      aria-hidden
-                      className="pointer-events-none absolute -inset-x-2.5 -inset-y-0.5"
-                      transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 34 }}
-                    >
-                      <span className="reg-mark tl" style={{ width: 7, height: 7, left: 0, top: 0 }} />
-                      <span className="reg-mark tr" style={{ width: 7, height: 7, right: 0, top: 0 }} />
-                      <span className="reg-mark br" style={{ width: 7, height: 7, right: 0, bottom: 0 }} />
-                      <span className="reg-mark bl" style={{ width: 7, height: 7, left: 0, bottom: 0 }} />
-                    </motion.span>
-                  )}
-                  {c.index}
-                </button>
-              );
-            })}
+        <div className="overflow-x-auto no-scrollbar mb-10 -mx-3 px-3 py-1">
+          <div className={styles.tabs} style={v({ "--active": active })}>
+            <span aria-hidden className={styles.bracket}>
+              <span className="reg-mark tl" style={{ width: 7, height: 7, left: 0, top: 0 }} />
+              <span className="reg-mark tr" style={{ width: 7, height: 7, right: 0, top: 0 }} />
+              <span className="reg-mark br" style={{ width: 7, height: 7, right: 0, bottom: 0 }} />
+              <span className="reg-mark bl" style={{ width: 7, height: 7, left: 0, bottom: 0 }} />
+            </span>
+            {localizedCombos.map((c, i) => (
+              <button
+                key={c.index}
+                type="button"
+                aria-pressed={active === i}
+                aria-controls={`combo-${c.index}`}
+                aria-label={`${c.index} · ${c.title}`}
+                onClick={() => setActive(i)}
+                className={styles.tab}
+              >
+                {c.index}
+              </button>
+            ))}
           </div>
         </div>
       </Reveal>
 
-      {/* Detail panel — eight viewfinder marks, the claim, and its sheet */}
+      {/* Detail panel — eight viewfinder marks around the six entries */}
       <Reveal delay={0.1}>
         <div ref={panel} className={styles.panel} data-run={inView}>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={active}
-              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -10 }}
-              transition={{ duration: reduce ? 0.12 : 0.34, ease }}
-            >
-              <div className={styles.frame}>
-                <span className="reg-mark tl" />
-                <span className="reg-mark tr" />
-                <span className="reg-mark br" />
-                <span className="reg-mark bl" />
-                <span className="vf-tick top" />
-                <span className="vf-tick bottom" />
-                <span className="vf-tick left" />
-                <span className="vf-tick right" />
+          <div className={styles.frame}>
+            <span className="reg-mark tl" />
+            <span className="reg-mark tr" />
+            <span className="reg-mark br" />
+            <span className="reg-mark bl" />
+            <span className="vf-tick top" />
+            <span className="vf-tick bottom" />
+            <span className="vf-tick left" />
+            <span className="vf-tick right" />
 
-                <div className={styles.copy}>
-                  <div className={styles.label}>
-                    <span className={styles.icon}>
-                      <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
-                    </span>
-                    <span className={styles.title}>{combo.title}</span>
-                  </div>
-                  <p className={`type-display ${styles.proof}`}>{combo.proof}</p>
-                  <p className={styles.body}>{combo.body}</p>
-                </div>
-
-                <Widget index={active} cn={cn} />
-              </div>
-            </motion.div>
-          </AnimatePresence>
+            <div className={styles.entries}>
+              {localizedCombos.map((c, i) => (
+                <Entry key={c.index} combo={c} index={i} cn={cn} on={active === i} />
+              ))}
+            </div>
+          </div>
         </div>
       </Reveal>
     </section>

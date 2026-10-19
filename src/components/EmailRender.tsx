@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { useLocale } from "next-intl";
 import styles from "./EmailRender.module.css";
@@ -18,7 +18,12 @@ import styles from "./EmailRender.module.css";
    Los Angeles search from the case study's own screenshots, the variable
    names are illustrative, nothing here is a production template. The two
    states alternate while the sheet is on screen and nobody is pointing at
-   it; a choice made by hand stays put. Reduced motion holds still. */
+   it; a choice made by hand stays put. Reduced motion holds still.
+   Every change of state is a fade or a transform: the line around the
+   fallback opens by sliding the closing braces, the headline closes up by
+   sliding the words after the slot from where they stood (measured once
+   per change, never per frame), and pointing at the sheet re-renders only
+   the toggle. */
 
 type Kind = "d" | "k" | "v" | "s" | "h" | "t" | "o" | "miss" | "city" | "fb";
 type Tok = [Kind, string];
@@ -102,17 +107,31 @@ function Fallback({ value, tag }: { value: string; tag: string }) {
       <span data-k="f">default</span>
       <span data-k="o">: </span>
       <span data-k="s">&quot;{value}&quot;</span>
+      {/* The token in the accent, faded in over the syntax colours */}
+      <span aria-hidden className={styles.lit}>
+        default: &quot;{value}&quot;
+      </span>
       {shape && (
-        <svg
-          aria-hidden
-          className={styles.ring}
-          width={shape.W + 1}
-          height={shape.H + 1}
-          style={{ left: -PAD_X, top: -PAD_Y }}
-        >
-          <polygon points={shape.points} className={styles.hex} />
-          <line x1={shape.W / 2 + 0.5} x2={shape.W / 2 + 0.5} y1={0.5} y2={-LEAD} className={styles.leader} />
-        </svg>
+        <>
+          <svg
+            aria-hidden
+            className={styles.ring}
+            width={shape.W + 1}
+            height={shape.H + 1}
+            style={{ left: -PAD_X, top: -PAD_Y }}
+          >
+            <polygon points={shape.points} className={styles.hex} />
+          </svg>
+          <svg
+            aria-hidden
+            className={styles.lead}
+            width="1"
+            height={LEAD}
+            style={{ left: shape.W / 2 - PAD_X, top: -PAD_Y - LEAD + 0.5 }}
+          >
+            <line x1="0.5" x2="0.5" y1="0" y2={LEAD} className={styles.leader} />
+          </svg>
+        </>
       )}
       <span aria-hidden className={styles.tag} style={{ bottom: `calc(100% + ${PAD_Y + LEAD}px)` }}>
         {tag}
@@ -121,36 +140,197 @@ function Fallback({ value, tag }: { value: string; tag: string }) {
   );
 }
 
-/* The one word the data decides. Both words share a cell; the cell's width
-   follows the word in use, so the rest of the line closes up around it. */
-function Slot({ words, missing }: { words: [string, string]; missing: boolean }) {
-  const a = useRef<HTMLSpanElement>(null);
-  const b = useRef<HTMLSpanElement>(null);
-  const [widths, setWidths] = useState<[number, number] | null>(null);
+const CLOSE = { duration: 520, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }; // --ease-arrive
+
+/** A transform's horizontal and vertical shift as it is seen right now. */
+function shift(el: HTMLElement) {
+  const t = getComputedStyle(el).transform;
+  const m = t && t !== "none" ? new DOMMatrixReadOnly(t) : null;
+  return { x: m?.m41 ?? 0, y: m?.m42 ?? 0 };
+}
+
+/* The headline, and the one word in it the data decides. Both words share
+   a slot; the one in use sets its width and the other stands over it while
+   it fades. When the word changes the slot takes the new width at once,
+   and then everything moves by transform alone, measured once per change:
+   the words after the slot slide from where they stood to where they now
+   stand, and each word in the slot is seen through a window whose edge
+   travels with them (the window slides one way and the word inside it the
+   other way), so the old word is wiped away, or the new one wiped in, at
+   the pace the line closes up. A word that changes line fades in on its
+   new line instead of crossing the others. */
+function Headline({
+  before,
+  words,
+  after,
+  missing,
+  still,
+}: {
+  before: string;
+  words: [string, string];
+  after: string;
+  missing: boolean;
+  still: boolean;
+}) {
+  const line = useRef<HTMLSpanElement>(null);
+  const slot = useRef<HTMLSpanElement>(null);
+  // The slot's width and where the words after it stood, as last laid out
+  const stood = useRef<{ w: number; at: { x: number; y: number }[] } | null>(null);
+  const parts = after.split(/(\s+)/).filter(Boolean);
+
+  const measure = () => {
+    const pieces = [...line.current!.querySelectorAll<HTMLElement>("[data-part]")];
+    return { pieces, w: slot.current!.offsetWidth, at: pieces.map((p) => ({ x: p.offsetLeft, y: p.offsetTop })) };
+  };
 
   useEffect(() => {
-    const ea = a.current;
-    const eb = b.current;
-    if (!ea || !eb) return;
-    const measure = () => setWidths([ea.getBoundingClientRect().width, eb.getBoundingClientRect().width]);
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(ea);
-    ro.observe(eb);
+    const el = line.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      const { w, at } = measure();
+      stood.current = { w, at };
+    });
+    ro.observe(el);
     return () => ro.disconnect();
-  }, [words]);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!line.current || !slot.current) return;
+    const { pieces, w, at } = measure();
+    const was = stood.current;
+    stood.current = { w, at };
+    if (!was || still || was.at.length !== at.length) return;
+    // Where the line's moving edge is seen now, a slide still running included
+    const lead = pieces.findIndex((_, k) => Math.abs(was.at[k].y - at[k].y) < 1);
+    const from = was.w + (lead >= 0 ? shift(pieces[lead]).x : 0);
+
+    pieces.forEach((p, k) => {
+      const seen = shift(p);
+      p.getAnimations().forEach((a) => a.cancel());
+      const dy = was.at[k].y - at[k].y;
+      if (Math.abs(dy) >= 1) {
+        p.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, delay: 200, easing: "ease", fill: "backwards" });
+        return;
+      }
+      const dx = was.at[k].x + seen.x - at[k].x;
+      if (Math.abs(dx) >= 0.5) p.animate([{ transform: `translateX(${dx}px)` }, { transform: "translateX(0)" }], CLOSE);
+    });
+
+    slot.current.querySelectorAll<HTMLElement>("[data-window]").forEach((win) => {
+      const hold = win.firstElementChild as HTMLElement;
+      win.getAnimations().forEach((a) => a.cancel());
+      hold.getAnimations().forEach((a) => a.cancel());
+      if (Math.abs(from - w) < 0.5) return;
+      const ww = win.offsetWidth;
+      win.animate([{ transform: `translateX(${from - ww}px)` }, { transform: `translateX(${w - ww}px)` }], CLOSE);
+      hold.animate([{ transform: `translateX(${ww - from}px)` }, { transform: `translateX(${ww - w}px)` }], CLOSE);
+    });
+  }, [missing, still]);
 
   return (
-    <span className={styles.slot} style={{ width: widths ? widths[missing ? 1 : 0] : undefined }}>
-      <span ref={a} className={styles.word} data-on={!missing} aria-hidden={missing}>
+    <p className={styles.headline}>
+      <span ref={line} className={styles.line}>
+        {before}
+        <span ref={slot} className={styles.slot}>
+          {words.map((word, k) => {
+            const on = (k === 1) === missing;
+            return (
+              <span key={k} data-window className={styles.window} data-on={on}>
+                <span className={styles.hold}>
+                  <span className={styles.word} data-on={on} aria-hidden={!on}>
+                    {word}
+                  </span>
+                </span>
+              </span>
+            );
+          })}
+        </span>
+        {parts.map((part, k) =>
+          /^\s+$/.test(part) ? (
+            part
+          ) : (
+            <span key={k} data-part className={styles.part}>
+              {part}
+            </span>
+          ),
+        )}
+      </span>
+      {/* The longer reading holds the height, so nothing below jumps */}
+      <span aria-hidden className={styles.ghost}>
+        {before}
         {words[0]}
+        {after}
       </span>
-      <span ref={b} className={styles.word} data-on={missing} aria-hidden={!missing}>
-        {words[1]}
-      </span>
-    </span>
+    </p>
   );
 }
+
+/* The template never changes with the state (the sheet's data-state
+   restyles it), so pointing at the sheet never re-renders it. */
+const Template = memo(function Template({ cn }: { cn: boolean }) {
+  const lines = template(cn);
+  return (
+    <pre className={styles.code}>
+      <code className={styles.lines}>
+        {lines.map((line, i) => {
+          // The tokens after the fallback slide over as the line opens round it
+          const fb = line.findIndex(([kind]) => kind === "fb");
+          return (
+            <span key={i} className={styles.row} data-focus={i === FOCUS_LINE}>
+              <span aria-hidden className={styles.num}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className={styles.src}>
+                {line.map(([kind, text], j) =>
+                  kind === "fb" ? (
+                    <Fallback key={j} value={text} tag={cn ? "兜底" : "Fallback"} />
+                  ) : (
+                    <span
+                      key={j}
+                      data-k={kind}
+                      data-t={kind === "miss" ? text : undefined}
+                      data-after={fb >= 0 && j > fb ? "" : undefined}
+                    >
+                      {text}
+                    </span>
+                  ),
+                )}
+              </span>
+            </span>
+          );
+        })}
+      </code>
+    </pre>
+  );
+});
+
+const Sky = memo(function Sky() {
+  return (
+    <svg
+      aria-hidden
+      className={styles.sky}
+      viewBox={`0 0 ${SKY[0].length * PX} ${SKY.length * PX}`}
+      width={SKY[0].length * PX * 1.2}
+      height={SKY.length * PX * 1.2}
+    >
+      {SKY.flatMap((row, y) =>
+        [...row].map((c, x) =>
+          c === "." ? null : (
+            <rect
+              key={`${x}-${y}`}
+              x={x * PX}
+              y={y * PX}
+              width={PX}
+              height={PX}
+              data-px={c}
+              style={{ ["--d" as string]: `${((x * 7 + y * 13) % 11) * 0.37}s` }}
+            />
+          ),
+        ),
+      )}
+    </svg>
+  );
+});
 
 export function EmailRender() {
   const cn = useLocale() === "cn";
@@ -173,7 +353,6 @@ export function EmailRender() {
     setMissing(next);
   };
 
-  const lines = template(cn);
   const words: [string, string] = cn ? ["洛杉矶", "下一趟"] : ["Los Angeles", "next"];
   const fallback = words[1];
   const before = cn ? "你的" : "Your ";
@@ -191,6 +370,7 @@ export function EmailRender() {
       <figure
         className={styles.sheet}
         data-state={missing ? "missing" : "data"}
+        data-run={inView && !reduce}
         aria-label={
           cn
             ? "示例：同一个 Liquid 邮件模板在有数据和缺失值时的渲染结果"
@@ -228,71 +408,16 @@ export function EmailRender() {
         </div>
 
         <div className={styles.panes}>
-          <pre className={styles.code}>
-            <code className={styles.lines}>
-              {lines.map((line, i) => (
-                <span key={i} className={styles.row} data-focus={i === FOCUS_LINE}>
-                  <span aria-hidden className={styles.num}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className={styles.src}>
-                    {line.map(([kind, text], j) =>
-                      kind === "fb" ? (
-                        <Fallback key={j} value={text} tag={cn ? "兜底" : "Fallback"} />
-                      ) : (
-                        <span key={j} data-k={kind}>
-                          {text}
-                        </span>
-                      ),
-                    )}
-                  </span>
-                </span>
-              ))}
-            </code>
-          </pre>
+          <Template cn={cn} />
 
           <div className={styles.preview}>
             <div className={styles.mail}>
               <div className={styles.head}>
                 <span className={styles.wordmark}>Axel</span>
-                <svg
-                  aria-hidden
-                  className={styles.sky}
-                  viewBox={`0 0 ${SKY[0].length * PX} ${SKY.length * PX}`}
-                  width={SKY[0].length * PX * 1.2}
-                  height={SKY.length * PX * 1.2}
-                >
-                  {SKY.flatMap((row, y) =>
-                    [...row].map((c, x) =>
-                      c === "." ? null : (
-                        <rect
-                          key={`${x}-${y}`}
-                          x={x * PX}
-                          y={y * PX}
-                          width={PX}
-                          height={PX}
-                          data-px={c}
-                          style={{ ["--d" as string]: `${((x * 7 + y * 13) % 11) * 0.37}s` }}
-                        />
-                      ),
-                    ),
-                  )}
-                </svg>
+                <Sky />
               </div>
 
-              <p className={styles.headline}>
-                <span className={styles.line}>
-                  {before}
-                  <Slot words={words} missing={missing} />
-                  {after}
-                </span>
-                {/* The longer reading holds the height, so nothing below jumps */}
-                <span aria-hidden className={styles.ghost}>
-                  {before}
-                  {words[0]}
-                  {after}
-                </span>
-              </p>
+              <Headline before={before} words={words} after={after} missing={missing} still={!!reduce} />
 
               <div className={styles.trip}>
                 <span className={styles.iata}>SEA</span>

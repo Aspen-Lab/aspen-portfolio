@@ -1,0 +1,428 @@
+/* Latent's sheet as a span chart on the dark page: a flat card on a second
+   sheet, hairline stage guides, flat bars, one accent rail and one focus.
+   No gradient fills; every mark is a flat fill or a hairline. Hover and
+   draw-in move opacity and transform only. */
+.root {
+  --accent-ink: var(--accent, var(--color-ink));
+  --hair: rgb(244 244 242 / 55%);
+  --step: 110ms;
+  /* When the rail draws: after the last bar has started */
+  --rail-at: calc(260ms + var(--rows) * var(--step));
+  display: grid;
+  gap: 36px;
+}
+
+/* ── The entries: the bars' legend ── */
+.list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 24px;
+}
+@media (min-width: 640px) {
+  .list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .list { grid-template-columns: repeat(var(--rows), minmax(0, 1fr)); }
+}
+.cell { display: grid; }
+
+.entry {
+  position: relative;
+  display: grid;
+  align-content: start;
+  width: 100%;
+  padding: 16px 0 20px;
+  border-top: 1px solid var(--color-line);
+  text-align: left;
+  cursor: pointer;
+  transition: opacity 220ms ease;
+}
+/* The lit rule over the entry in view */
+.entry::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 420ms var(--ease-arrive);
+}
+.entry[data-on]::before { transform: none; }
+.entry:focus-visible { outline: 1px dashed rgb(244 244 242 / 55%); outline-offset: 4px; }
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.num,
+.kicker,
+.rowNum,
+.stage,
+.tag {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.num {
+  color: var(--color-ink);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+}
+.kicker {
+  color: var(--color-soft);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  white-space: normal;
+}
+.title {
+  margin-top: 10px;
+  color: var(--color-ink);
+  font-size: 17px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.text {
+  margin-top: 8px;
+  color: var(--color-mute);
+  font-size: 14.5px;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+/* ── The sheet ── */
+.wrap {
+  position: relative;
+  isolation: isolate;
+  margin: 0 10px 10px 0;
+}
+.wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(10px, 10px);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: #131314;
+}
+.sheet {
+  position: relative;
+  padding: 24px 40px 76px 30px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+.plot { position: relative; }
+
+/* A band down each stage the active area covers */
+.band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--s) * 100% / var(--n));
+  width: calc(100% / var(--n));
+  background: rgb(244 244 242 / 3.5%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+.band[data-on] { opacity: 1; }
+
+.guides {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.guides line { stroke: rgb(244 244 242 / 6%); stroke-width: 1; }
+/* Where the union starts and ends, dashed */
+.guides line[data-bound="true"] { stroke: rgb(244 244 242 / 16%); stroke-dasharray: 2 4; }
+
+/* The grid every row shares: one column per stage */
+.axis,
+.row,
+.union {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+}
+
+/* ── Stage axis ── */
+.axis {
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgb(244 244 242 / 14%);
+}
+.stage {
+  padding: 0 4px;
+  overflow: hidden;
+  color: var(--color-mute);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-align: center;
+  transition: opacity 220ms ease;
+}
+.root[data-active] .stage:not([data-on]) { opacity: 0.35; }
+
+/* ── One row per area: its name, then its bar ── */
+.rows { padding: 6px 0 8px; }
+.row {
+  row-gap: 8px;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: opacity 220ms ease;
+}
+.root[data-active] [data-key]:not([data-on]) { opacity: 0.35; }
+
+.label {
+  grid-row: 1;
+  padding: 0 4px;
+  overflow: hidden;
+  color: var(--color-mute);
+  font-size: 13.5px;
+  line-height: 1.35;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.rowNum {
+  margin-right: 8px;
+  color: var(--color-soft);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar {
+  grid-row: 2;
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  margin: 0 3px;
+}
+.fill,
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+}
+.fill {
+  border: 1px solid rgb(244 244 242 / 16%);
+  background: #222225;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 720ms var(--ease-arrive) calc(140ms + var(--i) * var(--step));
+}
+.ring {
+  border: 1px solid rgb(244 244 242 / 72%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+.row[data-on] .ring { opacity: 1; }
+
+.items {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  padding: 8px 12px;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity 360ms ease calc(420ms + var(--i) * var(--step)),
+    transform 560ms var(--ease-arrive) calc(420ms + var(--i) * var(--step));
+}
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink);
+  font-size: 13.5px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.item::before {
+  content: "";
+  flex: none;
+  width: 4px;
+  height: 4px;
+  background: rgb(244 244 242 / 45%);
+}
+
+/* ── The union: a sum rule, the role's name, one accent rail ── */
+.union {
+  row-gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid rgb(244 244 242 / 24%);
+}
+.total {
+  grid-row: 1;
+  padding: 0 3px;
+  color: var(--color-ink);
+  font-size: 16px;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+  opacity: 0;
+  transition: opacity 420ms ease var(--rail-at);
+}
+.rail {
+  grid-row: 2;
+  position: relative;
+  height: 8px;
+  margin: 0 3px;
+}
+.railFill {
+  position: absolute;
+  inset: 0;
+  border-radius: 1px;
+  background: var(--accent-ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 900ms var(--ease-arrive) var(--rail-at);
+}
+/* A tick where the chain starts */
+.railFill::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  left: 0;
+  width: 2px;
+  background: var(--accent-ink);
+}
+
+/* ── The focus: the Ship end ── */
+.focus {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 100%;
+  width: 0;
+  height: 0;
+}
+.dot {
+  position: absolute;
+  top: -7.5px;
+  left: -7.5px;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--color-cream);
+  border-radius: 999px;
+  background: var(--accent-ink);
+  opacity: 0;
+  transform: scale(0.3);
+  transition:
+    opacity 200ms ease calc(var(--rail-at) + 700ms),
+    transform 460ms var(--ease-arrive) calc(var(--rail-at) + 700ms);
+}
+.mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 320ms ease calc(var(--rail-at) + 820ms);
+}
+.hex {
+  fill: none;
+  stroke: var(--hair);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.leader { stroke: var(--hair); stroke-width: 1; stroke-dasharray: 2 3; }
+.tag {
+  position: absolute;
+  top: 40px;
+  right: -14px;
+  padding: 5px 8px 4px;
+  border: 1px solid var(--hair);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 260ms ease calc(var(--rail-at) + 880ms),
+    transform 460ms var(--ease-arrive) calc(var(--rail-at) + 880ms);
+}
+
+/* ── Drawn: once, when the sheet comes into view ── */
+.root[data-in="true"] .fill,
+.root[data-in="true"] .railFill { transform: none; }
+.root[data-in="true"] .items { opacity: 1; transform: none; }
+.root[data-in="true"] .total { opacity: 1; }
+.root[data-in="true"] .dot { opacity: 1; transform: none; }
+.root[data-in="true"] .mark { opacity: 1; }
+.root[data-in="true"] .tag { opacity: 1; transform: none; }
+
+/* ── Chinese: no capitals to set, so a sans a size up ── */
+:global(html[lang="zh-CN"]) .kicker,
+:global(html[lang="zh-CN"]) .stage,
+:global(html[lang="zh-CN"]) .tag {
+  font-family: var(--font-sans);
+  letter-spacing: 0.06em;
+}
+:global(html[lang="zh-CN"]) .kicker { font-size: 12.5px; }
+:global(html[lang="zh-CN"]) .stage { font-size: 13px; }
+:global(html[lang="zh-CN"]) .tag { font-size: 11.5px; }
+
+/* ── Phones: the sheet tightens; each bar lists its items one per line,
+   so a two-stage bar never wraps mid-list ── */
+@media (max-width: 639px) {
+  .root { gap: 28px; }
+  .entry { padding: 14px 0 16px; }
+  .title { font-size: 16.5px; }
+  .sheet { padding: 20px 22px 72px 14px; }
+  .stage { padding: 0 1px; font-size: 10px; letter-spacing: 0.06em; }
+  .label { font-size: 13px; }
+  .rowNum { margin-right: 6px; }
+  .bar { margin: 0 2px; }
+  .items {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 7px 8px;
+  }
+  .item { font-size: 13px; }
+  .item::before { display: none; }
+  .total { font-size: 15px; }
+  .rail { margin: 0 2px; }
+  .tag { right: -10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry,
+  .entry::before,
+  .band,
+  .stage,
+  .row,
+  .fill,
+  .ring,
+  .items,
+  .total,
+  .railFill,
+  .dot,
+  .mark,
+  .tag { transition: none; }
+  /* The finished sheet, whether or not it has been seen */
+  .fill,
+  .railFill,
+  .items,
+  .dot,
+  .tag { transform: none; }
+  .items,
+  .total,
+  .dot,
+  .mark,
+  .tag { opacity: 1; }
+}

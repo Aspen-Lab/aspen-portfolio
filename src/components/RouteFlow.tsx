@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion } from "motion/react";
 import { useLocale } from "next-intl";
 import styles from "./RouteFlow.module.css";
@@ -14,9 +14,15 @@ type Step = { id: string; label: string; caption?: string };
    The stops sit on the arc at the centres of the label columns, so every
    label hangs under its own dot. The plane flies the arc once when the
    card comes into view; each stop lights as it passes, and the badge lands
-   with it. Reduced motion shows the finished trip. */
+   with it. Reduced motion shows the finished trip.
+   The flight runs on the compositor: the plane is a layer of its own moved
+   by transform, the flown dots are seen through a window that slides open
+   behind it (the window one way, the dots inside it the other), and each
+   stop's lit dot fades in on its own layer, so the arc is drawn once and
+   never repainted while the plane crosses it. */
 
 const W = 1000;
+const H = 96;
 const BASE = 72;
 const APEX = -8;
 
@@ -61,26 +67,44 @@ export function RouteFlow({ steps, title }: { steps: Step[]; title?: string }) {
   const cn = useLocale() === "cn";
   const reduce = useReducedMotion();
   const card = useRef<HTMLDivElement>(null);
-  const plane = useRef<SVGGElement>(null);
-  const trail = useRef<SVGRectElement>(null);
+  const plane = useRef<HTMLSpanElement>(null);
+  const win = useRef<HTMLSpanElement>(null);
+  const hold = useRef<HTMLSpanElement>(null);
+  const reachedNow = useRef(-1);
   const inView = useInView(card, { once: true, amount: 0.6 });
   const n = steps.length;
   const stops = steps.map((_, i) => (n > 1 ? i / (n - 1) : 0));
   const progress = useMotionValue(-TAXI);
-  // One clip per card: two routes on a page must not share an id.
-  const clipId = `route-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const [reached, setReached] = useState(-1);
 
   const { p0, p1, p2 } = arc(n);
   const path = `M${p0.x} ${p0.y} Q${p1.x} ${p1.y} ${p2.x} ${p2.y}`;
-  const start = pose(n, -TAXI);
+  const view = `0 0 ${W} ${H}`;
+
+  /* Each layer is as big as the arc, so a translate in per cent is a
+     distance along it in the arc's own units. */
+  const flight = (t: number) => {
+    const { x, y, angle, trail: flown } = pose(n, t);
+    const open = (flown / W) * 100;
+    return {
+      plane: `translate(${((x / W) * 100).toFixed(3)}%, ${((y / H) * 100).toFixed(3)}%) rotate(${angle.toFixed(2)}deg)`,
+      win: `translateX(${(open - 100).toFixed(3)}%)`,
+      hold: `translateX(${(100 - open).toFixed(3)}%)`,
+    };
+  };
+  const start = flight(-TAXI);
 
   useMotionValueEvent(progress, "change", (t) => {
-    const { x, y, angle, trail: flown } = pose(n, t);
-    plane.current?.setAttribute("transform", `translate(${x} ${y}) rotate(${angle})`);
-    trail.current?.setAttribute("width", String(flown));
+    const f = flight(t);
+    if (plane.current) plane.current.style.transform = f.plane;
+    if (win.current) win.current.style.transform = f.win;
+    if (hold.current) hold.current.style.transform = f.hold;
+    // React hears about a stop only when the plane passes one
     const last = stops.filter((s) => t >= s - 0.002).length - 1;
-    setReached((r) => (r === last ? r : last));
+    if (last !== reachedNow.current) {
+      reachedNow.current = last;
+      setReached(last);
+    }
   });
 
   useEffect(() => {
@@ -103,28 +127,40 @@ export function RouteFlow({ steps, title }: { steps: Step[]; title?: string }) {
 
       {title && <p className={styles.pill}>{title}</p>}
 
-      <svg aria-hidden className={styles.route} viewBox={`0 0 ${W} 96`} preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <clipPath id={clipId}>
-            <rect ref={trail} x="0" y="-40" width={start.trail} height="160" />
-          </clipPath>
-        </defs>
-        <path d={path} className={styles.dots} />
-        <path d={path} className={styles.flown} clipPath={`url(#${clipId})`} />
+      <div aria-hidden className={styles.track}>
+        {/* The arc and its stops at rest, drawn once */}
+        <svg className={styles.route} viewBox={view}>
+          <path d={path} className={styles.dots} />
+          {stops.map((s, i) => {
+            const { x, y } = point(n, s);
+            return <circle key={steps[i].id} cx={x} cy={y} r={i === 0 || i === n - 1 ? 7 : 5.5} className={styles.dot} />;
+          })}
+        </svg>
+        {/* The flown dots, seen through a window that opens behind the plane */}
+        <span ref={win} className={styles.window} style={{ transform: start.win }}>
+          <span ref={hold} className={styles.hold} style={{ transform: start.hold }}>
+            <svg className={styles.layer} viewBox={view}>
+              <path d={path} className={styles.flown} />
+            </svg>
+          </span>
+        </span>
+        {/* Each stop lit, on its own layer, faded in as the plane passes */}
         {stops.map((s, i) => {
           const { x, y } = point(n, s);
           const end = i === 0 || i === n - 1;
           return (
-            <g key={steps[i].id} className={styles.stop} data-on={i <= reached} data-end={end}>
+            <svg key={steps[i].id} className={styles.lit} data-on={i <= reached} viewBox={view}>
               {end && <circle cx={x} cy={y} r="13" className={styles.halo} />}
-              <circle cx={x} cy={y} r={end ? 7 : 5.5} className={styles.dot} />
-            </g>
+              <circle cx={x} cy={y} r={end ? 7 : 5.5} className={styles.dotOn} />
+            </svg>
           );
         })}
-        <g ref={plane} transform={`translate(${start.x} ${start.y}) rotate(${start.angle})`}>
-          <path d={PLANE} className={styles.plane} transform="scale(1.35)" />
-        </g>
-      </svg>
+        <span ref={plane} className={styles.flight} style={{ transform: start.plane }}>
+          <svg className={styles.layer} viewBox={view}>
+            <path d={PLANE} className={styles.plane} transform="scale(1.35)" />
+          </svg>
+        </span>
+      </div>
 
       <ol className={styles.steps} style={{ ["--n" as string]: n }}>
         {steps.map((step, i) => (
