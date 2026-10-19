@@ -28,6 +28,36 @@ export type RouteCard = {
 /** The same shape under the name NonstopRoute was first written against. */
 export type NonstopRouteData = RouteCard;
 
+/** One first-screen figure. On banded pages each renders as a solid
+    outcome tile (OutcomeTiles); elsewhere only label and value are read. */
+export type Metric = {
+  label: string;
+  value: string;
+  /** boxed chip in the tile footer */
+  tag?: string;
+  /** value in the page accent: the owner's or the work's own figure */
+  accent?: boolean;
+  /** "#s-04": the whole tile links to that section */
+  href?: string;
+  /** "matrix": one lit square per unit; "codes": the value split at " · " into code blocks */
+  viz?: "matrix" | "codes";
+};
+
+/** What the tools do and what stays the owner's, drawn as two blocks. */
+export type Ownership = {
+  tools: { title: string; items: string[] };
+  mine: { title: string; items: string[] };
+  note: string;
+};
+
+/** The SOP documents' extra drawing data: the acceptance checklist rows,
+    the delivery market codes, and the cycle bar (`cut` is the % removed). */
+export type SopData = {
+  checks: string[];
+  codes: string[];
+  cycle: { label: string; value: string; cut: number; before: string; after: string };
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -41,6 +71,12 @@ export type Project = {
   /** "editorial": the calm case-study layout (no chapters or Themes row,
       wide photo stages). Every template change it brings is gated on it. */
   layout?: "editorial";
+  /** The Latent band layout: full-bleed dark, light and grey bands, charts
+      on paper sheets, solid tiles. Every template change it brings is
+      gated on it, so cases without it render as before. */
+  bands?: true;
+  /** An exact substring of `title`, set in the page accent. */
+  titleAccent?: string;
   summary: string;
   tags: string[];
   cover?: string;
@@ -56,14 +92,23 @@ export type Project = {
   heroVideo?: string;
   /** One accent for the page's charts (the project's own colour). */
   accent?: string;
+  /** The accent for text and strokes on light and grey bands, where the
+      accent itself is too light to read. */
+  accentDeep?: string;
   /** Notes on the cover, in % of the 16:9 case-study frame. */
   coverNotes?: ImageNote[];
   /** One visible line under the cover, above its notes. */
   coverCaption?: string;
-  metrics?: { label: string; value: string }[];
+  metrics?: Metric[];
+  /** Section anchors are not stored: the page derives s-01, s-02, … from
+      each section's index, so `href: "#s-04"` points at the fourth. */
   sections?: {
     heading: string;
     body: string;
+    /** Banded pages only: the section sits on a light or grey band (dark otherwise). */
+    band?: "light" | "grey";
+    /** An exact substring of `heading`, set in the page accent. */
+    headingAccent?: string;
     images?: string[];
     imageLayout?: "single" | "grid-2" | "grid-3" | "grid-4";
     imageRatio?: "16/10" | "16/9" | "4/3" | "1/1" | "auto";
@@ -77,6 +122,14 @@ export type Project = {
       stage?: "wide";
       /** Turns the figure into an annotated image (notes in % of the image). */
       notes?: ImageNote[];
+      /** "split": image beside a black slab that holds the notes. */
+      layout?: "split";
+      /** CSS aspect-ratio of the crop, e.g. "1 / 1" (notes in % of that crop). */
+      aspect?: string;
+      /** CSS object-position of the crop. */
+      position?: string;
+      /** The slab's kicker line. */
+      kicker?: string;
     }[];
     videos?: {
       src: string;
@@ -96,13 +149,22 @@ export type Project = {
       label: string;
       problem: string;
       approach: string;
+      /** The layer's fix in a few words: the tab title on banded pages. */
+      title?: string;
     }[];
     pullQuote?: {
       text: string;
       attribution?: string;
     };
-    /** Code-drawn figures: the design-and-code surface ledger, the email render check. */
-    visual?: "surfaces" | "email-render";
+    /** Code-drawn figures: the design-and-code surface ledger, the email
+        render check, the AI ownership strip, the SOP documents. */
+    visual?: "surfaces" | "email-render" | "ownership" | "sop";
+    /** Data for visual "ownership". */
+    ownership?: Ownership;
+    /** Data for visual "sop" (the documents also read `iconList.items`). */
+    sop?: SopData;
+    /** The hub label of the markets constellation. */
+    marketsHub?: string;
     /** One owner's route from a problem to a PR, as Axel's flight card. */
     route?: RouteCard;
     /** @deprecated No case sets it any more. Kept only because the about
@@ -115,6 +177,8 @@ export type Project = {
         label: string;
         icon?: string;
         hint?: string;
+        /** "#s-06": the tile links to the section that holds the evidence. */
+        href?: string;
       }[];
       cols?: 2 | 3 | 4;
     };
@@ -129,21 +193,30 @@ export type Project = {
         icon?: string;
         label: string;
         text?: string;
+        /** Small solid chips under the text (e.g. regulator names). */
+        chips?: string[];
       }[];
       columns?: 1 | 2 | 3;
-      /** "charts": each item gets a small Latent-style plot above its text. */
-      variant?: "charts";
+      /** "charts": each item gets a small Latent-style plot above its text.
+          "tiles": solid tiles. "joined": light tiles joined to one bar. */
+      variant?: "charts" | "tiles" | "joined";
+      /** The label of the bar a "joined" list hangs from. */
+      joinLabel?: string;
     };
     callout?: {
       variant?: "info" | "warn" | "tip" | "note" | "insight";
       label?: string;
       title?: string;
       text: string;
+      /** An exact substring of `title`, set in the page accent. */
+      accent?: string;
     };
     chart?: {
       type: "bar" | "funnel";
       title?: string;
       max?: number;
+      /** "split": the chart on a paper cell beside a black readout slab. */
+      layout?: "split";
       data: {
         label: string;
         value: number;
@@ -362,6 +435,8 @@ export const projects: Project[] = [
   {
     slug: "tiktok",
     title: "TikTok Pay KYC, scaled across markets",
+    bands: true,
+    titleAccent: "scaled across markets",
     client: "TikTok · PIPO UED",
     role: "Product Designer (Intern)",
     period: "Jun — Sep 2025",
@@ -377,11 +452,16 @@ export const projects: Project[] = [
     coverFit: "contain",
     coverPosition: "50% 100%",
     coverBg: "#000",
+    // The selected/next-action red of TikTok's own KYC screens on the
+    // cover (the chosen ID radio, "Recommended", the primary button): on
+    // this page it marks only the focus, never a drop-off or an error.
+    accent: "#fe2c55",
+    accentDeep: "#d0103a",
     status: "live",
     metrics: [
-      { label: "Vietnam KYC completion", value: "70 → 90%" },
-      { label: "Vendor integration cycle", value: "−40%" },
-      { label: "Markets shipped", value: "VN · MY · ID · US" },
+      { label: "Vietnam KYC completion", value: "70 → 90%", accent: true, href: "#s-06" },
+      { label: "Vendor integration cycle", value: "−40%", accent: true, href: "#s-07" },
+      { label: "Markets shipped", value: "VN · MY · ID · US", viz: "codes", href: "#s-02" },
     ],
     sections: [
       {
@@ -392,14 +472,18 @@ export const projects: Project[] = [
           items: [
             { icon: "id", label: "Identity verification", text: "Local ID + selfie + liveness check, per market." },
             { icon: "lock", label: "Compliance contract", text: "Each regulator audits the flow, the data, the SDK." },
-            { icon: "globe", label: "4 frameworks", text: "SBV · BNM · OJK · FinCEN — same gate, different rulebooks." },
+            { icon: "globe", label: "4 frameworks", text: "SBV · BNM · OJK · FinCEN — same gate, different rulebooks.", chips: ["SBV", "BNM", "OJK", "FinCEN"] },
           ],
           columns: 3,
+          variant: "tiles",
         },
         callout: {
           variant: "insight",
           label: "Why design has leverage here",
-          text: "KYC sits at the **front of the funnel**. A 10-point completion lift across 4 markets compounds into hundreds of millions of payment volume. That's the slot where one designer × one engineer can move the entire business curve.",
+          // The callout's own first sentence, lifted into its title
+          title: "KYC sits at the front of the funnel.",
+          accent: "front of the funnel",
+          text: "A 10-point completion lift across 4 markets compounds into hundreds of millions of payment volume. That's the slot where one designer × one engineer can move the entire business curve.",
         },
         pullQuote: {
           text: "When KYC breaks, users drop off. When it's loose, the regulator does.",
@@ -409,7 +493,9 @@ export const projects: Project[] = [
       {
         chapter: "Background",
         heading: "Where the work landed",
-        body: "Four markets. One design system. TikTok Pay · Shop · Live across all.",
+        // Product list held together (no-break spaces) so a wrap never strands a "·".
+        body: "Four markets. One design system. TikTok\u00a0Pay\u00a0·\u00a0Shop\u00a0·\u00a0Live across all.",
+        marketsHub: "One design system",
         markets: [
           { code: "VN", name: "Vietnam", regulator: "SBV", scope: "Pay · Shop · Live" },
           { code: "MY", name: "Malaysia", regulator: "BNM", scope: "Pay · Shop" },
@@ -420,10 +506,13 @@ export const projects: Project[] = [
       {
         chapter: "Strategy",
         heading: "Three layers of the problem",
+        band: "light",
+        headingAccent: "Three layers",
         body: "**UX · Compliance · UI** — three distinct failures, three distinct fixes. None solvable alone.",
         layers: [
           {
             label: "UX",
+            title: "“Not My ID” escape path",
             problem:
               "Users reusing historical identity data had no fallback when their ID couldn't be found — flow forked into silent drop-offs.",
             approach:
@@ -431,6 +520,7 @@ export const projects: Project[] = [
           },
           {
             label: "Compliance",
+            title: "Standardized field schema",
             problem:
               "OCR fields inconsistent MY ↔ VN. Manual re-entry. Regulatory risk in the inconsistency itself.",
             approach:
@@ -438,6 +528,7 @@ export const projects: Project[] = [
           },
           {
             label: "UI",
+            title: "SDK-AAI style alignment",
             problem:
               "Vendor SDK type, radius, icons, errors fragmented. Trust collapsed at the handoff to vendor UI.",
             approach:
@@ -448,6 +539,7 @@ export const projects: Project[] = [
       {
         chapter: "Strategy",
         heading: "Three audiences, one flow",
+        band: "light",
         body: "Each KYC change had to satisfy *all three* at once.",
         iconList: {
           items: [
@@ -456,6 +548,8 @@ export const projects: Project[] = [
             { icon: "layers", label: "Design", text: "Framework that absorbs many SDKs without falling apart." },
           ],
           columns: 3,
+          variant: "joined",
+          joinLabel: "One flow",
         },
       },
       {
@@ -492,6 +586,7 @@ export const projects: Project[] = [
         body: "Vietnam was the trial — once it landed, the same pattern (escape path + Goal Gradient + standardized OCR) ported to MY · ID · US.",
         chart: {
           type: "funnel",
+          layout: "split",
           title: "KYC funnel · Vietnam · v1 → v2",
           data: [
             { label: "Open KYC", value: 100, display: "100%" },
@@ -506,6 +601,9 @@ export const projects: Project[] = [
         chapter: "Execution",
         heading: "Vendor Docking SOP",
         body: "First standardized SOP for TikTok PIPO — workflows, acceptance criteria, UI delivery priorities. The artifact I'm proudest of.",
+        // Three SOP documents drawn from the iconList below; `sop` adds
+        // only words already in those texts and the −40% result.
+        visual: "sop",
         iconList: {
           items: [
             { icon: "workflow", label: "Workflow", text: "Stages, owners, acceptance gates per SDK vendor." },
@@ -514,6 +612,11 @@ export const projects: Project[] = [
           ],
           columns: 3,
         },
+        sop: {
+          checks: ["OCR mapping", "UI templates", "Halts"],
+          codes: ["VN", "MY", "ID", "US"],
+          cycle: { label: "Vendor integration cycle", value: "−40%", cut: 40, before: "Before", after: "With the SOP" },
+        },
         pullQuote: {
           text: "Cross-market scalability stopped being a function of who was on shift.",
           attribution: "what the SOP changed",
@@ -521,14 +624,16 @@ export const projects: Project[] = [
       },
       {
         chapter: "Outcome",
-        heading: "Results",
-        body: "What shipped, what stuck.",
+        // The old body line is the heading now; each tile links to its evidence
+        heading: "What shipped, what stuck.",
+        headingAccent: "what stuck.",
+        body: "",
         statGrid: {
           items: [
-            { value: "70 → 90%", label: "VN new-user KYC", icon: "gauge", hint: "Vietnam completion lift." },
-            { value: "−40%", label: "Vendor cycle", icon: "arrow-up-right", hint: "Onboarding new SDKs, faster." },
-            { value: "4", label: "Markets shipped", icon: "globe", hint: "VN · MY · ID · US." },
-            { value: "1", label: "OCR taxonomy", icon: "shield", hint: "Co-authored with Legal + Risk." },
+            { value: "70 → 90%", label: "VN new-user KYC", icon: "gauge", hint: "Vietnam completion lift.", href: "#s-06" },
+            { value: "−40%", label: "Vendor cycle", icon: "arrow-up-right", hint: "Onboarding new SDKs, faster.", href: "#s-07" },
+            { value: "4", label: "Markets shipped", icon: "globe", hint: "VN · MY · ID · US.", href: "#s-02" },
+            { value: "1", label: "OCR taxonomy", icon: "shield", hint: "Co-authored with Legal + Risk.", href: "#s-03" },
           ],
           cols: 4,
         },

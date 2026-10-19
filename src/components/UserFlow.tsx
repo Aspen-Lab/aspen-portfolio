@@ -33,17 +33,22 @@ type Props = {
   title?: string;
 };
 
-/* A flow drawn on Latent's plotted sheet (latenthealth.com, "Platform"):
-   a flat card on a second card, the steps as boxed tags strung on one
-   dashed path, a decision drawn as a hexagon. The step that forks is the
-   chart's one focus — it carries the dashed hexagon ring, and its branch
-   leaves as Latent's leader does: a dashed line down to a boxed tag, then
-   a side path into the place the branch leads. Start and end are marked on
-   the path itself (a ring in, a dot out), not by filling their boxes.
+/* A flow drawn on Latent's plotted sheet (latenthealth.com, "Platform"),
+   given weight: a dark sheet on a black back sheet, every step a solid
+   paper plate strung on one solid path, the decision a solid paper
+   hexagon. The step that forks is the chart's one focus — it carries the
+   dashed hexagon ring, and its branch leaves as Latent's leader does: a
+   dashed line down to the branch's tag (a solid chip in the page accent,
+   the product's own "your next action" red), then a side path into the
+   place the branch leads. A step whose caption counts its progress
+   ("3 of 4") carries a meter of that many segments. Start and end are
+   marked on the path itself (a ring in, a dot out).
    From a wide sheet the steps run left to right and the branches hang
    below; on a narrow one the path runs down the left and each branch sits
    under its step. The steps light along the path once, when the sheet
-   comes into view. Reduced motion: the finished drawing, the ring still. */
+   comes into view. Hovering or focusing the branch draws its leaders
+   solid (an overlay fading in; nothing mounts). Reduced motion: the
+   finished drawing. The ring never turns. */
 
 const TIP = 14; // how far the hexagon's points stand off its sides, px
 const RING = 6; // the focus ring's distance from the hexagon, px (the branch's drop starts just past it)
@@ -108,6 +113,17 @@ function Hexagon({ focus }: { focus: boolean }) {
   );
 }
 
+/** "3 of 4 done" / "已完成 3/4" → [3, 4]; anything else → null. */
+function progress(caption?: string): [number, number] | null {
+  const m = caption?.match(/(\d+)\s*(?:of|\/)\s*(\d+)/);
+  if (!m) return null;
+  const done = Number(m[1]);
+  const total = Number(m[2]);
+  return total > 0 && total <= 12 && done <= total ? [done, total] : null;
+}
+
+const HAN = /\p{Script=Han}/u;
+
 export function UserFlow({ steps, branches, title }: Props) {
   const cn = useLocale() === "cn";
   const root = useRef<HTMLElement>(null);
@@ -124,7 +140,7 @@ export function UserFlow({ steps, branches, title }: Props) {
 
   return (
     <div className={styles.wrap}>
-      <figure ref={root} className={styles.sheet} data-lit={inView}>
+      <figure ref={root} className={styles.sheet} data-lit={inView} data-cn={cn}>
         {title && <figcaption className={styles.title}>{title}</figcaption>}
         <ol className={styles.flow} style={{ ["--n" as string]: n } as CSSProperties}>
           {steps.map((s, i) => {
@@ -133,6 +149,7 @@ export function UserFlow({ steps, branches, title }: Props) {
             // A fork's branches hang under its column and run right, as far
             // as the next fork's column or the sheet's edge.
             const next = forkCols.find((c) => c > i) ?? n;
+            const meter = progress(s.caption);
             return (
               <Fragment key={s.id}>
                 <li
@@ -142,13 +159,24 @@ export function UserFlow({ steps, branches, title }: Props) {
                   data-last={i === n - 1}
                   style={{ ["--i" as string]: i, ["--col" as string]: i + 1 } as CSSProperties}
                 >
-                  <div className={styles.box} data-focus={i === focus}>
+                  {/* Steps are solid paper plates; the decision is its hexagon */}
+                  <div
+                    className={`${styles.box} ${kind === "decision" ? "" : "paper"}`}
+                    data-focus={i === focus}
+                  >
                     {kind === "decision" && <Hexagon focus={i === focus} />}
                     <span aria-hidden className={styles.num}>
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <p className={styles.label}>{s.label}</p>
                     {s.caption && <p className={styles.caption}>{s.caption}</p>}
+                    {meter && (
+                      <span aria-hidden className={styles.meter}>
+                        {Array.from({ length: meter[1] }, (_, k) => (
+                          <span key={k} data-on={k < meter[0]} />
+                        ))}
+                      </span>
+                    )}
                   </div>
                 </li>
                 {out && (
@@ -167,7 +195,10 @@ export function UserFlow({ steps, branches, title }: Props) {
                       <div key={`${b.label}-${k}`} className={styles.branch} data-last={k === out.length - 1}>
                         <span aria-hidden className={styles.drop} />
                         <span aria-hidden className={styles.run} />
-                        <p className={styles.tag}>
+                        {/* The same leaders drawn solid, shown while the branch is pointed at */}
+                        <span aria-hidden className={`${styles.drop} ${styles.lit}`} />
+                        <span aria-hidden className={`${styles.run} ${styles.lit}`} />
+                        <p className={styles.tag} tabIndex={0} data-cjk={HAN.test(b.label)}>
                           <span className="sr-only">{cn ? "分支：" : "Branch: "}</span>
                           {b.label}
                         </p>

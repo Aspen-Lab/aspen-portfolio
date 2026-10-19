@@ -1,15 +1,13 @@
-/* Latent's flat sheet, split in two: the template in mono on the left,
-   the message on the right. Ink tones for the syntax, one pink focus for
-   the fallback, hairlines throughout; no gradient fills. */
+/* Two of Latent's numbered tabs over two blocks: the template on a black
+   slab, the message on a stacked paper sheet like a print proof. Ink
+   tones for the syntax; the one accent is the fallback, a solid chip, and
+   its bar in the preview. Flat fills and 1px lines; no gradient. */
 .wrap {
   --accent-ink: var(--accent, var(--color-ink));
 }
 .sheet {
   position: relative;
   margin: 0;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
 }
 
 /* What the sheet is, said plainly under it */
@@ -20,74 +18,118 @@
   line-height: 1.5;
 }
 
-/* ── The toggle ── */
-.bar {
-  display: flex;
-  align-items: center;
-  padding: 16px 16px 15px;
-  border-bottom: 1px solid var(--color-line);
-}
-@media (min-width: 640px) { .bar { padding: 18px 22px 17px; } }
-
-.toggle {
-  position: relative;
+/* ── The tabs: 01 Event data / 02 Missing value ── */
+.tabs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: 3px;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-paper);
+  column-gap: 16px;
+  margin-bottom: 24px;
 }
-.thumb {
-  position: absolute;
-  top: 3px;
-  bottom: 3px;
-  left: 3px;
-  width: calc(50% - 3px);
-  overflow: hidden;
-  border: 1px solid rgb(244 244 242 / 16%);
-  border-radius: 2px;
-  background: rgb(244 244 242 / 7%);
-  transition: transform 460ms var(--ease-arrive);
+@media (min-width: 640px) { .tabs { column-gap: 24px; } }
+/* Over the two blocks, on the same columns */
+@media (min-width: 1024px) {
+  .tabs { grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr); }
 }
-.sheet[data-state="missing"] .thumb { transform: translateX(100%); }
-
-/* Ink at 63% reads as the muted grey on the toggle; chosen or pointed at,
-   full ink. A fade, not a repaint. */
-.seg {
+.tab {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  padding: 8px 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px 0 16px;
+  border-bottom: 1px solid rgb(244 244 242 / 16%);
   color: var(--color-ink);
-  font-size: 14px;
-  line-height: 1.2;
-  white-space: nowrap;
+  text-align: left;
   cursor: pointer;
-  opacity: 0.63;
+}
+@media (min-width: 640px) { .tab { gap: 16px; } }
+/* The words fade, not the tab, so the underline filling under the next
+   tab reads at full strength */
+.tabNum,
+.tabLabel {
+  opacity: 0.42;
   transition: opacity 220ms ease;
 }
-.seg[data-on="true"] { opacity: 1; }
-.seg:hover { opacity: 1; }
-.seg:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 2px; border-radius: 2px; }
-
-/* A filled dot for data that arrived, an empty ring for data that did not */
-.glyph {
-  width: 7px;
-  height: 7px;
-  flex: none;
-  border-radius: 999px;
+@media (hover: hover) {
+  .tab:hover .tabNum,
+  .tab:hover .tabLabel { opacity: 0.7; }
 }
-.glyph[data-kind="data"] { background: currentColor; }
-.glyph[data-kind="missing"] { border: 1px solid currentColor; }
+.tab[data-on="true"] .tabNum,
+.tab[data-on="true"] .tabLabel { opacity: 1; }
+.tab:focus-visible { outline-offset: 4px; }
+.tabNum {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.tabLabel {
+  min-width: 0;
+  font-size: 16px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The underline: drawn full under the tab in view; the second tab's fills
+   once, left to right, before the sheet switches to it by itself */
+.fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: #f4f4f2;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 420ms var(--ease-arrive);
+}
+.fill[data-k="1"] { background: var(--accent-ink); }
+.tab[data-on="true"] .fill { transform: none; }
+.sheet[data-auto="true"] .fill[data-k="1"] {
+  animation: emFill 1600ms linear forwards;
+  animation-play-state: paused;
+}
+.sheet[data-auto="true"][data-run="true"] .fill[data-k="1"] { animation-play-state: running; }
+@keyframes emFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
 
-/* ── The two panes ── */
-.panes { display: grid; }
+/* ── The two blocks ── the proof first on a narrow screen, the template
+   on the left from 1024px */
+.panes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+.proofStack { order: -1; }
 @media (min-width: 1024px) {
   .panes { grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr); }
+  .proofStack { order: 0; }
 }
+
+/* The template's slab keeps the dark tokens it was drawn with */
+.codeSlab {
+  --color-ink: #f4f4f2;
+  --color-mute: #a0a0a5;
+  --color-soft: #717177;
+  --color-line: #252528;
+  --color-paper: #0f0f10;
+  display: grid;
+  min-width: 0;
+}
+
+/* The proof: Axel's dark card laid on paper, crop marks in the corners */
+.proofStack { display: grid; min-width: 0; }
+.proof.proof {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 36px 20px;
+}
+@media (min-width: 640px) { .proof.proof { padding: 40px 28px; } }
 
 /* The template. Lines wrap inside their own box on a phone, with a
    hanging indent, rather than pushing the page sideways. */
@@ -126,7 +168,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: rgb(244 244 242 / 3.5%);
+  background: #161618;
   opacity: 0;
   transform: scaleX(0.985);
   transform-origin: left;
@@ -221,8 +263,11 @@
 .lit {
   position: absolute;
   top: 0;
-  left: 0;
-  color: var(--accent-ink);
+  left: -4px;
+  padding: 0 4px;
+  border-radius: 2px;
+  background: var(--accent-ink);
+  color: #0f0f10;
   white-space: pre;
   opacity: 0;
   pointer-events: none;
@@ -268,18 +313,10 @@
   transition-delay: 140ms;
 }
 
-.tag {
+.sheet .tag {
   position: absolute;
   left: 50%;
-  padding: 5px 8px 4px;
-  border: 1px solid rgb(244 244 242 / 55%);
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: 12px;
   line-height: 1.1;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
@@ -295,24 +332,21 @@
 /* Chinese is never set in mono capitals */
 .sheet[data-cn="true"] .tag {
   padding: 4px 8px 4px;
+  text-transform: none;
   font-family: var(--font-sans);
   font-size: 13px;
   letter-spacing: 0.04em;
 }
 
-/* ── The message ── */
-.preview {
-  display: grid;
-  place-items: center;
-  padding: 22px 16px 26px;
-  border-top: 1px solid var(--color-line);
-}
-@media (min-width: 640px) { .preview { padding: 34px 32px 36px; } }
-@media (min-width: 1024px) {
-  .preview { padding: 30px 28px; border-top: 0; border-left: 1px solid var(--color-line); }
-}
-
+/* ── The message: dark-native, so it pins its own tokens on the paper ── */
 .mail {
+  --color-ink: #f4f4f2;
+  --color-mute: #a0a0a5;
+  --color-soft: #717177;
+  --color-line: #252528;
+  --color-paper: #0f0f10;
+  --trip: #1c1c1e;
+  position: relative;
   display: grid;
   justify-items: start;
   width: 100%;
@@ -320,8 +354,8 @@
   padding: 22px 20px 24px;
   border: 1px solid var(--color-line);
   border-radius: 14px;
-  background: var(--color-paper);
-  --trip: #1c1c1e;
+  background: #131314;
+  color: var(--color-ink);
 }
 @media (min-width: 640px) { .mail { padding: 26px 26px 28px; } }
 
@@ -386,10 +420,8 @@
 }
 .hold { display: inline-block; }
 .word {
+  position: relative;
   display: inline-block;
-  text-decoration: underline dotted rgb(244 244 242 / 40%);
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.2em;
   opacity: 0;
   transform: translateY(0.35em);
   transition: opacity 240ms ease, transform 420ms var(--ease-arrive);
@@ -400,6 +432,25 @@
   transition-delay: 140ms;
 }
 .word[data-on="false"] { transform: translateY(-0.35em); }
+/* The word the data decides, underlined by a solid bar once it is in:
+   light for the city from the data, the accent for the fallback */
+.word::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 3px;
+  background: rgb(244 244 242 / 60%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 420ms var(--ease-arrive);
+}
+.word[data-fallback="true"]::after { background: var(--accent-ink); }
+.word[data-on="true"]::after {
+  transform: none;
+  transition-delay: 260ms;
+}
 
 /* SEA ✈ LAX on a dotted line, as on Axel's flight card */
 .trip {
@@ -463,8 +514,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .thumb,
-  .seg,
+  .tabNum,
+  .tabLabel,
+  .fill,
+  .word::after,
   .row[data-focus="true"]::before,
   .num,
   .src [data-k="miss"],
@@ -476,6 +529,8 @@
   .fallback [data-k],
   .ring,
   .lead,
-  .tag,
+  .sheet .tag,
+  .sheet[data-state="missing"] .tag,
   .word { transition: none; }
+  .fill { animation: none !important; }
 }

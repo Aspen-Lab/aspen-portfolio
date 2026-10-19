@@ -20,10 +20,20 @@ import styles from "./AnnotatedImage.module.css";
    and scaled to their side, and the corner marks sit on their corner
    points. The picture, the regions, the viewfinder's pieces and every note
    are memoised: a hover re-renders only the notes and markers whose state
-   it changes. */
+   it changes.
+
+   Two joined layouts, after Latent's outcome card. "attached" (the cover)
+   hangs the notes under the picture on a black slab that shares the
+   frame's bottom edge. "split" puts the picture on the left and the notes
+   on a black slab on the right, one numbered row each; the row in view
+   lights its number on a solid accent square. Both carry Latent's L-marks
+   in the frame's corners and a dashed crosshair with a dark centre square
+   that glides, with the viewfinder, to the region in view. Nothing in the
+   picture is ever dimmed. */
 
 const SIDES = ["top", "right", "bottom", "left"] as const;
 const CORNERS = ["tl", "tr", "br", "bl"] as const;
+const AXES = ["x", "y", "dot"] as const;
 
 /* The viewfinder's pieces. They never re-render: where they stand comes
    from the --x, --y, --w and --h set on the viewfinder. */
@@ -42,6 +52,18 @@ const Viewfinder = memo(function Viewfinder() {
       ))}
     </>
   );
+});
+
+/* The crosshair: two dashed lines through the region's centre and a dark
+   square where they cross. Like the viewfinder, each piece is as big as
+   the frame and moves by transform alone. */
+const Crosshair = memo(function Crosshair() {
+  return AXES.map((axis) => <span key={axis} className={styles.cross} data-axis={axis} />);
+});
+
+/* Latent's L-marks in the frame's corners: still, light on the picture. */
+const RegMarks = memo(function RegMarks() {
+  return CORNERS.map((c) => <span key={c} aria-hidden className={`reg-mark ${c} ${styles.reg}`} />);
 });
 
 /* The picture and the regions never change on hover, so they never
@@ -172,7 +194,9 @@ const Note = memo(function Note({
         onBlur={() => hover(null)}
         onClick={() => pin(i)}
       >
-        <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
+        <span className={styles.num} data-n={String(i + 1).padStart(2, "0")}>
+          {String(i + 1).padStart(2, "0")}
+        </span>
         <span className={styles.title}>{title}</span>
         <span className={styles.text}>{text}</span>
       </button>
@@ -193,6 +217,8 @@ export function AnnotatedImage({
   caption,
   showCaption = false,
   stage,
+  layout,
+  kicker,
 }: {
   src: string;
   width: number;
@@ -209,6 +235,11 @@ export function AnnotatedImage({
   showCaption?: boolean;
   /** "wide": a photograph on the full container stage (the page sets the width). */
   stage?: "wide";
+  /** "attached": the notes on a black slab joined under the picture.
+      "split": the picture left, the notes on a black slab right. */
+  layout?: "split" | "attached";
+  /** The split slab's first row, after a small accent square. */
+  kicker?: string;
 }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [pinned, setPinned] = useState<number | null>(null);
@@ -242,66 +273,98 @@ export function AnnotatedImage({
 
   const [x, y, w, h] = notes[spot].box;
 
+  const kickerText = useMemo(() => (kicker ? hold(kicker, styles.word) : null), [kicker]);
+
+  const frame = (
+    <div
+      className={styles.frame}
+      style={{ aspectRatio: aspect ?? `${width} / ${height}` }}
+      data-active={shown !== null}
+    >
+      <Picture src={src} alt={alt} sizes={sizes} preload={priority} position={position} />
+      <Regions notes={notes} onPoint={point} onPin={pin} />
+
+      <span
+        aria-hidden
+        className={styles.spot}
+        data-on={shown !== null}
+        style={{ ["--x" as string]: x, ["--y" as string]: y, ["--w" as string]: w, ["--h" as string]: h }}
+      >
+        <Viewfinder />
+        <Crosshair />
+      </span>
+
+      <RegMarks />
+
+      {notes.map((note, i) => (
+        <Marker
+          key={`marker-${i}`}
+          note={note}
+          i={i}
+          on={shown === i}
+          dim={shown !== null && shown !== i}
+          point={point}
+          pin={pin}
+        />
+      ))}
+    </div>
+  );
+
+  const list = (after: boolean) => (
+    <ol className={styles.notes} data-after-caption={after} style={{ ["--n" as string]: notes.length }}>
+      {notes.map((note, i) => (
+        <Note
+          key={note.title}
+          note={note}
+          i={i}
+          on={shown === i}
+          dim={shown !== null && shown !== i}
+          pressed={pinned === i}
+          point={point}
+          hover={hover}
+          pin={pin}
+        />
+      ))}
+    </ol>
+  );
+
+  /* Joined: the slab is the figure's caption, so the notes stay part of
+     the figure they explain. The visible caption is its first row. */
+  if (layout) {
+    return (
+      <div className={styles.figure} data-layout={layout} data-stage={stage} onPointerLeave={leave}>
+        <figure className={styles.joined}>
+          {frame}
+          <figcaption className={`slab ${styles.slab}`}>
+            {layout === "split" && kickerText !== null && (
+              <span className={styles.kicker}>
+                <span aria-hidden className={styles.kickerMark} />
+                <span>{kickerText}</span>
+              </span>
+            )}
+            {captionText !== null && (
+              <span className={visibleCaption ? styles.caption : "sr-only"}>{captionText}</span>
+            )}
+            {list(visibleCaption)}
+          </figcaption>
+        </figure>
+      </div>
+    );
+  }
+
   /* The picture and its caption are the figure; the notes follow it as a
      list, so the caption stays the figure's last child (valid HTML) while
      it still reads directly under the picture. */
   return (
     <div className={styles.figure} data-stage={stage} onPointerLeave={leave}>
       <figure>
-        <div
-          className={styles.frame}
-          style={{ aspectRatio: aspect ?? `${width} / ${height}` }}
-          data-active={shown !== null}
-        >
-          <Picture src={src} alt={alt} sizes={sizes} preload={priority} position={position} />
-          <Regions notes={notes} onPoint={point} onPin={pin} />
-
-          <span
-            aria-hidden
-            className={styles.spot}
-            data-on={shown !== null}
-            style={{ ["--x" as string]: x, ["--y" as string]: y, ["--w" as string]: w, ["--h" as string]: h }}
-          >
-            <Viewfinder />
-          </span>
-
-          {notes.map((note, i) => (
-            <Marker
-              key={`marker-${i}`}
-              note={note}
-              i={i}
-              on={shown === i}
-              dim={shown !== null && shown !== i}
-              point={point}
-              pin={pin}
-            />
-          ))}
-        </div>
-
+        {frame}
         {captionText !== null && (
           <figcaption className={visibleCaption ? styles.caption : "sr-only"}>{captionText}</figcaption>
         )}
       </figure>
 
-      <ol
-        className={styles.notes}
-        data-after-caption={visibleCaption}
-        style={{ ["--n" as string]: notes.length }}
-      >
-        {notes.map((note, i) => (
-          <Note
-            key={note.title}
-            note={note}
-            i={i}
-            on={shown === i}
-            dim={shown !== null && shown !== i}
-            pressed={pinned === i}
-            point={point}
-            hover={hover}
-            pin={pin}
-          />
-        ))}
-      </ol>
+      {list(visibleCaption)}
     </div>
   );
 }

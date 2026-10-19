@@ -1,6 +1,8 @@
-/* Latent's plotted sheet, holding a flow: a flat card on a second card,
-   boxed tags on a dashed path, one hexagon, one focus. Flat fills and 1px
-   lines only; nothing filled with ink. */
+/* Latent's plotted sheet, holding a flow, with weight: a dark sheet on a
+   black back sheet, solid paper plates on one solid path, a solid paper
+   hexagon, one red chip on the branch. Flat fills and 1px/2px lines
+   only. Lines on the dark sheet keep their literal light values; words
+   on the plates read the plate's own ink tokens (the global .paper). */
 .wrap {
   position: relative;
   isolation: isolate;
@@ -13,44 +15,50 @@
   inset: 0;
   z-index: -1;
   transform: translate(10px, 10px);
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: #131314;
+  border: 1px solid #333336;
+  border-radius: 2px;
+  background: #0a0a0a;
 }
 
 .sheet {
-  --accent-ink: var(--accent, var(--color-ink));
-  --dash: rgb(244 244 242 / 45%);
+  --path: rgb(244 244 242 / 55%);
+  --dash: rgb(244 244 242 / 60%);
   /* narrow sheets: the path runs down the left, at --rail */
   --rail: 24px;
-  --vgap: 22px;
+  --vgap: 24px;
   --gap: 32px;
-  --elbow: 74px;
+  --elbow: 80px;
   --x: 88px;
   --lift: var(--vgap);
   container-type: inline-size;
   position: relative;
-  padding: 22px 18px 26px;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  /* a canvas of faint dots under the boxes (the gradient is the dot only) */
-  background-color: var(--color-cream);
-  background-image: radial-gradient(circle, rgb(244 244 242 / 7%) 0 1px, transparent 1.5px);
+  padding: 22px 18px 28px;
+  border: 1px solid #333336;
+  border-radius: 2px;
+  /* a canvas of faint dots under the plates (the gradient is the dot only) */
+  background-color: #131315;
+  background-image: radial-gradient(circle, rgb(244 244 242 / 6%) 0 1px, transparent 1.5px);
   background-size: 16px 16px;
   background-position: -8px -8px;
 }
 @media (min-width: 640px) {
-  .sheet { padding: 30px 32px 34px; }
+  .sheet { padding: 30px 32px 36px; }
 }
 
 .title {
   margin-bottom: 26px;
   color: var(--color-soft);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+.sheet[data-cn="true"] .title {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
 }
 
 /* ── Narrow: one column, the path down the left ── */
@@ -69,15 +77,15 @@
 }
 .sheet[data-lit="true"] .step { opacity: 1; }
 
-/* The dashed path from each step to the next */
+/* The solid path from each step to the next */
 .step:not([data-last="true"])::after,
 .fork::before {
   content: "";
   position: absolute;
-  left: var(--rail);
+  left: calc(var(--rail) - 1px);
   top: 100%;
   height: var(--vgap);
-  border-left: 1px dashed var(--dash);
+  border-left: 2px solid var(--path);
   clip-path: inset(0 0 100% 0);
   transition: clip-path 260ms linear;
   transition-delay: calc(var(--i) * 200ms + 120ms);
@@ -88,21 +96,19 @@
 .sheet[data-lit="true"] .step::after,
 .sheet[data-lit="true"] .fork::before { clip-path: inset(0); }
 
-/* ── The boxes ── */
+/* ── The plates (global .paper: #e1e1e1, a 1px edge, ink tokens) ── */
 .box {
   position: relative;
   height: 100%;
-  padding: 12px 14px 14px;
-  border: 1px solid rgb(244 244 242 / 26%);
-  border-radius: 2px;
-  background: var(--color-paper);
+  padding: 14px 16px;
 }
-.step[data-kind="start"] .box,
-.step[data-kind="end"] .box { border-color: rgb(244 244 242 / 55%); }
+/* The decision is its hexagon alone: no plate box, the plate's inks */
 .step[data-kind="decision"] .box {
-  padding: 12px 24px 14px;
-  border: 0;
-  background: none;
+  --color-ink: #0a0a0a;
+  --color-mute: #3f3f44;
+  --color-soft: #5e5e63;
+  padding: 14px 28px;
+  color: var(--color-ink);
 }
 
 /* Start: a ring where the path comes in. End: a dot where it leaves. */
@@ -111,48 +117,73 @@
   content: "";
   position: absolute;
   z-index: 1;
-  top: -5px;
-  left: calc(var(--rail) - 4.5px);
-  width: 10px;
-  height: 10px;
-  border: 1px solid var(--color-ink);
+  top: -7px;
+  left: calc(var(--rail) - 6px);
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgb(244 244 242 / 85%);
   border-radius: 999px;
-  background: var(--color-cream);
+  background: #131315;
 }
 .step[data-last="true"] .box::after {
   top: auto;
-  bottom: -5px;
-  background: var(--color-ink);
+  bottom: -7px;
+  background: #f4f4f2;
 }
 
 .num,
 .label,
-.caption { position: relative; }
+.caption,
+.meter { position: relative; }
 .num {
   display: block;
   color: var(--color-soft);
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 12px;
   line-height: 1;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   font-variant-numeric: tabular-nums;
 }
 .label {
   margin-top: 9px;
   color: var(--color-ink);
-  font-size: 15.5px;
+  font-size: 16px;
   line-height: 1.3;
   letter-spacing: -0.005em;
 }
 .caption {
   margin-top: 5px;
   color: var(--color-mute);
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.45;
   text-wrap: balance;
 }
+.sheet[data-cn="true"] .label,
+.sheet[data-cn="true"] .caption,
+.sheet[data-cn="true"] .destLabel,
+.sheet[data-cn="true"] .destCaption {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
 
-/* The decision: a hexagon drawn behind the text, to the box's own size */
+/* Progress the caption counts ("3 of 4"), as that many segments */
+.meter {
+  display: flex;
+  gap: 3px;
+  margin-top: 10px;
+}
+.meter span {
+  width: 18px;
+  height: 6px;
+  border: 1.5px solid rgb(10 10 10 / 40%);
+}
+.meter span[data-on="true"] {
+  border-color: #0a0a0a;
+  background: #0a0a0a;
+}
+
+/* The decision: a solid paper hexagon drawn behind the text, to the
+   box's own size */
 .hex {
   position: absolute;
   inset: 0;
@@ -161,31 +192,28 @@
   overflow: visible;
 }
 .hexShape {
-  fill: var(--color-paper);
-  stroke: rgb(244 244 242 / 55%);
-  stroke-width: 1;
+  fill: #e1e1e1;
+  stroke: none;
 }
-.box[data-focus="true"] .hexShape { stroke: var(--accent-ink); }
+/* The focus ring: dashed, static */
 .ring {
   fill: none;
   stroke: rgb(244 244 242 / 55%);
   stroke-width: 1;
   stroke-dasharray: 3 4;
-  animation: march 2.4s linear infinite;
 }
-@keyframes march { to { stroke-dashoffset: -14; } }
 
-/* ── A branch: a dashed drop to a boxed tag, then a side path into
+/* ── A branch: a dashed drop to the red chip, then a side path into
    where it leads. The drop leaves from the focus ring's edge. ── */
 .branch {
   position: relative;
-  padding: calc(var(--elbow) - 20px) 0 0 calc(var(--x) + 28px);
+  padding: calc(var(--elbow) - 27px) 0 0 calc(var(--x) + 28px);
 }
 .branch + .branch { margin-top: 18px; }
 .drop,
 .run {
   position: absolute;
-  left: var(--x);
+  left: calc(var(--x) - 0.75px);
   transition: clip-path 360ms var(--ease-arrive);
   transition-delay: calc(var(--i) * 200ms + 260ms);
 }
@@ -194,35 +222,58 @@
 .drop {
   top: 0;
   bottom: calc(100% - var(--elbow));
-  border-left: 1px dashed var(--dash);
+  border-left: 1.5px dashed var(--dash);
   clip-path: inset(0 0 100% 0);
 }
 .branch:first-child .drop { top: calc(0px - var(--lift)); }
 .fork[data-focus="true"] .branch:first-child .drop { top: calc(7px - var(--lift)); }
 .branch:not([data-last="true"]) .drop { bottom: -18px; }
 .run {
-  top: var(--elbow);
+  top: calc(var(--elbow) - 0.75px);
   width: 28px;
-  border-top: 1px dashed var(--dash);
+  border-top: 1.5px dashed var(--dash);
   clip-path: inset(0 100% 0 0);
   transition-delay: calc(var(--i) * 200ms + 560ms);
 }
 .sheet[data-lit="true"] .drop,
 .sheet[data-lit="true"] .run { clip-path: inset(0); }
 
-/* Latent's boxed tag, on the leader */
+/* The same leaders drawn solid, over the dashed ones, while the branch
+   is pointed at or focused: opacity only */
+.lit {
+  border-style: solid;
+  border-color: rgb(244 244 242 / 85%);
+  opacity: 0;
+}
+.drop.lit {
+  transition:
+    clip-path 360ms var(--ease-arrive) calc(var(--i) * 200ms + 260ms),
+    opacity 240ms ease;
+}
+.run.lit {
+  transition:
+    clip-path 360ms var(--ease-arrive) calc(var(--i) * 200ms + 560ms),
+    opacity 240ms ease;
+}
+.fork:focus-within .lit { opacity: 1; }
+@media (hover: hover) {
+  .fork:hover .lit { opacity: 1; }
+}
+
+/* The branch's chip: solid, in the page accent, ink words */
 .tag {
   position: absolute;
+  z-index: 1;
   top: 18px;
   left: var(--x);
-  padding: 5px 8px 4px;
-  border: 1px solid rgb(244 244 242 / 55%);
-  background: var(--color-paper);
-  color: var(--color-ink);
+  padding: 6px 10px;
+  border-radius: 2px;
+  background: var(--accent, #f4f4f2);
+  color: #0f0f10;
   font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.3;
-  letter-spacing: 0.14em;
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
   translate: -50% 0;
@@ -230,13 +281,25 @@
   transition: opacity 300ms ease;
   transition-delay: calc(var(--i) * 200ms + 460ms);
 }
-.dest {
-  width: fit-content;
-  max-width: 440px;
-  padding: 10px 14px 12px;
-  border: 1px dashed var(--dash);
+.tag[data-cjk="true"] {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.tag:focus-visible {
+  outline: 2px solid rgb(244 244 242 / 70%);
+  outline-offset: 3px;
   border-radius: 2px;
-  background: var(--color-paper);
+}
+.dest {
+  position: relative;
+  width: fit-content;
+  max-width: 460px;
+  padding: 16px 18px;
+  border: 1px dashed rgb(244 244 242 / 50%);
+  border-radius: 2px;
+  background: #131315;
   opacity: 0;
   transition: opacity 360ms ease;
   transition-delay: calc(var(--i) * 200ms + 680ms);
@@ -245,13 +308,13 @@
 .sheet[data-lit="true"] .dest { opacity: 1; }
 .destLabel {
   color: var(--color-ink);
-  font-size: 15.5px;
+  font-size: 16px;
   line-height: 20px;
 }
 .destCaption {
-  margin-top: 4px;
+  margin-top: 6px;
   color: var(--color-mute);
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.5;
   text-wrap: pretty;
 }
@@ -276,34 +339,35 @@
 
   .step:not([data-last="true"])::after {
     left: 100%;
-    top: 50%;
+    top: calc(50% - 1px);
     width: var(--gap);
     height: 0;
     border-left: 0;
-    border-top: 1px dashed var(--dash);
+    border-top: 2px solid var(--path);
     clip-path: inset(0 100% 0 0);
   }
   .sheet[data-lit="true"] .step::after { clip-path: inset(0); }
 
   .step[data-first="true"] .box::before,
   .step[data-last="true"] .box::after {
-    top: calc(50% - 5px);
+    top: calc(50% - 6px);
     bottom: auto;
-    left: -5px;
+    left: -7px;
   }
-  .step[data-last="true"] .box::after { left: auto; right: -5px; }
+  .step[data-last="true"] .box::after { left: auto; right: -7px; }
 }
 
-/* Reduced motion: the finished drawing from the first paint, the ring still */
+/* Reduced motion: the finished drawing from the first paint */
 @media (prefers-reduced-motion: reduce) {
   .step,
   .step:not([data-last="true"])::after,
   .fork::before,
   .drop,
   .run,
+  .drop.lit,
+  .run.lit,
   .tag,
   .dest { transition: none; }
-  .ring { animation: none; }
   .step,
   .tag,
   .dest { opacity: 1; }

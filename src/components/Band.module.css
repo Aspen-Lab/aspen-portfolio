@@ -1,0 +1,22 @@
+/* A band's air: 120px above and below its content, 72px on phones. The
+   hero band sits under the nav with less above and none below (the next
+   dark band carries the gap), and a dark band right after it keeps the
+   same step as any two blocks inside a band. */
+.band {
+  position: relative;
+  padding-block: 72px;
+}
+@media (min-width: 768px) {
+  .band { padding-block: 120px; }
+}
+.band[data-tone="dark"] { background: none; }
+
+.hero {
+  padding-top: 48px;
+  padding-bottom: 0;
+}
+.tight { padding-top: 88px; }
+@media (min-width: 768px) {
+  .hero { padding-top: 48px; padding-bottom: 0; }
+  .tight { padding-top: 120px; }
+}

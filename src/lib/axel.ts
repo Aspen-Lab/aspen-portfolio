@@ -3,15 +3,19 @@ import type { Project } from "./work";
 // Business milestones supplied by Aspen, September 2026. GMV is not ARR;
 // no currency or annualization is implied. Attribute growth to the team.
 //
-// The editorial layout: five numbered sections, each one claim in its
-// heading, one or two plain sentences, and one piece of Axel's own
-// evidence. No chapters, callouts, pull quotes or bold. Team figures live
-// only in the first-screen ledger, each labelled as the team's.
+// The editorial layout on Latent bands: five numbered sections, each one
+// claim in its heading, one or two plain sentences, and one piece of
+// Axel's own evidence. No chapters, callouts, pull quotes or bold. Team
+// figures live only in the first-screen tiles, each carrying a 'Team
+// milestone' tag; the one pink figure is mine.
 export const axelProject: Project = {
   slug: "axel",
   // No-break spaces hold the dash to the name and the claim together: a
   // narrow H1 reads "Axel —" / "design that ships", never opens on "—".
   title: "Axel\u00a0— design\u00a0that\u00a0ships",
+  // The page's Latent bands; the title phrase is set in the accent
+  bands: true,
+  titleAccent: "design\u00a0that\u00a0ships",
   client: "Axel · Gordian Software (YC W19)",
   role: "Founding Design Engineer · Full-time",
   period: "Dec 2025 — Present",
@@ -31,6 +35,8 @@ export const axelProject: Project = {
   coverPosition: "50% 0%",
   // helloaxel.com's pink (its FOUND sign): the one accent on this page
   accent: "#ff6f93",
+  // The same pink, deep enough for text and strokes on light bands
+  accentDeep: "#c42e5e",
   coverCaption: "helloaxel.com — the landing experience I design and build.",
   // In % of the 16:9 hero, which shows the top 84% of the 3:2 shot.
   coverNotes: [
@@ -41,9 +47,11 @@ export const axelProject: Project = {
   status: "live",
   liveUrl: "https://helloaxel.com",
   metrics: [
-    { label: "GMV from 0 · team milestone", value: "30M" },
-    { label: "Users from 0 · team milestone", value: "150K" },
-    { label: "Email templates I design and build", value: "79" },
+    { label: "GMV from 0", value: "30M", tag: "Team milestone" },
+    { label: "Users from 0", value: "150K", tag: "Team milestone" },
+    // Owner, 2026-10-19: revenue is growing fast — no figure given, so none is shown
+    { label: "Revenue, growing fast", value: "↑", tag: "Team milestone" },
+    { label: "Email templates I design and build", value: "79", accent: true, viz: "matrix", href: "#s-04" },
   ],
   sections: [
     {
@@ -66,24 +74,33 @@ export const axelProject: Project = {
       body: "On helloaxel.com, I design and build the conversational interface and its motion. Travelers describe a trip in plain language, and Axel searches flight and hotel deals.",
       // Second image of Render's customer story (render.com/customers/axel).
       // Notes are numbered in the traveler's order; they describe the
-      // screen, not who wrote the agent's verdicts.
+      // screen, not who wrote the agent's verdicts. Split card: the image
+      // cropped 1:1 at its centre beside a black slab of the notes. Boxes
+      // are remapped for that crop: x' = (x − 14.85) / 0.703, w' = w / 0.703
+      // (y and h unchanged).
       figures: [
         {
           src: "/work/axel/search-iphone.webp",
           width: 2000,
           height: 1406,
           stage: "wide",
+          layout: "split",
+          aspect: "1 / 1",
+          position: "50% 50%",
+          kicker: "helloaxel.com · iPhone",
           alt: "Axel on iPhone: flight results for a Seattle to Los Angeles search",
           notes: [
-            { box: [36.5, 80.8, 27, 11], at: [30.5, 86.3], title: "Ask in a sentence", text: "“Seattle to LA, Friday morning”, typed the way you’d say it." },
-            { box: [33.5, 21, 33, 9.8], at: [30.5, 25.9], title: "A verdict first", text: "Each option opens with a one-line reason and a rating." },
-            { box: [33.5, 40.4, 33, 9.4], at: [30.5, 45.1], title: "Savings beside Book", text: "Fare, struck-through usual price and the difference sit next to Book." },
+            { box: [30.8, 80.8, 38.4, 11], at: [22.3, 86.3], title: "Ask in a sentence", text: "“Seattle to LA, Friday morning”, typed the way you’d say it." },
+            { box: [26.5, 21, 46.9, 9.8], at: [22.3, 25.9], title: "A verdict first", text: "Each option opens with a one-line reason and a rating." },
+            { box: [26.5, 40.4, 46.9, 9.4], at: [22.3, 45.1], title: "Savings beside Book", text: "Fare, struck-through usual price and the difference sit next to Book." },
           ],
         },
       ],
     },
     {
       heading: "One pair of hands, from ad to inbox",
+      band: "light",
+      headingAccent: "One pair of hands",
       body: "I design Axel’s brand and core ad creative, and carry one visual language through landing pages, the product and email. The last three I also build in code.",
       visual: "surfaces",
     },
@@ -94,7 +111,16 @@ export const axelProject: Project = {
     },
     {
       heading: "AI makes me faster. I still own the result.",
+      band: "grey",
+      headingAccent: "I still own the result.",
       body: "I prototype and implement with AI coding tools. The code, the experience and the testing stay my responsibility, and I work closely with our lead engineer.",
+      // Every word restates the body: what the tools do, what stays mine
+      visual: "ownership",
+      ownership: {
+        tools: { title: "AI coding tools", items: ["Prototype", "Implement"] },
+        mine: { title: "Stays mine", items: ["The code", "The experience", "The testing"] },
+        note: "Working closely with our lead engineer",
+      },
     },
   ],
 };
@@ -105,6 +131,7 @@ export const axelProjectCn: Project = {
   // keeps the claim whole, so a narrow H1 reads "Axel —" / "把设计做到上线"
   // and never strands 把 at a line end.
   title: "Axel\u00a0— 把\u2060设计\u2060做到\u2060上线",
+  titleAccent: "把\u2060设计\u2060做到\u2060上线",
   role: "创始设计工程师 · 全职",
   period: "2025 年 12 月 — 至今",
   category: "旅行 · 金融科技",
@@ -118,9 +145,10 @@ export const axelProjectCn: Project = {
     { box: [32, 66.3, 36.6, 7.6], at: [28.7, 70.1], title: "省多少，写清楚", text: "原价划掉，差价单独放进绿色标签。" },
   ],
   metrics: [
-    { label: "GMV 从 0 起 · 团队成果", value: "30M" },
-    { label: "用户从 0 起 · 团队成果", value: "150K" },
-    { label: "我设计并实现的邮件模板", value: "79" },
+    { label: "GMV 从 0 起", value: "30M", tag: "团队成果" },
+    { label: "用户从 0 起", value: "150K", tag: "团队成果" },
+    { label: "收入快速增长", value: "↑", tag: "团队成果" },
+    { label: "我设计并实现的邮件模板", value: "79", accent: true, viz: "matrix", href: "#s-04" },
   ],
   sections: [
     {
@@ -146,17 +174,24 @@ export const axelProjectCn: Project = {
           width: 2000,
           height: 1406,
           stage: "wide",
+          layout: "split",
+          aspect: "1 / 1",
+          position: "50% 50%",
+          kicker: "helloaxel.com · iPhone",
           alt: "iPhone 上的 Axel：西雅图飞洛杉矶的航班搜索结果",
+          // The same 1:1 crop and remapped boxes as the English figure
           notes: [
-            { box: [36.5, 80.8, 27, 11], at: [30.5, 86.3], title: "一句话说行程", text: "“Seattle to LA, Friday morning”，像说话一样输入。" },
-            { box: [33.5, 21, 33, 9.8], at: [30.5, 25.9], title: "先给结论", text: "每个选项先给一句理由和评级。" },
-            { box: [33.5, 40.4, 33, 9.4], at: [30.5, 45.1], title: "省多少，就在预订旁", text: "票价、划掉的原价和差价，紧挨着 Book 按钮。" },
+            { box: [30.8, 80.8, 38.4, 11], at: [22.3, 86.3], title: "一句话说行程", text: "“Seattle to LA, Friday morning”，像说话一样输入。" },
+            { box: [26.5, 21, 46.9, 9.8], at: [22.3, 25.9], title: "先给结论", text: "每个选项先给一句理由和评级。" },
+            { box: [26.5, 40.4, 46.9, 9.4], at: [22.3, 45.1], title: "省多少，就在预订旁", text: "票价、划掉的原价和差价，紧挨着 Book 按钮。" },
           ],
         },
       ],
     },
     {
       heading: "从广告到收件箱，同一双手",
+      band: "light",
+      headingAccent: "同一双手",
       body: "Axel 的品牌和核心广告创意由我设计，同一套视觉语言再延续到落地页、产品和邮件；后三处，我也亲手写成代码。",
       visual: "surfaces",
     },
@@ -167,7 +202,15 @@ export const axelProjectCn: Project = {
     },
     {
       heading: "AI 提速，责任不外包",
+      band: "grey",
+      headingAccent: "责任不外包",
       body: "原型和实现，我都借助 AI 编码工具提速；代码、体验和测试，始终由我负责。我也与首席工程师紧密协作。",
+      visual: "ownership",
+      ownership: {
+        tools: { title: "AI 编码工具", items: ["原型", "实现"] },
+        mine: { title: "始终由我负责", items: ["代码", "体验", "测试"] },
+        note: "与首席工程师紧密协作",
+      },
     },
   ],
 };

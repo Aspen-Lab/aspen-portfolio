@@ -1,26 +1,29 @@
 "use client";
 
-import { Fragment, memo, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useInView, useReducedMotion } from "motion/react";
+import { Fragment, memo, useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useInView } from "motion/react";
 import { useLocale } from "next-intl";
 import styles from "./EmailRender.module.css";
 
-/* A render check, drawn on Latent's flat sheet. Left, a short Liquid
-   template; right, what it sends, in Axel's dark manner: the wordmark
-   beside a pixel moon (the night sky from helloaxel.com), a headline, the
-   SEA ✈ LAX trip line from the flight card, a button. A toggle feeds the
-   template event data or leaves the destination city out. Without the
-   city the `default` filter takes over: that token, its dashed hexagon and
-   its boxed tag are the one pink focus on the sheet, and the headline swaps
-   one word in place while the line closes up around it. With event data
-   the sheet carries no pink at all.
+/* A render check in two blocks under two of Latent's numbered tabs. Left,
+   a short Liquid template on a black slab; right, what it sends, laid on
+   a stacked paper sheet like a print proof with crop marks: Axel's dark
+   card, the wordmark beside a pixel moon (the night sky from
+   helloaxel.com), a headline, the SEA ✈ LAX trip line from the flight
+   card, a button. The tabs feed the template event data or leave the
+   destination city out. Without the city the `default` filter takes over:
+   that token turns into a solid accent chip inside its dashed hexagon,
+   with a boxed tag, and the headline swaps one word in place, underlined
+   by a solid accent bar, while the line closes up around it. With event
+   data the blocks carry no pink at all.
 
    It is an example, and the caption under the sheet says so: the route is
    the Seattle to Los Angeles search from the case study's own screenshots,
    the variable names are illustrative, nothing here is a production
-   template. Once the sheet is on screen it switches to the missing value
-   by itself, once, and holds there; a choice made by hand cancels that.
-   Reduced motion never switches by itself.
+   template. Once the sheet is half on screen the second tab's underline
+   fills, in 1.6s, and when it is full the sheet switches to the missing
+   value, once, and holds there; scrolled away, the fill waits; a choice
+   made by hand cancels it. Reduced motion never switches by itself.
    Every change of state is a fade or a transform: the line around the
    fallback opens by sliding the closing braces, and the headline closes up
    by sliding the words after the slot from where they stood (measured once
@@ -29,7 +32,6 @@ import styles from "./EmailRender.module.css";
 type Kind = "d" | "k" | "v" | "s" | "h" | "t" | "o" | "miss" | "city" | "fb";
 type Tok = [Kind, string];
 
-const AUTO = 1400; // ms on screen before the one switch to the missing value
 const FOCUS_LINE = 3;
 
 function template(cn: boolean): Tok[][] {
@@ -134,7 +136,12 @@ function Fallback({ value, tag }: { value: string; tag: string }) {
           </svg>
         </>
       )}
-      <span aria-hidden className={styles.tag} style={{ bottom: `calc(100% + ${PAD_Y + LEAD}px)` }}>
+      <span
+        aria-hidden
+        className={`boxed-tag ${styles.tag}`}
+        data-dark=""
+        style={{ bottom: `calc(100% + ${PAD_Y + LEAD}px)` }}
+      >
         {tag}
       </span>
     </span>
@@ -238,7 +245,7 @@ function Headline({
             return (
               <span key={k} data-window className={styles.window} data-on={on}>
                 <span className={styles.hold}>
-                  <span className={styles.word} data-on={on} aria-hidden={!on}>
+                  <span className={styles.word} data-on={on} data-fallback={k === 1} aria-hidden={!on}>
                     {word}
                   </span>
                 </span>
@@ -330,35 +337,66 @@ const Sky = memo(function Sky() {
   );
 });
 
+/* The reader's motion setting, read without a hydration mismatch: the
+   server and the hydrating render both say "no preference", then React
+   renders again with the real answer. */
+const REDUCE = "(prefers-reduced-motion: reduce)";
+const onReduceChange = (cb: () => void) => {
+  const m = window.matchMedia(REDUCE);
+  m.addEventListener("change", cb);
+  return () => m.removeEventListener("change", cb);
+};
+const useReduce = () =>
+  useSyncExternalStore(onReduceChange, () => window.matchMedia(REDUCE).matches, () => false);
+
+const TABS = {
+  en: ["Event data", "Missing value"],
+  cn: ["事件数据", "缺失值"],
+};
+
 export function EmailRender() {
   const cn = useLocale() === "cn";
-  const reduce = useReducedMotion();
+  const reduce = useReduce();
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const sheet = useRef<HTMLElement>(null);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const inView = useInView(sheet, { amount: 0.5 });
   const [missing, setMissing] = useState(false);
   // Until the one switch happens, or a hand makes the choice
   const [auto, setAuto] = useState(true);
-
-  // Half on screen for a beat: show the fallback once, then hold. Scrolled
-  // away before the beat is up, it waits for the next visit.
-  useEffect(() => {
-    if (!auto || !inView || reduce !== false) return;
-    const timer = setTimeout(() => {
-      setAuto(false);
-      setMissing(true);
-    }, AUTO);
-    return () => clearTimeout(timer);
-  }, [auto, inView, reduce]);
+  // The second tab's underline fills while the sheet is half on screen;
+  // when it is full, the sheet switches (onAnimationEnd below)
+  const running = auto && !reduce;
 
   const choose = (next: boolean) => {
     setAuto(false);
     setMissing(next);
+  };
+  const filled = (e: React.AnimationEvent) => {
+    if (e.target !== e.currentTarget || !auto) return;
+    setAuto(false);
+    setMissing(true);
+  };
+  // Arrow keys move between the two tabs; Home and End jump
+  const key = (e: React.KeyboardEvent) => {
+    const k = missing ? 1 : 0;
+    let next = k;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = (k + 1) % 2;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = (k + 1) % 2;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = 1;
+    else return;
+    e.preventDefault();
+    choose(next === 1);
+    tabs.current[next]?.focus();
   };
 
   const words: [string, string] = cn ? ["洛杉矶", "下一趟"] : ["Los Angeles", "next"];
   const fallback = words[1];
   const before = cn ? "你的" : "Your ";
   const after = cn ? "航班已订好" : " flight is booked";
+  const labels = cn ? TABS.cn : TABS.en;
+  const active = missing ? 1 : 0;
 
   return (
     <div className={styles.wrap}>
@@ -367,74 +405,82 @@ export function EmailRender() {
         className={styles.sheet}
         data-state={missing ? "missing" : "data"}
         data-cn={cn}
+        data-auto={running}
+        data-run={inView}
         aria-label={
           cn
             ? "示例：同一个 Liquid 邮件模板在有数据和缺失值时的渲染结果"
             : "Example: one Liquid email template rendered with event data and with a missing value"
         }
       >
-        <div className={styles.bar}>
-          <div className={styles.toggle} role="group" aria-label={cn ? "模板数据" : "Template data"}>
-            <span aria-hidden className={styles.thumb} />
+        <div className={styles.tabs} role="tablist" aria-label={cn ? "模板数据" : "Template data"}>
+          {labels.map((label, k) => (
             <button
+              key={k}
+              ref={(el) => {
+                tabs.current[k] = el;
+              }}
               type="button"
-              className={styles.seg}
-              data-on={!missing}
-              aria-pressed={!missing}
-              onClick={() => choose(false)}
+              role="tab"
+              id={`${uid}-tab-${k}`}
+              aria-selected={active === k}
+              aria-controls={`${uid}-panel`}
+              tabIndex={active === k ? 0 : -1}
+              className={styles.tab}
+              data-on={active === k}
+              onClick={() => choose(k === 1)}
+              onKeyDown={key}
             >
-              <span aria-hidden className={styles.glyph} data-kind="data" />
-              {cn ? "事件数据" : "Event data"}
+              <span className={styles.tabNum}>{String(k + 1).padStart(2, "0")}</span>
+              <span className={styles.tabLabel}>{label}</span>
+              <span aria-hidden className={styles.fill} data-k={k} onAnimationEnd={k === 1 ? filled : undefined} />
             </button>
-            <button
-              type="button"
-              className={styles.seg}
-              data-on={missing}
-              aria-pressed={missing}
-              onClick={() => choose(true)}
-            >
-              <span aria-hidden className={styles.glyph} data-kind="missing" />
-              {cn ? "缺失值" : "Missing value"}
-            </button>
-          </div>
+          ))}
         </div>
 
-        <div className={styles.panes}>
-          <Template cn={cn} />
+        <div className={styles.panes} role="tabpanel" id={`${uid}-panel`} aria-labelledby={`${uid}-tab-${active}`}>
+          <div className={`slab ${styles.codeSlab}`}>
+            <Template cn={cn} />
+          </div>
 
-          <div className={styles.preview}>
-            <div className={styles.mail}>
-              <div className={styles.head}>
-                <span className={styles.wordmark}>Axel</span>
-                <Sky />
+          <div className={`paper-stack ${styles.proofStack}`}>
+            <div className={`paper ${styles.proof}`}>
+              {(["tl", "tr", "br", "bl"] as const).map((c) => (
+                <span key={c} aria-hidden className={`reg-mark ${c}`} />
+              ))}
+              <div className={styles.mail}>
+                <div className={styles.head}>
+                  <span className={styles.wordmark}>Axel</span>
+                  <Sky />
+                </div>
+
+                <Headline before={before} words={words} after={after} missing={missing} still={reduce} />
+
+                <div className={styles.trip}>
+                  <span className={styles.iata}>SEA</span>
+                  <span aria-hidden className={styles.route}>
+                    <svg className={styles.dots} height="4">
+                      <line x1="2" x2="100%" y1="2" y2="2" />
+                    </svg>
+                    <svg className={styles.plane} viewBox="-13 -11 26 22" width="22" height="19">
+                      <path d={PLANE} />
+                    </svg>
+                  </span>
+                  <span className={styles.iata}>LAX</span>
+                </div>
+
+                <span className={styles.button}>{cn ? "查看行程" : "View trip"}</span>
               </div>
-
-              <Headline before={before} words={words} after={after} missing={missing} still={!!reduce} />
-
-              <div className={styles.trip}>
-                <span className={styles.iata}>SEA</span>
-                <span aria-hidden className={styles.route}>
-                  <svg className={styles.dots} height="4">
-                    <line x1="2" x2="100%" y1="2" y2="2" />
-                  </svg>
-                  <svg className={styles.plane} viewBox="-13 -11 26 22" width="22" height="19">
-                    <path d={PLANE} />
-                  </svg>
-                </span>
-                <span className={styles.iata}>LAX</span>
-              </div>
-
-              <span className={styles.button}>{cn ? "查看行程" : "View trip"}</span>
+              <span className="sr-only">
+                {cn
+                  ? missing
+                    ? `城市缺失时，default 过滤器兜底为“${fallback}”。`
+                    : "城市来自事件数据。"
+                  : missing
+                    ? `With the city missing, the default filter falls back to “${fallback}”.`
+                    : "The city comes from the event data."}
+              </span>
             </div>
-            <span className="sr-only">
-              {cn
-                ? missing
-                  ? `城市缺失时，default 过滤器兜底为“${fallback}”。`
-                  : "城市来自事件数据。"
-                : missing
-                  ? `With the city missing, the default filter falls back to “${fallback}”.`
-                  : "The city comes from the event data."}
-            </span>
           </div>
         </div>
       </figure>

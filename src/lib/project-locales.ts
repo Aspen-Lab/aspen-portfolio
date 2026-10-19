@@ -52,16 +52,19 @@ export const tiktokProjectCn: Project = {
   // A no-break space holds the dash to "KYC": a wrapped title never opens
   // its second line on "—"
   title: "TikTok Pay KYC\u00a0— 多市场规模化",
+  titleAccent: "多市场规模化",
   role: "产品设计实习生",
   period: "2025 年 6 月 — 9 月",
   category: "金融科技",
   summary:
     "为 TikTok Pay、Shop、Live 设计覆盖越南、马来西亚、印尼和美国的 KYC 流程。越南新用户完成率 70% → 90%，供应商对接 SOP 将集成周期缩短约 40%。",
   tags: ["金融科技", "合规", "多市场", "设计系统"],
+  // bands, accent and accentDeep come from the English entry; metrics and
+  // sections are restated in full, so every new section field is set here too
   metrics: [
-    { label: "越南 KYC 完成率", value: "70 → 90%" },
-    { label: "供应商集成周期", value: "−40%" },
-    { label: "已上线市场", value: "VN · MY · ID · US" },
+    { label: "越南 KYC 完成率", value: "70 → 90%", accent: true, href: "#s-06" },
+    { label: "供应商集成周期", value: "−40%", accent: true, href: "#s-07" },
+    { label: "已上线市场", value: "VN · MY · ID · US", viz: "codes", href: "#s-02" },
   ],
   sections: [
     {
@@ -72,14 +75,17 @@ export const tiktokProjectCn: Project = {
         items: [
           { icon: "id", label: "身份验证", text: "本地证件 + 自拍 + 活体检测，各市场分别适配。" },
           { icon: "lock", label: "合规约定", text: "每个监管方都会审查流程、数据和 SDK。" },
-          { icon: "globe", label: "4 套监管框架", text: "SBV · BNM · OJK · FinCEN：同一道关口，各有各的规则。" },
+          { icon: "globe", label: "4 套监管框架", text: "SBV · BNM · OJK · FinCEN：同一道关口，各有各的规则。", chips: ["SBV", "BNM", "OJK", "FinCEN"] },
         ],
         columns: 3,
+        variant: "tiles",
       },
       callout: {
         variant: "insight",
         label: "为什么设计在这里有杠杆",
-        text: "KYC 位于**漏斗的最前端**。在 4 个市场把完成率提升 10 个百分点，累积起来就是数亿规模的支付量。正是在这个位置，一名设计师 × 一名工程师就能撬动整条业务曲线。",
+        title: "KYC 位于漏斗的最前端。",
+        accent: "漏斗的最前端",
+        text: "在 4 个市场把完成率提升 10 个百分点，累积起来就是数亿规模的支付量。正是在这个位置，一名设计师 × 一名工程师就能撬动整条业务曲线。",
       },
       pullQuote: {
         text: "KYC 一出故障，用户就会流失；KYC 一旦宽松，流失的就是监管方。",
@@ -90,6 +96,7 @@ export const tiktokProjectCn: Project = {
       chapter: "背景",
       heading: "工作落在了哪里",
       body: "四个市场，一套设计系统，TikTok Pay · Shop · Live 贯穿其中。",
+      marketsHub: "一套设计系统",
       markets: [
         { code: "VN", name: "越南", regulator: "SBV", scope: "Pay · Shop · Live" },
         { code: "MY", name: "马来西亚", regulator: "BNM", scope: "Pay · Shop" },
@@ -100,10 +107,13 @@ export const tiktokProjectCn: Project = {
     {
       chapter: "策略",
       heading: "问题的三个层面",
+      band: "light",
+      headingAccent: "三个层面",
       body: "**UX · 合规 · UI**：三种不同的失效，三种不同的解法，任何一层都无法单独解决。",
       layers: [
         {
           label: "UX",
+          title: "“Not My ID”逃生通道",
           problem:
             "复用历史身份信息的用户，一旦系统找不到他们的证件就无路可退，流程由此分叉，变成无声的流失。",
           approach:
@@ -111,6 +121,7 @@ export const tiktokProjectCn: Project = {
         },
         {
           label: "合规",
+          title: "标准化字段规范",
           problem:
             "OCR 字段在 MY ↔ VN 之间不一致，用户只能手动重新填写，而这种不一致本身就是监管风险。",
           approach:
@@ -118,6 +129,7 @@ export const tiktokProjectCn: Project = {
         },
         {
           label: "UI",
+          title: "SDK-AAI 样式对齐",
           problem:
             "供应商 SDK 的字体、圆角、图标和报错样式各不相同，流程一交到供应商界面，信任感随之崩塌。",
           approach:
@@ -128,6 +140,7 @@ export const tiktokProjectCn: Project = {
     {
       chapter: "策略",
       heading: "三类受众，一条流程",
+      band: "light",
       body: "每一次 KYC 改动，都必须同时满足*这三方*。",
       iconList: {
         items: [
@@ -136,6 +149,8 @@ export const tiktokProjectCn: Project = {
           { icon: "layers", label: "设计", text: "一套能容纳众多 SDK 而不散架的框架。" },
         ],
         columns: 3,
+        variant: "joined",
+        joinLabel: "一条流程",
       },
     },
     {
@@ -172,6 +187,7 @@ export const tiktokProjectCn: Project = {
       body: "越南是试点。落地之后，同一套模式（逃生通道 + 目标梯度 + 标准化 OCR）移植到了马来西亚、印尼和美国。",
       chart: {
         type: "funnel",
+        layout: "split",
         title: "KYC 漏斗 · 越南 · v1 → v2",
         data: [
           { label: "打开 KYC", value: 100, display: "100%" },
@@ -187,6 +203,7 @@ export const tiktokProjectCn: Project = {
       chapter: "执行",
       heading: "供应商对接 SOP",
       body: "TikTok PIPO 的第一份标准化 SOP，涵盖工作流程、验收标准和 UI 交付优先级。这是我最自豪的产出。",
+      visual: "sop",
       iconList: {
         items: [
           { icon: "workflow", label: "工作流程", text: "按 SDK 供应商划分阶段、负责人和验收关口。" },
@@ -195,6 +212,11 @@ export const tiktokProjectCn: Project = {
         ],
         columns: 3,
       },
+      sop: {
+        checks: ["OCR 映射", "UI 模板", "中止状态"],
+        codes: ["VN", "MY", "ID", "US"],
+        cycle: { label: "供应商集成周期", value: "−40%", cut: 40, before: "之前", after: "有了 SOP" },
+      },
       pullQuote: {
         text: "跨市场的扩展能力，不再取决于当时是谁在值班。",
         attribution: "SOP 带来的改变",
@@ -202,14 +224,15 @@ export const tiktokProjectCn: Project = {
     },
     {
       chapter: "成果",
-      heading: "结果",
-      body: "上线了什么，留下了什么。",
+      heading: "上线了什么，留下了什么。",
+      headingAccent: "留下了什么",
+      body: "",
       statGrid: {
         items: [
-          { value: "70 → 90%", label: "越南新用户 KYC", icon: "gauge", hint: "越南完成率提升。" },
-          { value: "−40%", label: "供应商周期", icon: "arrow-up-right", hint: "新 SDK 接入更快。" },
-          { value: "4", label: "已上线市场", icon: "globe", hint: "VN · MY · ID · US" },
-          { value: "1", label: "OCR 字段体系", icon: "shield", hint: "与法务 + 风控共同制定。" },
+          { value: "70 → 90%", label: "越南新用户 KYC", icon: "gauge", hint: "越南完成率提升。", href: "#s-06" },
+          { value: "−40%", label: "供应商周期", icon: "arrow-up-right", hint: "新 SDK 接入更快。", href: "#s-07" },
+          { value: "4", label: "已上线市场", icon: "globe", hint: "VN · MY · ID · US", href: "#s-02" },
+          { value: "1", label: "OCR 字段体系", icon: "shield", hint: "与法务 + 风控共同制定。", href: "#s-03" },
         ],
         cols: 4,
       },

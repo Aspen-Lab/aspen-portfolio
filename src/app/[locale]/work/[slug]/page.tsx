@@ -3,7 +3,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
-import { projects } from "@/lib/work";
+import { Fragment, type ReactNode } from "react";
+import { projects, type Project } from "@/lib/work";
 import { localizeProject } from "@/lib/project-locales";
 import type { Locale } from "@/i18n/routing";
 import { pageMeta } from "@/lib/seo";
@@ -21,8 +22,13 @@ import { Chart } from "@/components/Chart";
 import { UserFlow } from "@/components/UserFlow";
 import { AnnotatedImage } from "@/components/AnnotatedImage";
 import { NonstopRoute } from "@/components/NonstopRoute";
-import { SurfaceLedger } from "@/components/SurfaceLedger";
+import { SurfaceLedger, SurfaceTabs } from "@/components/SurfaceLedger";
 import { EmailRender } from "@/components/EmailRender";
+import { Band, bandStyles } from "@/components/Band";
+import { OutcomeTiles } from "@/components/OutcomeTiles";
+import { LayerTabs } from "@/components/LayerSheet";
+import { OwnershipStrip } from "@/components/OwnershipStrip";
+import { SopStack } from "@/components/SopStack";
 import styles from "./case.module.css";
 
 type Params = { slug: string; locale: Locale };
@@ -38,14 +44,17 @@ const latinWidth = (s: string) => s.length + (s.match(/\p{Script=Han}/gu)?.lengt
 /** "A · B" as one line, or one part per line in the narrow lg facts
     column, where "Full-time" would otherwise break at its hyphen. A short
     tag never splits (交付, "Brand & growth"), and its dot travels with it,
-    so a line can end on a dot but never start with one. */
-function Stacked({ parts }: { parts: string[] }) {
+    so a line can end on a dot but never start with one. `held` (the
+    banded pages' Chinese) also holds each word, and a dash travels with
+    the word after it: "2025 年 12 月 / — 至今", never "至 / 今". */
+function Stacked({ parts, held = false }: { parts: string[]; held?: boolean }) {
   return parts.map((part, i) => {
     const last = i === parts.length - 1;
+    // "5 月" is one unit: a number keeps the hanzi that counts it
+    const kept = part.replace(/(\d) (?=\p{Script=Han})/gu, "$1\u00a0");
     const text = (
       <>
-        {/* "5 月" is one unit: a number keeps the hanzi that counts it */}
-        {part.replace(/(\d) (?=\p{Script=Han})/gu, "$1\u00a0")}
+        {held && HAN.test(part) ? heldWords(kept.replace(/ — /g, " —\u00a0")) : kept}
         {!last && <span className="lg:hidden">{"\u00a0·"}</span>}
       </>
     );
@@ -90,6 +99,153 @@ function Hanzi({ text }: { text: string }) {
     </span>
   ));
 }
+
+/* ── Held Chinese on the banded pages ──────────────────────────────────
+   Hanzi() above holds only the words the segmenter returns whole, so a
+   word it cuts (收件 | 箱, 一 | 步) still splits at a line end, and
+   keep-all prose breaks a long clause anywhere once it overflows. Here,
+   as in src/lib/hold.tsx, a lone hanzi joins its neighbour (收件箱,
+   优先级), and closing punctuation travels inside the word before it,
+   opening punctuation inside the word after it, so no line starts with
+   。” or ends on “. Lines break only between words. The non-banded
+   pages keep Hanzi() exactly as it was. */
+const HAN_RUN = /^[\p{Script=Han}⁠]+$/u;
+const hanCount = (s: string) => s.replace(/⁠/g, "").length;
+/** A lone hanzi joins a word only while the two stay this short. */
+const JOIN_MAX = 8;
+/** Words the segmenter cuts wrongly in this site's copy (see hold.tsx):
+    普通人 comes out 普通 | 人的, 马来西亚 马来 | 西亚; 逃生通道 and
+    目标梯度 are the case's own terms. */
+const GLOSSED = /(一句话|方形|像素|普通人|马来西亚|逃生通道|目标梯度)/u;
+/** Lone hanzi that lead the word after them (可 | 运行, 最 | 自豪,
+    某 | 一条), so they join forward instead of onto the word before. */
+const LEADS = /^[可不最第每各某非超再更被]$/u;
+const OPENERS = /^[“‘（《「『【〔]+$/u;
+const CLOSERS = /^[，。、：；！？”’）》」』】〕…]+$/u;
+const PROSE_TOKEN = /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/;
+
+type Run = { text: string; tag?: "strong" | "em" };
+type Unit = { runs: Run[]; held: boolean; node?: ReactNode };
+
+function wordUnits(text: string, tag?: Run["tag"]): Unit[] {
+  const words: string[] = [];
+  let afterHan = false;
+  // split() with a capture group puts the glossary words at odd indices
+  const segments = text
+    .split(GLOSSED)
+    .flatMap((piece, i) => (i % 2 === 1 ? [piece] : Array.from(zhWords.segment(piece), (s) => s.segment)));
+  for (const segment of segments) {
+    if (!segment) continue;
+    const han = HAN_RUN.test(segment);
+    const last = words[words.length - 1];
+    if (
+      han &&
+      afterHan &&
+      !LEADS.test(segment) &&
+      (hanCount(segment) === 1 || hanCount(last) === 1) &&
+      hanCount(last) + hanCount(segment) <= JOIN_MAX
+    ) {
+      words[words.length - 1] = last + segment;
+    } else words.push(segment);
+    afterHan = han;
+  }
+  return words.map((w) => ({ runs: [{ text: w, tag }], held: HAN_RUN.test(w) && hanCount(w) > 1 }));
+}
+
+const unitText = (u: Unit) => u.runs.map((r) => r.text).join("");
+
+/** Punctuation joins the held word it belongs to, across bold or italic. */
+function glue(units: Unit[]): Unit[] {
+  const out: Unit[] = [];
+  for (const u of units) {
+    const prev = out[out.length - 1];
+    if (prev?.held && !u.node && !u.held && CLOSERS.test(unitText(u))) prev.runs.push(...u.runs);
+    else out.push(u);
+  }
+  for (let i = out.length - 2; i >= 0; i--) {
+    const u = out[i];
+    if (out[i + 1].held && !u.node && !u.held && OPENERS.test(unitText(u))) {
+      out[i + 1].runs.unshift(...u.runs);
+      out.splice(i, 1);
+    }
+  }
+  return out;
+}
+
+function emit(units: Unit[]): ReactNode[] {
+  const out: ReactNode[] = [];
+  const styled = (r: Run, key: number) =>
+    r.tag === "strong" ? (
+      <strong key={key} className="font-semibold text-ink">
+        {r.text}
+      </strong>
+    ) : r.tag === "em" ? (
+      <em key={key} className="italic">
+        {r.text}
+      </em>
+    ) : (
+      r.text
+    );
+  let loose: Run[] = [];
+  const flush = () => {
+    // Neighbouring loose runs of one style print as one
+    const merged: Run[] = [];
+    for (const r of loose) {
+      const last = merged[merged.length - 1];
+      if (last && last.tag === r.tag) last.text += r.text;
+      else merged.push({ ...r });
+    }
+    merged.forEach((r) => out.push(styled(r, out.length)));
+    loose = [];
+  };
+  for (const u of units) {
+    if (u.node) {
+      flush();
+      out.push(<Fragment key={out.length}>{u.node}</Fragment>);
+    } else if (u.held) {
+      flush();
+      out.push(
+        <span key={out.length} className="whitespace-nowrap">
+          {u.runs.map((r, i) => styled(r, i))}
+        </span>,
+      );
+    } else loose.push(...u.runs);
+  }
+  flush();
+  return out;
+}
+
+/** A short run of Chinese (a label, a caption), held word by word. */
+const heldWords = (text: string) => emit(glue(wordUnits(text)));
+
+/** A Chinese paragraph with RichText's inline markup, held word by word;
+    bold and italic hold inside too, code and links render as RichText. */
+function heldProse(text: string): ReactNode[] {
+  const units = text.split(PROSE_TOKEN).flatMap((piece, i): Unit[] => {
+    if (i % 2 === 0) return piece ? wordUnits(piece) : [];
+    const strong = piece.startsWith("**");
+    const inner = strong ? piece.slice(2, -2) : piece.slice(1, -1);
+    if (piece.startsWith("*") && !/[`[*]/.test(inner)) return wordUnits(inner, strong ? "strong" : "em");
+    return [{ runs: [], held: false, node: <RichText as="span">{piece}</RichText> }];
+  });
+  return emit(glue(units));
+}
+
+/** Large Chinese (titles, headings, quotes): each phrase up to and
+    including its comma is a block of its own, held word by word inside. */
+function Held({ text }: { text: string }) {
+  const phrases = text.split(/(?<=[，、：；])/).filter(Boolean);
+  if (phrases.length === 1 && !/[，、：；]$/.test(text)) return <>{heldWords(text)}</>;
+  return phrases.map((phrase, i) => (
+    <span key={i} className="inline-block">
+      {heldWords(phrase)}
+    </span>
+  ));
+}
+
+/** Banded Chinese prose: lines break between held words, never inside
+    one; a Latin run longer than the line (a URL) may still break. */
+const CN_PROSE = "text-pretty [overflow-wrap:anywhere]";
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -155,6 +311,23 @@ export default async function CaseStudy({
     { label: cn ? "公司 / 客户" : "Client", parts: project.client.split(" · ") },
     ...(editorial ? [] : [{ label: cn ? "方向" : "Themes", parts: project.tags }]),
   ];
+
+  /* The Latent band layout (Project.bands): everything it changes lives in
+     BandedCase below, so a case without the flag renders the JSX after
+     this line exactly as before. */
+  if (project.bands === true) {
+    return (
+      <BandedCase
+        project={project}
+        cn={cn}
+        chapters={chapters}
+        facts={facts}
+        next={next}
+        nextTitle={nextTitle}
+        nextInEnglish={nextInEnglish}
+      />
+    );
+  }
 
   return (
     <article
@@ -681,6 +854,548 @@ export default async function CaseStudy({
           </Link>
         </div>
       </Reveal>
+    </article>
+  );
+}
+
+/* ══ The banded layout ══════════════════════════════════════════════════
+   Latent's rhythm (latenthealth.com): full-bleed bands, dark hero → dark
+   evidence → one light band for the page's tabbed signature chart → dark
+   evidence → a grey band for statements and quotes → dark close. Each
+   band carries opaque planes: charts on paper sheets, notes on black
+   slabs, numbers on solid tiles. Only pages with Project.bands come here;
+   the accent is the project's own, used as solid fills and at most a few
+   heading phrases. */
+
+type Section = NonNullable<Project["sections"]>[number];
+type Tone = "dark" | "light" | "grey";
+type Fact = { label: string; parts: string[] };
+type Block =
+  | { kind: "section"; s: Section; i: number; tone: Tone }
+  | { kind: "quote"; text: string; attribution?: string; i: number; tone: "grey" }
+  | { kind: "next"; tone: "dark" };
+
+const pad = (n: number) => String(n).padStart(2, "0");
+const ESCAPE = /[.*+?^${}()|[\]\\]/g;
+
+/** Where `accent` stands in `text`: exactly, or reading the spaces,
+    no-break spaces and word joiners that hold a title together as one. */
+function findAccent(text: string, accent?: string): [number, number] | null {
+  if (!accent) return null;
+  const exact = text.indexOf(accent);
+  if (exact >= 0) return [exact, exact + accent.length];
+  const chars = Array.from(accent.replace(/[\s ⁠]+/gu, " ").trim());
+  if (chars.length === 0) return null;
+  const source = chars
+    .map((c) => (c === " " ? "[\\s\\u00a0\\u2060]+" : c.replace(ESCAPE, "\\$&")))
+    .join("\\u2060?");
+  const m = new RegExp(source, "u").exec(text);
+  return m ? [m.index, m.index + m[0].length] : null;
+}
+
+/** A title or heading with its accent phrase in the page accent; Chinese
+    held word by word on either side of it. */
+function Accented({ text, accent, cn }: { text: string; accent?: string; cn: boolean }) {
+  const words = (t: string) => (cn ? <Held text={t} /> : t);
+  const at = findAccent(text, accent);
+  if (!at) return <>{words(text)}</>;
+  return (
+    <>
+      {at[0] > 0 && words(text.slice(0, at[0]))}
+      <span className={styles.accentPhrase}>{words(text.slice(at[0], at[1]))}</span>
+      {at[1] < text.length && words(text.slice(at[1]))}
+    </>
+  );
+}
+
+function BandedCase({
+  project,
+  cn,
+  chapters,
+  facts,
+  next,
+  nextTitle,
+  nextInEnglish,
+}: {
+  project: Project;
+  cn: boolean;
+  chapters: string[];
+  facts: Fact[];
+  next: Project;
+  nextTitle: string;
+  nextInEnglish: boolean;
+}) {
+  const editorial = project.layout === "editorial";
+  const sections = project.sections ?? [];
+
+  /* Blocks in reading order, each with its band; a pull quote leaves its
+     section's band for a grey one, and "Up next" closes on dark. Runs of
+     one tone share a band. */
+  const blocks: Block[] = [];
+  sections.forEach((s, i) => {
+    blocks.push({ kind: "section", s, i, tone: s.band ?? "dark" });
+    if (s.pullQuote) {
+      blocks.push({ kind: "quote", text: s.pullQuote.text, attribution: s.pullQuote.attribution, i, tone: "grey" });
+    }
+  });
+  blocks.push({ kind: "next", tone: "dark" });
+  const groups: { tone: Tone; blocks: Block[] }[] = [];
+  for (const b of blocks) {
+    const last = groups[groups.length - 1];
+    if (last && last.tone === b.tone) last.blocks.push(b);
+    else groups.push({ tone: b.tone, blocks: [b] });
+  }
+
+  const host = project.liveUrl?.replace(/^https?:\/\//, "").replace(/\/$/, "");
+
+  const renderSection = (s: Section, i: number, tone: Tone) => {
+    const prevChapter = i > 0 ? sections[i - 1].chapter : undefined;
+    const isFirstInChapter = s.chapter && s.chapter !== prevChapter;
+    const chapterIndex = s.chapter ? chapters.indexOf(s.chapter) : -1;
+
+    const intro = (
+      <>
+        <header className="max-w-3xl">
+          {chapters.length <= 1 && <p className={styles.sectionNum}>{pad(i + 1)}</p>}
+          <h2 className={tone === "grey" ? styles.statement : styles.h2}>
+            {/* Headings may carry `code` too — never print backticks */}
+            {MARKUP.test(s.heading) ? (
+              <RichText as="span">{s.heading}</RichText>
+            ) : (
+              <Accented text={s.heading} accent={s.headingAccent} cn={cn} />
+            )}
+          </h2>
+        </header>
+        {s.body.trim() !== "" && (
+          cn ? (
+            <p className={`${styles.bandBody} ${CN_PROSE}`}>{heldProse(s.body)}</p>
+          ) : (
+            <RichText className={`${styles.bandBody} text-pretty`}>{s.body}</RichText>
+          )
+        )}
+      </>
+    );
+
+    // The section's own signature figure, which holds the intro beside it
+    const lead =
+      s.visual === "surfaces" ? (
+        <SurfaceTabs intro={intro} />
+      ) : s.layers && s.layers.length > 0 ? (
+        <LayerTabs intro={intro} layers={s.layers} />
+      ) : s.markets && s.markets.length > 0 ? (
+        <div className={styles.side}>
+          <div className={styles.sideText}>{intro}</div>
+          <MarketsRow items={s.markets} hub={s.marketsHub} />
+        </div>
+      ) : (
+        intro
+      );
+
+    /* Every drawing sits right under the text it draws; the callout
+       follows them all as the section's footnote. */
+    const figures: ReactNode[] = [];
+    const fig = (key: string, node: ReactNode) =>
+      figures.push(
+        <div key={key} className="mt-14">
+          {node}
+        </div>,
+      );
+    if (s.route) fig("route", <NonstopRoute {...s.route} />);
+    if (s.chart) {
+      fig(
+        "chart",
+        <Chart
+          type={s.chart.type}
+          data={s.chart.data}
+          max={s.chart.max}
+          title={s.chart.title}
+          layout={s.chart.layout}
+        />,
+      );
+    }
+    if (s.userFlow) {
+      fig(
+        "flow",
+        <UserFlow steps={s.userFlow.steps} branches={s.userFlow.branches} title={s.userFlow.title} />,
+      );
+    }
+    if (s.visual === "email-render") fig("email", <EmailRender />);
+    if (s.visual === "ownership" && s.ownership) fig("ownership", <OwnershipStrip {...s.ownership} />);
+    if (s.visual === "sop" && s.sop && s.iconList) {
+      fig("sop", <SopStack items={s.iconList.items} {...s.sop} />);
+    }
+    if (s.statGrid) {
+      fig(
+        "stats",
+        <OutcomeTiles
+          items={s.statGrid.items.map((it) => ({
+            value: it.value,
+            label: it.label,
+            text: it.hint,
+            accent: true,
+            href: it.href,
+          }))}
+        />,
+      );
+    }
+    if (s.iconList && s.visual !== "sop") {
+      fig(
+        "icons",
+        <IconList
+          items={s.iconList.items.map((it) => ({
+            ...it,
+            icon: it.icon as Parameters<typeof IconList>[0]["items"][number]["icon"],
+          }))}
+          columns={s.iconList.columns}
+          variant={s.iconList.variant}
+          joinLabel={s.iconList.joinLabel}
+        />,
+      );
+    }
+    if (s.images && s.images.length === 1) {
+      fig(
+        "image",
+        <div className="overflow-hidden rounded-[2px] border border-line bg-cream">
+          <Image
+            src={s.images[0]}
+            alt={`${s.heading} — figure`}
+            width={2400}
+            height={1500}
+            sizes="(max-width: 1280px) 100vw, 1184px"
+            className="block w-full h-auto"
+            style={{ width: "100%", height: "auto" }}
+          />
+        </div>,
+      );
+    }
+    if (s.images && s.images.length > 1) {
+      fig("carousel", <Carousel images={s.images} alt={s.heading} aspect={s.carouselAspect} />);
+    }
+    s.figures?.forEach((figure) =>
+      figures.push(
+        figure.notes ? (
+          <div key={figure.src} className="mt-14" data-stage={figure.stage}>
+            <AnnotatedImage
+              src={figure.src}
+              width={figure.width}
+              height={figure.height}
+              alt={figure.alt}
+              notes={figure.notes}
+              caption={figure.caption}
+              stage={figure.stage}
+              layout={figure.layout}
+              aspect={figure.aspect}
+              position={figure.position}
+              kicker={figure.kicker}
+              sizes={
+                figure.layout === "split"
+                  ? "(max-width: 1023px) 100vw, 700px"
+                  : "(max-width: 1280px) 100vw, 1184px"
+              }
+            />
+          </div>
+        ) : (
+          <figure key={figure.src} className="mt-14">
+            <a
+              href={figure.src}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`${figure.alt} — ${cn ? "查看原图" : "View full-size image"}`}
+              className="block overflow-hidden rounded-[2px] border border-line bg-cream"
+            >
+              <Image
+                src={figure.src}
+                alt={figure.alt}
+                width={figure.width}
+                height={figure.height}
+                sizes="(max-width: 1280px) 100vw, 1184px"
+                className="block h-auto w-full"
+              />
+            </a>
+            <figcaption className="mt-3 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[14px] leading-relaxed text-mute">
+              <span>{cn ? heldWords(figure.caption ?? figure.alt) : (figure.caption ?? figure.alt)}</span>
+              <span className="text-soft">
+                {cn ? "点击图片查看原图 ↗" : "Open image at full size ↗"}
+              </span>
+            </figcaption>
+          </figure>
+        ),
+      ),
+    );
+    s.videos?.forEach((video) =>
+      figures.push(
+        <figure key={video.src} className="mt-14">
+          <video
+            src={video.src}
+            poster={video.poster}
+            width={video.width}
+            height={video.height}
+            controls
+            playsInline
+            preload="none"
+            aria-label={video.title}
+            className="block h-auto w-full rounded-[2px] border border-line bg-cream"
+          >
+            <a href={video.src}>{cn ? "观看演示视频" : "Watch the prototype video"}</a>
+          </video>
+          <figcaption className="mt-3 text-[14px] leading-relaxed text-mute">
+            {cn ? heldWords(video.title) : video.title}
+          </figcaption>
+        </figure>,
+      ),
+    );
+    if (s.callout) {
+      fig(
+        "callout",
+        <Callout
+          variant={s.callout.variant}
+          label={s.callout.label}
+          title={s.callout.title}
+          tone="slab"
+          accent={s.callout.accent}
+        >
+          {s.callout.text}
+        </Callout>,
+      );
+    }
+
+    return (
+      <>
+        {isFirstInChapter && (
+          <Reveal>
+            <div data-chapter={chapterIndex} className={`${styles.chapter} ${styles.bandChapter}`}>
+              <span className={styles.chapterNum}>
+                {cn ? "章节" : "Chapter"} {pad(chapterIndex + 1)}
+              </span>
+              <span className={styles.chapterTitle}>{cn && s.chapter ? heldWords(s.chapter) : s.chapter}</span>
+              <span aria-hidden className={styles.chapterRule} />
+            </div>
+          </Reveal>
+        )}
+        {/* A section runs 800–1500px tall on a phone: it rises as its
+            heading enters, not once a fifth of it is on screen. */}
+        <Reveal delay={0.04} amount="some">
+          <section id={`s-${pad(i + 1)}`} className={styles.bandSection}>
+            {lead}
+            {figures}
+          </section>
+        </Reveal>
+      </>
+    );
+  };
+
+  const renderQuote = (text: string, attribution?: string) => {
+    const quoted = /^[“"]/.test(text) ? text : `“${text}”`;
+    return (
+      <Reveal>
+        <figure className={styles.quoteBand}>
+          <blockquote>
+            <p className={`type-display ${styles.quoteBandText}`} data-hang={cn ? undefined : ""}>
+              {cn ? <Held text={quoted} /> : quoted}
+            </p>
+          </blockquote>
+          {attribution && (
+            <figcaption className={styles.quoteBandCite}>{cn ? heldWords(attribution) : attribution}</figcaption>
+          )}
+        </figure>
+      </Reveal>
+    );
+  };
+
+  /* Up next as Latent's split card: the next cover beside a black slab */
+  const renderNext = () => (
+    <div data-chapters-end>
+      <Reveal delay={0.1}>
+        <Link href={`/work/${next.slug}`} className={styles.nextSplit}>
+          <span className={styles.nextMedia}>
+            {/* The print always fills: the hero's "contain" and its edge
+                colour belong to that page's frame. */}
+            {next.cover && (
+              <Image
+                src={next.cover}
+                alt=""
+                fill
+                sizes="(max-width: 1023px) 100vw, 720px"
+                className={styles.nextImage}
+                style={{ objectFit: "cover", objectPosition: next.coverPosition }}
+              />
+            )}
+            <span aria-hidden className="reg-mark tl" />
+            <span aria-hidden className="reg-mark tr" />
+            <span aria-hidden className="reg-mark br" />
+            <span aria-hidden className="reg-mark bl" />
+          </span>
+          <span className={`slab ${styles.nextSlab}`}>
+            <span className={styles.splitKicker}>
+              <span aria-hidden className={styles.kickerSquare} />
+              {cn ? "下一个项目" : "Up next"}
+            </span>
+            <span className={`type-display ${styles.nextSplitTitle}`}>
+              {cn ? <Held text={nextTitle} /> : nextTitle}
+            </span>
+            {!nextInEnglish && (
+              <span className={styles.nextSplitSummary}>{cn ? heldWords(next.summary) : next.summary}</span>
+            )}
+            <span className={styles.nextSplitGo}>
+              {cn ? "阅读案例" : "Read the case study"}
+              <span aria-hidden className={styles.nextSplitArrow}>
+                →
+              </span>
+            </span>
+          </span>
+        </Link>
+      </Reveal>
+    </div>
+  );
+
+  return (
+    <article
+      className={styles.case}
+      data-bands=""
+      data-project-theme={project.theme}
+      data-layout={project.layout}
+      style={
+        {
+          "--accent": project.accent,
+          "--accent-deep": project.accentDeep ?? project.accent,
+        } as React.CSSProperties
+      }
+    >
+      <Band tone="dark" className={bandStyles.hero}>
+        <Link href="/#work" className={styles.back}>
+          <span aria-hidden className={styles.backArrow}>←</span>
+          {cn ? "返回作品" : "Back to work"}
+        </Link>
+
+        <div className="mt-12 grid gap-y-14 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-end lg:gap-x-16 xl:gap-x-24">
+          <Reveal>
+            <header className="max-w-4xl">
+              <span className={styles.kicker}>{project.category}</span>
+              <h1
+                className="mt-6 type-display leading-[1.0] text-ink text-balance"
+                style={{ fontSize: "clamp(40px, 6vw, 84px)" }}
+              >
+                <Accented text={project.title} accent={project.titleAccent} cn={cn} />
+              </h1>
+              <p className={`mt-8 text-[18px] leading-[1.6] text-mute max-w-2xl${cn ? ` ${CN_PROSE}` : ""}`}>
+                {cn ? heldWords(project.summary) : project.summary}
+              </p>
+              {/* The page's one solid button: the accent, ink words */}
+              {project.liveUrl && project.accent ? (
+                <a href={project.liveUrl} target="_blank" rel="noreferrer" className={`mt-9 ${styles.cta}`}>
+                  {cn ? "访问" : "Visit"} {host}
+                  <span aria-hidden className={styles.ctaArrow}>↗</span>
+                </a>
+              ) : project.liveUrl ? (
+                <a href={project.liveUrl} target="_blank" rel="noreferrer" className={`mt-7 ${styles.live}`}>
+                  {cn ? "访问" : "Visit"} {host}
+                  <span aria-hidden className={styles.liveArrow}>↗</span>
+                </a>
+              ) : null}
+            </header>
+          </Reveal>
+
+          <Reveal delay={0.08}>
+            <dl className={`grid grid-cols-2 ${editorial ? "sm:grid-cols-3" : "sm:grid-cols-4"} lg:grid-cols-1 gap-x-8 gap-y-7 lg:gap-y-5 border-t border-line pt-7 lg:pt-6 max-w-4xl`}>
+              {facts.map((f, i) => (
+                <div
+                  key={f.label}
+                  className={editorial && i === facts.length - 1 ? "col-span-2 sm:col-span-1" : undefined}
+                >
+                  <dt className={styles.factLabel}>{f.label}</dt>
+                  <dd className={styles.factValue}>
+                    <Stacked parts={f.parts} held={cn} />
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.14}>
+          {project.cover && project.coverNotes ? (
+            <div className="mt-14">
+              <AnnotatedImage
+                src={project.cover}
+                width={project.coverWidth ?? 1600}
+                height={project.coverHeight ?? 1000}
+                alt={project.coverCaption ?? project.title}
+                notes={project.coverNotes}
+                caption={project.coverCaption}
+                showCaption
+                aspect="16 / 9"
+                position={project.coverPosition}
+                sizes="(max-width: 1280px) 100vw, 1280px"
+                layout="attached"
+                priority
+              />
+            </div>
+          ) : (
+            <div
+              className="mt-14 aspect-[16/9] rounded-[2px] border border-line overflow-hidden bg-cream relative"
+              style={project.coverBg ? { backgroundColor: project.coverBg } : undefined}
+            >
+              {project.heroVideo ? (
+                <video
+                  src={project.heroVideo}
+                  poster={project.cover}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : project.cover ? (
+                <Image
+                  src={project.cover}
+                  alt={project.title}
+                  fill
+                  sizes="(max-width: 1280px) 100vw, 1280px"
+                  style={{ objectFit: project.coverFit ?? "cover", objectPosition: project.coverPosition }}
+                  priority
+                />
+              ) : null}
+              <span aria-hidden className="reg-mark tl" />
+              <span aria-hidden className="reg-mark tr" />
+              <span aria-hidden className="reg-mark br" />
+              <span aria-hidden className="reg-mark bl" />
+            </div>
+          )}
+        </Reveal>
+
+        {/* The outcome tiles: the team's figures in ink, the owner's or the
+            work's own in the accent, each linked to its evidence */}
+        {project.metrics && project.metrics.length > 0 && (
+          <Reveal delay={0.18}>
+            <div className="mt-6">
+              <OutcomeTiles items={project.metrics} />
+            </div>
+          </Reveal>
+        )}
+      </Band>
+
+      {chapters.length > 1 && <ChapterNav chapters={chapters} plate />}
+
+      {groups.map((g, gi) => (
+        <Band
+          key={gi}
+          tone={g.tone}
+          className={gi === 0 && g.tone === "dark" ? bandStyles.tight : undefined}
+        >
+          {g.blocks.map((b) => (
+            <div
+              key={b.kind === "next" ? "next" : `${b.kind}-${b.i}`}
+              className={styles.block}
+            >
+              {b.kind === "section"
+                ? renderSection(b.s, b.i, b.tone)
+                : b.kind === "quote"
+                  ? renderQuote(b.text, b.attribution)
+                  : renderNext()}
+            </div>
+          ))}
+        </Band>
+      ))}
     </article>
   );
 }

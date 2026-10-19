@@ -1,176 +1,269 @@
-/* Latent's network on the dark page: one flat sheet, a field of faint dots
-   (the only radial-gradient here is the dot itself, tiled), lit points,
-   one hairline. No glows, no fills beyond flat ink. */
-.sheet {
-  container-type: inline-size;
-  overflow: hidden;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
+/* Latent's network on the dark band: a field of faint dots (SVG circles,
+   2px at desktop), a 1px accent ring round a solid hub, the markets lit as
+   solid accent points. Flat fills and 1px lines only. Every light tone is
+   the ink token mixed down, so the field follows the band it sits on. */
+.root {
+  position: relative;
+  width: 100%;
 }
 
-/* The field's pitch is a tenth of a column, and the tiles are shifted by
-   half a pitch so the dots sit on whole multiples of it — the same grid
-   the band below draws its points on. */
-.field {
-  --pitch: calc(10cqi / var(--n));
-  background-image: radial-gradient(circle, rgb(244 244 242 / 11%) 0 1px, transparent 1.5px);
-  background-size: var(--pitch) var(--pitch);
-  background-position: calc(var(--pitch) / -2) calc(var(--pitch) / -2);
+.field { position: relative; }
+@media (min-width: 640px) {
+  .field { aspect-ratio: 600 / 360; }
 }
 
-.band { display: block; width: 100%; height: auto; overflow: visible; }
+.svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
-.route,
-.drop { fill: none; }
-.route,
-.drop,
-.ring { vector-effect: non-scaling-stroke; }
-.route {
-  stroke: rgb(244 244 242 / 35%);
+.gridDot { fill: color-mix(in srgb, var(--color-ink) 20%, transparent); }
+
+.ring {
+  fill: none;
+  stroke: var(--accent, var(--color-ink));
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+}
+.hub {
+  fill: var(--color-ink);
+  opacity: 0;
+}
+
+/* Spokes: drawn along +x inside a group rotated toward the market, so a
+   scaleX from the hub end runs each one out from the centre */
+.spoke,
+.overlay {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.spoke {
+  stroke: color-mix(in srgb, var(--color-ink) 30%, transparent);
   stroke-width: 1;
   transform-box: fill-box;
-  transform-origin: left center;
+  transform-origin: 0 50%;
   transform: scaleX(0);
-  transition: transform var(--run) linear 150ms;
 }
-.sheet[data-lit="true"] .route { transform: none; }
-
-.dot,
-.near {
-  fill: var(--color-ink);
-  opacity: 0.18;
-  transition: opacity 320ms ease calc(150ms + var(--d));
-}
-.ring {
-  /* a flat cream disc, so the route stops at the ring */
-  fill: var(--color-cream);
-  stroke: rgb(244 244 242 / 32%);
-  stroke-width: 1;
+.overlay {
+  stroke: color-mix(in srgb, var(--color-ink) 80%, transparent);
+  stroke-width: 1.5;
   opacity: 0;
-  transition: opacity 400ms ease calc(250ms + var(--d));
+  transition: opacity 240ms ease;
 }
-.drop {
-  stroke: rgb(244 244 242 / 28%);
-  stroke-width: 1;
-  stroke-dasharray: 2 3;
-  opacity: 0;
-  transition: opacity 400ms ease calc(300ms + var(--d));
-}
-.sheet[data-lit="true"] .dot,
-.sheet[data-lit="true"] .ring,
-.sheet[data-lit="true"] .drop { opacity: 1; }
-.sheet[data-lit="true"] .near { opacity: 0.5; }
+.overlay[data-on="true"] { opacity: 1; }
 
-/* The markets, one column under each point */
-.markets {
-  display: grid;
-  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
-  padding-bottom: 30px;
-  text-align: center;
+.dot {
+  fill: var(--accent, var(--color-ink));
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transition: opacity 240ms ease;
 }
+
+/* ── The labels ── */
+.labels {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Each label's box starts on its point, so pointing at the dot counts;
+   its type starts 14px past the point. The name line sits on the point:
+   the code line (16px) plus half the name line (13px) above it. */
 .market {
-  padding: 8px 12px 0;
-  opacity: 0.35;
-  transition: opacity 420ms ease calc(150ms + var(--d));
+  position: absolute;
+  top: calc(var(--y) * 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 2px;
+  white-space: nowrap;
+  cursor: default;
+  opacity: 0;
+  transition: opacity 240ms ease;
 }
-.sheet[data-lit="true"] .market { opacity: 1; }
+.market[data-side="right"] {
+  left: calc(var(--x) * 100%);
+  translate: -9px -29px;
+  padding-left: 23px;
+}
+.market[data-side="left"] {
+  right: calc((1 - var(--x)) * 100%);
+  translate: 9px -29px;
+  padding-right: 23px;
+  align-items: flex-end;
+  text-align: right;
+}
+.market:focus-visible {
+  outline: 1px dashed var(--color-ink);
+  outline-offset: 4px;
+}
 
 .code {
-  color: var(--color-ink);
+  color: var(--color-soft);
   font-family: var(--font-mono);
-  font-size: clamp(24px, 3cqi, 32px);
-  line-height: 40px;
-  letter-spacing: 0.04em;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  line-height: 16px;
 }
 .name {
-  margin-top: 4px;
+  color: var(--color-ink);
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  line-height: 26px;
+}
+.reg {
+  color: var(--color-mute);
+  font-size: 14px;
+  line-height: 20px;
+}
+.scope {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.sq {
+  flex: none;
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid color-mix(in srgb, var(--color-ink) 35%, transparent);
+}
+.sq[data-on="true"] {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+}
+
+/* The hub's label, in the wedge between the two lower spokes */
+.hubLabel {
+  position: absolute;
+  top: calc(var(--y) * 100%);
+  left: 50%;
+  margin: 0;
+  translate: -50% 0;
   color: var(--color-ink);
   font-size: 15px;
   line-height: 20px;
+  white-space: nowrap;
+  opacity: 0;
 }
-.reg {
-  margin-top: 6px;
-  color: var(--color-ink);
-  font-size: 13.5px;
-  line-height: 20px;
-}
-.key { margin-right: 2px; color: var(--color-soft); }
-/* the regulator wraps as one, under its key if it must */
-.value { display: inline-block; white-space: nowrap; }
-.scope {
+
+.legend {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0;
   color: var(--color-mute);
   font-size: 13px;
-  line-height: 20px;
+  line-height: 16px;
+  opacity: 0;
+}
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Phones: the row turns into a rail down the left. A fixed 20px pitch, the
-   rail on the second column of dots, and every line of type 20px high (the
-   code 40px), so each point lands on a dot however the names wrap. */
+/* ── Entry: the ring and hub, then the spokes out one by one, each point
+   popping as its spoke reaches it, then its label ── */
+.root[data-lit="true"] :is(.ring, .hub, .hubLabel, .legend) {
+  opacity: 1;
+  animation: fade 600ms ease backwards;
+}
+.root[data-lit="true"] :is(.hubLabel, .legend) { animation-delay: 900ms; }
+.root[data-lit="true"] .spoke {
+  transform: none;
+  animation: drawX 700ms var(--ease-arrive) calc(200ms + var(--i) * 120ms) backwards;
+}
+.root[data-lit="true"] .dot {
+  opacity: 1;
+  animation: pop 420ms var(--ease-arrive) calc(640ms + var(--i) * 120ms) backwards;
+}
+.root[data-lit="true"] .market {
+  opacity: 1;
+  animation: fade 500ms ease calc(720ms + var(--i) * 120ms) backwards;
+}
+
+/* ── Pointing at a market: its spoke solid, the others fade ── */
+.field[data-active="true"] :is(.market, .dot):not([data-on="true"]) { opacity: 0.4; }
+
+/* ── Phones: a strip of the field as a picture, the markets as rows ── */
+.list { display: none; }
+
 @media (max-width: 639px) {
-  .field {
-    --pitch: 20px;
-    padding: 20px 16px 20px 0;
+  .field { height: 160px; }
+  /* The strip draws at about half scale: the points and hub grow to
+     stay legible (SVG geometry set from CSS) */
+  .dot { r: 7px; }
+  .gridDot { r: 1.6px; }
+  .hub {
+    x: 291px;
+    y: 171px;
+    width: 18px;
+    height: 18px;
   }
-  .band { display: none; }
-  .markets {
+  .labels,
+  .hubLabel { display: none; }
+  .legend {
+    position: static;
+    margin-top: 18px;
+  }
+  .list {
     display: block;
-    padding-bottom: 0;
-    text-align: left;
+    margin: 14px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--color-line);
+    list-style: none;
   }
-  .market {
-    position: relative;
-    min-height: 100px;
-    padding: 0 0 0 64px;
+  .row {
+    display: grid;
+    grid-template-columns: 8px 32px minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--color-line);
   }
-  .market + .market { margin-top: 20px; }
-  .market::before {
-    content: "";
-    position: absolute;
-    top: 14.5px;
-    left: 34.5px;
-    width: 11px;
-    height: 11px;
-    border-radius: 999px;
-    background: var(--color-ink);
-    outline: 1px solid rgb(244 244 242 / 32%);
-    outline-offset: 7px;
-    box-shadow: 0 0 0 7px var(--color-cream);
+  .rowDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent, var(--color-ink));
   }
-  .market:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    top: 20px;
-    left: 40px;
-    width: 1px;
-    height: calc(100% + 20px);
-    background: rgb(244 244 242 / 35%);
-    transform: scaleY(0);
-    transform-origin: top;
-    transition: transform 420ms linear calc(150ms + var(--d));
+  .rowText {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
-  .markets { position: relative; z-index: 0; }
-  .sheet[data-lit="true"] .market::after { transform: none; }
-  .code { font-size: 28px; }
-  .name { margin-top: 0; }
-  .reg { margin-top: 0; }
+  .row .name {
+    font-size: 18px;
+    line-height: 24px;
+  }
+  .row .scope { margin-top: 0; }
 }
 
-/* Reduced motion: all lit from the first paint */
+@keyframes fade { from { opacity: 0; } }
+@keyframes drawX { from { transform: scaleX(0); } }
+@keyframes pop { from { opacity: 0; transform: scale(0.5); } }
+
+/* Reduced motion: drawn from the first paint, switches instant */
 @media (prefers-reduced-motion: reduce) {
-  .route,
-  .dot,
-  .near,
+  .spoke { transform: none; }
   .ring,
-  .drop,
+  .hub,
+  .dot,
   .market,
-  .market:not(:last-child)::after { transition: none; }
-  .route,
-  .market:not(:last-child)::after { transform: none; }
+  .hubLabel,
+  .legend { opacity: 1; }
+  .root[data-lit="true"] :is(.ring, .hub, .hubLabel, .legend, .spoke, .dot, .market) { animation: none; }
+  .overlay,
   .dot,
-  .ring,
-  .drop,
-  .market { opacity: 1; }
-  .near { opacity: 0.5; }
+  .market { transition: none; }
 }

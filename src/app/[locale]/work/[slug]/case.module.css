@@ -494,7 +494,7 @@
    heading and body are left out here, or their measures would widen to
    the diagrams'. Every rule is scoped to the flag; the other cases never
    see it. */
-.case[data-layout="editorial"] section > :not(header, p, [data-stage="wide"]) {
+.case[data-layout="editorial"]:not([data-bands]) section > :not(header, p, [data-stage="wide"]) {
   max-width: 64rem;
 }
 /* A figure's moving layer may stand past the page's edge before it
@@ -518,4 +518,291 @@
 :global(html[lang="zh-CN"]) .case[data-layout="editorial"] .nextSummary {
   word-break: keep-all;
   overflow-wrap: anywhere;
+}
+
+/* ══ Banded layout (Project.bands) ══════════════════════════════════════
+   Full-bleed bands (components/Band) carry the page; the article itself
+   is full width. Every rule here is scoped to [data-bands] or to classes
+   only the banded path renders, so the other cases never see them. */
+.case[data-bands] {
+  --accent-text: var(--accent, var(--color-ink));
+  overflow-x: clip;
+}
+
+/* The hero and heading phrase in the page accent (accent-deep on light) */
+.accentPhrase { color: var(--accent-text); }
+
+/* The page's one solid button */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border-radius: 2px;
+  background: var(--accent);
+  color: #0f0f10;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.cta:hover { color: #0f0f10; }
+.ctaArrow {
+  display: inline-block;
+  transition: transform 320ms var(--ease-arrive);
+}
+@media (hover: hover) {
+  .cta:hover .ctaArrow { transform: translate(2px, -2px); }
+}
+.cta:focus-visible {
+  outline: 2px solid #f4f4f2;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+:global(html[lang="zh-CN"]) .cta {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+/* Blocks inside a band: the first sits on the band's padding, the rest
+   keep one step apart */
+.block + .block { margin-top: 88px; }
+@media (min-width: 768px) {
+  .block + .block { margin-top: 120px; }
+}
+.bandSection { scroll-margin-top: 96px; }
+.bandChapter {
+  max-width: none;
+  margin: 0 0 56px;
+}
+
+.sectionNum {
+  margin-bottom: 16px;
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  font-variant-numeric: tabular-nums;
+}
+.h2,
+.statement {
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 300;
+  text-wrap: balance;
+}
+.h2 {
+  font-size: clamp(28px, 3.6vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+/* A grey band's statement (Latent's quote band at heading scale) */
+.statement {
+  font-size: clamp(32px, 2.6vw + 16px, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+.bandBody {
+  max-width: 40rem;
+  margin-top: 24px;
+  color: color-mix(in srgb, var(--color-ink) 85%, transparent);
+  font-size: 18px;
+  line-height: 1.65;
+}
+:global([data-tone="light"]) .bandBody,
+:global([data-tone="grey"]) .bandBody { color: var(--color-mute); }
+
+/* Text beside a field (the markets constellation) */
+.side {
+  display: grid;
+  gap: 48px;
+}
+.sideText { min-width: 0; }
+@media (min-width: 1024px) {
+  .side {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    align-items: center;
+    gap: 64px;
+  }
+}
+
+/* ── Quote band ── Latent's grey testimonial band: the sentence large in
+   ink inside its own curly marks, a quiet attribution under it. */
+.quoteBand { max-width: 56rem; }
+.quoteBandText {
+  color: var(--color-ink);
+  font-size: clamp(28px, 2.2vw + 14px, 44px);
+  line-height: 1.18;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+.quoteBandText[data-hang] { text-indent: -0.42em; }
+/* Chinese is held word by word in the markup (Held in page.tsx), so lines
+   break between words; keep-all here would remove those breaks and let
+   overflow-wrap cut the quote anywhere (值班 / 。”). */
+:global(html[lang="zh-CN"]) .quoteBandText { overflow-wrap: anywhere; }
+.quoteBandCite {
+  margin-top: 28px;
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+:global(html[lang="zh-CN"]) .quoteBandCite {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+/* ── Up next ── Latent's split card: the next cover in a viewfinder
+   beside a black slab, one 1px outline round both. */
+.nextSplit {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border: 1px solid var(--slab-line);
+  border-radius: 2px;
+  color: var(--color-ink);
+}
+@media (min-width: 1024px) {
+  .nextSplit { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+}
+.nextMedia {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--color-cream);
+}
+.nextImage { transition: transform 700ms var(--ease-arrive); }
+.nextSlab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+  padding: 24px 20px;
+  border: 0;
+  border-top: 1px solid var(--slab-line);
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .nextSlab { padding: 40px; }
+}
+@media (min-width: 1024px) {
+  .nextSlab {
+    border-top: 0;
+    border-left: 1px solid var(--slab-line);
+  }
+}
+.splitKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+:global(html[lang="zh-CN"]) .splitKicker {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.kickerSquare {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--accent, var(--color-ink));
+}
+.nextSplitTitle {
+  margin-top: 8px;
+  color: var(--color-ink);
+  font-size: clamp(28px, 2vw + 16px, 40px);
+  line-height: 1.06;
+  text-wrap: balance;
+}
+.nextSplitSummary {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--color-mute);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+:global(html[lang="zh-CN"]) .nextSplitTitle,
+:global(html[lang="zh-CN"]) .nextSplitSummary { overflow-wrap: anywhere; }
+.nextSplitGo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 12px;
+  color: var(--color-ink);
+  font-size: 15px;
+}
+.nextSplitArrow {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  transition: transform 360ms var(--ease-arrive);
+}
+/* Hover: the cover breathes, the arrow steps on, an ink edge fades in.
+   Transform and opacity only. */
+.nextSplit::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--color-ink);
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+@media (hover: hover) {
+  .nextSplit:hover::after { opacity: 0.5; }
+  .nextSplit:hover .nextImage { transform: scale(1.03); }
+  .nextSplit:hover .nextSplitArrow { transform: translateX(4px); }
+}
+.nextSplit:focus-visible {
+  outline: 1px solid var(--color-ink);
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ctaArrow,
+  .nextImage,
+  .nextSplitArrow,
+  .nextSplit::after { transition: none; }
+  .cta:hover .ctaArrow,
+  .nextSplit:hover .nextImage,
+  .nextSplit:hover .nextSplitArrow { transform: none; }
+}
+/* No label under 11.5px on a banded page */
+.case[data-bands] .kicker,
+.case[data-bands] .chapterNum { font-size: 12px; }
+/* Chinese labels on a banded page leave the mono role: Hanzi in a
+   monospace face at 12px turns to specks, so they set in the sans at
+   13px with close tracking and no case change. Placed last and scoped
+   past the two rules above so it wins on both layouts. */
+:global(html[lang="zh-CN"]) .case[data-bands] .kicker,
+:global(html[lang="zh-CN"]) .case[data-bands] .chapterNum,
+:global(html[lang="zh-CN"]) .case[data-bands] .table th,
+:global(html[lang="zh-CN"]) .case[data-bands] .nextKicker,
+:global(html[lang="zh-CN"]) .case[data-bands] .quoteCite {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
 }

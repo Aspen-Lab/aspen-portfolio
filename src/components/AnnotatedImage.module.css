@@ -1,15 +1,24 @@
-/* Flat throughout: a dim, a hairline and four corner marks — no gradient
-   fills (Aspen, 2026-10-19). The photograph runs the full stage, on the
-   page's one sheet: 4px corners and a #252528 hairline, no inner padding. */
+/* Flat throughout: hairlines, corner marks, a dashed crosshair and solid
+   blocks — no gradient fills, and nothing over the picture ever dims it
+   (Aspen, 2026-10-19). The photograph runs the full stage: 4px corners and
+   a #252528 hairline, or, joined to a black slab, 2px corners and #333336. */
 .figure { position: relative; }
 
 .frame {
+  /* The picture is dark-native: its marks and markers keep the dark
+     tokens wherever the frame sits */
+  --color-paper: #0f0f10;
+  --color-cream: #181819;
+  --color-line: #252528;
+  --color-ink: #f4f4f2;
   position: relative;
   overflow: hidden;
   border-radius: 4px;
   background: var(--color-cream);
   isolation: isolate;
 }
+/* Latent's L-marks: still, over the picture, under the markers */
+.reg { z-index: 3; }
 /* The hairline is drawn over the picture, not round it, so the notes'
    per cent stay a share of the picture itself. */
 .frame::after {
@@ -87,6 +96,48 @@
 .corner[data-c="tr"] { left: -11px; top: -1px; border-right-width: 1.5px; border-top-width: 1.5px; border-top-right-radius: 6px; }
 .corner[data-c="br"] { left: -11px; top: -11px; border-right-width: 1.5px; border-bottom-width: 1.5px; border-bottom-right-radius: 6px; }
 .corner[data-c="bl"] { left: -1px; top: -11px; border-left-width: 1.5px; border-bottom-width: 1.5px; border-bottom-left-radius: 6px; }
+
+/* The crosshair: a dashed line across and one down, through the region's
+   centre, and a dark square where they cross (Latent's hero). Each piece
+   is as big as the frame, so a per cent of it is a per cent of the frame;
+   the lines are drawn at the piece's top and left edges and carried to the
+   centre by transform. */
+.cross {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  transition: transform 460ms var(--ease-arrive);
+}
+.cross::before {
+  content: "";
+  position: absolute;
+}
+.cross[data-axis="x"] { transform: translateY(calc((var(--y) + var(--h) / 2) * 1%)); }
+.cross[data-axis="x"]::before {
+  top: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed rgb(244 244 242 / 35%);
+}
+.cross[data-axis="y"] { transform: translateX(calc((var(--x) + var(--w) / 2) * 1%)); }
+.cross[data-axis="y"]::before {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 1px dashed rgb(244 244 242 / 35%);
+}
+.cross[data-axis="dot"] {
+  transform: translate(calc((var(--x) + var(--w) / 2) * 1%), calc((var(--y) + var(--h) / 2) * 1%));
+}
+.cross[data-axis="dot"]::before {
+  top: -4px;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgb(244 244 242 / 60%);
+  background: #0a0a0a;
+}
 
 /* Numbered markers: a still, flat disc with a hairline. Ink, never the
    accent; they never pulse. */
@@ -232,9 +283,156 @@
   .hit, .marker { cursor: pointer; }
 }
 
+/* ── Joined layouts: the picture and a black slab in one 1px box ── */
+.joined { margin: 0; }
+.slab { display: block; }
+.slab .caption {
+  display: block;
+  margin: 0 0 16px;
+}
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.kickerMark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--accent, var(--color-ink));
+}
+:global(html[lang="zh-CN"]) .kicker {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+/* Attached (the cover): the frame keeps its 1px edge; the slab hangs from
+   it with no top edge of its own, so the two read as one block. */
+.figure[data-layout="attached"] .frame { border-radius: 2px 2px 0 0; }
+.figure[data-layout="attached"] .frame::after { border-color: #333336; }
+.figure[data-layout="attached"] .slab.slab {
+  padding: 20px;
+  border-top: 0;
+  border-radius: 0 0 2px 2px;
+}
+.figure[data-layout="attached"] .notes { gap: 0; margin-top: 0; }
+.figure[data-layout="attached"] .note {
+  padding: 16px 0 14px;
+  border-top-color: #2a2a2d;
+}
+.figure[data-layout="attached"] .title {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+@media (min-width: 640px) {
+  .figure[data-layout="attached"] .slab.slab { padding: 24px 28px 26px; }
+  /* Three columns under one rule, split by 1px uprights; the rule over
+     the note in view lights, like Latent's tab underline */
+  .figure[data-layout="attached"] .notes { border-top: 1px solid #2a2a2d; }
+  .figure[data-layout="attached"] .notes > li + li { border-left: 1px solid #2a2a2d; }
+  .figure[data-layout="attached"] .note {
+    padding: 20px 24px 4px;
+    border-top: 0;
+  }
+  .figure[data-layout="attached"] .notes > li:first-child .note { padding-left: 0; }
+  .figure[data-layout="attached"] .notes > li:last-child .note { padding-right: 0; }
+}
+
+/* Split (§02): picture left, slab right, inside one box */
+.figure[data-layout="split"] .joined {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid #333336;
+  border-radius: 2px;
+}
+.figure[data-layout="split"] .frame { border-radius: 0; }
+.figure[data-layout="split"] .frame::after { content: none; }
+.figure[data-layout="split"] .slab.slab {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  border: 0;
+  border-top: 1px solid #333336;
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .figure[data-layout="split"] .slab.slab { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .figure[data-layout="split"] .joined { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .figure[data-layout="split"] .slab.slab {
+    padding: 40px;
+    border-top: 0;
+    border-left: 1px solid #333336;
+  }
+}
+/* The rows sit at the slab's foot, the kicker at its head, as on Latent */
+.figure[data-layout="split"] .notes {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin-top: 24px;
+}
+@media (min-width: 1024px) {
+  .figure[data-layout="split"] .notes { margin-top: auto; padding-top: 32px; }
+}
+.figure[data-layout="split"] .note {
+  grid-template-columns: 32px minmax(0, 1fr);
+  column-gap: 12px;
+  padding: 22px 0;
+  border-top-color: #2a2a2d;
+}
+.figure[data-layout="split"] .notes > li:last-child .note { padding-bottom: 0; }
+/* No lit rule here: the number's square is the mark */
+.figure[data-layout="split"] .note::before { content: none; }
+.figure[data-layout="split"] .num {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-self: start;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  padding: 0;
+  color: var(--color-soft);
+  opacity: 1;
+  line-height: 1;
+}
+.figure[data-layout="split"] .num::before {
+  content: attr(data-n);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--accent, var(--color-ink));
+  color: #0f0f10;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.figure[data-layout="split"] .note[data-on="true"] .num::before { opacity: 1; }
+.figure[data-layout="split"] .title {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.figure[data-layout="split"] .text { margin-top: 8px; }
+.figure[data-layout="split"] .note:focus-visible { outline-offset: -1px; }
+
 @media (prefers-reduced-motion: reduce) {
   .spot,
   .piece,
+  .cross,
+  .figure[data-layout="split"] .num::before,
   .marker,
   .marker::before,
   .note,

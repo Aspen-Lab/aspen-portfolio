@@ -1,0 +1,189 @@
+/* Solid outcome tiles. The fill and edge come from the global .tile
+   (var(--tile) on the band), so the same tile reads on dark and light. */
+.tiles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+@media (min-width: 640px) {
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+@media (min-width: 1024px) {
+  .tiles[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tiles[data-count="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.item {
+  display: flex;
+  min-width: 0;
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  min-height: 240px;
+  container-type: inline-size;
+  color: var(--color-ink);
+}
+@media (max-width: 639px) {
+  .tile { min-height: 200px; padding: 24px 22px 20px; }
+}
+
+/* The figure: one size for the row, the largest the row's longest figure
+   allows in a tile, never past 64px */
+.value {
+  display: block;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: min(64px, calc(100cqi / var(--chars) * 1.75));
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.accent { color: var(--accent-text); }
+
+/* "VN · MY · ID · US" drawn as four solid code blocks */
+.codes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.code {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 2px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+}
+@media (max-width: 639px) {
+  .code { width: 44px; height: 44px; font-size: 15px; }
+}
+
+.label {
+  margin-top: 4px;
+  color: var(--color-ink);
+  font-size: 16px;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+.text {
+  color: var(--color-mute);
+  font-size: 15px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.word { white-space: nowrap; }
+
+.foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+.tag {
+  padding: 5px 8px 4px;
+  border: 1px solid var(--hair);
+  border-radius: 1px;
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.25;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+:global(html[lang="zh-CN"]) .tag {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.arrow {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1;
+  transition: transform 360ms var(--ease-arrive);
+}
+
+/* The matrix: one square per unit, lit in reading order once in view */
+.matrix {
+  display: block;
+  flex: none;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.matrix rect {
+  fill: var(--accent, var(--color-ink));
+  opacity: 0;
+}
+.matrix[data-lit="true"] rect {
+  animation: lit 260ms ease forwards;
+  animation-delay: calc(var(--i) * 8ms);
+}
+@keyframes lit {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: none; }
+}
+.matrix rect {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* A linked tile: an ink edge fades in over the tile's own and the arrow
+   steps toward the evidence. Transform and opacity only. */
+.tile[data-link]::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--color-ink);
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+@media (hover: hover) {
+  .tile[data-link]:hover::after { opacity: 0.6; }
+  .tile[data-link]:hover .arrow { transform: translateX(4px); }
+}
+.tile[data-link]:focus-visible {
+  outline: 1px solid var(--color-ink);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.tile[data-link]:focus-visible .arrow { transform: translateX(4px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow,
+  .tile[data-link]::after { transition: none; }
+  .matrix rect,
+  .matrix[data-lit="true"] rect {
+    opacity: 1;
+    animation: none;
+  }
+}
+@media (scripting: none) {
+  .matrix rect { opacity: 1; }
+}

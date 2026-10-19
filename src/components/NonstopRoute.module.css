@@ -1,50 +1,51 @@
-/* Axel's result card as one flat Latent sheet: cream plane, one hairline,
-   4px corners. No echo sheet, shadow, glow or gradient fill. Everything is
-   ink, mute or hairline; the SHIPPED sign is the only pink. */
+/* Axel's result card printed on a Latent paper sheet. The global
+   .paper-stack > .paper supplies the #e1e1e1 sheet, its two back sheets and
+   the paper tokens (ink, mute, soft, line, grid, axis); this file only lays
+   the card out on it. Data marks are solid: dotted route, 3px ink rail,
+   16px stop squares, a solid plane, black cargo chips. No gradient fills,
+   no shadow; the SHIPPED sign is the only pink and pins its own colours. */
 .root {
   width: 100%;
-  max-width: 1024px;
+  margin: 0;
 }
 
 .sheet {
   position: relative;
   padding: 48px 56px 40px;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
 }
 
 /* SHIPPED, on the sheet's top edge, in lit pixels: the mask leaves one dot
-   per 2px cell, so the letters read as Axel's dot-matrix sign. Unlit until
-   the plane lands, then it flickers on once. */
+   per 2px cell, so the letters read as Axel's dot-matrix sign. The dark
+   plate is always there (the heaviest contrast on the sheet); the letters
+   stay unlit until the plane lands, then flicker on once. */
 .sign {
   position: absolute;
   top: -15px;
   right: 40px;
   padding: 7px 11px 6px;
   border: 1px solid rgb(255 111 147 / 35%);
-  border-radius: 4px;
+  border-radius: 2px;
   background: #1b1315;
-  opacity: 0.22;
-  transition: opacity 240ms ease;
-}
-.sign[data-on="true"] {
-  opacity: 1;
-  animation: sign 520ms steps(1, end);
 }
 .signText {
   display: block;
-  color: var(--accent, #ff6f93);
+  color: #ff6f93;
   font-family: var(--font-mono);
   font-size: 17px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  opacity: 0.26;
+  transition: opacity 240ms ease;
   -webkit-mask-image: radial-gradient(circle, #000 0.8px, transparent 1.05px);
   mask-image: radial-gradient(circle, #000 0.8px, transparent 1.05px);
   -webkit-mask-size: 2px 2px;
   mask-size: 2px 2px;
+}
+.sign[data-on="true"] .signText {
+  opacity: 1;
+  animation: sign 520ms steps(1, end);
 }
 @keyframes sign {
   0% { opacity: 0.35; }
@@ -54,6 +55,7 @@
 }
 
 .meta {
+  margin: 0;
   color: var(--color-mute);
   font-size: 15px;
   line-height: 1;
@@ -62,31 +64,31 @@
   color: var(--color-ink);
 }
 
-/* Problem ····✈···· PR: the two ends and the route between them */
+/* Problem ····✈···· PR: the two ends and the plot strip between them */
 .route {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  column-gap: 28px;
+  column-gap: 32px;
   align-items: center;
-  margin-top: 40px;
-  padding-bottom: 26px;
+  margin-top: 36px;
 }
 
 .end {
   color: var(--color-ink);
   font-family: var(--font-display);
-  font-size: clamp(44px, 4.4vw + 8px, 64px);
+  font-size: clamp(56px, 5vw + 16px, 96px);
   font-weight: 300;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   white-space: nowrap;
 }
 
 .track {
   position: relative;
-  height: 64px;
+  height: 72px;
 }
 
+.grid,
 .dots,
 .flown {
   position: absolute;
@@ -95,16 +97,26 @@
   height: 100%;
   overflow: visible;
 }
-.dots line,
-.flown line {
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-dasharray: 0 8;
+/* Latent's plot strip: 1px verticals at both ends and at every stop */
+.grid line {
+  stroke: var(--grid, #d0d0d2);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
 }
-.dots line { stroke: color-mix(in srgb, var(--color-ink) 26%, transparent); }
-.flown line { stroke: color-mix(in srgb, var(--color-ink) 82%, transparent); }
+/* Axel's dotted route, heavier: 3px dots on a 10px pitch */
+.dots line {
+  stroke: var(--axis, #9a9a9f);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 0 10;
+}
+/* The flown route: one solid ink rail, never broken */
+.flown line {
+  stroke: var(--color-ink);
+  stroke-width: 3;
+}
 
-/* The window opens behind the plane; the dots inside it hold still */
+/* The window opens behind the plane; the rail inside it holds still */
 .window {
   position: absolute;
   inset: 0;
@@ -119,7 +131,8 @@
   will-change: transform;
 }
 
-/* A stop: a hairline ring on the line that fills as the plane passes */
+/* A stop: a 16px hollow ink square on the rail that fills as the plane
+   passes; its label hangs under it on the grid vertical. */
 .stop {
   position: absolute;
   top: 50%;
@@ -129,29 +142,32 @@
 }
 .node {
   position: absolute;
-  top: -3.5px;
-  left: -3.5px;
-  width: 7px;
-  height: 7px;
-  border: 1px solid color-mix(in srgb, var(--color-ink) 45%, transparent);
-  border-radius: 999px;
-  background: var(--color-cream);
+  top: -8px;
+  left: -8px;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--color-ink);
+  border-radius: 1px;
+  background: var(--color-paper);
 }
 .node::after {
   content: "";
   position: absolute;
-  inset: -1px;
-  border-radius: 999px;
+  inset: 0;
   background: var(--color-ink);
   opacity: 0;
   transition: opacity 200ms ease;
 }
+/* The label sits on the paper and breaks the grid vertical, like a tag on
+   its leader. */
 .label {
   position: absolute;
-  top: 16px;
+  top: 17px;
   left: 0;
+  padding: 1px 6px;
+  background: var(--color-paper);
   color: var(--color-ink);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.2;
   white-space: nowrap;
   opacity: 0.5;
@@ -163,14 +179,14 @@
   opacity: 1;
 }
 
-/* The plane, level, on its own layer: it starts on the line's first 26px
+/* The plane, level, on its own layer: it starts on the strip's first 32px
    and lands on its last. */
 .flight {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
-  left: 26px;
+  left: 32px;
   transform: translateX(0);
   will-change: transform;
   pointer-events: none;
@@ -178,29 +194,28 @@
 .plane {
   position: absolute;
   top: 50%;
-  left: -26px;
-  width: 26px;
-  height: 22px;
-  margin-top: -11px;
+  left: -32px;
+  width: 32px;
+  height: 27px;
+  margin-top: -13.5px;
   overflow: visible;
 }
 .plane path {
-  fill: var(--color-cream);
-  stroke: var(--color-ink);
-  stroke-width: 1.3;
-  stroke-linejoin: round;
+  fill: var(--color-ink);
+  stroke: none;
 }
 
-/* The manifest: what the PR carries */
+/* The manifest: what the PR carries, unloaded as solid cargo on landing */
 .cargo {
   display: flex;
   align-items: baseline;
-  gap: 28px;
+  gap: 24px;
   margin-top: 30px;
   padding-top: 22px;
   border-top: 1px solid var(--color-line);
 }
 .cargoLabel {
+  flex: none;
   color: var(--color-soft);
   font-family: var(--font-mono);
   font-size: 12px;
@@ -218,27 +233,44 @@
 .items {
   display: flex;
   flex-wrap: wrap;
-  row-gap: 6px;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .items li {
-  color: color-mix(in srgb, var(--color-ink) 85%, transparent);
-  font-size: 16px;
-  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 2px;
+  background: var(--color-ink);
+  color: #f4f4f2;
+  font-size: 15px;
+  line-height: 1.3;
   white-space: nowrap;
 }
-.items li + li::before {
-  content: "·";
-  margin: 0 12px;
-  color: var(--color-soft);
+.cargo[data-on="false"] li {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.cargo[data-on="true"] li {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 260ms ease,
+    transform 420ms var(--ease-arrive, cubic-bezier(0.16, 1, 0.3, 1));
+  transition-delay: calc(var(--i, 0) * 60ms);
 }
 
-/* Phones: Problem on top, the route across the full width, PR under it on
-   the right; the manifest becomes a two-column list. */
+/* Tablets: a little less air around the strip */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .sheet { padding: 44px 40px 36px; }
+  .route { column-gap: 22px; }
+  .label { font-size: 15px; }
+}
+
+/* Phones: Problem on top, the strip across the full width, PR under it on
+   the right; the manifest goes under its label and wraps. */
 @media (max-width: 639px) {
-  .sheet { padding: 30px 20px 24px; }
+  .sheet { padding: 28px 20px 24px; }
   .sign { top: -13px; right: 16px; }
   .signText { font-size: 15px; }
   .meta { font-size: 14px; }
@@ -246,41 +278,41 @@
   .route {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "from" "track" "to";
-    margin-top: 26px;
-    padding-bottom: 0;
+    margin-top: 24px;
   }
   .end[data-end="from"] { grid-area: from; justify-self: start; font-size: 44px; }
   .end[data-end="to"] { grid-area: to; justify-self: end; font-size: 44px; }
   .track {
     grid-area: track;
-    height: 36px;
-    margin: 8px 0 32px;
+    height: 40px;
+    margin: 8px 0 36px;
   }
-  .label { font-size: 13px; }
+  .label { top: 15px; padding: 1px 4px; font-size: 14px; }
 
   .cargo {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
+    margin-top: 24px;
+    padding-top: 18px;
   }
-  /* A manifest, one item a line; Chinese items are short enough for two
-     columns, so they pair up. */
-  .items {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 6px 16px;
-  }
+  /* Chinese items are short: a two-column grid of solid chips */
   :global(html[lang="zh-CN"]) .items {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 8px;
   }
+  /* Latin chips tighten a little so they pair up two to a line */
   .items li {
-    font-size: 15px;
+    padding: 7px 10px;
+    font-size: 14px;
     white-space: normal;
     word-break: keep-all;
     overflow-wrap: anywhere;
   }
-  .items li + li::before { content: none; }
+  :global(html[lang="zh-CN"]) .items li {
+    padding: 8px 12px;
+    font-size: 15px;
+  }
 }
 
 /* Reduced motion: the landed frame, in CSS; the script does nothing. */
@@ -290,5 +322,7 @@
   .hold { transform: none !important; }
   .stop .node::after,
   .stop .label { opacity: 1; transition: none; }
-  .sign { opacity: 1; animation: none; transition: none; }
+  .signText,
+  .sign[data-on="true"] .signText { opacity: 1; animation: none; transition: none; }
+  .cargo[data-on] li { opacity: 1; transform: none; transition: none; }
 }

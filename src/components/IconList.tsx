@@ -28,24 +28,41 @@ import styles from "./IconList.module.css";
    sheet says, and the drawing then fills in under the words (stroke
    offsets on small paths, opacity, transforms). The hexagon turns on its
    own composited layer. Reduced motion shows the finished drawing,
-   still. Flat fills only; no gradients. */
+   still. Flat fills only; no gradients.
+
+   variant="tiles" sets each entry on a solid tile (Latent's outcome
+   cards): number and glyph on top, a big title, the text, and any chips
+   (regulator names) as solid paper chips at the foot. variant="joined"
+   sets the tiles on a light band and hangs them from one solid ink bar,
+   the flow they all pass through: a leader from each tile down to the
+   bar, a red square where it meets. On a phone the bar runs down the
+   left of the stack. Both arrive once (tiles rise, the bar draws, the
+   squares pop) and are static after. */
 
 type Item = {
   icon?: Parameters<typeof Icon>[0]["name"];
   label: string;
   text?: string;
+  /** Small solid chips at the foot of a tile (variant "tiles"). */
+  chips?: string[];
 };
 
 type Props = {
   items: Item[];
   /** Columns once the list has room for them; phones always read one. */
   columns?: 1 | 2 | 3;
-  /** "charts": a small drawn plot above each of the first three entries. */
-  variant?: "charts";
+  /** "charts": a small drawn plot above each of the first three entries.
+      "tiles": solid tiles. "joined": light tiles hung from one bar. */
+  variant?: "charts" | "tiles" | "joined";
+  /** The bar's name, for variant "joined". */
+  joinLabel?: string;
 };
 
-export function IconList({ items, columns = 2, variant }: Props) {
+export function IconList({ items, columns = 2, variant, joinLabel }: Props) {
   const cn = useLocale() === "cn";
+  if (variant === "tiles" || variant === "joined") {
+    return <Tiles items={items} columns={columns} joined={variant === "joined"} joinLabel={joinLabel} cn={cn} />;
+  }
   const charts = variant === "charts";
 
   return (
@@ -90,6 +107,83 @@ function Entry({
         <p className={styles.label}>{item.label}</p>
         {item.text && <p className={styles.text}>{item.text}</p>}
       </div>
+    </li>
+  );
+}
+
+/* ── Tiles ── */
+
+function Tiles({
+  items,
+  columns,
+  joined,
+  joinLabel,
+  cn,
+}: {
+  items: Item[];
+  columns: 1 | 2 | 3;
+  joined: boolean;
+  joinLabel?: string;
+  cn: boolean;
+}) {
+  const root = useRef<HTMLDivElement>(null);
+  // The bar draws once the row is in view; each tile watches for itself
+  const inView = useInView(root, { once: true, amount: 0.3 });
+
+  return (
+    <div
+      ref={root}
+      className={styles.tiles}
+      data-variant={joined ? "joined" : "tiles"}
+      data-cols={columns}
+      data-cn={cn}
+      data-in={inView}
+    >
+      {joined && joinLabel && <p className={styles.joinLabel}>{joinLabel}</p>}
+      <div className={styles.stage}>
+        {joined && <span aria-hidden className={styles.bar} />}
+        <ol className={styles.tileList}>
+          {items.map((it, i) => (
+            <Tile key={it.label} item={it} index={i} joined={joined} />
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
+function Tile({ item, index, joined }: { item: Item; index: number; joined: boolean }) {
+  const ref = useRef<HTMLLIElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.35 });
+  const chips = !joined && item.chips && item.chips.length > 0 ? item.chips : null;
+
+  return (
+    <li ref={ref} className={`tile ${styles.tile}`} data-in={inView} style={{ ["--i" as string]: index }}>
+      <div aria-hidden className={styles.tileHead}>
+        <span className={styles.tileNum}>{String(index + 1).padStart(2, "0")}</span>
+        {item.icon && (
+          <span className={styles.tileIcon}>
+            <Icon name={item.icon} size={18} strokeWidth={1.4} />
+          </span>
+        )}
+      </div>
+      <p className={styles.tileTitle}>{item.label}</p>
+      {item.text && <p className={styles.tileText}>{item.text}</p>}
+      {chips && (
+        <ul className={styles.chips}>
+          {chips.map((c) => (
+            <li key={c} className={styles.chip}>
+              {c}
+            </li>
+          ))}
+        </ul>
+      )}
+      {joined && (
+        <>
+          <span aria-hidden className={styles.leader} />
+          <span aria-hidden className={styles.node} />
+        </>
+      )}
     </li>
   );
 }

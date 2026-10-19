@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { motion, useReducedMotion } from "motion/react";
 
 type ChapterNavProps = {
   chapters: string[];
+  /** Banded pages: the rail sits on a solid plate, so it reads over a
+      light band too, and the phone bar spans an article with no gutter. */
+  plate?: boolean;
 };
 
 /* Reading line, as a fraction of viewport height: the active chapter is
@@ -19,8 +22,10 @@ const DOT = 6;
 const LABEL_GAP = 12;
 const BACK_SHEET = 10;
 const AIR = 24;
+/* The plate's inner padding beside the labels (banded pages) */
+const PLATE_PAD = 12;
 
-export function ChapterNav({ chapters }: ChapterNavProps) {
+export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
   const [active, setActive] = useState(0);
   const cn = useLocale() === "cn";
   const [past, setPast] = useState(false);
@@ -70,7 +75,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
         for (const el of labelRefs.current) {
           if (el) widest = Math.max(widest, el.getBoundingClientRect().width);
         }
-        setDots(rail.right - DOT - LABEL_GAP - widest < column);
+        setDots(rail.right - (plate ? PLATE_PAD : 0) - DOT - LABEL_GAP - widest < column);
       }
 
       // Hold the rail back until everything full-width above the chapters
@@ -97,7 +102,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
     };
-  }, [chapters]);
+  }, [chapters, plate]);
 
   /* The phone bar scrolls sideways; keep the lit chapter in it. Centred,
      so its neighbours show either side and the strip reads as scrollable.
@@ -135,6 +140,12 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
   };
 
   const hidden = past || before;
+  const RailPlate = plate ? "div" : Fragment;
+  /* Hanzi in the mono role at 10px with wide tracking turn to specks: the
+     Chinese labels are set in the sans at 12px, closed up; numbers stay mono. */
+  const labelType = cn
+    ? "font-sans text-[12px] tracking-[0.04em]"
+    : "font-mono text-[10px] uppercase tracking-[0.22em]";
 
   return (
     <>
@@ -142,13 +153,13 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
       <div ref={startRef} aria-hidden />
 
       {/* Mobile: horizontal sticky bar (lg-) */}
-      <div ref={mobileNavRef} className="lg:hidden sticky top-24 sm:top-16 z-30 mt-16 bg-paper/90 backdrop-blur-md border-y border-line/80 -mx-[max(1.25rem,4vw)]">
+      <div ref={mobileNavRef} className={`lg:hidden sticky top-24 sm:top-16 z-30 mt-16 bg-paper/90 backdrop-blur-md border-y border-line/80 ${plate ? "mx-0" : "-mx-[max(1.25rem,4vw)]"}`}>
         <motion.div
           ref={scrollerRef}
           layoutScroll
           className="container-fluid flex items-center gap-7 overflow-x-auto no-scrollbar py-3.5"
         >
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft shrink-0">
+          <span className={`${labelType} text-soft shrink-0`}>
             {cn ? "章节" : "Chapters"}
           </span>
           {chapters.map((c, i) => (
@@ -164,7 +175,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
                 active === i ? "text-ink" : "text-soft hover:text-mute"
               }`}
             >
-              <span className="font-mono text-[10px] uppercase tracking-[0.22em] opacity-70 tabular-nums">
+              <span className={`font-mono ${cn ? "text-[11px] tracking-[0.06em]" : "text-[10px] uppercase tracking-[0.22em]"} opacity-70 tabular-nums`}>
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span className="font-display text-[14px] tracking-[-0.005em]">
@@ -194,10 +205,14 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
           hidden ? "opacity-0" : "opacity-100"
         }`}
       >
-        {/* Kept in the flow when hidden, so the rail never shifts between modes */}
+        {/* On a banded page the rail stands on a solid plate (it passes
+            over light bands); without one the markup is as it always was */}
+        <RailPlate {...(plate ? { className: "rounded-[2px] border border-[#333336] bg-[#131315] px-3 py-2.5" } : {})}>
+        {/* Kept in the flow when hidden, so the rail never shifts between
+            modes; on a plate the dots stand alone and the plate hugs them */}
         <p
-          className={`font-mono text-[10px] uppercase tracking-[0.22em] text-soft mb-5 text-right pr-1 ${
-            dots ? "invisible" : ""
+          className={`${labelType} text-soft mb-5 text-right pr-1 ${
+            dots ? (plate ? "hidden" : "invisible") : ""
           }`}
         >
           {cn ? "章节" : "Chapters"}
@@ -236,9 +251,9 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
                       ref={(el) => {
                         labelRefs.current[i] = el;
                       }}
-                      className="block font-mono text-[10px] uppercase tracking-[0.22em] whitespace-nowrap leading-none"
+                      className={`block ${labelType} whitespace-nowrap leading-none`}
                     >
-                      <span className="opacity-55 mr-2 tabular-nums">
+                      <span className={`opacity-55 mr-2 tabular-nums${cn ? " font-mono text-[11px]" : ""}`}>
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       {c}
@@ -264,6 +279,7 @@ export function ChapterNav({ chapters }: ChapterNavProps) {
             );
           })}
         </ul>
+        </RailPlate>
       </nav>
     </>
   );

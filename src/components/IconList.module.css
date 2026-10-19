@@ -391,3 +391,213 @@
   .knob { transform: translateX(12px); }
   .item[data-in="true"] .ring { animation: none; }
 }
+
+/* ══ Tiles ══ Latent's outcome cards: a solid tile per entry (the global
+   .tile: opaque, one 1px edge), number and glyph on top, a big title,
+   the text, chips at the foot. "joined" hangs the tiles from one solid
+   ink bar. Arrival only; no hover. */
+.tiles {
+  --accent-ink: var(--accent, var(--color-ink));
+  display: flex;
+  flex-direction: column;
+}
+.stage { position: relative; }
+.tileList {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .tileList { gap: 24px; }
+  .tiles[data-cols="2"] .tileList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tiles[data-cols="3"] .tileList { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  /* a phone's stacked tiles keep their mass without a well of empty paper */
+  min-height: 176px;
+  padding: 28px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 550ms ease,
+    transform 700ms var(--ease-arrive);
+  transition-delay: calc(var(--i) * 70ms);
+}
+.tile[data-in="true"] {
+  opacity: 1;
+  transform: none;
+}
+@media (min-width: 768px) {
+  .tile { min-height: 220px; }
+}
+
+.tileHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 18px;
+  color: var(--color-soft);
+}
+.tileNum {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}
+.tileIcon { display: inline-flex; }
+.tileTitle {
+  margin-top: 28px;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.tileText {
+  margin-top: 10px;
+  color: var(--color-mute);
+  font-size: 15px;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.tiles[data-cn="true"] .tileTitle,
+.tiles[data-cn="true"] .tileText {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* Solid paper chips at the foot of the tile */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 22px;
+}
+.chip {
+  padding: 5px 8px;
+  border-radius: 2px;
+  background: #e1e1e1;
+  color: #0a0a0a;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+}
+
+/* ── Joined: the tiles hang from one bar ──
+   Wide: the bar runs under the row, 20px below the tiles; a 1px ink
+   leader drops from each tile's foot to it and a red square sits where
+   they meet. Narrow: the bar runs down the left of the stack and each
+   leader runs in from it at the tile's middle. The leaders and squares
+   live in their tiles, so they find each tile's middle without measuring. */
+.joinLabel {
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1.4;
+}
+.bar {
+  position: absolute;
+  background: var(--color-ink);
+  pointer-events: none;
+  transition: transform 700ms var(--ease-arrive);
+}
+.leader,
+.node {
+  position: absolute;
+  pointer-events: none;
+}
+.leader {
+  background: var(--color-ink);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  transition-delay: calc(700ms + var(--i) * 80ms);
+}
+.node {
+  width: 12px;
+  height: 12px;
+  background: var(--accent-ink);
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 260ms ease,
+    transform 420ms var(--ease-arrive);
+  transition-delay: calc(700ms + var(--i) * 80ms);
+}
+.tiles[data-in="true"] .bar { transform: none; }
+.tiles[data-in="true"] .leader { opacity: 1; }
+.tiles[data-in="true"] .node {
+  opacity: 1;
+  transform: none;
+}
+
+@media (min-width: 768px) {
+  .tiles[data-variant="joined"] .joinLabel {
+    order: 2;
+    margin-top: 10px;
+  }
+  .tiles[data-variant="joined"] .stage { padding-bottom: 26px; }
+  .bar {
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 6px;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  /* From the tile's foot (its 1px edge included) to the bar's top */
+  .leader {
+    top: 100%;
+    left: calc(50% - 0.5px);
+    width: 1px;
+    height: 21px;
+  }
+  .node {
+    top: calc(100% + 18px);
+    left: calc(50% - 6px);
+  }
+}
+@media (max-width: 767.98px) {
+  .tiles[data-variant="joined"] .joinLabel { margin-bottom: 12px; }
+  .tiles[data-variant="joined"] .tileList { padding-left: 28px; }
+  .bar {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 6px;
+    transform: scaleY(0);
+    transform-origin: center top;
+  }
+  /* The tile's padding box starts 1px inside its 29px left edge */
+  .leader {
+    top: calc(50% - 0.5px);
+    left: -23px;
+    width: 23px;
+    height: 1px;
+  }
+  .node {
+    top: calc(50% - 6px);
+    left: -32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile,
+  .bar,
+  .leader,
+  .node { transition: none; }
+  .tile,
+  .bar,
+  .node { transform: none; }
+  .tile,
+  .leader,
+  .node { opacity: 1; }
+}

@@ -1,0 +1,266 @@
+/* Latent's platform section: text and numbered tabs on the left, the
+   paper sheet on the right at lg; below lg the sheet comes straight after
+   the text, then the tabs (2×2 blocks for four, rows for three), then the
+   details. */
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "intro" "panel" "tabs" "details";
+}
+.intro { grid-area: intro; min-width: 0; }
+.panel { grid-area: panel; min-width: 0; margin-top: 48px; }
+.tabs { grid-area: tabs; display: grid; margin-top: 32px; }
+.details { grid-area: details; min-width: 0; margin-top: 24px; }
+@media (min-width: 1024px) {
+  .root {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas: "intro panel" "tabs panel" "details panel";
+    column-gap: 64px;
+    align-items: start;
+  }
+  .panel { margin-top: 0; }
+  .tabs { margin-top: 40px; }
+  .details { margin-top: 28px; }
+}
+
+.sheet { padding: 20px; }
+@media (min-width: 640px) {
+  .sheet { padding: 40px 44px 32px; }
+}
+
+/* ── Tabs ── a mono number, a mono kicker, the title; the row's lower edge
+   carries the progress fill in the accent. Inactive rows rest at .42. */
+.tab {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: baseline;
+  width: 100%;
+  padding: 18px 0 20px;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+  border-radius: 0;
+  background: none;
+  color: var(--color-ink);
+  text-align: left;
+}
+.tab:last-child { border-bottom: 1px solid var(--color-line); }
+.tab:focus-visible {
+  outline: 2px solid var(--hair-strong);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.num,
+.words {
+  opacity: 0.42;
+  transition: opacity 240ms ease;
+}
+@media (hover: hover) {
+  .tab:hover .num,
+  .tab:hover .words { opacity: 0.7; }
+}
+.tab[aria-selected="true"] .num,
+.tab[aria-selected="true"] .words { opacity: 1; }
+
+.num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.words {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .kicker {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+:global(html[lang="zh-CN"]) .title { font-size: 22px; }
+
+.bar {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--accent-text, var(--color-ink));
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.root[data-auto="false"] .tab[aria-selected="true"] .fill { transform: none; }
+.root[data-auto="true"] .tab[aria-selected="true"] .fill {
+  animation: ptFill var(--dwell) linear forwards;
+  animation-play-state: paused;
+}
+.root[data-auto="true"][data-run="true"] .tab[aria-selected="true"] .fill {
+  animation-play-state: running;
+}
+/* A reader looking at the sheet or using the keyboard holds it */
+.root[data-auto="true"]:focus-within .tab[aria-selected="true"] .fill { animation-play-state: paused; }
+@media (hover: hover) {
+  .root[data-auto="true"]:hover .tab[aria-selected="true"] .fill { animation-play-state: paused; }
+}
+@keyframes ptFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Below lg: four tabs as a 2×2 block grid, three or fewer as rows */
+@media (max-width: 1023px) {
+  .root[data-count="4"] .tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .root[data-count="4"] .tab,
+  .root[data-count="4"] .tab:last-child {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--tile-line);
+    border-radius: 2px;
+    background: var(--tile);
+  }
+  .root[data-count="4"] .bar {
+    right: -1px;
+    left: -1px;
+  }
+  .root[data-count="4"] .num,
+  .root[data-count="4"] .words { opacity: 0.55; }
+  .root[data-count="4"] .tab[aria-selected="true"] .num,
+  .root[data-count="4"] .tab[aria-selected="true"] .words { opacity: 1; }
+  .root[data-count="4"] .title { font-size: 18px; }
+  :global(html[lang="zh-CN"]) .root[data-count="4"] .title { font-size: 17px; }
+}
+
+/* ── The sheet contract ── a caller's panels and marks, keyed by tab k:
+   [data-pt="k"]      a whole state, shown only while k is active
+   [data-pt-lit="k"]  fades in while k is active
+   [data-pt-dim="k"]  rests at .45, full while k is active
+   The outgoing state fades in 180ms; the incoming follows after 120ms,
+   rising 8px over 420ms. Opacity, transform and visibility only. */
+.root :global([data-pt]) {
+  opacity: 0;
+  transform: translateY(8px);
+  visibility: hidden;
+  transition:
+    opacity 180ms ease,
+    transform 420ms var(--ease-arrive),
+    visibility 0s linear 180ms;
+}
+.root :global([data-pt-lit]) {
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.root :global([data-pt-dim]) {
+  opacity: 0.45;
+  transition: opacity 240ms ease;
+}
+.root:global([data-active="0"]) :global([data-pt="0"]) {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity 420ms ease 120ms,
+    transform 420ms var(--ease-arrive) 120ms,
+    visibility 0s;
+}
+.root:global([data-active="0"]) :global([data-pt-lit="0"]),
+.root:global([data-active="0"]) :global([data-pt-dim="0"]) { opacity: 1; }
+.root:global([data-active="1"]) :global([data-pt="1"]) {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity 420ms ease 120ms,
+    transform 420ms var(--ease-arrive) 120ms,
+    visibility 0s;
+}
+.root:global([data-active="1"]) :global([data-pt-lit="1"]),
+.root:global([data-active="1"]) :global([data-pt-dim="1"]) { opacity: 1; }
+.root:global([data-active="2"]) :global([data-pt="2"]) {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity 420ms ease 120ms,
+    transform 420ms var(--ease-arrive) 120ms,
+    visibility 0s;
+}
+.root:global([data-active="2"]) :global([data-pt-lit="2"]),
+.root:global([data-active="2"]) :global([data-pt-dim="2"]) { opacity: 1; }
+.root:global([data-active="3"]) :global([data-pt="3"]) {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity 420ms ease 120ms,
+    transform 420ms var(--ease-arrive) 120ms,
+    visibility 0s;
+}
+.root:global([data-active="3"]) :global([data-pt-lit="3"]),
+.root:global([data-active="3"]) :global([data-pt-dim="3"]) { opacity: 1; }
+.root:global([data-active="4"]) :global([data-pt="4"]) {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity 420ms ease 120ms,
+    transform 420ms var(--ease-arrive) 120ms,
+    visibility 0s;
+}
+.root:global([data-active="4"]) :global([data-pt-lit="4"]),
+.root:global([data-active="4"]) :global([data-pt-dim="4"]) { opacity: 1; }
+.root:global([data-active="5"]) :global([data-pt="5"]) {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity 420ms ease 120ms,
+    transform 420ms var(--ease-arrive) 120ms,
+    visibility 0s;
+}
+.root:global([data-active="5"]) :global([data-pt-lit="5"]),
+.root:global([data-active="5"]) :global([data-pt-dim="5"]) { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .num,
+  .words { transition: none; }
+  .fill,
+  .root[data-auto="true"] .tab[aria-selected="true"] .fill { animation: none; }
+  .tab[aria-selected="true"] .fill { transform: none; }
+  /* doubled class: outranks the per-tab rules above */
+  .root.root :global([data-pt]),
+  .root.root :global([data-pt-lit]),
+  .root.root :global([data-pt-dim]) {
+    transform: none;
+    transition: none;
+  }
+}

@@ -1,8 +1,9 @@
 "use client";
 
-import { memo, useId, useRef, type CSSProperties } from "react";
+import { Fragment, memo, useId, useMemo, useRef, type CSSProperties, type ReactNode } from "react";
 import { useInView } from "motion/react";
 import { useLocale } from "next-intl";
+import { PlatformTabs } from "@/components/PlatformTabs";
 import styles from "./SurfaceLedger.module.css";
 
 /* Four surfaces of one brand, and which of them I build in code. Four
@@ -19,7 +20,16 @@ import styles from "./SurfaceLedger.module.css";
    It plays once, in CSS, when the sheet comes into view: the frames rise,
    the squares fill lane by lane, then the signs flicker on left to right.
    Nothing here responds to a pointer. Reduced motion shows the last
-   frame. */
+   frame.
+
+   SurfaceTabs is the same claim as Latent's platform chart: four numbered
+   tabs beside one paper sheet. The sheet's stage shows one surface at a
+   time, drawn large on a drafting grid, so its dark night is a heavy
+   block on the paper; under it the ledger stays whole, every square a
+   solid grey, and the tab in view lights its column in the accent. A
+   dashed hexagon rings that column's code square and a boxed tag above it
+   names the code, and both glide to the column by transform. The frames
+   keep their own dark colours on the paper (--frame-ink). */
 
 // ── The pixel grid every frame is drawn on (frame units; a column is 220) ──
 const P = 2.5;
@@ -504,5 +514,131 @@ export function SurfaceLedger() {
       </div>
       <figcaption className="sr-only">{cn ? CAPTION.cn : CAPTION.en}</figcaption>
     </figure>
+  );
+}
+
+// ── Tabs: one surface at a time on a paper sheet ──
+
+const TABS = {
+  en: [
+    { kicker: "Design", title: "Ad creative" },
+    { kicker: "Design · React", title: "Landing pages" },
+    { kicker: "Design · React", title: "The product" },
+    { kicker: "Design · Liquid", title: "Email" },
+  ],
+  cn: [
+    { kicker: "设计", title: "广告创意" },
+    { kicker: "设计 · React", title: "落地页" },
+    { kicker: "设计 · React", title: "产品" },
+    { kicker: "设计 · Liquid", title: "邮件" },
+  ],
+};
+
+/* What the code square of each column says, on the boxed tag over it */
+const TAGS = { en: ["Design only", "React", "React", "Liquid"], cn: ["只做设计", "React", "React", "Liquid"] };
+
+/* A pointy-topped hexagon round the code square (px, centred on 0,0) */
+const HEX = [
+  [0, -23],
+  [19.92, -11.5],
+  [19.92, 11.5],
+  [0, 23],
+  [-19.92, 11.5],
+  [-19.92, -11.5],
+]
+  .map(([x, y]) => `${(x + 21).toFixed(2)},${(y + 24).toFixed(2)}`)
+  .join(" ");
+
+/* The sheet is made once and never re-renders on a tab change: the tabs
+   write data-active and --active on their root, and the CSS here reads
+   them through data-pt, data-pt-lit and data-pt-dim. */
+const SurfaceSheet = memo(function SurfaceSheet({ cn }: { cn: boolean }) {
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const sheet = useRef<HTMLElement>(null);
+  const inView = useInView(sheet, { amount: 0.35, once: true });
+  const [design, code] = cn ? LANES.cn : LANES.en;
+  const tags = cn ? TAGS.cn : TAGS.en;
+
+  return (
+    <figure ref={sheet} className={styles.board} data-in={inView} data-cn={cn}>
+      <div className={styles.drafting}>
+        <svg aria-hidden className={styles.gridSvg}>
+          <defs>
+            <pattern id={`${uid}-grid`} width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M0 0.5 H40 M0.5 0 V40" className={styles.gridLine} />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#${uid}-grid)`} />
+        </svg>
+        {COLS.map((c, i) => (
+          <div key={c.id} data-pt={i} className={styles.panel}>
+            <div
+              className={styles.shot}
+              style={{ "--r": (c.w / c.h).toFixed(4), aspectRatio: `${c.w} / ${c.h}` } as CSSProperties}
+            >
+              <c.Draw id={`${uid}-tab-${c.id}`} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div aria-hidden className={styles.ledger}>
+        {COLS.map((c, i) => (
+          <span key={c.id} className={styles.colName} data-pt-dim={i} style={{ gridColumn: i + 2 }}>
+            {cn ? c.name.cn : c.name.en}
+          </span>
+        ))}
+        <span className={styles.laneName} data-lane="design">
+          {design}
+        </span>
+        <span className={styles.laneName} data-lane="code">
+          {code}
+        </span>
+        {COLS.map((c, i) => (
+          <Fragment key={c.id}>
+            <span className={styles.lcell} data-lane="design" style={{ gridColumn: i + 2, "--i": i } as CSSProperties}>
+              <span className={styles.lsq} data-fill="true">
+                <span className={styles.lit} data-pt-lit={i} />
+              </span>
+            </span>
+            <span className={styles.lcell} data-lane="code" style={{ gridColumn: i + 2, "--i": i } as CSSProperties}>
+              <span className={styles.lsq} data-fill={!!c.code}>
+                <span className={styles.lit} data-pt-lit={i} data-hollow={!c.code} />
+              </span>
+              {c.code && <span className={styles.ltech}>{c.code}</span>}
+            </span>
+          </Fragment>
+        ))}
+
+        {/* One column wide; it glides to the column in view */}
+        <span className={styles.focus}>
+          <span className={styles.tags}>
+            {tags.map((t, i) => (
+              <span key={i} data-pt={i} className={`boxed-tag ${styles.tag}`}>
+                {t}
+              </span>
+            ))}
+          </span>
+          <svg className={styles.hex} width="42" height="48" viewBox="0 0 42 48">
+            <polygon points={HEX} />
+          </svg>
+        </span>
+      </div>
+      <figcaption className="sr-only">{cn ? CAPTION.cn : CAPTION.en}</figcaption>
+    </figure>
+  );
+});
+
+export function SurfaceTabs({ intro }: { intro: ReactNode }) {
+  const cn = useLocale() === "cn";
+  const sheet = useMemo(() => <SurfaceSheet cn={cn} />, [cn]);
+  return (
+    <PlatformTabs
+      intro={intro}
+      label={cn ? "四个界面" : "Surfaces"}
+      dwell={6000}
+      tabs={cn ? TABS.cn : TABS.en}
+      sheet={sheet}
+    />
   );
 }

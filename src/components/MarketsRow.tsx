@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type CSSProperties } from "react";
+import { useId, useRef, type CSSProperties } from "react";
 import { useInView } from "motion/react";
 import { useLocale } from "next-intl";
 import styles from "./MarketsRow.module.css";
@@ -10,88 +10,209 @@ type Market = {
   code: string;
   /** Full country name, e.g. "Vietnam" */
   name: string;
-  /** Regulator label, e.g. "SBV — State Bank" */
+  /** Regulator label, e.g. "SBV" */
   regulator: string;
-  /** Optional caption, e.g. "Pay · Shop · Live" */
+  /** The products live there, e.g. "Pay · Shop · Live" */
   scope?: string;
 };
 
 type Props = {
   items: Market[];
+  /** What the markets share, written under the hub ("One design system") */
+  hub?: string;
 };
 
 /* The markets drawn the way Latent draws its network (latenthealth.com,
-   "Trusted by 60+ health systems"): a flat sheet of faint dots, and a few
-   of them lit — here one per market, each with a ring, joined by a single
-   hairline. The order is the order of the list; the drawing is a schematic,
-   not a map, so nothing is placed by geography. Every point sits on a dot
-   of the field: the field's pitch is a tenth of a column, so the column
-   centres land on it at any width. The hairline runs out once when the
-   sheet comes into view and each market lights as it is reached. Phones
-   turn the row into a rail down the left. No market is singled out: the
-   list marks none. Reduced motion: all lit. */
+   "Giving time back…"): a dark field of faint dots, a ring around a hub,
+   and a few points lit in the accent, each with its label beside it. Here
+   the hub is the one design system and the lit points are the markets it
+   shipped to, each joined to the hub by a spoke. Under each name: its
+   regulator and three squares, one per product, solid where the product
+   runs and hollow where it does not.
 
-const W = 1000;
-const RUN = 1400;
+   It is a schematic, not a map: points sit on the field's dots, the two
+   markets left of the hub carry their labels on the left and the two on
+   the right on the right, so no spoke crosses a label, and the hub's own
+   label sits in the wedge between the lower spokes. Pointing at (or
+   focusing) a market draws its spoke solid and fades the others: a DOM
+   write, opacity only, nothing mounts. The spokes run out from the hub
+   once in view, then the points pop and the labels fade in. Phones keep
+   a strip of the field as a picture and list the markets as rows under
+   it. Reduced motion: everything drawn from the first paint. */
 
-export function MarketsRow({ items }: Props) {
+const VW = 600;
+const VH = 360;
+const HUB = { x: 300, y: 180 };
+const RING = 120;
+const STEP = 40;
+const at = (c: number, r: number) => ({ x: 20 + STEP * c, y: 20 + STEP * r });
+/* Four markets, by list order (VN, MY, ID, US): two left of the hub, two
+   right, the lower spokes shallow enough to leave the hub label clear. */
+const FOUR = [at(3, 1), at(4, 6), at(11, 6), at(10, 1)];
+
+function place(n: number) {
+  if (n <= FOUR.length) return FOUR.slice(0, n);
+  // More markets than the drawing was laid out for: evenly round an
+  // ellipse, each snapped to the nearest dot of the field
+  return Array.from({ length: n }, (_, i) => {
+    const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
+    const c = Math.round((HUB.x + 220 * Math.cos(a) - 20) / STEP);
+    const r = Math.round((HUB.y + 130 * Math.sin(a) - 20) / STEP);
+    return at(Math.min(14, Math.max(0, c)), Math.min(8, Math.max(0, r)));
+  });
+}
+
+const SPLIT = /\s*·\s*/;
+
+export function MarketsRow({ items, hub }: Props) {
   const cn = useLocale() === "cn";
   const root = useRef<HTMLDivElement>(null);
-  const inView = useInView(root, { once: true, amount: 0.4 });
-  const n = Math.max(items.length, 1);
-  // One pitch of the dot field, in the band's own units
-  const pitch = W / (n * 10);
-  const xs = items.map((_, i) => (i + 0.5) * (W / n));
-  const y = pitch * 2;
-  const band = pitch * 4;
-  const delay = (i: number) => (n > 1 ? Math.round((i / (n - 1)) * RUN) : 0);
+  const field = useRef<HTMLDivElement>(null);
+  const lit = useInView(root, { once: true, amount: 0.4 });
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const points = place(items.length);
+
+  // The products, in the order the markets first name them (Pay, Shop, Live)
+  const products: string[] = [];
+  for (const m of items) {
+    for (const p of (m.scope ?? "").split(SPLIT).filter(Boolean)) {
+      if (!products.includes(p)) products.push(p);
+    }
+  }
+  const runs = (m: Market) => new Set((m.scope ?? "").split(SPLIT).filter(Boolean));
+  const say = (m: Market) => {
+    const live = products.filter((p) => runs(m).has(p));
+    return cn
+      ? `${m.name}：监管方 ${m.regulator}；${live.join("、")}`
+      : `${m.name}: regulator ${m.regulator}; ${live.join(", ")}`;
+  };
+
+  /* One market lit, the rest faded; null clears. A DOM write, no state. */
+  const show = (i: number | null) => {
+    const el = field.current;
+    if (!el) return;
+    el.dataset.active = String(i !== null);
+    el.querySelectorAll<HTMLElement | SVGElement>("[data-i]").forEach((node) => {
+      node.dataset.on = String(Number(node.dataset.i) === i);
+    });
+  };
+
+  const squares = (m: Market) => (
+    <span aria-hidden className={styles.scope}>
+      {products.map((p) => (
+        <span key={p} className={styles.sq} data-on={runs(m).has(p)} />
+      ))}
+    </span>
+  );
 
   return (
     <div
       ref={root}
-      className={styles.sheet}
-      data-lit={inView}
-      style={{ ["--n" as string]: n, ["--run" as string]: `${RUN}ms` } as CSSProperties}
+      className={styles.root}
+      data-lit={lit}
+      style={{ "--n": items.length } as CSSProperties}
     >
-      <div className={styles.field}>
-        <svg aria-hidden className={styles.band} viewBox={`0 0 ${W} ${band}`}>
-          {n > 1 && <line x1={xs[0]} y1={y} x2={xs[n - 1]} y2={y} className={styles.route} />}
-          {xs.map((x, i) => (
-            <g key={items[i].code} className={styles.point} style={{ ["--d" as string]: `${delay(i)}ms` } as CSSProperties}>
-              {/* the four neighbouring dots of the field light with the point */}
-              {[
-                [-1, 0],
-                [1, 0],
-                [0, -1],
-                [0, 1],
-              ].map(([dx, dy]) => (
-                <circle key={`${dx}${dy}`} cx={x + dx * pitch} cy={y + dy * pitch} r={1.6} className={styles.near} />
-              ))}
-              <circle cx={x} cy={y} r={13} className={styles.ring} />
-              <circle cx={x} cy={y} r={5.5} className={styles.dot} />
-              <line x1={x} y1={y + 19} x2={x} y2={band} className={styles.drop} />
-            </g>
+      <div ref={field} className={styles.field} data-active="false">
+        <svg
+          aria-hidden
+          className={styles.svg}
+          viewBox={`0 0 ${VW} ${VH}`}
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <defs>
+            <pattern id={`${uid}-dots`} width={STEP} height={STEP} patternUnits="userSpaceOnUse">
+              <circle cx={20} cy={20} r={1} className={styles.gridDot} />
+            </pattern>
+          </defs>
+          <rect width={VW} height={VH} fill={`url(#${uid}-dots)`} />
+
+          <circle cx={HUB.x} cy={HUB.y} r={RING} className={styles.ring} />
+
+          {points.map((p, i) => {
+            const dx = p.x - HUB.x;
+            const dy = p.y - HUB.y;
+            const len = Math.hypot(dx, dy).toFixed(2);
+            const deg = ((Math.atan2(dy, dx) * 180) / Math.PI).toFixed(2);
+            return (
+              <g key={`spoke${items[i].code}`} transform={`translate(${HUB.x} ${HUB.y}) rotate(${deg})`}>
+                <line x1={0} y1={0} x2={len} y2={0} className={styles.spoke} style={{ "--i": i } as CSSProperties} />
+                <line x1={0} y1={0} x2={len} y2={0} className={styles.overlay} data-i={i} />
+              </g>
+            );
+          })}
+
+          <rect x={HUB.x - 6} y={HUB.y - 6} width={12} height={12} className={styles.hub} />
+
+          {points.map((p, i) => (
+            <circle
+              key={`dot${items[i].code}`}
+              cx={p.x}
+              cy={p.y}
+              r={4}
+              className={styles.dot}
+              data-i={i}
+              style={{ "--i": i } as CSSProperties}
+            />
           ))}
         </svg>
 
-        <ol className={styles.markets}>
+        {/* The labels are type, not drawing: crisp at any width */}
+        <ul className={styles.labels}>
           {items.map((m, i) => (
             <li
               key={m.code}
+              tabIndex={0}
               className={styles.market}
-              style={{ ["--d" as string]: `${delay(i)}ms` } as CSSProperties}
+              data-i={i}
+              data-side={points[i].x < HUB.x ? "left" : "right"}
+              style={{ "--x": points[i].x / VW, "--y": points[i].y / VH, "--i": i } as CSSProperties}
+              onPointerEnter={(e) => e.pointerType === "mouse" && show(i)}
+              onPointerLeave={(e) => e.pointerType === "mouse" && show(null)}
+              onFocus={() => show(i)}
+              onBlur={() => show(null)}
             >
-              <p className={styles.code}>{m.code}</p>
-              <p className={styles.name}>{m.name}</p>
-              <p className={styles.reg}>
-                <span className={styles.key}>{cn ? "监管" : "Regulator"}</span>{" "}
-                <span className={styles.value}>{m.regulator}</span>
-              </p>
-              {m.scope && <p className={styles.scope}>{m.scope}</p>}
+              <span aria-hidden className={styles.code}>{m.code}</span>
+              <span aria-hidden className={styles.name}>{m.name}</span>
+              <span aria-hidden className={styles.reg}>{m.regulator}</span>
+              {squares(m)}
+              <span className="sr-only">{say(m)}</span>
             </li>
           ))}
-        </ol>
+        </ul>
+
+        {hub && (
+          <p className={styles.hubLabel} style={{ "--y": (HUB.y + 50) / VH } as CSSProperties}>
+            {hub}
+          </p>
+        )}
       </div>
+
+      {products.length > 0 && (
+        <p aria-hidden className={styles.legend}>
+          {products.map((p) => (
+            <span key={p} className={styles.legendItem}>
+              <span className={styles.sq} data-on="true" />
+              {p}
+            </span>
+          ))}
+        </p>
+      )}
+
+      {/* Phones: the markets as rows under the strip */}
+      <ol className={styles.list}>
+        {items.map((m) => (
+          <li key={m.code} className={styles.row}>
+            <span aria-hidden className={styles.rowDot} />
+            <span aria-hidden className={styles.code}>{m.code}</span>
+            <span aria-hidden className={styles.rowText}>
+              <span className={styles.name}>{m.name}</span>
+              <span className={styles.reg}>{m.regulator}</span>
+            </span>
+            {squares(m)}
+            <span className="sr-only">{say(m)}</span>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

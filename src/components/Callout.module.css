@@ -75,3 +75,55 @@
   line-height: 1.65;
   text-wrap: pretty;
 }
+
+/* ── Slab ── the banded pages' callout: a black block (global .slab, which
+   pins the dark tokens on any band), one column, the kicker in plain
+   type, the title large with one phrase in the accent. */
+.slab {
+  display: grid;
+  padding: 24px 20px;
+}
+@media (min-width: 640px) {
+  .slab { padding: 32px 36px; }
+}
+.slabKicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1.4;
+}
+.slabKicker .mark {
+  margin-top: 0;
+  color: var(--color-ink);
+}
+.slabTitle {
+  max-width: 34ch;
+  margin-top: 16px;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: clamp(24px, 1.2vw + 16px, 30px);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.accent { color: var(--accent-text, var(--accent)); }
+.word { white-space: nowrap; }
+.slabText {
+  max-width: 44rem;
+  margin-top: 12px;
+  color: var(--color-mute);
+  font-size: 17px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+/* Chinese arrives held word by word (Callout.tsx), closers glued to their
+   word, so lines break between whole words. No keep-all: a long run under
+   keep-all + anywhere broke wherever it overflowed, even before a 。. */
+:global(html[lang="zh-CN"]) .slabTitle,
+:global(html[lang="zh-CN"]) .slabText {
+  line-break: strict;
+  overflow-wrap: anywhere;
+}
