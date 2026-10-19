@@ -1,0 +1,93 @@
+/* A flat card, the figures on the left, the field on the right. Every dot
+   is one flat fill that steps from faint to lit; no gradients. */
+.field {
+  --accent-ink: var(--accent, var(--color-ink));
+  display: grid;
+  gap: 28px;
+  padding: 28px 24px 26px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+@media (min-width: 900px) {
+  .field {
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 40px;
+    padding: 34px 36px 32px;
+  }
+}
+
+.side { display: grid; gap: 22px; }
+.figures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+@media (min-width: 900px) { .figures { grid-template-columns: minmax(0, 1fr); } }
+
+.figure { border-top: 1px solid var(--color-line); padding-top: 12px; }
+.label {
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.value {
+  margin-top: 6px;
+  color: var(--color-ink);
+  font-size: clamp(40px, 5vw, 56px);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.tag {
+  justify-self: start;
+  padding: 5px 8px 4px;
+  border: 1px solid rgb(244 244 242 / 45%);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+/* Hanzi in the mono role need the size and lose the tracking, as the
+   Callout's kicker does one block below */
+:global(html[lang="zh-CN"]) .label,
+:global(html[lang="zh-CN"]) .tag {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.dots { display: block; width: 100%; height: auto; overflow: visible; }
+/* One field per width: fewer, larger dots on a phone (see FIELDS) */
+.wide { display: none; }
+@media (min-width: 600px) {
+  .wide { display: block; }
+  .compact { display: none; }
+}
+
+.dot,
+.now {
+  fill: var(--color-ink);
+  opacity: 0.1;
+  transition: opacity 260ms ease, fill 260ms ease;
+  /* Each dot waits for its turn in the seeded order (--at, 0 to 1) */
+  transition-delay: calc(var(--at, 0) * var(--run, 2600ms) * 0.92);
+}
+.field[data-lit="true"] .dot { opacity: var(--lit, 0.78); }
+.field[data-lit="true"] .now { opacity: 1; fill: var(--accent-ink); }
+.ring {
+  fill: none;
+  stroke: rgb(244 244 242 / 55%);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-arrive) calc(var(--run, 2600ms) * 0.96);
+}
+.field[data-lit="true"] .ring { opacity: 1; }
+
+/* Reduced motion: no fades and no stagger; the field is simply lit */
+@media (prefers-reduced-motion: reduce) {
+  .dot,
+  .now,
+  .ring { transition: none; }
+}

@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useRef, type CSSProperties } from "react";
+import { useInView } from "motion/react";
+import { useLocale } from "next-intl";
+import styles from "./LayerStack.module.css";
 
 export type Layer = {
   label: string;
@@ -9,91 +11,53 @@ export type Layer = {
   approach: string;
 };
 
-const SPRING = { type: "spring", stiffness: 380, damping: 32 } as const;
-
+/* The layers of a problem written out as a ledger, Latent's numbered list
+   (latenthealth.com, "Platform") laid flat: every layer on one row, its
+   number and name on the left, then the problem and the approach side by
+   side, a dashed leader carrying one into the other. Nothing is hidden
+   behind a tab, so the three can be read against each other. The rows
+   arrive one after another when the ledger comes into view; pointing at a
+   row runs an ink rule out over it. Phones stack each row, and the column
+   heads move into the rows. Reduced motion: everything already in place. */
 export function LayerStack({ layers }: { layers: Layer[] }) {
-  const [activeIdx, setActiveIdx] = useState(0);
-  const reduce = useReducedMotion();
-  const active = layers[activeIdx];
+  const cn = useLocale() === "cn";
+  const root = useRef<HTMLDivElement>(null);
+  const inView = useInView(root, { once: true, amount: 0.25 });
+  const problem = cn ? "问题" : "Problem";
+  const approach = cn ? "解法" : "Approach";
 
   return (
-    <div className="w-full">
-      <div
-        role="tablist"
-        aria-label="Problem layers"
-        className="flex gap-0 border-b border-line"
-      >
-        {layers.map((layer, i) => {
-          const selected = i === activeIdx;
-          return (
-            <button
-              key={layer.label}
-              role="tab"
-              aria-selected={selected}
-              aria-controls={`layer-panel-${i}`}
-              id={`layer-tab-${i}`}
-              type="button"
-              onClick={() => setActiveIdx(i)}
-              className="relative px-5 py-4 flex-1 sm:flex-none sm:min-w-[140px] text-left group"
-            >
-              <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-soft mb-1.5 tabular-nums">
-                Layer {String(i + 1).padStart(2, "0")}
-              </span>
-              <span
-                className={`block font-display text-[20px] tracking-[-0.01em] leading-none transition-colors ${
-                  selected
-                    ? "text-ink"
-                    : "text-mute group-hover:text-ink"
-                }`}
-              >
-                {layer.label}
-              </span>
-              {selected && (
-                <motion.span
-                  layoutId="layer-indicator"
-                  transition={reduce ? { duration: 0 } : SPRING}
-                  className="absolute left-0 right-0 -bottom-px h-[2px] bg-ink"
-                />
-              )}
-            </button>
-          );
-        })}
+    <div ref={root} className={styles.ledger} data-lit={inView}>
+      <div aria-hidden className={styles.head}>
+        <span>{cn ? "层" : "Layer"}</span>
+        <span>{problem}</span>
+        <span />
+        <span>{approach}</span>
       </div>
 
-      <div
-        id={`layer-panel-${activeIdx}`}
-        role="tabpanel"
-        aria-labelledby={`layer-tab-${activeIdx}`}
-        className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 pt-10 min-h-[180px]"
-      >
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={`problem-${activeIdx}`}
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            transition={{ duration: reduce ? 0 : 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="contents"
-          >
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft mb-3">
-                Problem
-              </p>
-              <p className="text-[16px] leading-[1.6] text-ink/85">
-                {active.problem}
-              </p>
+      <ol className={styles.rows}>
+        {layers.map((layer, i) => (
+          <li key={layer.label} className={styles.row} style={{ ["--i" as string]: i } as CSSProperties}>
+            <span aria-hidden className={styles.run} />
+            <p className={styles.name}>
+              <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
+              <span className={styles.label}>{layer.label}</span>
+            </p>
+            <div className={styles.cell}>
+              <p className={styles.kicker}>{problem}</p>
+              <p className={styles.problem}>{layer.problem}</p>
             </div>
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft mb-3">
-                Approach
-              </p>
-              <p className="text-[16px] leading-[1.6] text-ink/85">
-                {active.approach}
-              </p>
+            <svg aria-hidden className={styles.leader} viewBox="0 0 40 9">
+              <line x1="0" y1="4.5" x2="37" y2="4.5" />
+              <polyline points="33,1 37,4.5 33,8" />
+            </svg>
+            <div className={styles.cell}>
+              <p className={styles.kicker}>{approach}</p>
+              <p className={styles.approach}>{layer.approach}</p>
             </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

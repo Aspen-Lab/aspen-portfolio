@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useInView, useReducedMotion } from "motion/react";
 import { useLocale } from "next-intl";
 import type { CatalogueCover } from "./CatalogueIndex";
-import { AxelPreview } from "./AxelPreview";
 import { SideProjectDemo } from "./SideProjectDemo";
 import styles from "./CatalogueMedia.module.css";
 
@@ -95,21 +94,19 @@ export function CatalogueMedia({
       data-fit={cover.fit ?? "cover"}
       style={{ backgroundColor: cover.bg ?? "var(--color-paper)" }}
     >
-      {showMedia && (cover.presentation === "axel" ? (
-        <AxelPreview animate={animate} />
-      ) : (
+      {showMedia && (
         <div className={styles.image}>
           <Image
             src={cover.src}
             unoptimized={cover.src === "/work/tiktok.png"}
             alt={desktop ? "" : cover.alt ?? ""}
             fill
-            sizes={desktop ? "(min-width: 1440px) 580px, 44vw" : "(min-width: 768px) 44vw, calc(100vw - 40px)"}
+            sizes={desktop ? "(min-width: 1280px) 700px, 58vw" : "(min-width: 768px) 44vw, calc(100vw - 40px)"}
             loading={active && inView ? "eager" : "lazy"}
             style={{ objectFit: cover.fit ?? "cover", objectPosition: cover.position }}
           />
         </div>
-      ))}
+      )}
       {cover.demo && active && inView && (
         <SideProjectDemo key={`${cover.demo}-${replay}`} id={cover.demo} playing={animate} cn={cn} />
       )}

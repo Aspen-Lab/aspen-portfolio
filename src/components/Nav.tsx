@@ -80,7 +80,7 @@ export function Nav() {
             className="hidden sm:flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-soft"
           >
             <span aria-hidden className="relative flex w-1.5 h-1.5">
-              {!reduce && <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping" />}
+              <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping motion-reduce:hidden" />
               <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
             </span>
             <span className="hidden md:inline">{t("available")}</span>
@@ -88,7 +88,13 @@ export function Nav() {
         </Link>
 
         <div className="flex min-w-0 items-center justify-between gap-2 sm:justify-start sm:gap-6">
-          <nav className="flex shrink-0 items-center gap-1 sm:gap-5">
+          {/* On phones each label carries its own side room, so the bracket
+              clears its text and never kisses a neighbour, and the gap keeps
+              WORK / ABOUT / CONTACT reading as three words. The row before
+              EN / 中文 has the space; only sub-360 screens tighten up. The
+              extra 2px on the left answers the trailing letter-spacing, so
+              the label sits optically centred inside its bracket. */}
+          <nav className="flex shrink-0 items-center gap-1 min-[360px]:gap-2 sm:gap-5">
             {ITEMS.map((item) => {
               const active = item.match(pathname);
               return (
@@ -97,7 +103,7 @@ export function Nav() {
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   onClick={item.key === "work" ? onWorkClick : undefined}
-                  className={`relative inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap px-0 sm:px-1 touch-manipulation font-mono text-[11px] uppercase tracking-[0.18em] transition-colors duration-200 ${
+                  className={`relative inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap pl-1.5 pr-1 min-[360px]:pl-2.5 min-[360px]:pr-2 sm:pl-1.5 sm:pr-1 touch-manipulation font-mono text-[11px] uppercase tracking-[0.18em] transition-colors duration-200 ${
                     active ? "text-ink" : "text-soft hover:text-ink"
                   }`}
                 >
@@ -105,7 +111,10 @@ export function Nav() {
                     <motion.span
                       layoutId="nav-bracket"
                       aria-hidden
-                      className="pointer-events-none absolute inset-x-0 inset-y-1.5"
+                      /* 36px tall: the global reg-mark arms are 18px, so the
+                         side arms meet at the midpoint instead of overlapping
+                         into a brighter fleck. */
+                      className="pointer-events-none absolute inset-x-0 inset-y-1"
                       transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 34 }}
                     >
                       <span className="reg-mark tl" style={{ width: 7, height: 7, left: 0, top: 0 }} />

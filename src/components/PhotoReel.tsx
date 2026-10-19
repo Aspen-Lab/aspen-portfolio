@@ -13,7 +13,11 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
    fills the width, no cropping, no sideways scroll. Hovering shows the
    registration corners and the frame number; clicking opens the frame
    in a full-size viewfinder that also never crops (object-contain), with
-   a readout, arrows, ← → and Esc. */
+   a readout, arrows, ← → and Esc.
+   Captions are sentences, so they are set as sentences: the sans, in
+   sentence case, in mute, brightening with the photo on hover. Mono is
+   kept for the one thing that is a label — the frame index, boxed in
+   the corner of the photo and in the viewer's readout. */
 
 export type Frame = {
   src: string;
@@ -65,7 +69,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
               type="button"
               onClick={() => setOpen(i)}
               aria-label={`${label} · ${pad(i + 1)} / ${pad(frames.length)}${f.caption ? ` · ${f.caption}` : ""}`}
-              className="relative block w-full plate plate-figure cursor-pointer outline-none"
+              className="relative block w-full plate plate-figure cursor-pointer outline-none focus-visible:border-ink/45"
             >
               <Image
                 src={f.src}
@@ -77,19 +81,20 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                 className="block w-full h-auto transition-transform duration-[900ms] group-hover:scale-[1.02]"
                 style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
               />
-              <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100">
                 <span className="reg-mark tl" />
                 <span className="reg-mark tr" />
                 <span className="reg-mark br" />
                 <span className="reg-mark bl" />
-              </span>
-              <span className="pointer-events-none absolute left-3 top-3 font-mono text-[9px] uppercase tracking-[0.22em] text-ink/80 opacity-0 transition-opacity duration-300 group-hover:opacity-100 tabular-nums">
-                {pad(i + 1)} <span className="text-ink/45">/</span> {pad(frames.length)}
+                {/* The index rides inside the top-left registration mark as a boxed tag:
+                    paper fill and a hairline, so it reads over a white mat as well as a night sky. */}
+                <span className="absolute left-[18px] top-[18px] border border-[rgb(244_244_242/55%)] bg-paper px-[7px] py-[5px] font-mono text-[10px] leading-none uppercase tracking-[0.16em] text-ink tabular-nums">
+                  {pad(i + 1)} <span className="text-soft">/</span> {pad(frames.length)}
+                </span>
               </span>
             </button>
             {f.caption && (
-              <figcaption className="mt-3 font-mono text-[10.5px] uppercase tracking-[0.16em] text-soft leading-[1.7]">
-                <span className="text-soft/50">{"// "}</span>
+              <figcaption className="mt-3 text-[13.5px] sm:text-[14px] leading-[1.5] tracking-[-0.005em] text-mute text-pretty transition-colors duration-300 group-hover:text-ink">
                 {f.caption}
               </figcaption>
             )}
@@ -175,8 +180,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                     </div>
                   </div>
                   {current.caption && (
-                    <figcaption className="mt-1 max-w-[60ch] text-center font-mono text-[11px] uppercase tracking-[0.16em] text-soft leading-[1.7]">
-                      <span className="text-soft/50">{"// "}</span>
+                    <figcaption className="mt-1 max-w-[56ch] px-4 text-center text-[14.5px] sm:text-[15px] leading-[1.5] tracking-[-0.005em] text-mute text-pretty">
                       {current.caption}
                     </figcaption>
                   )}

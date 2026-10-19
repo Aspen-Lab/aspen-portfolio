@@ -1,0 +1,176 @@
+/* Latent's network on the dark page: one flat sheet, a field of faint dots
+   (the only radial-gradient here is the dot itself, tiled), lit points,
+   one hairline. No glows, no fills beyond flat ink. */
+.sheet {
+  container-type: inline-size;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+
+/* The field's pitch is a tenth of a column, and the tiles are shifted by
+   half a pitch so the dots sit on whole multiples of it — the same grid
+   the band below draws its points on. */
+.field {
+  --pitch: calc(10cqi / var(--n));
+  background-image: radial-gradient(circle, rgb(244 244 242 / 11%) 0 1px, transparent 1.5px);
+  background-size: var(--pitch) var(--pitch);
+  background-position: calc(var(--pitch) / -2) calc(var(--pitch) / -2);
+}
+
+.band { display: block; width: 100%; height: auto; overflow: visible; }
+
+.route,
+.drop { fill: none; }
+.route,
+.drop,
+.ring { vector-effect: non-scaling-stroke; }
+.route {
+  stroke: rgb(244 244 242 / 35%);
+  stroke-width: 1;
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform var(--run) linear 150ms;
+}
+.sheet[data-lit="true"] .route { transform: none; }
+
+.dot,
+.near {
+  fill: var(--color-ink);
+  opacity: 0.18;
+  transition: opacity 320ms ease calc(150ms + var(--d));
+}
+.ring {
+  /* a flat cream disc, so the route stops at the ring */
+  fill: var(--color-cream);
+  stroke: rgb(244 244 242 / 32%);
+  stroke-width: 1;
+  opacity: 0;
+  transition: opacity 400ms ease calc(250ms + var(--d));
+}
+.drop {
+  stroke: rgb(244 244 242 / 28%);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  opacity: 0;
+  transition: opacity 400ms ease calc(300ms + var(--d));
+}
+.sheet[data-lit="true"] .dot,
+.sheet[data-lit="true"] .ring,
+.sheet[data-lit="true"] .drop { opacity: 1; }
+.sheet[data-lit="true"] .near { opacity: 0.5; }
+
+/* The markets, one column under each point */
+.markets {
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  padding-bottom: 30px;
+  text-align: center;
+}
+.market {
+  padding: 8px 12px 0;
+  opacity: 0.35;
+  transition: opacity 420ms ease calc(150ms + var(--d));
+}
+.sheet[data-lit="true"] .market { opacity: 1; }
+
+.code {
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: clamp(24px, 3cqi, 32px);
+  line-height: 40px;
+  letter-spacing: 0.04em;
+}
+.name {
+  margin-top: 4px;
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 20px;
+}
+.reg {
+  margin-top: 6px;
+  color: var(--color-ink);
+  font-size: 13.5px;
+  line-height: 20px;
+}
+.key { margin-right: 2px; color: var(--color-soft); }
+/* the regulator wraps as one, under its key if it must */
+.value { display: inline-block; white-space: nowrap; }
+.scope {
+  color: var(--color-mute);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* Phones: the row turns into a rail down the left. A fixed 20px pitch, the
+   rail on the second column of dots, and every line of type 20px high (the
+   code 40px), so each point lands on a dot however the names wrap. */
+@media (max-width: 639px) {
+  .field {
+    --pitch: 20px;
+    padding: 20px 16px 20px 0;
+  }
+  .band { display: none; }
+  .markets {
+    display: block;
+    padding-bottom: 0;
+    text-align: left;
+  }
+  .market {
+    position: relative;
+    min-height: 100px;
+    padding: 0 0 0 64px;
+  }
+  .market + .market { margin-top: 20px; }
+  .market::before {
+    content: "";
+    position: absolute;
+    top: 14.5px;
+    left: 34.5px;
+    width: 11px;
+    height: 11px;
+    border-radius: 999px;
+    background: var(--color-ink);
+    outline: 1px solid rgb(244 244 242 / 32%);
+    outline-offset: 7px;
+    box-shadow: 0 0 0 7px var(--color-cream);
+  }
+  .market:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 20px;
+    left: 40px;
+    width: 1px;
+    height: calc(100% + 20px);
+    background: rgb(244 244 242 / 35%);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 420ms linear calc(150ms + var(--d));
+  }
+  .markets { position: relative; z-index: 0; }
+  .sheet[data-lit="true"] .market::after { transform: none; }
+  .code { font-size: 28px; }
+  .name { margin-top: 0; }
+  .reg { margin-top: 0; }
+}
+
+/* Reduced motion: all lit from the first paint */
+@media (prefers-reduced-motion: reduce) {
+  .route,
+  .dot,
+  .near,
+  .ring,
+  .drop,
+  .market,
+  .market:not(:last-child)::after { transition: none; }
+  .route,
+  .market:not(:last-child)::after { transform: none; }
+  .dot,
+  .ring,
+  .drop,
+  .market { opacity: 1; }
+  .near { opacity: 0.5; }
+}

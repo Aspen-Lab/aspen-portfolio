@@ -82,7 +82,7 @@ export function HeroHeadline({ line2, line3a, line3Italic, line3b }: Props) {
         <MaskLine delay={BASE + 0.16}>
           {line3a}
           <span
-            className="italic font-normal leverage-gradient"
+            className="italic font-normal leverage"
             style={{ padding: "0 0.08em", margin: "0 -0.08em" }}
           >
             {line3Italic}

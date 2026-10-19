@@ -1,6 +1,33 @@
 import { axelProject } from "./axel";
 import { hyundaiProject } from "./hyundai";
 
+/** A note on an image: the region it explains and where its numbered
+    marker sits, both in % of the frame the image is shown in. */
+export type ImageNote = {
+  box: [number, number, number, number];
+  at: [number, number];
+  title: string;
+  text: string;
+};
+
+/** One entry of a MorphChart: the list copy, how the dots arrange, and
+    the sheet's labels for that arrangement. */
+export type MorphState = {
+  kicker: string;
+  title: string;
+  text: string;
+  layout: "scatter" | "curve" | "clusters" | "grid";
+  /** The boxed tag on the focus dot. */
+  tag: string;
+  /** The sheet's vertical title. */
+  axis: string;
+  /** The x axis, start and end. */
+  from: string;
+  to: string;
+  /** Labels under the three clusters ("clusters" only). */
+  groups?: string[];
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -24,6 +51,10 @@ export type Project = {
   coverPosition?: string;
   coverBg?: string;
   heroVideo?: string;
+  /** One accent for the page's charts (the project's own colour). */
+  accent?: string;
+  /** Notes on the cover, in % of the 16:9 case-study frame. */
+  coverNotes?: ImageNote[];
   metrics?: { label: string; value: string }[];
   sections?: {
     heading: string;
@@ -37,6 +68,8 @@ export type Project = {
       height: number;
       alt: string;
       caption?: string;
+      /** Turns the figure into an annotated image (notes in % of the image). */
+      notes?: ImageNote[];
     }[];
     videos?: {
       src: string;
@@ -61,7 +94,12 @@ export type Project = {
       text: string;
       attribution?: string;
     };
-    visual?: "loop-diagram";
+    /** Code-drawn figures: the design⇄engineering lanes, the brand touchpoints chain, the email render check. */
+    visual?: "loop-diagram" | "touchpoints" | "email-render";
+    /** A Latent-style list + plotted sheet whose dots rearrange per entry. */
+    morph?: { states: MorphState[] };
+    /** Figures that count up beside a field of dots lighting from none to all. */
+    dotField?: { items: { value: string; label: string }[]; tag: string };
     statGrid?: {
       items: {
         value: string;
@@ -84,6 +122,8 @@ export type Project = {
         text?: string;
       }[];
       columns?: 1 | 2 | 3;
+      /** "charts": each item gets a small Latent-style plot above its text. */
+      variant?: "charts";
     };
     callout?: {
       variant?: "info" | "warn" | "tip" | "note" | "insight";
@@ -103,6 +143,8 @@ export type Project = {
       }[];
     };
     userFlow?: {
+      /** "route" draws the steps as a flight route (Axel's own flight card). */
+      variant?: "route";
       title?: string;
       steps: {
         id: string;

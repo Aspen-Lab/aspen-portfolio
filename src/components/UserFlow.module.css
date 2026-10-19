@@ -1,0 +1,314 @@
+/* Latent's plotted sheet, holding a flow: a flat card on a second card,
+   boxed tags on a dashed path, one hexagon, one focus. Flat fills and 1px
+   lines only; nothing filled with ink. */
+.wrap {
+  position: relative;
+  isolation: isolate;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(10px, 10px);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: #131314;
+}
+
+.sheet {
+  --accent-ink: var(--accent, var(--color-ink));
+  --dash: rgb(244 244 242 / 45%);
+  /* narrow sheets: the path runs down the left, at --rail */
+  --rail: 24px;
+  --vgap: 22px;
+  --gap: 32px;
+  --elbow: 74px;
+  --x: 88px;
+  --lift: var(--vgap);
+  container-type: inline-size;
+  position: relative;
+  padding: 22px 18px 26px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  /* a canvas of faint dots under the boxes (the gradient is the dot only) */
+  background-color: var(--color-cream);
+  background-image: radial-gradient(circle, rgb(244 244 242 / 7%) 0 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: -8px -8px;
+}
+@media (min-width: 640px) {
+  .sheet { padding: 30px 32px 34px; }
+}
+
+.title {
+  margin-bottom: 26px;
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ── Narrow: one column, the path down the left ── */
+.flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--vgap);
+  max-width: 560px;
+}
+
+.step {
+  position: relative;
+  opacity: 0.28;
+  transition: opacity 420ms ease;
+  transition-delay: calc(var(--i) * 200ms);
+}
+.sheet[data-lit="true"] .step { opacity: 1; }
+
+/* The dashed path from each step to the next */
+.step:not([data-last="true"])::after,
+.fork::before {
+  content: "";
+  position: absolute;
+  left: var(--rail);
+  top: 100%;
+  height: var(--vgap);
+  border-left: 1px dashed var(--dash);
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 260ms linear;
+  transition-delay: calc(var(--i) * 200ms + 120ms);
+}
+/* where a branch sits between two steps, the path runs on past it */
+.fork { position: relative; }
+.fork::before { top: 0; height: calc(100% + var(--vgap)); }
+.sheet[data-lit="true"] .step::after,
+.sheet[data-lit="true"] .fork::before { clip-path: inset(0); }
+
+/* ── The boxes ── */
+.box {
+  position: relative;
+  height: 100%;
+  padding: 12px 14px 14px;
+  border: 1px solid rgb(244 244 242 / 26%);
+  border-radius: 2px;
+  background: var(--color-paper);
+}
+.step[data-kind="start"] .box,
+.step[data-kind="end"] .box { border-color: rgb(244 244 242 / 55%); }
+.step[data-kind="decision"] .box {
+  padding: 12px 24px 14px;
+  border: 0;
+  background: none;
+}
+
+/* Start: a ring where the path comes in. End: a dot where it leaves. */
+.step[data-first="true"] .box::before,
+.step[data-last="true"] .box::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  left: calc(var(--rail) - 4.5px);
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--color-ink);
+  border-radius: 999px;
+  background: var(--color-cream);
+}
+.step[data-last="true"] .box::after {
+  top: auto;
+  bottom: -5px;
+  background: var(--color-ink);
+}
+
+.num,
+.label,
+.caption { position: relative; }
+.num {
+  display: block;
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+}
+.label {
+  margin-top: 9px;
+  color: var(--color-ink);
+  font-size: 15.5px;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
+.caption {
+  margin-top: 5px;
+  color: var(--color-mute);
+  font-size: 13px;
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+/* The decision: a hexagon drawn behind the text, to the box's own size */
+.hex {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.hexShape {
+  fill: var(--color-paper);
+  stroke: rgb(244 244 242 / 55%);
+  stroke-width: 1;
+}
+.box[data-focus="true"] .hexShape { stroke: var(--accent-ink); }
+.ring {
+  fill: none;
+  stroke: rgb(244 244 242 / 55%);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  animation: march 2.4s linear infinite;
+}
+@keyframes march { to { stroke-dashoffset: -14; } }
+
+/* ── A branch: a dashed drop to a boxed tag, then a side path into
+   where it leads. The drop leaves from the focus ring's edge. ── */
+.branch {
+  position: relative;
+  padding: calc(var(--elbow) - 20px) 0 0 calc(var(--x) + 28px);
+}
+.branch + .branch { margin-top: 18px; }
+.drop,
+.run {
+  position: absolute;
+  left: var(--x);
+  transition: clip-path 360ms var(--ease-arrive);
+  transition-delay: calc(var(--i) * 200ms + 260ms);
+}
+/* Down to the elbow; the first reaches up to the step (on a narrow sheet
+   across the gap under it), the others carry on to the next branch. */
+.drop {
+  top: 0;
+  bottom: calc(100% - var(--elbow));
+  border-left: 1px dashed var(--dash);
+  clip-path: inset(0 0 100% 0);
+}
+.branch:first-child .drop { top: calc(0px - var(--lift)); }
+.fork[data-focus="true"] .branch:first-child .drop { top: calc(7px - var(--lift)); }
+.branch:not([data-last="true"]) .drop { bottom: -18px; }
+.run {
+  top: var(--elbow);
+  width: 28px;
+  border-top: 1px dashed var(--dash);
+  clip-path: inset(0 100% 0 0);
+  transition-delay: calc(var(--i) * 200ms + 560ms);
+}
+.sheet[data-lit="true"] .drop,
+.sheet[data-lit="true"] .run { clip-path: inset(0); }
+
+/* Latent's boxed tag, on the leader */
+.tag {
+  position: absolute;
+  top: 18px;
+  left: var(--x);
+  padding: 5px 8px 4px;
+  border: 1px solid rgb(244 244 242 / 55%);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  translate: -50% 0;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  transition-delay: calc(var(--i) * 200ms + 460ms);
+}
+.dest {
+  width: fit-content;
+  max-width: 440px;
+  padding: 10px 14px 12px;
+  border: 1px dashed var(--dash);
+  border-radius: 2px;
+  background: var(--color-paper);
+  opacity: 0;
+  transition: opacity 360ms ease;
+  transition-delay: calc(var(--i) * 200ms + 680ms);
+}
+.sheet[data-lit="true"] .tag,
+.sheet[data-lit="true"] .dest { opacity: 1; }
+.destLabel {
+  color: var(--color-ink);
+  font-size: 15.5px;
+  line-height: 20px;
+}
+.destCaption {
+  margin-top: 4px;
+  color: var(--color-mute);
+  font-size: 13.5px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* ── Wide: the steps run left to right, the branches hang below ── */
+@container (min-width: 820px) {
+  .flow {
+    --lift: 0px;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    column-gap: var(--gap);
+    row-gap: 0;
+    max-width: none;
+  }
+  .step { grid-row: 1; grid-column: var(--col); }
+  /* --x: the centre of the fork's own column, the first of those it spans */
+  .fork {
+    --x: calc((100% - (var(--span) - 1) * var(--gap)) / var(--span) / 2);
+    grid-row: 2;
+    grid-column: var(--col) / span var(--span);
+  }
+  .fork::before { display: none; }
+
+  .step:not([data-last="true"])::after {
+    left: 100%;
+    top: 50%;
+    width: var(--gap);
+    height: 0;
+    border-left: 0;
+    border-top: 1px dashed var(--dash);
+    clip-path: inset(0 100% 0 0);
+  }
+  .sheet[data-lit="true"] .step::after { clip-path: inset(0); }
+
+  .step[data-first="true"] .box::before,
+  .step[data-last="true"] .box::after {
+    top: calc(50% - 5px);
+    bottom: auto;
+    left: -5px;
+  }
+  .step[data-last="true"] .box::after { left: auto; right: -5px; }
+}
+
+/* Reduced motion: the finished drawing from the first paint, the ring still */
+@media (prefers-reduced-motion: reduce) {
+  .step,
+  .step:not([data-last="true"])::after,
+  .fork::before,
+  .drop,
+  .run,
+  .tag,
+  .dest { transition: none; }
+  .ring { animation: none; }
+  .step,
+  .tag,
+  .dest { opacity: 1; }
+  .step:not([data-last="true"])::after,
+  .fork::before,
+  .drop,
+  .run { clip-path: inset(0); }
+}

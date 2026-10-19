@@ -18,6 +18,17 @@
 .description:focus-visible .rowArrow { color: var(--color-ink); transform: translate(2px, -2px); }
 .preview { display: none; }
 
+/* The viewfinder's stacked covers. Only the active one shows; the swap is
+   a crossfade, and it is CSS so the server and the first client render
+   carry the same markup whatever the visitor's motion setting. */
+.layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 360ms var(--ease-arrive);
+}
+.layer[data-active="true"] { opacity: 1; }
+
 /* At tablet widths, keep the picture attached to its project. This also
    applies to larger touch screens, where hovering is not an available action. */
 @media (min-width: 768px) {
@@ -28,20 +39,24 @@
   .name { font-size: 32px; }
 }
 
-/* Shared previews belong to a layout that can actually use hover. */
+/* Shared previews belong to a layout that can actually use hover. The
+   plate is the stage: it takes three fifths of the width, and a row keeps
+   only its name, its line and its year. Role and field are said once, in
+   the readout under the plate (Aspen: 「小字很多 + staging小」). */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-  .catalogue { display: grid; grid-template-columns: 1fr minmax(380px, 44%); gap: 48px; align-items: start; }
+  .catalogue { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 48px; align-items: start; }
   .index { display: block; border-top: 1px solid var(--color-line); }
   .entry { border-top: 0; border-bottom: 1px solid var(--color-line); }
   .inlinePreview { display: none; }
   .description { padding-block: 32px; }
   .rowContent { grid-template-columns: 2.25rem minmax(0, 1fr) auto; column-gap: 20px; }
   .name { font-size: 40px; }
-  .meta { max-width: 44ch; }
+  .sub { font-size: 16px; }
+  .meta { display: none; }
   .rowArrow { opacity: 0; }
   .description[data-current="true"] .rowArrow,
   .description:focus-visible .rowArrow { opacity: 1; color: var(--color-ink); }
-  .preview { display: block; position: sticky; top: 138px; }
+  .preview { display: block; position: sticky; top: 104px; }
 }
 
 @media (min-width: 1280px) and (hover: hover) and (pointer: fine) {
@@ -53,6 +68,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .layer { transition: none; }
+  /* The demos do not play (CatalogueMedia), so there is nothing to replay. */
+  .replay { display: none; }
   .rowArrow { transition: none; }
   .description:hover .rowArrow,
   .description:focus-visible .rowArrow { transform: none; }

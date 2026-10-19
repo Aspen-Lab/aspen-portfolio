@@ -83,3 +83,8 @@
   .tab, .tab::before { transition: none; }
   .scene { animation: none; }
 }
+
+/* The replay button is in the markup for everyone; nothing replays under reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .replay { display: none; }
+}

@@ -152,7 +152,8 @@ export function TechStack() {
               <span className={styles.scrollHint} aria-hidden>{cn ? "横向滑动，查看完整流程" : "Swipe to explore the workflow"}</span>
               <figcaption className={styles.sceneFooter}>
                 <span>{SCENE_CAPTIONS[kind][cn ? "cn" : "en"]}</span>
-                {!reduce && <button className={styles.replay} type="button" onClick={() => setReplay((value) => value + 1)} aria-label={cn ? `重播${name}演示` : `Replay ${name} demo`}><RotateCcw size={13} aria-hidden /><span>{cn ? "重播" : "Replay"}</span></button>}
+                {/* Always rendered (the server cannot know the motion setting); CSS hides it for reduced motion */}
+                {<button className={styles.replay} type="button" onClick={() => setReplay((value) => value + 1)} aria-label={cn ? `重播${name}演示` : `Replay ${name} demo`}><RotateCcw size={13} aria-hidden /><span>{cn ? "重播" : "Replay"}</span></button>}
               </figcaption>
             </figure>
 
@@ -180,7 +181,7 @@ export function TechStack() {
               <div key={label} className={styles.spectrumItem}>
                 <StackCategoryIcon kind={SPECTRUM_ICONS[i]} size={22} />
                 <span>{label}</span>
-                <motion.span className={styles.spectrumLine} initial={reduce ? false : { scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: EASE, delay: i * 0.08 }} />
+                <motion.span className={styles.spectrumLine} initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true, amount: 0.6 }} transition={reduce ? { duration: 0 } : { duration: 0.7, ease: EASE, delay: i * 0.08 }} />
                 {i < spectrum.length - 1 && <ArrowRight size={12} className={styles.spectrumArrow} aria-hidden />}
               </div>
             ))}

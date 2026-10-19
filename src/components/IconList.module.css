@@ -1,0 +1,301 @@
+/* A Latent ledger: hairlines, mono numbers, one short ink rule per entry.
+   The chart sheets are flat cards with a hairline grid and one accent.
+   No gradient fills anywhere. */
+.wrap {
+  --accent-ink: var(--accent, var(--color-ink));
+  container-type: inline-size;
+  max-width: 56rem;
+}
+.wrap[data-cols="1"] { max-width: 44rem; }
+.wrap[data-variant="charts"] { max-width: 64rem; }
+
+.list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 30px 32px;
+}
+.wrap[data-variant="charts"] .list { row-gap: 44px; }
+
+.item {
+  /* Side by side, the entries arrive one after another */
+  --stagger: 0ms;
+  min-width: 0;
+}
+
+/* ── The entry ── */
+.entry {
+  position: relative;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-line);
+}
+.entry::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 2.25rem;
+  height: 1px;
+  background: var(--color-ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition:
+    transform 760ms var(--ease-arrive) calc(var(--stagger) + 120ms),
+    width 520ms var(--ease-arrive);
+}
+.item[data-in="true"] .entry::before { transform: none; }
+.item:hover .entry::before { width: 100%; }
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 16px;
+}
+.num {
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  transition: color 220ms ease;
+}
+.icon {
+  display: inline-flex;
+  color: var(--color-soft);
+  transition: color 220ms ease;
+}
+.item:hover .num,
+.item:hover .icon { color: var(--color-ink); }
+
+.label {
+  margin-top: 12px;
+  color: var(--color-ink);
+  font-size: 17px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.text {
+  margin-top: 8px;
+  max-width: 34rem;
+  color: var(--color-mute);
+  font-size: 14.5px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* One column with room to spare: a true ledger row, the number in a
+   gutter, the last row closed by a hairline. */
+@container (min-width: 520px) {
+  .wrap[data-variant="ledger"] .list { row-gap: 0; }
+  .wrap[data-variant="ledger"] .entry {
+    display: grid;
+    grid-template-columns: 6rem minmax(0, 1fr);
+    column-gap: 16px;
+    padding: 18px 0 22px;
+  }
+  .wrap[data-variant="ledger"] .head { grid-row: span 2; height: 22px; }
+  .wrap[data-variant="ledger"] .label { margin-top: 0; }
+  .wrap[data-variant="ledger"] .item:last-child .entry { border-bottom: 1px solid var(--color-line); }
+}
+
+/* Columns, when the list asks for them and has the width */
+@container (min-width: 600px) {
+  .wrap[data-variant="ledger"][data-cols="2"] .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 30px;
+  }
+  .wrap[data-variant="ledger"][data-cols="2"] .entry { display: block; padding: 16px 0 0; }
+  .wrap[data-variant="ledger"][data-cols="2"] .label { margin-top: 12px; }
+  .wrap[data-variant="ledger"][data-cols="2"] .item:last-child .entry { border-bottom: 0; }
+}
+@container (min-width: 720px) {
+  .wrap[data-variant="ledger"][data-cols="3"] .list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 30px;
+  }
+  .wrap[data-variant="ledger"][data-cols="3"] .entry { display: block; padding: 16px 0 0; }
+  .wrap[data-variant="ledger"][data-cols="3"] .label { margin-top: 12px; }
+  .wrap[data-variant="ledger"][data-cols="3"] .item:last-child .entry { border-bottom: 0; }
+  .wrap[data-cols="3"] .item { --stagger: calc(var(--i) * 140ms); }
+}
+
+/* Charts: stacked on a phone, the sheet beside its entry on a tablet,
+   three across once each sheet can be drawn at full size. */
+.wrap[data-variant="charts"] .entry { margin-top: 22px; }
+@container (min-width: 600px) and (max-width: 879.98px) {
+  .wrap[data-variant="charts"] .item {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 28px;
+  }
+  .wrap[data-variant="charts"] .entry { margin-top: 0; }
+}
+@container (min-width: 880px) {
+  .wrap[data-variant="charts"][data-cols="3"] .list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wrap[data-variant="charts"][data-cols="2"] .list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wrap[data-variant="charts"] .item { --stagger: calc(var(--i) * 160ms); }
+}
+
+/* ── The sheet ── */
+.sheet {
+  position: relative;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+.plot { display: block; width: 100%; height: auto; overflow: visible; }
+
+.grid line { stroke: rgb(244 244 242 / 6%); stroke-width: 1; }
+.axis { fill: none; stroke: rgb(244 244 242 / 22%); stroke-width: 1; }
+.ink { fill: var(--color-ink); }
+.dot { fill: var(--color-ink); }
+.focus { fill: var(--accent-ink); }
+.trace { fill: none; stroke: rgb(244 244 242 / 30%); stroke-width: 1; }
+
+.panel {
+  fill: var(--color-paper);
+  stroke: rgb(244 244 242 / 13%);
+  stroke-width: 1;
+}
+.rule { stroke: rgb(244 244 242 / 10%); stroke-width: 1; }
+.mark line { stroke: var(--color-ink); stroke-width: 1.2; stroke-linecap: round; }
+.port { fill: var(--color-cream); stroke: var(--color-ink); stroke-width: 1.2; }
+
+.band { fill: rgb(244 244 242 / 4.5%); }
+.mid { fill: none; stroke: rgb(244 244 242 / 20%); stroke-width: 1; stroke-dasharray: 2 4; }
+
+.hex {
+  fill: none;
+  stroke: rgb(244 244 242 / 55%);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: turn 24s linear infinite;
+}
+@keyframes turn { to { transform: rotate(360deg); } }
+.leader { stroke: rgb(244 244 242 / 55%); stroke-width: 1; stroke-dasharray: 2 3; }
+
+/* The switch on the preview: off until the change lands, then on in the
+   accent — the one thing on the sheet that carries it. */
+.track {
+  fill: transparent;
+  stroke: rgb(244 244 242 / 32%);
+  stroke-width: 1;
+  transition: fill 260ms ease, stroke 260ms ease;
+  transition-delay: calc(var(--stagger) + var(--d, 0ms));
+}
+.knob {
+  fill: rgb(244 244 242 / 45%);
+  transition: transform 420ms var(--ease-arrive), fill 260ms ease;
+  transition-delay: calc(var(--stagger) + var(--d, 0ms));
+}
+.item[data-in="true"] .track { fill: var(--accent-ink); stroke: var(--accent-ink); }
+.item[data-in="true"] .knob { fill: var(--color-paper); transform: translateX(12px); }
+
+/* Labels on the sheet: one tag per sheet, the axis words on the third */
+.tag,
+.word {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tag {
+  padding: 4px 7px 3px;
+  border: 1px solid rgb(244 244 242 / 55%);
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.tag[data-side="above"] { translate: -50% -100%; }
+.tag[data-side="below"] { translate: -50% 0; }
+.tag[data-side="left"] { translate: -100% -50%; }
+.word { color: var(--color-soft); letter-spacing: 0.16em; }
+/* Placed by its centre line; the transform carries the shift as well as
+   the turn, so the two never compound in the wrong order. */
+.wordY {
+  writing-mode: vertical-rl;
+  transform: translateX(-50%) rotate(180deg);
+}
+/* Chinese stands upright down the axis instead of lying on its side */
+.wordY[data-cjk="true"] {
+  transform: translateX(-50%);
+  text-orientation: upright;
+  letter-spacing: 0.3em;
+}
+
+/* ── Arrival ── marks wait, then draw, grow or settle on their delay. */
+.draw,
+.fade,
+.pop,
+.grow,
+.rise,
+.tag {
+  transition-delay: calc(var(--stagger) + var(--d, 0ms));
+}
+.draw {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition-property: stroke-dashoffset;
+  transition-duration: 1700ms;
+  transition-timing-function: linear;
+}
+.fade { opacity: 0; transition-property: opacity; transition-duration: 420ms; transition-timing-function: ease; }
+.pop,
+.grow,
+.rise {
+  opacity: 0;
+  transform-box: fill-box;
+  transition-property: opacity, transform;
+  transition-duration: 300ms, 640ms;
+  transition-timing-function: ease, var(--ease-arrive);
+}
+.pop { transform-origin: center; transform: scale(0.2); }
+.grow { transform-origin: left center; transform: scaleX(0); }
+.rise { transform-origin: center bottom; transform: scaleY(0); }
+.tag {
+  opacity: 0;
+  transform: translateY(3px);
+  transition-property: opacity, transform;
+  transition-duration: 320ms, 520ms;
+  transition-timing-function: ease, var(--ease-arrive);
+}
+
+.item[data-in="true"] .draw { stroke-dashoffset: 0; }
+.item[data-in="true"] .fade,
+.item[data-in="true"] .pop,
+.item[data-in="true"] .grow,
+.item[data-in="true"] .rise { opacity: var(--o, 1); transform: none; }
+.item[data-in="true"] .tag { opacity: 1; transform: none; }
+
+/* Reduced motion: the finished drawing, nothing turning */
+@media (prefers-reduced-motion: reduce) {
+  .entry::before,
+  .num,
+  .icon,
+  .draw,
+  .fade,
+  .pop,
+  .grow,
+  .rise,
+  .tag,
+  .track,
+  .knob { transition: none; }
+  .entry::before { transform: none; }
+  .draw { stroke-dashoffset: 0; }
+  .fade,
+  .pop,
+  .grow,
+  .rise { opacity: var(--o, 1); transform: none; }
+  .tag { opacity: 1; transform: none; }
+  .track { fill: var(--accent-ink); stroke: var(--accent-ink); }
+  .knob { fill: var(--color-paper); transform: translateX(12px); }
+  .hex { animation: none; }
+}

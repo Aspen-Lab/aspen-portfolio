@@ -1,0 +1,532 @@
+/* Latent's plotted sheet on the dark page: a flat card, a second sheet
+   offset under it, a hairline grid, mono ticks, flat ink columns and one
+   accent. No gradient fills anywhere. */
+.figure {
+  --accent-ink: var(--accent, var(--color-ink));
+  --hair: rgb(244 244 242 / 55%);
+  /* When the focus marks land: after the last column has risen */
+  --land: calc(1000ms + var(--n) * 90ms);
+  width: 100%;
+}
+
+/* ── The sheet ── */
+.sheetWrap {
+  position: relative;
+  isolation: isolate;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.sheetWrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(10px, 10px);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: #131314;
+}
+.sheet {
+  position: relative;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+
+.kicker,
+.num,
+.ytick,
+.tag,
+.rowTag,
+.wasLabel,
+.rowWasLabel,
+.rticks {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.kicker {
+  padding: 18px 16px 0;
+  color: var(--color-soft);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  line-height: 1.5;
+  white-space: normal;
+}
+.num {
+  color: var(--color-soft);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Columns (tablet and up) ── */
+.plotBox,
+.xlabels { display: none; }
+
+@media (min-width: 640px) {
+  .kicker { padding: 22px 26px 0; }
+  .plotBox {
+    position: relative;
+    display: block;
+    margin-top: 6px;
+  }
+  .xlabels {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    padding-top: 4px;
+    padding-bottom: 26px;
+  }
+}
+
+.plot { display: block; width: 100%; height: auto; overflow: visible; }
+.grid { stroke: rgb(244 244 242 / 6%); stroke-width: 1; }
+.axis { stroke: rgb(244 244 242 / 22%); stroke-width: 1; }
+
+.col {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: scaleY(0);
+  transition:
+    transform 1100ms var(--ease-arrive) calc(120ms + var(--i) * 90ms),
+    opacity 240ms ease;
+}
+.col[data-dim="true"] { opacity: 0.4; }
+.figure[data-lit="true"] .col { transform: none; }
+.bar {
+  fill: var(--color-ink);
+  opacity: var(--o);
+}
+.col[data-focus="true"] .bar { fill: var(--accent-ink); }
+.cap {
+  stroke: var(--color-ink);
+  stroke-width: 1;
+  opacity: calc(var(--o) + 0.34);
+}
+
+/* Funnel steps joined top to top */
+.link {
+  stroke: rgb(244 244 242 / 30%);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+  opacity: 0;
+}
+.figure[data-lit="true"] .link {
+  opacity: 1;
+  animation: fade 500ms ease calc(700ms + var(--i) * 90ms) backwards;
+}
+
+/* The focus: a dashed hexagon split by the column's top edge (light on
+   the sheet, dark on the fill), a leader and a boxed tag. */
+.hex {
+  fill: none;
+  stroke: var(--hair);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: stroke 220ms ease;
+}
+.hexOn { stroke: rgb(15 15 16 / 72%); }
+.figure[data-lit="true"] .hex { animation: turn 24s linear infinite; }
+.leader {
+  stroke: var(--hair);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: stroke 220ms ease;
+}
+.mark { opacity: 0; }
+.figure[data-lit="true"] .mark {
+  opacity: 1;
+  animation: fade 520ms ease var(--land) backwards;
+}
+.figure[data-lit="true"] .leader {
+  animation: draw 420ms var(--ease-arrive) calc(var(--land) + 160ms) backwards;
+}
+.mark[data-dim="true"] .hex:not(.hexOn),
+.mark[data-dim="true"] .leader,
+.mark[data-dim="true"] .was:not(.wasOn) { stroke: rgb(244 244 242 / 22%); }
+
+/* The earlier level on the focus (v1 under v2): a dashed rule across the
+   column, dark on the fill and light past its edges, drawn left to right
+   once the marks have landed, with a short end label. */
+.was {
+  stroke: var(--hair);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+  transition: stroke 220ms ease;
+}
+.wasOn { stroke: rgb(15 15 16 / 72%); }
+.figure[data-lit="true"] .was {
+  animation: drawX 640ms var(--ease-arrive) calc(var(--land) + 120ms) backwards;
+}
+
+.ytick,
+.value,
+.tag,
+.wasLabel,
+.marker {
+  position: absolute;
+  pointer-events: none;
+}
+.ytick {
+  translate: 0 -50%;
+  color: var(--color-soft);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+
+.value {
+  translate: -50% calc(-100% - 10px);
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  opacity: 0;
+  transition: color 220ms ease;
+}
+.value[data-dim="true"] { color: var(--color-soft); }
+.figure[data-lit="true"] .value {
+  opacity: 1;
+  animation: rise 520ms var(--ease-arrive) calc(760ms + var(--i) * 90ms) backwards;
+}
+
+.tag,
+.rowTag {
+  padding: 5px 8px 4px;
+  border: 1px solid var(--hair);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  transition: border-color 220ms ease, color 220ms ease;
+}
+.tag {
+  translate: -50% -100%;
+  opacity: 0;
+}
+.tag[data-dim="true"] { border-color: rgb(244 244 242 / 22%); color: var(--color-mute); }
+.figure[data-lit="true"] .tag {
+  opacity: 1;
+  animation: rise 520ms var(--ease-arrive) calc(var(--land) + 380ms) backwards;
+}
+
+.wasLabel {
+  translate: 0 -50%;
+  color: var(--color-mute);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  opacity: 0;
+  transition: color 220ms ease;
+}
+.wasLabel[data-dim="true"] { color: var(--color-soft); }
+.figure[data-lit="true"] .wasLabel {
+  opacity: 1;
+  animation: fade 420ms ease calc(var(--land) + 560ms) backwards;
+}
+
+/* Footnote markers: a numbered disc at the foot of the column */
+.marker,
+.rowMarker,
+.noteMarker {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgb(244 244 242 / 70%);
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+.marker { translate: -50% -50%; }
+.marker[data-on="true"],
+.note[data-on="true"] .noteMarker {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.figure[data-lit="true"] .marker,
+.figure[data-lit="true"] .rowMarker {
+  animation: fade 400ms ease calc(900ms + var(--i) * 90ms) backwards;
+}
+
+.hit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.xlabel {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 0 6px;
+  text-align: center;
+  transition: opacity 220ms ease;
+}
+.name {
+  color: var(--color-mute);
+  font-size: 14px;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.xlabel[data-focus="true"] .num,
+.xlabel[data-focus="true"] .name { color: var(--color-ink); }
+.xlabel[data-dim="true"] { opacity: 0.45; }
+
+/* ── Phones: one bar per row, values at the bar ends ── */
+.rows {
+  --gutter: 76px;
+  padding: 20px 16px 16px;
+}
+/* A from → to tag runs longer than a single value */
+.rows[data-was="true"] { --gutter: 96px; }
+@media (min-width: 640px) { .rows { display: none; } }
+
+.rowsPlot {
+  position: relative;
+  padding-bottom: 14px;
+}
+.rowsPlot::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: var(--gutter);
+  bottom: 0;
+  height: 1px;
+  background: rgb(244 244 242 / 22%);
+}
+.rgrid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc((100% - var(--gutter)) * var(--t));
+  width: 1px;
+  background: rgb(244 244 242 / 6%);
+}
+.rgrid[data-axis="true"] { background: rgb(244 244 242 / 22%); }
+
+.row { position: relative; }
+.row + .row { margin-top: 16px; }
+.rowHead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-left: 12px;
+}
+.rowName {
+  min-width: 0;
+  color: var(--color-mute);
+  font-size: 14.5px;
+  line-height: 1.3;
+}
+.row[data-focus="true"] .num,
+.row[data-focus="true"] .rowName { color: var(--color-ink); }
+
+.track {
+  position: relative;
+  height: 18px;
+  margin-top: 8px;
+}
+.rowBar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc((100% - var(--gutter)) * var(--v));
+  background: var(--color-ink);
+  opacity: var(--o);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 1100ms var(--ease-arrive) calc(120ms + var(--i) * 90ms);
+}
+.row[data-focus="true"] .rowBar { background: var(--accent-ink); }
+.figure[data-lit="true"] .rowBar { transform: none; }
+
+.rowMarker {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  width: 18px;
+  height: 18px;
+  translate: 0 -50%;
+  font-size: 9.5px;
+}
+
+/* The earlier level on the focus row: a tick across the track, dark on
+   the bar and light past it, its label above. */
+.rowWas {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc((100% - var(--gutter)) * var(--w));
+  width: 1px;
+  translate: -50% 0;
+  border-left: 1px dashed rgb(15 15 16 / 72%);
+  opacity: 0;
+}
+.rowWas[data-over="true"] { border-left-color: var(--hair); }
+.rowWas::before,
+.rowWas::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  height: 5px;
+  border-left: 1px solid var(--hair);
+}
+.rowWas::before { bottom: 100%; }
+.rowWas::after { top: 100%; }
+.figure[data-lit="true"] .rowWas {
+  opacity: 1;
+  animation: fade 420ms ease calc(var(--land) + 120ms) backwards;
+}
+.rowWasLabel {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: 0;
+  translate: -50% 0;
+  color: var(--color-mute);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  line-height: 1;
+}
+
+.rowValue {
+  position: absolute;
+  top: 50%;
+  left: calc((100% - var(--gutter)) * var(--v) + 10px);
+  translate: 0 -50%;
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  opacity: 0;
+}
+.figure[data-lit="true"] .rowValue {
+  opacity: 1;
+  animation: rise 520ms var(--ease-arrive) calc(760ms + var(--i) * 90ms) backwards;
+}
+
+.rowMark {
+  position: absolute;
+  top: 50%;
+  left: calc((100% - var(--gutter)) * var(--v) - 18px);
+  display: flex;
+  align-items: center;
+  translate: 0 -50%;
+  opacity: 0;
+}
+.figure[data-lit="true"] .rowMark {
+  opacity: 1;
+  animation: fade 520ms ease var(--land) backwards;
+}
+.rowHex { display: block; width: 36px; height: 36px; overflow: visible; }
+.rowHex .hex { stroke-dasharray: 2.5 3; }
+.rowLeader {
+  width: 8px;
+  margin-left: -4px;
+  border-top: 1px dashed var(--hair);
+}
+
+.rticks {
+  position: relative;
+  height: 12px;
+  margin-top: 8px;
+  color: var(--color-soft);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+.rticks > span {
+  position: absolute;
+  top: 0;
+  left: calc((100% - var(--gutter)) * var(--t));
+  translate: -50% 0;
+}
+.rticks > span:first-child { translate: 0 0; }
+
+/* ── Footnotes ── */
+.notes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 28px;
+  margin-top: 28px;
+}
+@media (min-width: 640px) {
+  .notes { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); }
+}
+.note {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  column-gap: 12px;
+  padding: 14px 0 12px;
+  border-top: 1px solid var(--color-line);
+  transition: opacity 220ms ease, border-color 220ms ease;
+}
+.note[data-on="true"] { border-top-color: var(--color-ink); }
+.note[data-dim="true"] { opacity: 0.45; }
+.noteBody { display: grid; gap: 3px; padding-top: 1px; }
+.noteLabel {
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.noteText {
+  color: var(--color-mute);
+  font-size: 14px;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+@keyframes draw { from { transform: scaleY(0); } }
+@keyframes drawX { from { transform: scaleX(0); } }
+@keyframes turn { to { transform: rotate(360deg); } }
+
+/* Reduced motion: everything stands where it ends, nothing loops */
+@media (prefers-reduced-motion: reduce) {
+  .col,
+  .rowBar,
+  .value,
+  .tag,
+  .hex,
+  .leader,
+  .was,
+  .wasLabel,
+  .marker,
+  .rowMarker,
+  .xlabel,
+  .note { transition: none; }
+  .figure[data-lit="true"] .col,
+  .figure[data-lit="true"] .rowBar,
+  .figure[data-lit="true"] .link,
+  .figure[data-lit="true"] .hex,
+  .figure[data-lit="true"] .leader,
+  .figure[data-lit="true"] .was,
+  .figure[data-lit="true"] .wasLabel,
+  .figure[data-lit="true"] .rowWas,
+  .figure[data-lit="true"] .mark,
+  .figure[data-lit="true"] .value,
+  .figure[data-lit="true"] .tag,
+  .figure[data-lit="true"] .marker,
+  .figure[data-lit="true"] .rowMarker,
+  .figure[data-lit="true"] .rowValue,
+  .figure[data-lit="true"] .rowMark { animation: none; }
+}

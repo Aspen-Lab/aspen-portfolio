@@ -63,9 +63,6 @@
     "side": "Side projects"
   },
   "SelectedWork": {
-    "browseLabel": "A suggestion for exploring",
-    "browseHint": "Before diving into a project, scroll to the bottom for a fuller picture of how I work, what I build, and the experiments in between.",
-    "keepScrolling": "Keep exploring",
     "inProgress": "In progress",
     "cover": "cover",
     "more": "More work",

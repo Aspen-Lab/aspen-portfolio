@@ -151,10 +151,13 @@ function CompanyItem({ name, node, echo }: { name: string; node: ReactNode; echo
 }
 
 /* Tool marks share a readable explanation below. Hover previews it;
-   selecting a tool keeps its explanation available on touch screens. */
+   selecting a tool keeps its explanation available on touch screens.
+   The tiles are square cells of one 8-column grid, so the whole set
+   always fits the column: 44px at sm+, ~38px on a 390 phone. The
+   running number lives in the explanation line, not in the tile. */
 
-function InventorySlot({ name, index, active, selected, label, descriptionId, onEnter, onLeave, onFocus, onBlur, onPointerDown, onSelect }: {
-  name: string; index: number; active: boolean;
+function InventorySlot({ name, active, selected, label, descriptionId, onEnter, onLeave, onFocus, onBlur, onPointerDown, onSelect }: {
+  name: string; active: boolean;
   selected: boolean; label: string; descriptionId?: string;
   onEnter: () => void; onLeave: () => void;
   onFocus: FocusEventHandler<HTMLButtonElement>; onBlur: () => void;
@@ -163,7 +166,7 @@ function InventorySlot({ name, index, active, selected, label, descriptionId, on
   return (
     <button
       type="button"
-      className={`relative grid place-items-center w-11 h-11 border cursor-pointer transition-colors duration-200 motion-reduce:transition-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-ink focus-visible:outline-offset-2 ${
+      className={`grid place-items-center w-full aspect-square border cursor-pointer transition-colors duration-200 motion-reduce:transition-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-ink focus-visible:outline-offset-2 ${
         active ? "border-ink/45 text-ink" : "border-line text-soft"
       }`}
       onMouseEnter={onEnter}
@@ -176,13 +179,7 @@ function InventorySlot({ name, index, active, selected, label, descriptionId, on
       aria-pressed={selected}
       aria-describedby={descriptionId}
     >
-      <span
-        aria-hidden
-        className="absolute right-[3px] bottom-[1px] font-mono text-[7px] tabular-nums pointer-events-none select-none text-soft/45"
-      >
-        {index + 1}
-      </span>
-      <span className="[&>svg]:w-[18px] [&>svg]:h-[18px]">{icons[name]}</span>
+      <span className="[&>svg]:w-[17px] [&>svg]:h-[17px] sm:[&>svg]:w-[18px] sm:[&>svg]:h-[18px]">{icons[name]}</span>
     </button>
   );
 }
@@ -253,39 +250,45 @@ export function HeroWidgets() {
 
       {/* Toolbox — usage depth and a concrete scope for each tool. */}
       <div className="hero-fade-up mt-8 sm:mt-9" style={enterDelay(1.1)}>
-        <div className="max-sm:overflow-x-auto no-scrollbar" role="group" aria-label={t("invLabel")}>
-          <div className="flex items-center gap-2 w-max">
-            {TOOLS.map((name, i) => (
-              <InventorySlot
-                key={name}
-                name={name}
-                index={i}
-                active={tip === name}
-                selected={selectedTool === name}
-                label={`${name} — ${t(`inv.${name}.level`)}`}
-                descriptionId={tip === name ? descriptionId : undefined}
-                onEnter={() => setHoveredTool(name)}
-                onLeave={() => setHoveredTool(null)}
-                onFocus={(event) => setFocusedTool(event.currentTarget.matches(":focus-visible") ? name : null)}
-                onBlur={() => setFocusedTool(null)}
-                onPointerDown={() => setFocusedTool(null)}
-                onSelect={() => setSelectedTool(selectedTool === name ? null : name)}
-              />
-            ))}
-          </div>
+        <div
+          className="grid grid-cols-8 gap-1.5 sm:gap-2 max-w-[408px]"
+          role="group"
+          aria-label={t("invLabel")}
+        >
+          {TOOLS.map((name) => (
+            <InventorySlot
+              key={name}
+              name={name}
+              active={tip === name}
+              selected={selectedTool === name}
+              label={`${name} — ${t(`inv.${name}.level`)}`}
+              descriptionId={tip === name ? descriptionId : undefined}
+              onEnter={() => setHoveredTool(name)}
+              onLeave={() => setHoveredTool(null)}
+              onFocus={(event) => setFocusedTool(event.currentTarget.matches(":focus-visible") ? name : null)}
+              onBlur={() => setFocusedTool(null)}
+              onPointerDown={() => setFocusedTool(null)}
+              onSelect={() => setSelectedTool(selectedTool === name ? null : name)}
+            />
+          ))}
         </div>
         <div id={descriptionId} className="mt-3 min-h-[5rem] sm:min-h-[3.75rem] max-w-[560px]">
           {tip ? (
             <>
               <p className="flex items-baseline gap-3 font-mono text-[10px] uppercase tracking-[0.12em]">
-                <span className="text-ink">{tip}</span>
+                <span className="text-ink">
+                  <span aria-hidden className="mr-2 tabular-nums text-soft">
+                    {String((TOOLS as readonly string[]).indexOf(tip) + 1).padStart(2, "0")}
+                  </span>
+                  {tip}
+                </span>
                 <span className="border-l border-line pl-3 text-mute">{t(`inv.${tip}.level`)}</span>
               </p>
               <p className="mt-1.5 text-[12px] leading-[1.6] text-mute">{t(`inv.${tip}.description`)}</p>
             </>
           ) : (
             <>
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft">{t("invLabel")} · 08</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft">{t("invLabel")} · {String(TOOLS.length).padStart(2, "0")}</p>
               <p className="mt-1.5 text-[12px] leading-[1.6] text-mute">{t("invHint")}</p>
             </>
           )}

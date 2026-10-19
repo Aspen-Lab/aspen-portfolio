@@ -1,9 +1,12 @@
+/* The frame holds both drawings and picks one by its own width: the
+   wide one from 600px of plate, the compact one below (see the TSX). */
 .frame {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
   isolation: isolate;
+  container-type: inline-size;
 }
 
 .canvas {
@@ -12,19 +15,27 @@
   height: 100%;
 }
 
+.compact { display: none; }
+
+@container (max-width: 599.98px) {
+  .wide { display: none; }
+  .compact { display: block; }
+}
+
 .archive {
   background: #090a0a;
   color: #eeeee9;
 }
 
+/* The dot grid sits in the masthead band only and stops on its rule
+   (28% down in both drawings): a hard edge, not a fade. */
 .archive::after {
   position: absolute;
-  inset: 0;
+  inset: 0 0 72% 0;
   content: "";
   opacity: 0.15;
   background-image: radial-gradient(#b9c0b9 0.6px, transparent 0.6px);
   background-size: 9px 9px;
-  mask-image: linear-gradient(#000, transparent 48%);
 }
 
 .rule {
@@ -44,8 +55,10 @@
   fill: #c6cbc3;
 }
 
+.mono { font-size: 15px; }
+
 .dimMono {
-  font-size: 11px;
+  font-size: 14px;
   fill: #8e968d;
 }
 
@@ -82,7 +95,7 @@
 
 .loupeLabel {
   fill: #141715;
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 1px;
 }
 
@@ -110,7 +123,7 @@
 
 .mapEyebrow {
   fill: #a0b8ad;
-  font-size: 12px;
+  font-size: 15px;
   letter-spacing: 1.3px;
 }
 
@@ -138,7 +151,7 @@
 .legend {
   fill: #b7c7bc;
   font-family: var(--font-geist-sans), sans-serif;
-  font-size: 16px;
+  font-size: 17px;
 }
 
 .mapHelper {
@@ -179,7 +192,7 @@
 
 .timelineLabel {
   fill: #97aaa0;
-  font-size: 11px;
+  font-size: 14px;
   letter-spacing: 0.8px;
 }
 
@@ -251,6 +264,46 @@
   87%, 100% { stroke-dashoffset: 0; }
 }
 
+/* Compact type: one unit draws at about one pixel on a phone plate, so
+   10 is the floor, and CJK runs a size up. Travel is scaled to the
+   smaller strip and loupe; the storm and the scrubber keep their own. */
+.compact .mono,
+.compact .mapEyebrow { font-size: 10px; letter-spacing: 1.2px; }
+.compact .loupeLabel { font-size: 10px; letter-spacing: 0.6px; }
+.compact .archiveTitle { font-size: 38px; letter-spacing: -2px; }
+.compact .archiveOutline { stroke-width: 0.8; }
+.compact .projectTitle { font-size: 12px; letter-spacing: 0.6px; }
+.compact .mapTitle { font-size: 17px; letter-spacing: -0.4px; }
+.compact .routeTitle { font-size: 13px; letter-spacing: 0; fill: #dfe6dc; }
+.frame[data-cn="true"] .compact .mono,
+.frame[data-cn="true"] .compact .mapEyebrow,
+.frame[data-cn="true"] .compact .loupeLabel { font-size: 11px; letter-spacing: 0.4px; }
+
+.compact .artStrip { transform: translateX(-68px); }
+.compact .loupe { transform-origin: 226px 128px; filter: drop-shadow(0 4px 8px #0009); }
+.compact .scrubber { transform: translate(302px, 184.5px); }
+
+.archive[data-playing="true"] .compact .artStrip { animation-name: strip-glide-compact; }
+.archive[data-playing="true"] .compact .loupe { animation-name: inspect-art-compact; }
+.map[data-playing="true"] .compact .scrubber { animation-name: timeline-scrub-compact; }
+
+@keyframes strip-glide-compact {
+  0%, 10% { transform: translateX(0); }
+  48%, 100% { transform: translateX(-68px); }
+}
+
+@keyframes inspect-art-compact {
+  0%, 43% { opacity: 0; transform: translate(-12px, 5px) scale(0.85); }
+  68%, 100% { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+@keyframes timeline-scrub-compact {
+  0%, 12% { transform: translate(90px, 184.5px); }
+  42%, 57% { transform: translate(196px, 184.5px); }
+  87%, 100% { transform: translate(302px, 184.5px); }
+}
+
+/* No motion: the resting state is the last frame. */
 @media (prefers-reduced-motion: reduce) {
   .frame[data-playing="true"] * {
     animation: none !important;

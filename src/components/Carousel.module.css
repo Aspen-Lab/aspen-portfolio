@@ -1,0 +1,144 @@
+/* A slide viewer that is always the shape of the slide it shows. The frame
+   takes each picture's own proportions, so a long research strip is a long
+   strip and a screen is a screen: no empty bands above and below. The
+   controls ride in one row above the frame, so they stay put while the
+   frame grows and shrinks under them. Flat fills and hairlines only. */
+.carousel { container-type: inline-size; }
+
+/* ── The row: count, progress, arrows ── */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.count {
+  flex: none;
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.count b {
+  color: var(--color-ink);
+  font-weight: 400;
+}
+
+/* One hairline per slide; the one in view is ink and longer. The button
+   is taller than its line so it is easy to hit. */
+.ticks {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+.tick {
+  display: grid;
+  flex: 0 1 18px;
+  min-width: 8px;
+  height: 24px;
+  align-items: center;
+  cursor: pointer;
+  transition: flex-basis 420ms var(--ease-arrive);
+}
+.tick::before {
+  content: "";
+  height: 1px;
+  background: rgb(244 244 242 / 22%);
+  transition: background-color 220ms ease, height 220ms ease;
+}
+.tick:hover::before { background: rgb(244 244 242 / 55%); }
+.tick[data-on="true"] { flex-basis: 34px; flex-shrink: 0; }
+.tick[data-on="true"]::before { height: 2px; background: var(--color-ink); }
+.tick:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 2px; }
+
+.arrows {
+  display: flex;
+  flex: none;
+  gap: 8px;
+}
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  color: var(--color-ink);
+  transition: border-color 200ms ease, background-color 200ms ease;
+}
+.arrow:hover {
+  border-color: rgb(244 244 242 / 40%);
+  background: var(--color-cream);
+}
+.arrow:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 2px; }
+.arrow svg { transition: transform 300ms var(--ease-arrive); }
+.arrow[data-dir="prev"]:hover svg { transform: translateX(-2px); }
+.arrow[data-dir="next"]:hover svg { transform: translateX(2px); }
+.arrow[data-dir="open"]:hover svg { transform: translate(1.5px, -1.5px); }
+
+/* ── The frame ── */
+/* Its height is the slide's: the full width over the slide's ratio, held
+   under most of a screen for the tall ones (those sit centred, flanked by
+   the sheet). A new ratio eases the frame open or shut; the slides keep
+   their own size and are revealed or trimmed by it, never squashed. */
+.stage {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: var(--ratio);
+  max-height: 80vh;
+  height: min(calc(100cqw / var(--ratio)), 80svh);
+  border-radius: 8px;
+  background: var(--color-cream);
+  transition: height 560ms var(--ease-arrive);
+}
+/* A hairline over the edge, so a dark slide and the sheet around a tall
+   one still read as one frame on the page. */
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 1px solid var(--color-line);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: var(--slide-ratio);
+  max-height: 80vh;
+  height: min(calc(100cqw / var(--slide-ratio)), 80svh);
+  cursor: grab;
+  touch-action: pan-y;
+}
+.slide:active { cursor: grabbing; }
+
+.img {
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+@media (max-width: 639px) {
+  .bar { gap: 12px; margin-bottom: 12px; }
+  .arrows { gap: 6px; }
+  .arrow { width: 34px; height: 34px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage,
+  .tick,
+  .tick::before,
+  .arrow,
+  .arrow svg { transition: none; }
+}

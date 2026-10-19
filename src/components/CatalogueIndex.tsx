@@ -3,7 +3,6 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
-import { useReducedMotion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { CatalogueMedia } from "./CatalogueMedia";
 import { demoCaption, type SideDemoId } from "./SideProjectDemo";
@@ -27,8 +26,7 @@ export type CatalogueCover = {
   alt?: string;
   /** The first entry's cover is the LCP when the catalogue is high on the page. */
   priority?: boolean;
-  /** Optional code-native artwork or a short silent desktop preview. */
-  presentation?: "axel";
+  /** Optional short silent desktop preview. */
   video?: string;
   demo?: SideDemoId;
 };
@@ -49,28 +47,30 @@ export type CatalogueRow = {
   readout: [ReactNode, ReactNode];
 };
 
-const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const folio = (i: number) => String(i + 1).padStart(2, "0");
 
-function DemoControls({ row, cn, reduce, onReplay }: {
+/* Motion preference is read by CSS, never in render: the server cannot
+   know it, and a render that branches on it fails hydration for every
+   reduced-motion visitor. Replay is always in the markup; the stylesheet
+   takes it away when there is no motion to replay. */
+function DemoControls({ row, cn, onReplay }: {
   row: CatalogueRow;
   cn: boolean;
-  reduce: boolean | null;
   onReplay: () => void;
 }) {
   if (!row.cover?.demo) return null;
   return (
     <div className="flex min-h-11 items-center justify-between gap-4 font-mono text-[10px] leading-relaxed text-mute">
       <span className="min-w-0"><span className="text-soft">{cn ? "演示" : "DEMO"}</span><span className="mx-2 text-soft/50">/</span>{demoCaption(row.cover.demo, cn)}</span>
-      {!reduce && <button
+      <button
         type="button"
         onClick={onReplay}
         aria-label={`${cn ? "重播" : "Replay"} ${row.name} ${cn ? "演示" : "demo"}`}
-        className="group/replay flex min-h-11 shrink-0 items-center gap-2 pl-3 uppercase tracking-[0.12em] text-mute transition-colors hover:text-ink focus-visible:text-ink"
+        className={`${styles.replay} group/replay flex min-h-11 shrink-0 items-center gap-2 pl-3 uppercase tracking-[0.12em] text-mute transition-colors hover:text-ink focus-visible:text-ink`}
       >
         <svg aria-hidden width="12" height="12" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 motion-safe:group-hover/replay:-rotate-45"><path d="M3 5a5.5 5.5 0 1 1-.4 5M3 1.5V5h3.5" stroke="currentColor" strokeWidth="1.2" /></svg>
         {cn ? "重播" : "Replay"}
-      </button>}
+      </button>
     </div>
   );
 }
@@ -118,7 +118,6 @@ function RowShell({
 }
 
 export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
-  const reduce = useReducedMotion();
   const cn = useLocale() === "cn";
   const [active, setActive] = useState(0);
   const [replays, setReplays] = useState<Record<string, number>>({});
@@ -144,7 +143,7 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
                 >
                   <CatalogueMedia cover={row.cover} replay={replays[row.key]} />
                 </RowShell>
-                <DemoControls row={row} cn={cn} reduce={reduce} onReplay={() => replay(row.key)} />
+                <DemoControls row={row} cn={cn} onReplay={() => replay(row.key)} />
               </div>}
               <RowShell
                 row={row}
@@ -162,7 +161,7 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
                       {row.name}
                     </h3>
                     {row.sub && (
-                      <p className="mt-2 text-[14px] sm:text-[15px] leading-[1.5] text-mute">
+                      <p className={`mt-2 text-[14px] sm:text-[15px] leading-[1.5] text-mute ${styles.sub}`}>
                         {row.sub}
                       </p>
                     )}
@@ -187,13 +186,10 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
           {rows.map((row, i) => (
             <div
               key={row.key}
-              className="absolute inset-0"
+              className={styles.layer}
+              data-active={active === i}
               aria-hidden
-              style={{
-                opacity: active === i ? 1 : 0,
-                transition: reduce ? "none" : `opacity 360ms ${EASE}`,
-                backgroundColor: row.cover?.bg ?? "var(--color-paper)",
-              }}
+              style={{ backgroundColor: row.cover?.bg ?? "var(--color-paper)" }}
             >
               {row.cover && (
                 <CatalogueMedia cover={row.cover} active={active === i} desktop replay={replays[row.key]} />
@@ -222,7 +218,7 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
           <span aria-hidden className="pointer-events-none absolute right-5 bottom-5 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white opacity-0 transition-opacity duration-200 group-hover/preview:opacity-100 group-focus-within/preview:opacity-100">↗</span>
         </div>
         {current.cover?.demo && <div className="border-b border-line pt-1">
-          <DemoControls row={current} cn={cn} reduce={reduce} onReplay={() => replay(current.key)} />
+          <DemoControls row={current} cn={cn} onReplay={() => replay(current.key)} />
         </div>}
         <div aria-hidden className="mt-4 grid grid-cols-[auto_1fr] items-baseline gap-5 font-mono text-[10px] leading-relaxed uppercase tracking-[0.14em] text-soft">
           <span className="tabular-nums">

@@ -63,9 +63,6 @@
     "side": "副业项目"
   },
   "SelectedWork": {
-    "browseLabel": "浏览建议",
-    "browseHint": "进入项目前，建议先滑到页底，看看我的工作方式、能力和个人实验，再挑一个项目细看。",
-    "keepScrolling": "继续向下探索",
     "inProgress": "进行中",
     "cover": "封面",
     "more": "更多项目",

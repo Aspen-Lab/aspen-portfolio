@@ -5,16 +5,20 @@ import type { Project } from "./work";
 // users; omit an unqualified participant count rather than reconcile it by guess.
 // The reported +10% is a prototype-study confidence score, not a safety claim.
 // The source pipeline labels camera/FER and Tobii integration as future work.
+// Product names keep a no-break space ("IONIQ 6", "HDA 2.0"): a wrapped
+// title or summary never strands the "6" or "2.0" on a line of its own.
 export const hyundaiProject: Project = {
   "slug": "hyundai",
-  "title": "Hyundai IONIQ 6 — designing for trust at L2+",
+  // The dash rides with the model name, so a wrapped title never opens its
+  // second line on "—" (as TikTok Pay KYC does in project-locales.ts)
+  "title": "Hyundai IONIQ\u00a06\u00a0— designing for trust at L2+",
   "client": "Hyundai · HATCI Lab",
   "role": "HMI Designer",
   "period": "Jan — May 2025",
   "year": "2025",
   "date": "9/17/25",
   "category": "Automotive · HMI",
-  "summary": "A sponsored HMI project exploring driver confidence in Hyundai’s HDA 2.0 system. Real-driving research, simulator testing and three interface directions shaped an adaptive instrument cluster for the IONIQ 6.",
+  "summary": "A sponsored HMI project exploring driver confidence in Hyundai’s HDA\u00a02.0 system. Real-driving research, simulator testing and three interface directions shaped an adaptive instrument cluster for the IONIQ\u00a06.",
   "tags": [
     "HMI design",
     "Driving research",
@@ -45,14 +49,14 @@ export const hyundaiProject: Project = {
     {
       "chapter": "Research",
       "heading": "Clarity at the handoff",
-      "body": "How might we help drivers feel more confident when control shifts between the human and Hyundai’s HDA 2.0 system? This sponsored HMI project explored the IONIQ 6 experience in Level 2 and Level 2+ assistance scenarios, focusing on system status, information hierarchy and feedback at critical transitions.",
+      "body": "How might we help drivers feel more confident when control shifts between the human and Hyundai’s HDA\u00a02.0 system? This sponsored HMI project explored the IONIQ\u00a06 experience in Level 2 and Level 2+ assistance scenarios, focusing on system status, information hierarchy and feedback at critical transitions.",
       "figures": [
         {
           "src": "/work/hyundai/01-bwE5bnnAlBpKw9wHI66xQE6CBag.png",
           "width": 1904,
           "height": 720,
-          "alt": "The original IONIQ 6 instrument cluster and HDA status indicators.",
-          "caption": "The original IONIQ 6 instrument cluster and HDA status indicators."
+          "alt": "The original IONIQ\u00a06 instrument cluster and HDA status indicators.",
+          "caption": "The original IONIQ\u00a06 instrument cluster and HDA status indicators."
         }
       ]
     },
@@ -542,11 +546,11 @@ export const hyundaiProject: Project = {
 
 export const hyundaiProjectCn: Project = {
   ...hyundaiProject,
-  "title": "Hyundai IONIQ 6 — 为 L2+ 驾驶辅助建立信心",
+  "title": "Hyundai IONIQ\u00a06\u00a0— 为 L2+ 驾驶辅助建立信心",
   "role": "人机界面设计师",
   "period": "2025 年 1 月 — 5 月",
   "category": "汽车 · 人机交互",
-  "summary": "一个由现代支持的 HMI 项目，探索驾驶者对 HDA 2.0 系统的信心。通过实车研究、模拟器测试与三种界面方向的比较，为 IONIQ 6 设计随驾驶模式调整的信息界面。",
+  "summary": "一个由现代支持的 HMI 项目，探索驾驶者对 HDA\u00a02.0 系统的信心。通过实车研究、模拟器测试与三种界面方向的比较，为 IONIQ\u00a06 设计随驾驶模式调整的信息界面。",
   "tags": [
     "人机界面设计",
     "驾驶体验研究",
@@ -570,14 +574,14 @@ export const hyundaiProjectCn: Project = {
     {
       "chapter": "研究",
       "heading": "让控制交接更清晰",
-      "body": "当控制在驾驶者与现代 HDA 2.0 系统之间切换时，怎样让人更有信心？这个由现代支持的人机界面项目聚焦 IONIQ 6 的 L2 与 L2+ 驾驶辅助场景，研究系统状态、信息层级以及关键交接时刻的反馈。",
+      "body": "当控制在驾驶者与现代 HDA\u00a02.0 系统之间切换时，怎样让人更有信心？这个由现代支持的人机界面项目聚焦 IONIQ\u00a06 的 L2 与 L2+ 驾驶辅助场景，研究系统状态、信息层级以及关键交接时刻的反馈。",
       "figures": [
         {
           "src": "/work/hyundai/01-bwE5bnnAlBpKw9wHI66xQE6CBag.png",
           "width": 1904,
           "height": 720,
-          "alt": "IONIQ 6 原有仪表界面及 HDA 状态指示。",
-          "caption": "IONIQ 6 原有仪表界面及 HDA 状态指示。"
+          "alt": "IONIQ\u00a06 原有仪表界面及 HDA 状态指示。",
+          "caption": "IONIQ\u00a06 原有仪表界面及 HDA 状态指示。"
         }
       ]
     },

@@ -149,15 +149,11 @@ const MORE_WORK_CN = [
 
 type Photo = { src: string; alt: string; w: number; h: number; caption?: Bi; priority?: boolean };
 
-const REELS: ReadonlyArray<{ key: string; title: Bi; icon: ReactNode; intro?: Bi; frames: Photo[] }> = [
+const REELS: ReadonlyArray<{ key: string; title: Bi; icon: ReactNode; frames: Photo[] }> = [
   {
     key: "life",
     title: { en: "Life Style", cn: "生活方式" },
     icon: <Camera strokeWidth={1.5} />,
-    intro: {
-      en: "Got my car at 18 · Freshman at Georgia Tech · Dreaming about my future",
-      cn: "18 岁拥有第一辆车 · Georgia Tech 大一 · 认真想象自己的未来",
-    },
     frames: [
       { src: "/about/car-georgia-tech.jpg", w: 1080, h: 1440, alt: "Aspen with her first car at 18, downtown Atlanta at night", priority: true,
         caption: { en: "Got my car at 18 — freshman at GT, dreaming about my future", cn: "18 岁拥有第一辆车 —— GT 大一，认真想象未来" } },
@@ -383,11 +379,6 @@ export default async function About({
             icon={r.icon}
             meta={cn ? `${pad(r.frames.length)} 张影像` : `${pad(r.frames.length)} frames`}
           />
-          {r.intro && (
-            <Reveal>
-              <p className="font-mono uppercase tracking-[0.18em] text-[11px] text-soft mb-10 max-w-md">{tr(r.intro)}</p>
-            </Reveal>
-          )}
           <Reveal>
             <PhotoReel
               label={tr(r.title)}

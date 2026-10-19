@@ -1,0 +1,469 @@
+/* Latent's sheet with a second sheet under it, split in two: the template
+   in mono on the left, the message on the right. Ink tones for the syntax,
+   one accent for the fallback, hairlines throughout; no gradient fills. */
+.wrap {
+  --accent-ink: var(--accent, var(--color-ink));
+  position: relative;
+  isolation: isolate;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(10px, 10px);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: #131314;
+}
+.sheet {
+  position: relative;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+
+/* The boxed tag on the sheet's edge: this is an example, not production */
+.example {
+  position: absolute;
+  z-index: 2;
+  top: -11px;
+  right: 18px;
+  padding: 5px 8px 4px;
+  border: 1px solid rgb(244 244 242 / 55%);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* ── The toggle ── */
+.bar {
+  display: flex;
+  align-items: center;
+  padding: 16px 16px 15px;
+  border-bottom: 1px solid var(--color-line);
+}
+@media (min-width: 640px) { .bar { padding: 18px 22px 17px; } }
+
+.toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 3px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-paper);
+}
+.thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  overflow: hidden;
+  border: 1px solid rgb(244 244 242 / 16%);
+  border-radius: 2px;
+  background: rgb(244 244 242 / 7%);
+  transition: transform 460ms var(--ease-arrive);
+}
+.sheet[data-state="missing"] .thumb { transform: translateX(100%); }
+
+/* The hairline that runs out the dwell time, as under MorphChart's entries */
+.run {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--accent-ink);
+  transform-origin: left;
+  animation: run 5200ms linear both; /* DWELL in EmailRender.tsx */
+}
+@keyframes run { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.seg {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 8px 16px;
+  color: var(--color-mute);
+  font-size: 13.5px;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 220ms ease;
+}
+.seg[data-on="true"] { color: var(--color-ink); }
+.seg:hover { color: var(--color-ink); }
+.seg:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 2px; border-radius: 2px; }
+
+/* A filled dot for data that arrived, an empty ring for data that did not */
+.glyph {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 999px;
+}
+.glyph[data-kind="data"] { background: currentColor; }
+.glyph[data-kind="missing"] { border: 1px solid currentColor; }
+
+/* ── The two panes ── */
+.panes { display: grid; }
+@media (min-width: 1024px) {
+  .panes { grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr); }
+}
+
+/* The template. Lines wrap inside their own box on a phone, with a
+   hanging indent, rather than pushing the page sideways. */
+.code {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  margin: 0;
+  padding: 22px 0 24px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 22px;
+  color: var(--color-mute);
+}
+@media (min-width: 640px) {
+  .code { padding: 28px 0 30px; font-size: 14px; line-height: 28px; }
+}
+.lines { display: block; }
+
+.row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: baseline;
+  padding: 0 16px;
+}
+@media (min-width: 640px) {
+  .row { grid-template-columns: 30px minmax(0, 1fr); column-gap: 12px; padding: 0 24px; }
+}
+
+/* The line the data changes: a flat band and a lit number when it falls back */
+.row[data-focus="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgb(244 244 242 / 3.5%);
+  opacity: 0;
+  transform: scaleX(0.985);
+  transform-origin: left;
+  transition: opacity 360ms ease, transform 520ms var(--ease-arrive);
+}
+.sheet[data-state="missing"] .row[data-focus="true"]::before { opacity: 1; transform: none; }
+
+.num {
+  color: rgb(113 113 119 / 70%);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  transition: color 300ms ease;
+}
+.sheet[data-state="missing"] .row[data-focus="true"] .num { color: var(--color-ink); }
+
+.src {
+  min-width: 0;
+  padding-left: 2ch;
+  text-indent: -2ch;
+  white-space: pre-wrap;
+  /* break at the template's spaces, never inside a word or a CJK phrase */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* Ink-tone syntax: delimiters and markup recede, names and values come
+   forward, prose sits between. */
+.src [data-k="d"],
+.src [data-k="o"],
+.src [data-k="h"] { color: var(--color-soft); }
+.src [data-k="k"],
+.src [data-k="t"],
+.src [data-k="f"] { color: var(--color-mute); }
+.src [data-k="v"] { color: var(--color-ink); }
+.src [data-k="s"] { color: rgb(244 244 242 / 78%); }
+
+/* The variable that went missing steps back under a wavy rule */
+.src [data-k="miss"],
+.src [data-k="city"] {
+  color: var(--color-ink);
+  text-decoration: underline wavy transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color 320ms ease, text-decoration-color 320ms ease;
+}
+.sheet[data-state="missing"] .src [data-k="miss"] {
+  color: var(--color-soft);
+  text-decoration-color: rgb(244 244 242 / 45%);
+}
+.sheet[data-state="missing"] .src [data-k="city"] { color: var(--color-soft); }
+
+/* ── The fallback: the one accent on the sheet ── */
+.fallback {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  text-indent: 0;
+  line-height: 1.45;
+  white-space: nowrap;
+  opacity: 0.5;
+  transition: opacity 320ms ease, margin 460ms var(--ease-arrive);
+}
+.fallback [data-k] { transition: color 320ms ease; }
+/* The line opens a little around the token to make room for the ring's
+   points, so it never touches the pipe or the braces */
+.sheet[data-state="missing"] .fallback { margin: 0 7px; opacity: 1; }
+.sheet[data-state="missing"] .fallback [data-k] { color: var(--accent-ink); }
+
+.ring {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+}
+.hex {
+  fill: none;
+  stroke: rgb(244 244 242 / 55%);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  opacity: 0;
+  transform: scale(0.94);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 280ms ease, transform 520ms var(--ease-arrive);
+}
+.leader {
+  stroke: rgb(244 244 242 / 55%);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-box: fill-box;
+  transform-origin: bottom;
+  transition: opacity 200ms ease, transform 320ms var(--ease-arrive);
+}
+.sheet[data-state="missing"] .hex {
+  opacity: 1;
+  transform: none;
+  animation: march 14s linear infinite;
+}
+.sheet[data-state="missing"] .leader {
+  opacity: 1;
+  transform: none;
+  transition-delay: 140ms;
+}
+@keyframes march { to { stroke-dashoffset: -70; } }
+
+.tag {
+  position: absolute;
+  left: 50%;
+  padding: 5px 8px 4px;
+  border: 1px solid rgb(244 244 242 / 55%);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity 220ms ease, transform 420ms var(--ease-arrive);
+}
+.sheet[data-state="missing"] .tag {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition-delay: 220ms;
+}
+
+/* ── The message ── */
+.preview {
+  display: grid;
+  place-items: center;
+  padding: 22px 16px 26px;
+  border-top: 1px solid var(--color-line);
+}
+@media (min-width: 640px) { .preview { padding: 34px 32px 36px; } }
+@media (min-width: 1024px) {
+  .preview { padding: 30px 28px; border-top: 0; border-left: 1px solid var(--color-line); }
+}
+
+.mail {
+  display: grid;
+  justify-items: start;
+  width: 100%;
+  max-width: 380px;
+  padding: 22px 20px 24px;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  background: var(--color-paper);
+  --trip: #1c1c1e;
+}
+@media (min-width: 640px) { .mail { padding: 26px 26px 28px; } }
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-line);
+}
+.wordmark {
+  color: var(--color-ink);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.sky { display: block; margin-top: -2px; }
+.sky rect { fill: var(--color-ink); shape-rendering: crispEdges; }
+.sky [data-px="m"] { opacity: 0.88; }
+.sky [data-px="p"] { opacity: 0.7; }
+.sky [data-px="s"] {
+  opacity: 0.32;
+  animation: twinkle 4.4s steps(1, end) infinite;
+  animation-delay: var(--d);
+}
+@keyframes twinkle {
+  0%, 62%, 100% { opacity: 0.32; }
+  70% { opacity: 0.9; }
+  78% { opacity: 0.5; }
+}
+
+.headline {
+  display: grid;
+  margin-top: 20px;
+  color: var(--color-ink);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+@media (min-width: 640px) { .headline { font-size: 25px; } }
+.line,
+.ghost { grid-area: 1 / 1; }
+.ghost { visibility: hidden; }
+
+/* Both readings in one cell; the cell takes the width of the one in use */
+.slot {
+  display: inline-grid;
+  vertical-align: bottom;
+  white-space: nowrap;
+  clip-path: inset(-0.5em 0 -0.5em 0);
+  transition: width 520ms var(--ease-arrive);
+}
+.word {
+  grid-area: 1 / 1;
+  justify-self: start;
+  text-decoration: underline dotted rgb(244 244 242 / 40%);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.2em;
+  opacity: 0;
+  transform: translateY(0.35em);
+  transition: opacity 240ms ease, transform 420ms var(--ease-arrive);
+}
+.word[data-on="true"] {
+  opacity: 1;
+  transform: none;
+  transition-delay: 140ms;
+}
+.word[data-on="false"] { transform: translateY(-0.35em); }
+
+/* SEA ✈ LAX on a dotted line, as on Axel's flight card */
+.trip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--trip);
+}
+.iata {
+  color: var(--color-ink);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.route {
+  position: relative;
+  display: grid;
+  flex: 1;
+  place-items: center;
+  height: 20px;
+}
+.dots {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 100%;
+  overflow: visible;
+}
+.dots line {
+  stroke: rgb(244 244 242 / 30%);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 7;
+}
+.plane {
+  position: relative;
+  padding: 0 4px;
+  background: var(--trip);
+  box-sizing: content-box;
+}
+.plane path {
+  fill: var(--color-paper);
+  stroke: var(--color-ink);
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+}
+
+.button {
+  margin-top: 20px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb,
+  .seg,
+  .row[data-focus="true"]::before,
+  .num,
+  .src [data-k="miss"],
+  .src [data-k="city"],
+  .fallback,
+  .fallback [data-k],
+  .hex,
+  .leader,
+  .tag,
+  .slot,
+  .word { transition: none; }
+  .run,
+  .sheet[data-state="missing"] .hex,
+  .sky [data-px="s"] { animation: none; }
+}

@@ -1,0 +1,363 @@
+/* Latent's sheet with a second sheet under it; four frames drawn in flat
+   fills and hairlines, a dashed rail, one accent. No gradient anywhere:
+   the night is a flat fill, the mountains and the moon are a dot pattern. */
+.wrap {
+  --accent-ink: var(--accent, var(--color-ink));
+  --night: #0b0b0c;
+  position: relative;
+  isolation: isolate;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(10px, 10px);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: #131314;
+}
+.sheet {
+  position: relative;
+  padding: 18px 16px 18px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+@media (min-width: 900px) {
+  .sheet { padding: 28px 36px 22px; }
+}
+
+.tag {
+  display: inline-block;
+  padding: 5px 8px 4px;
+  border: 1px solid rgb(244 244 242 / 55%);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ── The frames: two up on a phone, then one row of four ── */
+.row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 30px 16px;
+  max-width: 560px;
+  margin: 18px auto 0;
+}
+@media (min-width: 900px) {
+  .row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 24px;
+    max-width: none;
+    margin-top: 14px;
+  }
+}
+.item { display: flex; }
+
+.hit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: opacity 260ms ease;
+}
+.hit[data-dim="true"] { opacity: 0.38; }
+.hit:focus-visible { outline: none; }
+.hit:focus-visible .frame { outline: 1px solid rgb(244 244 242 / 70%); outline-offset: 5px; }
+
+/* Every stage is as tall as the tallest frame, and the frames stand on its
+   floor, so the rail runs under all four at one height. */
+.stage {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 220 / 228;
+}
+.frame {
+  position: relative;
+  display: block;
+  width: var(--w);
+  border-radius: 9px;
+  transition: transform 360ms var(--ease-arrive);
+}
+.hit[data-lift="true"] .frame { transform: translateY(-2px); }
+.svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* Where the rail plugs into a frame */
+.port {
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border: 1px solid rgb(244 244 242 / 45%);
+  background: var(--color-cream);
+  transition: background-color 300ms ease, border-color 300ms ease;
+}
+.hit[data-lit="true"] .port { border-color: var(--color-ink); background: var(--color-ink); }
+
+.rail { display: block; width: 100%; height: 30px; }
+@media (min-width: 900px) { .rail { height: 36px; } }
+
+.num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  color: var(--color-soft);
+  font-variant-numeric: tabular-nums;
+  transition: color 220ms ease;
+}
+.label {
+  margin-top: 7px;
+  color: var(--color-ink);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
+.hit[data-on="true"] .num { color: var(--color-ink); }
+
+/* The note under the label. Two-up it stays in the accessible name only
+   and the shared caption below shows it; four-up every column keeps room
+   for its note, so the sheet never changes height. */
+.note {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (min-width: 900px) {
+  .note {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    min-height: calc(2 * 1.5em);
+    margin-top: 6px;
+    color: var(--color-mute);
+    font-size: 14px;
+    line-height: 1.5;
+    text-wrap: balance;
+    opacity: 0;
+    transform: translateY(3px);
+    transition: opacity 300ms ease, transform 420ms var(--ease-arrive);
+  }
+  .hit[data-on="true"] .note { opacity: 1; transform: none; }
+  .phrase { display: inline-block; }
+}
+
+.caption {
+  display: grid;
+  max-width: 560px;
+  margin: 22px auto 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-line);
+}
+.caption > p {
+  grid-area: 1 / 1;
+  color: var(--color-mute);
+  font-size: 14.5px;
+  line-height: 1.5;
+  text-wrap: pretty;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.caption > p[data-on="true"] { opacity: 1; }
+.capNum {
+  margin-right: 10px;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+}
+@media (min-width: 900px) { .caption { display: none; } }
+
+/* ── The rail, the stems and the focus ── */
+.links {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: visible;
+  pointer-events: none;
+  animation: appear 500ms ease both;
+}
+@keyframes appear { from { opacity: 0; } }
+.line {
+  fill: none;
+  stroke: rgb(244 244 242 / 32%);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.stem {
+  stroke: rgb(244 244 242 / 28%);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  transition: stroke 300ms ease;
+}
+.stem[data-on="true"] { stroke: rgb(244 244 242 / 70%); }
+.node {
+  fill: var(--color-cream);
+  stroke: rgb(244 244 242 / 42%);
+  stroke-width: 1;
+  transition: fill 300ms ease, stroke 300ms ease;
+}
+.node[data-on="true"] { fill: var(--color-ink); stroke: var(--color-ink); }
+.dot { fill: var(--accent-ink); }
+.hex {
+  fill: none;
+  stroke: rgb(244 244 242 / 55%);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: turn 24s linear infinite;
+}
+@keyframes turn { to { transform: rotate(360deg); } }
+
+/* ── Inside the frames (frame units) ── */
+.night { fill: var(--night); }
+.mail { fill: #131314; }
+.chrome { fill: #151516; }
+.edge {
+  fill: none;
+  stroke: rgb(244 244 242 / 30%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 300ms ease;
+}
+.hit[data-lift="true"] .edge { stroke: rgb(244 244 242 / 62%); }
+.inner {
+  fill: none;
+  stroke: rgb(244 244 242 / 12%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.bezel {
+  fill: none;
+  stroke: rgb(244 244 242 / 7%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.island { fill: #000; stroke: rgb(244 244 242 / 10%); stroke-width: 0.6; }
+.panel {
+  fill: #1b1b1d;
+  stroke: rgb(244 244 242 / 12%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.rule {
+  stroke: rgb(244 244 242 / 11%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.t1 { fill: rgb(244 244 242 / 90%); }
+.t2 { fill: rgb(244 244 242 / 48%); }
+.t3 { fill: rgb(244 244 242 / 24%); }
+.t4 { fill: rgb(244 244 242 / 10%); }
+.hole { fill: var(--night); }
+.stroke {
+  fill: none;
+  stroke: rgb(244 244 242 / 85%);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.arrow {
+  fill: none;
+  stroke: var(--night);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.word {
+  fill: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.route {
+  fill: none;
+  stroke: rgb(244 244 242 / 50%);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-dasharray: 0.01 2.6;
+}
+.plane { fill: var(--color-ink); }
+
+/* The night */
+.px { fill: var(--color-ink); }
+.far { opacity: 0.22; }
+.near { opacity: 0.36; }
+.snow { opacity: 0.6; }
+.ground { fill: var(--night); }
+.moon { fill: rgb(244 244 242 / 85%); }
+.cloud { fill: rgb(244 244 242 / 26%); }
+.star { fill: rgb(244 244 242 / 45%); }
+.blink {
+  fill: var(--color-ink);
+  opacity: 0.55;
+  animation: blink 6s steps(1, end) infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes blink {
+  0% { opacity: 0.55; }
+  46% { opacity: 1; }
+  52% { opacity: 0.2; }
+  58% { opacity: 0.55; }
+}
+
+/* The sign: a plate tinted with the accent, lit dots in it. It flickers on
+   when the dot stops under its frame, like FOUND on helloaxel.com. */
+.plate {
+  fill: color-mix(in srgb, var(--accent-ink) 12%, var(--night));
+  stroke: color-mix(in srgb, var(--accent-ink) 45%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.pink { fill: var(--accent-ink); }
+.hit[data-lit="true"] .sign { animation: sign 560ms steps(1, end); }
+@keyframes sign {
+  0% { opacity: 0.3; }
+  22% { opacity: 1; }
+  36% { opacity: 0.45; }
+  52% { opacity: 1; }
+}
+
+@media (hover: none) {
+  .hit { cursor: default; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hit,
+  .frame,
+  .port,
+  .num,
+  .note,
+  .caption > p,
+  .stem,
+  .node,
+  .edge { transition: none; }
+  .links,
+  .hex,
+  .blink,
+  .hit[data-lit="true"] .sign { animation: none; }
+}

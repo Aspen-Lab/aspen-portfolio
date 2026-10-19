@@ -20,12 +20,15 @@ export function Reveal({
   amount = 0.2,
 }: RevealProps) {
   const reduce = useReducedMotion();
+  // The server cannot know the motion setting, so the first render is the
+  // same for everyone (it used to drop the offset for reduced motion and
+  // fail hydration). Reduced motion lands in place instead of rising.
   return (
     <motion.div
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y }}
+      initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
+      transition={reduce ? { duration: 0 } : { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
       className={className}
     >
       {children}

@@ -11,6 +11,24 @@ const cx = (...names: Array<string | false | undefined>) => names.filter(Boolean
 /** Stagger index for a study's loops (read as --i in the CSS). */
 const at = (index: number) => ({ "--i": index }) as CSSProperties;
 
+/* Every study draws on one 400 × 170 plate that fills the card's stage, so
+   the four sit at one size and the art scales with the card. The mono
+   labels are HTML pinned over the drawing in % (MorphChart's overlay), so
+   they ride the art but keep their own 10px at every width instead of
+   shrinking with it. */
+const VW = 400;
+const VH = 170;
+const pin = (x: number, y: number) => ({ left: `${(x / VW) * 100}%`, top: `${(y / VH) * 100}%` }) as CSSProperties;
+
+function Plate({ children, labels }: { children: ReactNode; labels?: ReactNode }) {
+  return (
+    <div className={styles.canvas} aria-hidden="true">
+      <svg viewBox={`0 0 ${VW} ${VH}`} className={styles.visual}>{children}</svg>
+      {labels}
+    </div>
+  );
+}
+
 function Choice({ active, onClick, children, label }: { active: boolean; onClick: () => void; children: ReactNode; label?: string }) {
   return <button type="button" aria-pressed={active} aria-label={label} onClick={onClick} className={styles.choice}>{children}</button>;
 }
@@ -20,23 +38,21 @@ function LayoutStudy({ cn }: { cn: boolean }) {
   const [columns, setColumns] = useState(false);
   return (
     <>
-      <div className={styles.canvas} aria-hidden="true">
-        <svg viewBox="0 0 320 114" className={styles.visual}>
-          <path d="M31 3v108m258-108v108" className={styles.guide} />
-          {[0, 1, 2].map((i) => (
-            <g key={i} className={styles.layoutTile} style={{ transform: columns ? "translate(" + (39 + i * 83) + "px, 8px)" : "translate(39px," + (8 + i * 34) + "px)", transitionDelay: `${i * 50}ms` }}>
-              <rect width={columns ? 76 : 242} height={columns ? 98 : 29} rx="3" className={cx(styles.tile, styles.scan, styles.motion)} style={{ ...at(i), transitionDelay: `${i * 50}ms` }} />
-              <g className={styles.layoutSymbol} style={{ transform: columns ? "translate(38px, 33px)" : "translate(17px, 14px)" }}>
-                {i === 0 && <circle r="7" className={styles.symbolFill} />}
-                {i === 1 && <path d="m0-8 8 14H-8Z" className={styles.symbolFill} />}
-                {i === 2 && <rect x="-6" y="-6" width="12" height="12" className={styles.symbolFill} transform="rotate(45)" />}
-              </g>
-              <path d={columns ? "M17 64h42m-42 12h27" : "M39 11h131m-131 8h87"} className={styles.contentLine} />
-              {!columns && <path d="M217 14h10m-4-4 4 4-4 4" className={cx(styles.contentLine, styles.nudge, styles.motion)} style={at(i)} />}
+      <Plate>
+        <path d="M36 4v162m328-162v162" className={styles.guide} />
+        {[0, 1, 2].map((i) => (
+          <g key={i} className={styles.layoutTile} style={{ transform: columns ? `translate(${48 + i * 104}px, 10px)` : `translate(48px, ${10 + i * 52}px)`, transitionDelay: `${i * 50}ms` }}>
+            <rect width={columns ? 96 : 304} height={columns ? 150 : 46} rx="3" className={cx(styles.tile, styles.scan, styles.motion)} style={{ ...at(i), transitionDelay: `${i * 50}ms` }} />
+            <g className={styles.layoutSymbol} style={{ transform: columns ? "translate(48px, 56px)" : "translate(25px, 23px)" }}>
+              {i === 0 && <circle r="8" className={styles.symbolFill} />}
+              {i === 1 && <path d="m0-10 9.5 16h-19Z" className={styles.symbolFill} />}
+              {i === 2 && <rect x="-6.5" y="-6.5" width="13" height="13" className={styles.symbolFill} transform="rotate(45)" />}
             </g>
-          ))}
-        </svg>
-      </div>
+            <path d={columns ? "M18 104h60m-60 14h38" : "M50 18h176m-176 11h112"} className={styles.contentLine} />
+            {!columns && <path d="M272 23h16m-5-5 5 5-5 5" className={cx(styles.contentLine, styles.nudge, styles.motion)} style={at(i)} />}
+          </g>
+        ))}
+      </Plate>
       <div className={styles.controls} role="group" aria-label={cn ? "切换抽象布局" : "Change the abstract layout"}>
         <Choice active={!columns} onClick={() => setColumns(false)}><span aria-hidden="true">☰</span>{cn ? "行布局" : "Rows"}</Choice>
         <Choice active={columns} onClick={() => setColumns(true)}><span aria-hidden="true">▥</span>{cn ? "列布局" : "Columns"}</Choice>
@@ -45,44 +61,48 @@ function LayoutStudy({ cn }: { cn: boolean }) {
   );
 }
 
+/* The bar of the sample component runs from x 90 to 310, under the glyph
+   and the text; FILLED is the share of it drawn in each state, and the
+   loading dot rides its end. */
+const BAR = { x: 90, w: 220, y: 88 };
+const FILLED = { idle: 0, loading: 0.54, done: 1 } as const;
+
 /** Design engineering · one component through its states: the spinner turns, the bar fills, the check draws. */
 function StateStudy({ cn }: { cn: boolean }) {
-  const [state, setState] = useState<"idle" | "loading" | "done">("idle");
+  const [state, setState] = useState<keyof typeof FILLED>("idle");
   const text = state === "idle" ? (cn ? "准备开始" : "Ready when you are") : state === "loading" ? (cn ? "正在构建…" : "Putting it together…") : (cn ? "可以探索了" : "Ready to explore");
-  const progress = state === "idle" ? 1 : state === "loading" ? 0.46 : 0;
   return (
     <>
-      <div className={styles.canvas} aria-hidden="true">
-        <svg viewBox="0 0 320 114" className={styles.visual}>
-          <path d="M30 55h27m206 0h27" className={styles.guide} />
-          <rect x="58" y="16" width="204" height="73" rx="6" className={styles.tile} />
-          <g key={state} className={styles.stateGlyph} transform="translate(81 44)">
-            {state === "idle" && (
-              <>
-                <circle r="10" className={cx(styles.ring, styles.pulse, styles.motion)} />
-                <path d="m-3-7 10 7-10 7Z" className={styles.symbolFill} />
-              </>
-            )}
-            {state === "loading" && (
-              <>
-                <circle r="8" className={styles.guide} />
-                <circle r="8" pathLength={1} className={cx(styles.brightLine, styles.arc, styles.spin, styles.motion)} />
-              </>
-            )}
-            {state === "done" && (
-              <>
-                <circle r="9" className={cx(styles.guide, styles.pop)} />
-                <path pathLength={1} d="m-5 0 3 3 7-7" className={cx(styles.brightLine, styles.check)} />
-              </>
-            )}
-          </g>
-          <text key={`text-${state}`} x="100" y="48" className={cx(styles.stateText, styles.fadeIn)}>{text}</text>
-          <path d="M77 69h166" className={styles.guide} />
-          <path pathLength={1} d="M77 69h166" className={styles.stateProgress} style={{ strokeDashoffset: progress }} />
-          {state === "loading" && <circle cx="153" cy="69" r="2" className={cx(styles.symbolFill, styles.blink, styles.motion)} />}
-          <text x="160" y="108" textAnchor="middle" className={styles.codeReadout}>{"<Button state=\"" + state + "\" />"}</text>
-        </svg>
-      </div>
+      <Plate labels={<span className={styles.codeTag} style={pin(200, 132)}>{`<Button state="${state}" />`}</span>}>
+        <path d="M20 66h52m256 0h52" className={styles.guide} />
+        <rect x="72" y="22" width="256" height="88" rx="8" className={styles.tile} />
+        <g key={state} transform="translate(102 54)">
+          {state === "idle" && (
+            <>
+              <circle r="12" className={cx(styles.ring, styles.pulse, styles.motion)} />
+              <path d="m-4-8 12 8-12 8Z" className={styles.symbolFill} />
+            </>
+          )}
+          {state === "loading" && (
+            <>
+              <circle r="10" className={styles.guide} />
+              <circle r="10" pathLength={1} className={cx(styles.brightLine, styles.arc, styles.spin, styles.motion)} />
+            </>
+          )}
+          {state === "done" && (
+            <>
+              <circle r="11" className={cx(styles.guide, styles.pop)} />
+              <path pathLength={1} d="m-6 0 4 4 8-8" className={cx(styles.brightLine, styles.check)} />
+            </>
+          )}
+        </g>
+        <text key={`text-${state}`} x="126" y="59" className={cx(styles.stateText, styles.fadeIn)}>{text}</text>
+        <path d={`M${BAR.x} ${BAR.y}h${BAR.w}`} className={styles.guide} />
+        <path pathLength={1} d={`M${BAR.x} ${BAR.y}h${BAR.w}`} className={styles.stateProgress} style={{ strokeDashoffset: 1 - FILLED[state] }} />
+        {state === "loading" && <circle cx={BAR.x + BAR.w * FILLED.loading} cy={BAR.y} r="2.5" className={cx(styles.symbolFill, styles.blink, styles.motion)} />}
+        {/* a dashed leader from the component down to its props, as a boxed tag */}
+        <path d="M200 110v22" className={styles.leader} />
+      </Plate>
       <div className={styles.controls} role="group" aria-label={cn ? "切换示例组件状态" : "Change the sample component state"}>
         <Choice active={state === "idle"} onClick={() => setState("idle")}>{cn ? "待机" : "Idle"}</Choice>
         <Choice active={state === "loading"} onClick={() => setState("loading")}>{cn ? "加载" : "Loading"}</Choice>
@@ -92,48 +112,92 @@ function StateStudy({ cn }: { cn: boolean }) {
   );
 }
 
+/* The specimen: "Aa" at 124 on a baseline at y 124, centred on x 220.
+   The guides run from x 8 to 392; each label sits on the left end of its
+   own line, centred on it and masking it, so the line reads as starting
+   after the name and the labels never stack, even where cap height and
+   x-height are 16px apart on a small phone. */
+const SPECIMEN = { size: 124, x: 220, baseline: 124, bracket: 146 };
+const GUIDE = 8;
+/* Ascent of the specimen's own glyphs as a share of its size: the cap
+   line sits on the apex of the A, the x line on the arch of the a.
+   Newsreader at 350 and Geist at 450, measured in Chrome; the effect
+   below measures again in the reader's browser once the fonts are in,
+   so the guides stay on the glyphs whatever the face renders as. */
+const ASCENT = { serif: { cap: 0.725, x: 0.5215 }, sans: { cap: 0.71, x: 0.543 } };
+type Face = keyof typeof ASCENT;
+
 /** Brand & visual · a specimen on its metrics, with brackets that measure its live width. */
 function TypeStudy({ cn }: { cn: boolean }) {
   const [serif, setSerif] = useState(true);
   const [spaced, setSpaced] = useState(false);
   const specimen = useRef<SVGTextElement>(null);
   const [span, setSpan] = useState<{ x: number; w: number } | null>(null);
+  const [ascent, setAscent] = useState(ASCENT);
+  const face: Face = serif ? "serif" : "sans";
 
   useEffect(() => {
     const measure = () => {
-      const box = specimen.current?.getBBox();
-      if (box?.width) setSpan({ x: box.x, w: box.width });
+      const node = specimen.current;
+      if (!node) return;
+      const keep = (x: number, w: number) => setSpan((prev) => (prev && Math.abs(prev.x - x) < 0.05 && Math.abs(prev.w - w) < 0.05 ? prev : { x, w }));
+      // getBBox only knows the em box and the tracking after the last
+      // letter; the ink comes from a canvas set in the same face, weight
+      // and size, placed at each letter's laid-out origin.
+      const style = getComputedStyle(node);
+      const pen = document.createElement("canvas").getContext("2d");
+      if (pen) pen.font = `${style.fontWeight} ${SPECIMEN.size}px ${style.fontFamily}`;
+      if (!pen || !pen.font.includes(`${SPECIMEN.size}px`)) {
+        const box = node.getBBox();
+        if (box.width) keep(box.x, box.width);
+        return;
+      }
+      const upper = pen.measureText("A");
+      const lower = pen.measureText("a");
+      try {
+        const left = node.getStartPositionOfChar(0).x - upper.actualBoundingBoxLeft;
+        const right = node.getStartPositionOfChar(1).x + lower.actualBoundingBoxRight;
+        if (right > left) keep(left, right - left);
+      } catch {
+        const box = node.getBBox();
+        if (box.width) keep(box.x, box.width);
+      }
+      const cap = upper.actualBoundingBoxAscent / SPECIMEN.size;
+      const x = lower.actualBoundingBoxAscent / SPECIMEN.size;
+      if (!(cap > 0.4 && cap < 1 && x > 0.2 && x < cap)) return;
+      setAscent((prev) => (Math.abs(prev[face].cap - cap) < 0.002 && Math.abs(prev[face].x - x) < 0.002 ? prev : { ...prev, [face]: { cap, x } }));
     };
     measure();
     // letter-spacing eases over 300ms; read the settled width after it.
     const timer = window.setTimeout(measure, 340);
     document.fonts?.ready.then(measure);
     return () => window.clearTimeout(timer);
-  }, [serif, spaced]);
+  }, [face, spaced]);
 
-  const xHeight = serif ? 44 : 39;
+  const capY = SPECIMEN.baseline - ascent[face].cap * SPECIMEN.size;
+  const xY = SPECIMEN.baseline - ascent[face].x * SPECIMEN.size;
+  const labels = (
+    <>
+      <span className={styles.metricLabel} style={pin(GUIDE, capY)}>{cn ? "大写高度" : "Cap height"}</span>
+      <span className={styles.metricLabel} style={pin(GUIDE, xY)}>{cn ? "x 字高" : "x-height"}</span>
+      <span className={styles.metricLabel} style={pin(GUIDE, SPECIMEN.baseline)}>{cn ? "基线" : "Baseline"}</span>
+      {span && <span key={face + String(spaced)} className={cx(styles.readout, styles.appear)} style={pin(span.x + span.w / 2, SPECIMEN.bracket)}>W {Math.round(span.w)}</span>}
+    </>
+  );
   return (
     <>
-      <div className={styles.canvas} aria-hidden="true">
-        <svg viewBox="0 0 320 114" className={styles.visual}>
-          <path d="M35 24h250M35 85h250" className={styles.guide} />
-          <path d={`M35 ${xHeight}h250`} className={cx(styles.guide, styles.dashed, styles.metric)} />
-          <text x="36" y="21" className={styles.metricLabel}>CAP</text>
-          <text x="36" y={xHeight - 3} className={cx(styles.metricLabel, styles.metric)}>X</text>
-          <text x="36" y="82" className={styles.metricLabel}>BASE</text>
-          <path d="M57 19v10m206-10v10M57 80v10m206-10v10" className={styles.contentLine} />
-          <text ref={specimen} x="160" y="84" textAnchor="middle" className={styles.specimen} style={{ fontFamily: serif ? "var(--font-newsreader), Georgia, serif" : "var(--font-sans)", letterSpacing: spaced ? "14px" : "-4px", fontWeight: serif ? 350 : 450 } as CSSProperties}>Aa</text>
-          {span && (
-            <g className={styles.measure}>
-              <path d={`M${span.x} 94v8M${span.x + span.w} 94v8`} className={styles.brightLine} />
-              <path d={`M${span.x} 98H${span.x + span.w}`} className={styles.contentLine} />
-              <text x="160" y="110" textAnchor="middle" className={styles.codeReadout}>W {Math.round(span.w)}</text>
-            </g>
-          )}
-          <text x="42" y="108" className={styles.codeReadout}>{serif ? "SERIF" : "SANS"}</text>
-          <text x="278" y="108" textAnchor="end" className={styles.codeReadout}>{spaced ? (cn ? "疏" : "OPEN") : (cn ? "密" : "TIGHT")}</text>
-        </svg>
-      </div>
+      <Plate labels={labels}>
+        <path d={`M${GUIDE} ${capY}H${VW - GUIDE}`} className={cx(styles.guide, styles.metric)} />
+        <path d={`M${GUIDE} ${xY}H${VW - GUIDE}`} className={cx(styles.guide, styles.dashed, styles.metric)} />
+        <path d={`M${GUIDE} ${SPECIMEN.baseline}H${VW - GUIDE}`} className={styles.axis} />
+        <text ref={specimen} x={SPECIMEN.x} y={SPECIMEN.baseline} textAnchor="middle" className={styles.specimen} style={{ fontSize: SPECIMEN.size, fontFamily: serif ? "var(--font-newsreader), Georgia, serif" : "var(--font-sans)", letterSpacing: spaced ? "0.16em" : "-0.045em", fontWeight: serif ? 350 : 450 } as CSSProperties}>Aa</text>
+        {span && (
+          <g className={styles.measure}>
+            <path d={`M${span.x} ${SPECIMEN.bracket - 6}v12M${span.x + span.w} ${SPECIMEN.bracket - 6}v12`} className={styles.brightLine} />
+            <path d={`M${span.x} ${SPECIMEN.bracket}H${span.x + span.w}`} className={styles.contentLine} />
+          </g>
+        )}
+      </Plate>
       <div className={styles.controls} role="group" aria-label={cn ? "调整抽象字形与字距" : "Adjust the abstract type study"}>
         <Choice active={serif} onClick={() => setSerif(true)}>{cn ? "衬线" : "Serif"}</Choice>
         <Choice active={!serif} onClick={() => setSerif(false)}>{cn ? "无衬线" : "Sans"}</Choice>
@@ -147,36 +211,34 @@ function TypeStudy({ cn }: { cn: boolean }) {
 function FocusStudy({ cn }: { cn: boolean }) {
   const [action, setAction] = useState(false);
   const fixations = action
-    ? [[96, 30], [168, 56], [206, 84], [226, 86], [214, 84]]
-    : [[72, 30], [118, 29], [160, 33], [204, 35], [120, 57], [226, 58]];
+    ? [[120, 42], [212, 86], [268, 134], [294, 138], [282, 135]]
+    : [[84, 40], [140, 38], [196, 42], [254, 46], [150, 84], [286, 88]];
   const scanpath = `M${fixations.map(([x, y]) => `${x} ${y}`).join("L")}`;
   return (
     <>
-      <div className={styles.canvas} aria-hidden="true">
-        <svg viewBox="0 0 320 114" className={styles.visual}>
-          <rect x="48" y="8" width="224" height="98" rx="3" className={styles.tile} />
-          <g className={styles.focusGroup} opacity={action ? .35 : 1}>
-            <circle cx="71" cy="30" r="5" className={styles.symbolFill} />
-            <path d="M85 25h77m-77 10h123" className={styles.contentLine} />
-            <path d="M65 52h182m-182 10h132" className={styles.guide} />
-          </g>
-          <path d="M65 88h64" className={styles.guide} />
-          <g className={styles.focusGroup} opacity={action ? 1 : .45}>
-            <rect x="186" y="75" width="66" height="20" rx="2" fill="var(--color-ink)" fillOpacity=".13" />
-            <path d="M199 85h29m-4-4 4 4-4 4" className={styles.brightLine} />
-          </g>
-          <g key={String(action)}>
-            <path d={scanpath} className={cx(styles.guide, styles.dashed)} />
-            {fixations.map(([x, y], index) => (
-              <circle key={`${x}-${y}`} cx={x} cy={y} r={2.5 + (index % 3)} className={cx(styles.fixation, styles.motion)} style={at(index)} />
-            ))}
-            <circle r="3" className={cx(styles.gaze, styles.motion)} style={{ offsetPath: `path("${scanpath}")` }} />
-          </g>
-          <rect x={action ? 179 : 58} y={action ? 69 : 17} width={action ? 80 : 198} height={action ? 32 : 28} rx="4" className={styles.focusOutline} />
-          <path d={action ? "M259 85H289" : "M256 31H289"} className={styles.focusLeader} />
-          <circle cx="291" cy={action ? 85 : 31} r="2" className={styles.symbolFill} />
-        </svg>
-      </div>
+      <Plate>
+        <rect x="56" y="10" width="288" height="152" rx="3" className={styles.tile} />
+        <g className={styles.focusGroup} opacity={action ? .35 : 1}>
+          <circle cx="84" cy="40" r="7" className={styles.symbolFill} />
+          <path d="M102 34h104m-104 12h160" className={styles.contentLine} />
+          <path d="M76 80h248m-248 14h176" className={styles.guide} />
+        </g>
+        <path d="M76 138h84" className={styles.guide} />
+        <g className={styles.focusGroup} opacity={action ? 1 : .45}>
+          <rect x="244" y="122" width="84" height="28" rx="2" fill="var(--color-ink)" fillOpacity=".13" />
+          <path d="M270 136h32m-5-5 5 5-5 5" className={styles.brightLine} />
+        </g>
+        <g key={String(action)}>
+          <path d={scanpath} className={cx(styles.guide, styles.dashed)} />
+          {fixations.map(([x, y], index) => (
+            <circle key={`${x}-${y}`} cx={x} cy={y} r={3.5 + (index % 3) * 1.5} className={cx(styles.fixation, styles.motion)} style={at(index)} />
+          ))}
+          <circle r="3.5" className={cx(styles.gaze, styles.motion)} style={{ offsetPath: `path("${scanpath}")` }} />
+        </g>
+        <rect x={action ? 238 : 66} y={action ? 116 : 24} width={action ? 96 : 228} height={action ? 40 : 32} rx="4" className={styles.focusOutline} />
+        <path d={action ? "M334 136H376" : "M294 40H376"} className={styles.focusLeader} />
+        <circle cx="378" cy={action ? 136 : 40} r="2.5" className={styles.symbolFill} />
+      </Plate>
       <div className={styles.controls} role="group" aria-label={cn ? "切换观察焦点" : "Change the observation focus"}>
         <Choice active={!action} onClick={() => setAction(false)}>{cn ? "观察内容" : "Content"}</Choice>
         <Choice active={action} onClick={() => setAction(true)}>{cn ? "观察操作" : "Action"}</Choice>

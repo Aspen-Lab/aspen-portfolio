@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import type { ReactNode } from "react";
+import { useRef, useState } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useInView, useReducedMotion } from "motion/react";
 import {
   PencilRuler,
   TrendingUp,
@@ -15,8 +15,16 @@ import {
 import type { ComponentType, SVGProps } from "react";
 import { combos } from "@/lib/work";
 import type { Combo } from "@/lib/work";
-import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
+import styles from "./Moat.module.css";
+
+/* Six proof points, one at a time: the claim on the left, and beside it a
+   sheet drawn in Latent Health's plot language (latenthealth.com,
+   "Platform") — cream card, hairline grid, mono ticks, one focus mark with
+   a dashed hexagon and a boxed tag on a dashed leader. Every figure on a
+   sheet is one the copy already states; where there is no number (the
+   delivery chain, the founding path, the awards) the sheet draws the
+   order of things, not a measurement. Flat fills only; no gradients. */
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -29,6 +37,8 @@ const ICONS: ComponentType<SVGProps<SVGSVGElement>>[] = [
   LineChart,
 ];
 
+/* A translation of `combos` in src/lib/work.ts, entry for entry: no claim
+   here that the English does not make. */
 const COMBOS_CN: Combo[] = [
   {
     index: "01",
@@ -45,14 +55,14 @@ const COMBOS_CN: Combo[] = [
   {
     index: "03",
     title: "前端，直接以 PR 交付",
-    proof: "helloaxel.com 100%",
-    body: "Figma → tokens → Tailwind components → Vercel PR，没有翻译损耗。再加上 Customer.io 的 28 个交易类模板。交付物是 commits，不是 PDF。",
+    proof: "Axel 创始设计工程师",
+    body: "从产品设计到生产环境前端，以可审阅的 PR 交付。在 Axel，我在设计与工程之间双向打通，并把体验延伸到品牌、营销活动和 28 个交易类邮件模板。",
   },
   {
     index: "04",
     title: "iF + Red Dot + IDEA",
     proof: "一年三个奖",
-    body: "2025 年同时拿到 iF Design、Red Dot 和 IDEA Student Award，项目覆盖 Field of Vision 与 CryoSave。HCI 与行为科学训练支撑的是手艺，不只是视觉。",
+    body: "iF Design、Red Dot 和 IDEA Student Award，都在 2025 年 —— 获奖的是 Field of Vision（视障手杖）和 CryoSave（CDC NWSS 包装）。HCI 与行为科学的训练为手艺托底。",
   },
   {
     index: "05",
@@ -68,183 +78,335 @@ const COMBOS_CN: Combo[] = [
   },
 ];
 
-/* ─── Animated bar ─────────────────────────────────────────────────── */
+const AWARDS = [
+  { name: "iF Design Award", project: "Field of Vision" },
+  { name: "Red Dot Design Award", project: "Field of Vision" },
+  { name: "IDEA Student Award", project: "CryoSave · CDC NWSS" },
+];
 
-function AnimBar({
-  label,
-  pct,
-  delay = 0,
+const v = (vars: Record<string, string | number>) => vars as CSSProperties;
+
+function hexagon(r: number) {
+  return Array.from({ length: 6 }, (_, k) => {
+    const a = (Math.PI / 3) * k - Math.PI / 2;
+    return `${(r * Math.cos(a)).toFixed(2)},${(r * Math.sin(a)).toFixed(2)}`;
+  }).join(" ");
+}
+
+/* ─── The focus ───────────────────────────────────────────────────────
+   A zero-size anchor on the point it marks: the dot, the dashed hexagon
+   around it, a dashed leader and the boxed tag at its end. The tag hangs
+   centred, or flush to the anchor's side when the point is near an edge
+   of the sheet. */
+
+function Focus({
+  tag,
+  dir = "down",
+  align = "center",
+  style,
 }: {
-  label: string;
-  pct: number;
-  delay?: number;
+  tag: string;
+  dir?: "down" | "up";
+  align?: "center" | "end";
+  style?: CSSProperties;
 }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-soft/60 w-20 shrink-0">
-        {label}
-      </span>
-      <div className="flex-1 h-px bg-line">
-        <motion.div
-          className="h-px bg-ink origin-left"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: pct / 100 }}
-          transition={{ duration: 0.75, ease, delay }}
-        />
+    <span className={styles.focus} data-dir={dir} data-align={align} style={style}>
+      <svg aria-hidden viewBox="-22 -22 44 44" className={styles.mark}>
+        <polygon points={hexagon(17)} className={styles.hex} />
+        <circle r="6" className={styles.dot} />
+      </svg>
+      <span aria-hidden className={styles.leader} />
+      <span className={styles.tag}>{tag}</span>
+    </span>
+  );
+}
+
+/* ─── Bars on an axis ─────────────────────────────────────────────────
+   Rows of flat bars over a hairline grid. The focus row carries the
+   accent (from `from`, when only the change is the point); `ghost` draws
+   a dashed, unfilled stretch: a cut that was saved, or an open end. */
+
+type Row = {
+  label: string;
+  value?: string;
+  to: number;
+  from?: number;
+  ghost?: [number, number];
+  focus?: boolean;
+};
+
+function Bars({
+  rows,
+  max,
+  ticks,
+  tag,
+}: {
+  rows: Row[];
+  max: number;
+  ticks: { at: number; label?: string }[];
+  tag: string;
+}) {
+  const pct = (n: number) => `${(n / max) * 100}%`;
+
+  return (
+    <div className={styles.bars}>
+      <div aria-hidden className={styles.gridlines}>
+        {ticks.map((t) => (
+          <span key={t.at} style={{ left: pct(t.at) }} data-axis={t.at === 0} />
+        ))}
       </div>
-      <span className="font-mono text-[10px] text-soft/50 tabular-nums w-9 text-right">
-        {pct}%
+
+      {rows.map((r, i) => (
+        <div key={r.label} className={styles.row} data-focus={!!r.focus} style={v({ "--i": i })}>
+          <p className={styles.rowHead}>
+            <span>{r.label}</span>
+            {r.value && <span className={styles.rowValue}>{r.value}</span>}
+          </p>
+          <div className={styles.track}>
+            {r.ghost && (
+              <span
+                aria-hidden
+                className={styles.ghost}
+                style={{ left: pct(r.ghost[0]), width: pct(r.ghost[1] - r.ghost[0]) }}
+              />
+            )}
+            <span aria-hidden className={styles.fill} data-split={r.from !== undefined} style={{ width: pct(r.to) }}>
+              {r.from !== undefined && (
+                <span className={styles.gain} style={{ left: `${(r.from / r.to) * 100}%` }} />
+              )}
+            </span>
+            {r.focus && (
+              <Focus tag={tag} align={r.to / max > 0.72 ? "end" : "center"} style={{ left: pct(r.to) }} />
+            )}
+          </div>
+        </div>
+      ))}
+
+      <div aria-hidden className={styles.axis}>
+        {ticks.map((t) => (
+          <span
+            key={t.at}
+            className={styles.tick}
+            style={{ left: pct(t.at) }}
+            data-edge={t.at === 0 ? "start" : t.at === max ? "end" : undefined}
+          >
+            {t.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── A chain of stations ─────────────────────────────────────────────
+   Left to right on one hairline, the way the work moves; the line draws
+   through and each station lights as it is reached. The last one is the
+   handoff, so it is the focus. */
+
+function Chain({ stops, tag }: { stops: string[]; tag: string }) {
+  const n = stops.length;
+  return (
+    <div className={styles.chain} style={v({ "--n": n })}>
+      <span aria-hidden className={styles.line}>
+        <span className={styles.lineLit} />
+      </span>
+      {Array.from({ length: n - 1 }, (_, k) => (
+        <svg
+          key={k}
+          aria-hidden
+          viewBox="0 0 8 10"
+          className={styles.chevron}
+          style={v({ left: `${((k + 1) / n) * 100}%`, "--i": k })}
+        >
+          <path d="M2 1.5 L6 5 L2 8.5" />
+        </svg>
+      ))}
+      <ol className={styles.stations}>
+        {stops.map((s, i) => {
+          const last = i === n - 1;
+          return (
+            <li key={s} className={styles.station} style={v({ "--i": i })}>
+              <span className={styles.stationMark}>
+                {last ? <Focus tag={tag} dir="up" align="end" /> : <span aria-hidden className={styles.node} />}
+              </span>
+              <span className={styles.stationLabel}>{s}</span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+/* ─── A path down a rail ──────────────────────────────────────────────
+   Stages in the order they happened; no dates, so no time axis. The
+   focus stage reads its fact off a dashed leader into the boxed tag. */
+
+function Path({ steps }: { steps: { label: string; tag?: string }[] }) {
+  return (
+    <ol className={styles.path}>
+      {steps.map((s, i) => (
+        <li key={s.label} className={styles.step} data-focus={!!s.tag} style={v({ "--i": i })}>
+          <span aria-hidden className={styles.stepMark}>
+            {s.tag ? (
+              <svg viewBox="-22 -22 44 44" className={styles.mark}>
+                <polygon points={hexagon(17)} className={styles.hex} />
+                <circle r="6" className={styles.dot} />
+              </svg>
+            ) : (
+              <span className={styles.node} />
+            )}
+          </span>
+          <span className={styles.stepLabel}>{s.label}</span>
+          {s.tag && (
+            <>
+              <span aria-hidden className={styles.stepLeader} />
+              <span className={`${styles.tag} ${styles.stepTag}`}>{s.tag}</span>
+            </>
+          )}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/* ─── The sheet ───────────────────────────────────────────────────────
+   One kicker on top, the drawing, and at most one line of note in body
+   type underneath — no small print. */
+
+function Sheet({ kicker, foot, children }: { kicker: string; foot?: ReactNode; children: ReactNode }) {
+  return (
+    <div className={styles.sheetWrap}>
+      <figure className={styles.sheet}>
+        <figcaption className={styles.kicker}>{kicker}</figcaption>
+        <div className={styles.drawing}>{children}</div>
+        {foot && (
+          <div className={styles.foot}>
+            {typeof foot === "string" ? <p className={styles.note}>{foot}</p> : foot}
+          </div>
+        )}
+      </figure>
+    </div>
+  );
+}
+
+/* A count drawn as what it counts: one cell per template, lit in turn. */
+function Count({ n, label }: { n: number; label: string }) {
+  return (
+    <div className={styles.count}>
+      <p className={styles.figure}>{n}</p>
+      <p className={styles.countLabel}>{label}</p>
+      <span aria-hidden className={styles.cells}>
+        {Array.from({ length: n }, (_, i) => (
+          <span key={i} style={v({ "--i": i })} />
+        ))}
       </span>
     </div>
   );
 }
 
-/* ─── Per-credential widgets ───────────────────────────────────────── */
-
-function Widget({ index, locale }: { index: number; locale: Locale }) {
+function Widget({ index, cn }: { index: number; cn: boolean }) {
   switch (index) {
     case 0:
+      // "Integration cycles cut ~40%": the standard cycle is the base (100),
+      // the SOP cycle stops about 40% short of it.
       return (
-        <div className="flex flex-col gap-3">
-          <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45 mb-1">
-            {locale === "cn" ? "周期对比" : "Cycle comparison"}
-          </p>
-          <AnimBar label={locale === "cn" ? "标准流程" : "Standard"} pct={100} delay={0.1} />
-          <AnimBar label={locale === "cn" ? "有 SOP" : "With SOP"} pct={60} delay={0.22} />
-          <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-soft/35 mt-1">
-            −40% · TikTok PIPO vendor integration
-          </p>
-        </div>
+        <Sheet
+          kicker={cn ? "集成周期 · 标准 = 100" : "Integration cycle\u00a0· standard = 100"}
+          foot={cn ? "TikTok Pay PIPO 供应商对接，VN / MY / ID" : "TikTok Pay PIPO vendor integration, VN / MY / ID"}
+        >
+          <Bars
+            max={100}
+            ticks={[{ at: 0, label: "0" }, { at: 25 }, { at: 50 }, { at: 75 }, { at: 100, label: "100" }]}
+            tag={cn ? "约 −40%" : "≈ −40%"}
+            rows={[
+              { label: cn ? "标准流程" : "Standard", to: 100 },
+              { label: cn ? "有 SOP" : "With SOP", to: 60, ghost: [60, 100], focus: true },
+            ]}
+          />
+        </Sheet>
       );
 
     case 1:
       return (
-        <div className="flex flex-col gap-3">
-          <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45 mb-1">
-            {locale === "cn" ? "KYC 完成率 · 越南" : "KYC completion · Vietnam"}
-          </p>
-          <AnimBar label={locale === "cn" ? "v1 · 之前" : "v1 · before"} pct={70} delay={0.1} />
-          <AnimBar label={locale === "cn" ? "v2 · 之后" : "v2 · after"} pct={90} delay={0.22} />
-          <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-soft/35 mt-1">
-            +20pp · new-user flow
-          </p>
-        </div>
+        <Sheet
+          kicker={cn ? "KYC 完成率 · 越南" : "KYC completion · Vietnam"}
+          foot={cn ? "新用户流程，前后两版" : "New-user flow, before and after"}
+        >
+          <Bars
+            max={100}
+            ticks={[{ at: 0, label: "0" }, { at: 25 }, { at: 50, label: "50%" }, { at: 75 }, { at: 100, label: "100%" }]}
+            tag="+20 pp"
+            rows={[
+              { label: cn ? "v1 · 之前" : "v1 · before", value: "70%", to: 70 },
+              { label: cn ? "v2 · 之后" : "v2 · after", value: "90%", to: 90, from: 70, focus: true },
+            ]}
+          />
+        </Sheet>
       );
 
     case 2:
       return (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3">
-            <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45">
-              {locale === "cn" ? "交付完整度" : "Delivery completeness"}
-            </p>
-            <AnimBar label={locale === "cn" ? "已上线" : "Shipped"} pct={100} delay={0.1} />
-          </div>
-          <div className="flex flex-col gap-2">
-            <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45">
-              {locale === "cn" ? "交付链路" : "Delivery chain"}
-            </p>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {["Figma", "tokens", "Tailwind", "Vercel"].map((s, i) => (
-                <motion.span
-                  key={s}
-                  className="inline-flex items-center gap-1.5"
-                  initial={{ opacity: 0, x: -4 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.15 + i * 0.07, duration: 0.26, ease }}
-                >
-                  <span className="px-2 py-1 border border-line font-mono text-[11px] text-ink/75">
-                    {s}
-                  </span>
-                  {i < 3 && (
-                    <span className="text-soft/30 font-mono text-[10px]">→</span>
-                  )}
-                </motion.span>
-              ))}
-            </div>
-          </div>
-        </div>
+        <Sheet
+          kicker={cn ? "交付链路" : "Delivery chain"}
+          foot={<Count n={28} label={cn ? "Axel 的交易类邮件模板" : "Transactional email templates at Axel"} />}
+        >
+          <Chain stops={["Figma", "tokens", "Tailwind", "Vercel"]} tag={cn ? "可审阅的 PR" : "Reviewable PR"} />
+        </Sheet>
       );
 
     case 3:
       return (
-        <div className="flex flex-col gap-3">
-          <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45 mb-1">
-            {locale === "cn" ? "认可 · 2025" : "Recognition · 2025"}
-          </p>
-          <div className="flex flex-col gap-2">
-            {[
-              { name: "iF Design Award", cat: "Field of Vision" },
-              { name: "Red Dot Design Award", cat: "Field of Vision" },
-              { name: "IDEA Student Award", cat: "CryoSave · CDC NWSS" },
-            ].map(({ name, cat }, i) => (
-              <motion.div
-                key={name}
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + i * 0.08, duration: 0.28, ease }}
-                className="flex items-center justify-between gap-3 py-2.5 border-b border-line"
-              >
-                <div className="flex items-center gap-2">
-                  <Award className="w-3.5 h-3.5 text-soft/50 shrink-0" strokeWidth={1.5} />
-                  <span className="font-mono text-[11px] text-ink/75">{name}</span>
-                </div>
-                <span className="font-mono text-[9.5px] text-soft/45 text-right leading-tight hidden sm:block">
-                  {cat}
-                </span>
-              </motion.div>
+        <Sheet kicker={cn ? "获奖 · 2025" : "Recognition · 2025"}>
+          <ol className={styles.awards}>
+            {AWARDS.map((a, i) => (
+              <li key={a.name} className={styles.award} style={v({ "--i": i })}>
+                <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
+                <span className={styles.awardName}>{a.name}</span>
+                <span className={styles.awardFor}>{a.project}</span>
+              </li>
             ))}
-          </div>
-        </div>
+          </ol>
+        </Sheet>
       );
 
     case 4:
       return (
-        <div className="flex flex-col gap-3">
-          <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45 mb-1">
-            XING Art · MiraclePlus &apos;25
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { value: "$300K", label: locale === "cn" ? "种子前轮" : "pre-seed" },
-              { value: "1K+", label: locale === "cn" ? "用户" : "users" },
-              { value: "Top %", label: locale === "cn" ? "同届" : "cohort" },
-            ].map(({ value, label }, i) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.08 + i * 0.08, duration: 0.28, ease }}
-                className="flex flex-col gap-1 px-3 py-3 border border-line"
-              >
-                <span className="font-display text-[18px] tracking-[-0.01em] text-ink/85 tabular-nums">
-                  {value}
-                </span>
-                <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-soft/50">
-                  {label}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+        <Sheet kicker={cn ? "XING Art · 创业路径" : "XING Art · the path"}>
+          <Path
+            steps={[
+              { label: cn ? "联合创办 XING Art" : "Co-founded XING Art" },
+              { label: cn ? "$300K 种子前轮" : "$300K pre-seed", tag: "MiraclePlus '25" },
+              { label: cn ? "产品跑到规模 · 1K+ 用户" : "Product at scale · 1K+ users" },
+              { label: cn ? "转为股东 + advisor" : "Shareholder + advisor" },
+            ]}
+          />
+        </Sheet>
       );
 
     case 5:
+      // "200%+": the bar stops at 200 and the dashed stretch past it is
+      // the plus, an open end rather than a second number.
       return (
-        <div className="flex flex-col gap-3">
-          <p className="font-mono text-[9.5px] uppercase tracking-[0.2em] text-soft/45 mb-1">
-            {locale === "cn" ? "个人组合 · 年化" : "Personal portfolio · annualized"}
-          </p>
-          <AnimBar label={locale === "cn" ? "收益" : "Return"} pct={100} delay={0.1} />
-          <div className="flex items-center gap-2 mt-1">
-            <TrendingUp className="w-3.5 h-3.5 text-soft/50" strokeWidth={1.5} />
-            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-soft/45">
-              {locale === "cn"
-                ? "200%+ · 和产品判断来自同一种直觉"
-                : "200%+ · same instinct that ships products"}
-            </span>
-          </div>
-        </div>
+        <Sheet
+          kicker={cn ? "年化收益" : "Annualized return"}
+          foot={cn ? "和判断产品的是同一种直觉" : "The same instinct that ships products"}
+        >
+          <Bars
+            max={250}
+            ticks={[
+              { at: 0, label: "0" },
+              { at: 50 },
+              { at: 100, label: "100%" },
+              { at: 150 },
+              { at: 200, label: "200%" },
+              { at: 250 },
+            ]}
+            tag="200%+"
+            rows={[{ label: cn ? "个人投资组合" : "Personal portfolio", to: 200, ghost: [200, 250], focus: true }]}
+          />
+        </Sheet>
       );
 
     default:
@@ -258,10 +420,15 @@ function Widget({ index, locale }: { index: number; locale: Locale }) {
    home page reads better with four. `inPage` drops the tab-panel padding
    so it sits in the About rhythm instead of floating. */
 export function Moat({ inPage = false }: { inPage?: boolean }) {
-  const locale = useLocale() as Locale;
+  const cn = useLocale() === "cn";
   const t = useTranslations("Moat");
+  const reduce = useReducedMotion();
+  const panel = useRef<HTMLDivElement>(null);
+  // The sheets draw themselves once the panel is on screen; after that,
+  // each entry draws as it is chosen.
+  const inView = useInView(panel, { once: true, amount: 0.35 });
   const [active, setActive] = useState(0);
-  const localizedCombos = locale === "cn" ? COMBOS_CN : combos;
+  const localizedCombos = cn ? COMBOS_CN : combos;
   const combo = localizedCombos[active];
   const Icon = ICONS[active];
 
@@ -270,7 +437,7 @@ export function Moat({ inPage = false }: { inPage?: boolean }) {
       <Reveal>
         <p className="type-display text-ink leading-[1.15] max-w-3xl mb-12" style={{ fontSize: "clamp(30px, 4.2vw, 54px)" }}>
           {t.rich("intro", {
-            i: (chunks: ReactNode) => <span className="italic text-ink">{chunks}</span>,
+            i: (chunks: ReactNode) => <span className={styles.em}>{chunks}</span>,
             ink: (chunks: ReactNode) => <span className="block mt-5 font-sans text-[18px] sm:text-[21px] leading-relaxed text-mute tracking-normal">{chunks}</span>,
           })}
         </p>
@@ -287,9 +454,11 @@ export function Moat({ inPage = false }: { inPage?: boolean }) {
                 <button
                   key={c.index}
                   type="button"
+                  aria-pressed={on}
+                  aria-label={`${c.index} · ${c.title}`}
                   onClick={() => setActive(i)}
-                  onPointerEnter={() => setActive(i)}
-                  className={`relative shrink-0 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] tabular-nums cursor-pointer outline-none transition-colors duration-200 ${
+                  onPointerEnter={(e) => e.pointerType === "mouse" && setActive(i)}
+                  className={`relative shrink-0 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] tabular-nums cursor-pointer outline-none transition-colors duration-200 focus-visible:text-ink ${
                     on ? "text-ink" : "text-soft hover:text-ink"
                   }`}
                 >
@@ -298,7 +467,7 @@ export function Moat({ inPage = false }: { inPage?: boolean }) {
                       layoutId="combo-bracket"
                       aria-hidden
                       className="pointer-events-none absolute -inset-x-2.5 -inset-y-0.5"
-                      transition={{ type: "spring", stiffness: 380, damping: 34 }}
+                      transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 34 }}
                     >
                       <span className="reg-mark tl" style={{ width: 7, height: 7, left: 0, top: 0 }} />
                       <span className="reg-mark tr" style={{ width: 7, height: 7, right: 0, top: 0 }} />
@@ -314,59 +483,43 @@ export function Moat({ inPage = false }: { inPage?: boolean }) {
         </div>
       </Reveal>
 
-      {/* Detail panel — no border, surface only */}
+      {/* Detail panel — eight viewfinder marks, the claim, and its sheet */}
       <Reveal delay={0.1}>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={active}
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.34, ease }}
-          >
-            <div className="relative px-6 py-9 sm:px-10 sm:py-11 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 lg:gap-12">
-              <span className="reg-mark tl" />
-              <span className="reg-mark tr" />
-              <span className="reg-mark br" />
-              <span className="reg-mark bl" />
-              <span className="vf-tick top" />
-              <span className="vf-tick bottom" />
-              <span className="vf-tick left" />
-              <span className="vf-tick right" />
-              {/* Left: credential text */}
-              <div className="flex flex-col gap-5 justify-center">
-                {/* Category label */}
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 border border-line flex items-center justify-center">
-                    <Icon className="w-3.5 h-3.5 text-soft" strokeWidth={1.5} />
+        <div ref={panel} className={styles.panel} data-run={inView}>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={active}
+              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -10 }}
+              transition={{ duration: reduce ? 0.12 : 0.34, ease }}
+            >
+              <div className={styles.frame}>
+                <span className="reg-mark tl" />
+                <span className="reg-mark tr" />
+                <span className="reg-mark br" />
+                <span className="reg-mark bl" />
+                <span className="vf-tick top" />
+                <span className="vf-tick bottom" />
+                <span className="vf-tick left" />
+                <span className="vf-tick right" />
+
+                <div className={styles.copy}>
+                  <div className={styles.label}>
+                    <span className={styles.icon}>
+                      <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    </span>
+                    <span className={styles.title}>{combo.title}</span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft">
-                    {combo.title}
-                  </span>
+                  <p className={`type-display ${styles.proof}`}>{combo.proof}</p>
+                  <p className={styles.body}>{combo.body}</p>
                 </div>
 
-                {/* Proof — hero size */}
-                <p
-                  className="type-display italic text-ink leading-[1.0]"
-                  style={{ fontSize: "clamp(34px, 4.5vw, 56px)" }}
-                >
-                  {combo.proof}
-                </p>
-
-                {/* Body */}
-                <p className="text-[14.5px] text-mute leading-[1.7] max-w-[52ch]">
-                  {combo.body}
-                </p>
+                <Widget index={active} cn={cn} />
               </div>
-
-              {/* Right: widget */}
-              <div className="relative flex flex-col justify-center lg:pl-10">
-                <span aria-hidden className="hidden lg:block absolute left-0 top-1 bottom-1 w-px bg-line" />
-                <Widget index={active} locale={locale} />
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </Reveal>
     </section>
   );

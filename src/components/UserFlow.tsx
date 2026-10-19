@@ -1,7 +1,9 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import { Icon } from "./Icon";
+import { Fragment, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useInView } from "motion/react";
+import { useLocale } from "next-intl";
+import styles from "./UserFlow.module.css";
 
 type StepKind = "start" | "step" | "decision" | "end";
 
@@ -9,7 +11,7 @@ type Step = {
   /** Stable id used for branch references. */
   id: string;
   label: string;
-  /** Sub-line under the label (small mono caption). */
+  /** Sub-line under the label. */
   caption?: string;
   kind?: StepKind;
 };
@@ -31,138 +33,157 @@ type Props = {
   title?: string;
 };
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+/* A flow drawn on Latent's plotted sheet (latenthealth.com, "Platform"):
+   a flat card on a second card, the steps as boxed tags strung on one
+   dashed path, a decision drawn as a hexagon. The step that forks is the
+   chart's one focus — it carries the dashed hexagon ring, and its branch
+   leaves as Latent's leader does: a dashed line down to a boxed tag, then
+   a side path into the place the branch leads. Start and end are marked on
+   the path itself (a ring in, a dot out), not by filling their boxes.
+   From a wide sheet the steps run left to right and the branches hang
+   below; on a narrow one the path runs down the left and each branch sits
+   under its step. The steps light along the path once, when the sheet
+   comes into view. Reduced motion: the finished drawing, the ring still. */
 
-function Node({
-  step,
-  index,
-  delay,
-}: {
-  step: Step;
-  index: number;
-  delay: number;
-}) {
-  const isStart = step.kind === "start";
-  const isEnd = step.kind === "end";
-  const isDecision = step.kind === "decision";
+const TIP = 14; // how far the hexagon's points stand off its sides, px
+const RING = 6; // the focus ring's distance from the hexagon, px (the branch's drop starts just past it)
 
-  return (
-    <motion.li
-      initial={{ opacity: 0, y: 8 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.5, ease: EASE, delay }}
-      className="flex items-stretch gap-3"
-    >
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft tabular-nums pt-3 w-7 shrink-0">
-        {String(index + 1).padStart(2, "0")}
-      </span>
-      <div
-        className={`flex-1 relative px-4 py-3 rounded-[6px] border ${
-          isStart || isEnd
-            ? "border-ink bg-ink text-paper"
-            : isDecision
-              ? "border-ink/80 bg-paper text-ink"
-              : "border-line bg-paper text-ink"
-        }`}
-      >
-        <div className="flex items-center justify-between gap-3">
-          <p
-            className={`font-display text-[16px] tracking-[-0.005em] leading-[1.15] ${
-              isStart || isEnd ? "text-paper" : "text-ink"
-            }`}
-          >
-            {step.label}
-          </p>
-          {isDecision && (
-            <span className="text-soft" aria-hidden>
-              <Icon name="split" size={16} />
-            </span>
-          )}
-        </div>
-        {step.caption && (
-          <p
-            className={`font-mono text-[10px] uppercase tracking-[0.16em] mt-1 ${
-              isStart || isEnd ? "text-paper/70" : "text-soft"
-            }`}
-          >
-            {step.caption}
-          </p>
-        )}
-      </div>
-    </motion.li>
-  );
+type Pt = [number, number];
+
+const hexagon = (w: number, h: number): Pt[] => [
+  [TIP, 0],
+  [w - TIP, 0],
+  [w, h / 2],
+  [w - TIP, h],
+  [TIP, h],
+  [0, h / 2],
+];
+
+/** Every edge pushed out by d and its neighbours re-met: a ring that keeps
+    one distance from the shape all the way round, points included. */
+function grow(pts: Pt[], d: number): Pt[] {
+  const n = pts.length;
+  const edges = pts.map((p, i) => {
+    const q = pts[(i + 1) % n];
+    const dx = q[0] - p[0];
+    const dy = q[1] - p[1];
+    const len = Math.hypot(dx, dy);
+    return { x: p[0] + (dy / len) * d, y: p[1] - (dx / len) * d, dx, dy };
+  });
+  return edges.map((b, i) => {
+    const a = edges[(i - 1 + n) % n];
+    const s = ((b.x - a.x) * b.dy - (b.y - a.y) * b.dx) / (a.dx * b.dy - a.dy * b.dx);
+    return [a.x + a.dx * s, a.y + a.dy * s];
+  });
 }
 
-function Connector() {
-  return (
-    <li
-      aria-hidden
-      className="flex items-center pl-7 my-1"
-    >
-      <span className="ml-3 block w-px h-5 bg-line" />
-    </li>
-  );
-}
+const points = (pts: Pt[]) => pts.map(([x, y]) => `${(x + 0.5).toFixed(1)},${(y + 0.5).toFixed(1)}`).join(" ");
 
-function BranchRow({ branch }: { branch: Branch }) {
+/* The hexagon is drawn to the box's measured size in pixels, so its points
+   keep one depth and its hairline stays one pixel at any width. */
+function Hexagon({ focus }: { focus: boolean }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const [size, setSize] = useState<Pt | null>(null);
+
+  useEffect(() => {
+    const box = ref.current?.parentElement;
+    if (!box) return;
+    // The observer reports once on observe(), then on every resize
+    const ro = new ResizeObserver(() => setSize([box.offsetWidth - 1, box.offsetHeight - 1]));
+    ro.observe(box);
+    return () => ro.disconnect();
+  }, []);
+
+  const shape = size ? hexagon(size[0], size[1]) : null;
+
   return (
-    <li className="ml-7 mb-2 mt-[-4px] flex items-stretch gap-3">
-      <span aria-hidden className="block w-7 shrink-0 relative">
-        <span className="absolute left-3 top-0 bottom-0 w-px bg-line" />
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 h-px w-3 bg-line" />
-      </span>
-      <div className="flex-1 px-4 py-2.5 rounded-[6px] border border-dashed border-line bg-cream/30">
-        <div className="flex items-baseline justify-between gap-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft">
-            ↗ {branch.label}
-          </span>
-          <span className="font-display text-[14px] tracking-[-0.005em] text-ink">
-            {branch.destination}
-          </span>
-        </div>
-        {branch.caption && (
-          <p className="text-[12.5px] text-mute mt-1">{branch.caption}</p>
-        )}
-      </div>
-    </li>
+    <svg ref={ref} aria-hidden className={styles.hex}>
+      {shape && (
+        <>
+          {focus && <polygon points={points(grow(shape, RING))} className={styles.ring} />}
+          <polygon points={points(shape)} className={styles.hexShape} />
+        </>
+      )}
+    </svg>
   );
 }
 
 export function UserFlow({ steps, branches, title }: Props) {
-  const reduce = useReducedMotion();
-  void reduce; // currently unused — animation is gentle; reduce-motion still shows content
+  const cn = useLocale() === "cn";
+  const root = useRef<HTMLElement>(null);
+  const inView = useInView(root, { once: true, amount: 0.35 });
+  const n = steps.length;
 
-  // Build a fast lookup of branches by fromId
-  const byId = new Map<string, Branch[]>();
-  (branches ?? []).forEach((b) => {
-    const arr = byId.get(b.fromId) ?? [];
-    arr.push(b);
-    byId.set(b.fromId, arr);
-  });
+  // Branches gathered under the step they leave from
+  const forks = new Map<string, Branch[]>();
+  (branches ?? []).forEach((b) => forks.set(b.fromId, [...(forks.get(b.fromId) ?? []), b]));
+  const forkCols = steps.flatMap((s, i) => (forks.has(s.id) ? [i] : []));
+  // One focus per chart: the first decision that forks, else the first decision
+  const decisions = steps.flatMap((s, i) => (s.kind === "decision" ? [i] : []));
+  const focus = decisions.find((i) => forkCols.includes(i)) ?? decisions[0] ?? -1;
 
   return (
-    <figure className="w-full max-w-3xl">
-      {title && (
-        <figcaption className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft mb-5">
-          {title}
-        </figcaption>
-      )}
-      <ol className="relative">
-        {steps.map((s, i) => {
-          const stepBranches = byId.get(s.id) ?? [];
-          const isLast = i === steps.length - 1;
-          return (
-            <div key={s.id}>
-              <Node step={s} index={i} delay={0.05 + i * 0.06} />
-              {stepBranches.map((b, j) => (
-                <BranchRow key={`${s.id}-b${j}`} branch={b} />
-              ))}
-              {!isLast && <Connector />}
-            </div>
-          );
-        })}
-      </ol>
-    </figure>
+    <div className={styles.wrap}>
+      <figure ref={root} className={styles.sheet} data-lit={inView}>
+        {title && <figcaption className={styles.title}>{title}</figcaption>}
+        <ol className={styles.flow} style={{ ["--n" as string]: n } as CSSProperties}>
+          {steps.map((s, i) => {
+            const kind = s.kind ?? "step";
+            const out = forks.get(s.id);
+            // A fork's branches hang under its column and run right, as far
+            // as the next fork's column or the sheet's edge.
+            const next = forkCols.find((c) => c > i) ?? n;
+            return (
+              <Fragment key={s.id}>
+                <li
+                  className={styles.step}
+                  data-kind={kind}
+                  data-first={i === 0}
+                  data-last={i === n - 1}
+                  style={{ ["--i" as string]: i, ["--col" as string]: i + 1 } as CSSProperties}
+                >
+                  <div className={styles.box} data-focus={i === focus}>
+                    {kind === "decision" && <Hexagon focus={i === focus} />}
+                    <span aria-hidden className={styles.num}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <p className={styles.label}>{s.label}</p>
+                    {s.caption && <p className={styles.caption}>{s.caption}</p>}
+                  </div>
+                </li>
+                {out && (
+                  <li
+                    className={styles.fork}
+                    data-focus={i === focus}
+                    style={
+                      {
+                        ["--i" as string]: i,
+                        ["--col" as string]: i + 1,
+                        ["--span" as string]: next - i,
+                      } as CSSProperties
+                    }
+                  >
+                    {out.map((b, k) => (
+                      <div key={`${b.label}-${k}`} className={styles.branch} data-last={k === out.length - 1}>
+                        <span aria-hidden className={styles.drop} />
+                        <span aria-hidden className={styles.run} />
+                        <p className={styles.tag}>
+                          <span className="sr-only">{cn ? "分支：" : "Branch: "}</span>
+                          {b.label}
+                        </p>
+                        <div className={styles.dest}>
+                          <p className={styles.destLabel}>{b.destination}</p>
+                          {b.caption && <p className={styles.destCaption}>{b.caption}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </li>
+                )}
+              </Fragment>
+            );
+          })}
+        </ol>
+      </figure>
+    </div>
   );
 }

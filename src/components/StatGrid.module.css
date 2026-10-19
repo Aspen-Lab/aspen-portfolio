@@ -1,0 +1,122 @@
+/* An outcome ledger: a hairline over each entry, mono entry numbers, the
+   figures large and light. Flat; no gradients, no cards. */
+.ledger {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 32px;
+}
+@media (min-width: 640px) {
+  .ledger { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 40px; }
+  .ledger[data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .ledger[data-cols="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* Each entry measures itself, so the figure can size to its column. */
+.entry {
+  position: relative;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: minmax(0, 54fr) minmax(0, 46fr);
+  grid-template-areas:
+    "num icon"
+    "value text";
+  column-gap: 16px;
+  align-items: start;
+  padding: 14px 0 22px;
+  border-top: 1px solid var(--color-line);
+}
+@media (min-width: 640px) {
+  .entry {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "num icon"
+      "value value"
+      "text text";
+    padding: 16px 0 0;
+  }
+}
+
+/* The rule that runs out over the hairline once, entry after entry. */
+.run {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1100ms var(--ease-arrive);
+  transition-delay: calc(120ms + var(--i) * 160ms);
+}
+.ledger[data-lit="true"] .run { transform: none; }
+
+.num {
+  grid-area: num;
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  transition: color 300ms ease;
+  transition-delay: calc(120ms + var(--i) * 160ms);
+}
+.ledger[data-lit="true"] .num { color: var(--color-ink); }
+
+.icon {
+  grid-area: icon;
+  justify-self: end;
+  display: block;
+  height: 16px;
+  color: var(--color-soft);
+}
+
+/* One size for every figure: the column, shared out across the widest
+   figure's characters (0.56em is a little over Geist's average glyph). */
+.value {
+  grid-area: value;
+  display: block;
+  margin-top: 18px;
+  color: var(--color-ink);
+  font-size: clamp(32px, calc((100cqi - 16px) * 0.54 / (var(--chars) * 0.56)), 56px);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 640px) {
+  .value {
+    margin-top: 26px;
+    font-size: clamp(36px, calc(100cqi / (var(--chars) * 0.56)), 56px);
+  }
+}
+
+.text { grid-area: text; margin-top: 18px; }
+@media (min-width: 640px) { .text { margin-top: 16px; } }
+
+.label {
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.hint {
+  margin-top: 4px;
+  color: var(--color-mute);
+  font-size: 13.5px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* Reduced motion: the finished ledger from the first paint (set here, not
+   from JS, so the server's markup already matches) */
+@media (prefers-reduced-motion: reduce) {
+  .run,
+  .num { transition: none; }
+  .run { transform: none; }
+  .num { color: var(--color-ink); }
+}

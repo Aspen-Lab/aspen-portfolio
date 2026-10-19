@@ -1,0 +1,198 @@
+/* Latent's plotted sheet on the dark page: a flat card, a second sheet
+   offset under it, a hairline grid, mono ticks, one accent. */
+.chart {
+  --accent-ink: var(--accent, var(--color-ink));
+  display: grid;
+  gap: 32px;
+}
+@media (min-width: 1024px) {
+  .chart {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: center;
+    gap: 48px;
+  }
+}
+
+/* ── The entries ── */
+.tabs { display: grid; order: 2; }
+@media (min-width: 1024px) { .tabs { order: 0; } }
+
+.tab {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  width: 100%;
+  padding: 16px 0 18px;
+  border-top: 1px solid var(--color-line);
+  text-align: left;
+  cursor: pointer;
+}
+li:last-child .tab { border-bottom: 1px solid var(--color-line); }
+.num,
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-soft);
+  transition: color 220ms ease;
+}
+.num { grid-row: span 3; padding-top: 2px; font-variant-numeric: tabular-nums; }
+.title {
+  margin-top: 6px;
+  color: var(--color-mute);
+  font-size: 19px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  transition: color 220ms ease;
+}
+.text {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  color: var(--color-mute);
+  font-size: 14.5px;
+  line-height: 1.55;
+  opacity: 0;
+  transition: grid-template-rows 420ms var(--ease-arrive), opacity 300ms ease, margin-top 420ms var(--ease-arrive);
+}
+.text > span { min-height: 0; overflow: hidden; }
+.tab[data-on="true"] .num,
+.tab[data-on="true"] .kicker { color: var(--color-ink); }
+.tab[data-on="true"] .title { color: var(--color-ink); }
+.tab[data-on="true"] .text {
+  grid-template-rows: 1fr;
+  margin-top: 8px;
+  opacity: 1;
+}
+.tab:hover .title { color: var(--color-ink); }
+.tab:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
+
+/* The hairline that runs out the dwell time, Latent's progress rule */
+.track {
+  position: absolute;
+  left: 2.25rem;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+}
+.bar {
+  position: absolute;
+  inset: 0;
+  background: var(--accent-ink);
+  transform-origin: left;
+  transform: scaleX(1);
+}
+.bar[data-run="true"] { animation: run 6500ms linear both; }
+@keyframes run { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ── The sheet ── */
+.sheetWrap {
+  position: relative;
+  isolation: isolate;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.sheetWrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(10px, 10px);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: #131314;
+}
+.sheet {
+  position: relative;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+.plot { display: block; width: 100%; height: auto; }
+
+.grid { stroke: rgb(244 244 242 / 6%); stroke-width: 1; }
+.axis { stroke: rgb(244 244 242 / 22%); stroke-width: 1; }
+.curve { fill: none; stroke: rgb(244 244 242 / 55%); stroke-width: 1.2; }
+.link { stroke: rgb(244 244 242 / 35%); stroke-width: 1; stroke-dasharray: 3 5; }
+.dot { fill: var(--color-ink); }
+.focus { fill: var(--accent-ink); }
+.hex {
+  fill: none;
+  stroke: rgb(244 244 242 / 55%);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: turn 24s linear infinite;
+}
+.leader { stroke: rgb(244 244 242 / 55%); stroke-width: 1; stroke-dasharray: 2 3; }
+@keyframes turn { to { transform: rotate(360deg); } }
+
+.tag,
+.group,
+.end,
+.axisTitle {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tag {
+  translate: -50% 0;
+  padding: 5px 8px 4px;
+  border: 1px solid rgb(244 244 242 / 55%);
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.group {
+  transform: translateX(-50%);
+  color: var(--color-mute);
+}
+.end { bottom: 12px; color: var(--color-soft); }
+/* On a phone the band under the ticks is ~25px: drop the leading and
+   centre the label in it, or it rides up onto the axis */
+@media (max-width: 639px) { .end { bottom: 6px; line-height: 1; } }
+.from { left: calc(36 / 600 * 100%); }
+.to { right: calc(28 / 600 * 100%); }
+/* The vertical title stands in the strip between the last gridline and the
+   sheet's edge, centred on the plot's height: on the sheet, never across
+   the gutter to the one behind it. */
+.axisTitle {
+  top: calc(228 / 480 * 100%);
+  right: calc(14 / 600 * 100%);
+  writing-mode: vertical-rl;
+  transform: translate(50%, -50%);
+  color: var(--color-soft);
+  letter-spacing: 0.2em;
+}
+/* On a narrow sheet that strip is too slim to hold a line of type */
+@media (max-width: 639px) { .axisTitle { display: none; } }
+
+/* Hanzi set in the mono role at 10–11px with wide tracking turn to
+   specks; on the Chinese routes the labels step up and close in, and the
+   vertical title stands upright down the plot instead of on its side. */
+:global(html[lang="zh-CN"]) .kicker,
+:global(html[lang="zh-CN"]) .tag,
+:global(html[lang="zh-CN"]) .group,
+:global(html[lang="zh-CN"]) .end {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+:global(html[lang="zh-CN"]) .axisTitle {
+  text-orientation: upright;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text,
+  .title,
+  .num,
+  .kicker { transition: none; }
+  .bar[data-run="true"] { animation: none; }
+  .hex { animation: none; }
+}
