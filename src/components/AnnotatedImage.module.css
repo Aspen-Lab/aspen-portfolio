@@ -44,12 +44,6 @@
 }
 .spot[data-on="true"] { opacity: 1; }
 
-.dim {
-  position: absolute;
-  inset: 0;
-  opacity: 0.58;
-}
-.panel,
 .piece {
   position: absolute;
   inset: 0;
@@ -57,16 +51,11 @@
   will-change: transform;
   transition: transform 460ms var(--ease-arrive);
 }
-.panel { background: rgb(10 10 11); }
 
 /* Where each piece stands, from the region on the viewfinder (--x, --y,
    --w, --h, in per cent of the frame). Left and right panels run the full
    height, top and bottom the full width; edges are pinned at a corner and
    scaled to their side; fills and marks sit on their corner point. */
-.panel[data-side="top"] { transform: translateY(calc(var(--y) * 1% - 100%)); }
-.panel[data-side="right"] { transform: translateX(calc((var(--x) + var(--w)) * 1%)); }
-.panel[data-side="bottom"] { transform: translateY(calc((var(--y) + var(--h)) * 1%)); }
-.panel[data-side="left"] { transform: translateX(calc(var(--x) * 1% - 100%)); }
 .piece[data-edge="top"] { transform: translate(calc(var(--x) * 1%), calc(var(--y) * 1%)) scaleX(calc(var(--w) / 100)); }
 .piece[data-edge="right"] { transform: translate(calc((var(--x) + var(--w)) * 1%), calc(var(--y) * 1%)) scaleY(calc(var(--h) / 100)); }
 .piece[data-edge="bottom"] { transform: translate(calc(var(--x) * 1%), calc((var(--y) + var(--h)) * 1%)) scaleX(calc(var(--w) / 100)); }
@@ -80,26 +69,12 @@
    it reads as the old 22% outline over the dim. */
 .edge {
   position: absolute;
-  background: rgb(100 100 99);
+  background: rgb(244 244 242 / 60%);
 }
 .edge[data-side="top"] { left: 0; top: -1px; width: 100%; height: 1px; }
 .edge[data-side="bottom"] { left: 0; top: 0; width: 100%; height: 1px; }
 .edge[data-side="left"] { left: -1px; top: 0; width: 1px; height: 100%; }
 .edge[data-side="right"] { left: 0; top: 0; width: 1px; height: 100%; }
-
-/* The region's rounded corners: each fill sits on its corner point */
-.fill {
-  position: absolute;
-  left: -6px;
-  top: -6px;
-  width: 12px;
-  height: 12px;
-  overflow: visible;
-  fill: rgb(10 10 11);
-}
-.fill[data-c="tr"] { transform: rotate(90deg); }
-.fill[data-c="br"] { transform: rotate(180deg); }
-.fill[data-c="bl"] { transform: rotate(270deg); }
 
 /* The four marks, each on its corner point */
 .corner {
@@ -259,7 +234,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .spot,
-  .panel,
   .piece,
   .marker,
   .marker::before,

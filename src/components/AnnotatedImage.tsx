@@ -8,55 +8,33 @@ import styles from "./AnnotatedImage.module.css";
 
 /* An image that explains itself. Numbered markers sit on the picture and
    the notes are written out under it, one column each. Point at a marker,
-   a region or a note and the picture dims around that region, held in a
-   viewfinder; the other notes step back. Touch and keyboard pin a note
-   with a tap or Enter. The notes are the accessible copy; the markers and
-   regions are pointer conveniences on top of the image. Nothing moves on
-   its own: the markers are still discs until someone points at them.
+   a region or a note and a viewfinder settles on that region — a hairline
+   and four corner marks; the picture around it stays as it is (Aspen,
+   2026-10-19: 「图片 zoom 不要加暗附近」) — and the other notes step back.
+   Touch and keyboard pin a note with a tap or Enter. The notes are the
+   accessible copy; the markers and regions are pointer conveniences on top
+   of the image.
 
    The viewfinder moves by transform only; nothing in it is ever laid out
-   again. It is drawn in pieces as big as the frame, so a translate in per cent is a share of the
-   picture and a scale is a share of one side: four dim panels (left and
-   right run the full height, top and bottom the full width) and four
-   hairline edges and four corner fills, all in one flat group that dims
-   them evenly where they overlap, with the four corner marks on top.
-   Pointing at another note sets the region's four numbers on one element;
-   every piece's transform is worked out from them in CSS, so the
-   compositor glides the viewfinder and the page underneath is never laid
-   out or repainted on the way. The picture, the regions, the viewfinder's
-   pieces and every note are memoised: a hover re-renders only the notes
-   and markers whose state it changes. */
+   again. Its hairline edges are as big as the frame, pinned at a corner
+   and scaled to their side, and the corner marks sit on their corner
+   points. The picture, the regions, the viewfinder's pieces and every note
+   are memoised: a hover re-renders only the notes and markers whose state
+   it changes. */
 
 const SIDES = ["top", "right", "bottom", "left"] as const;
 const CORNERS = ["tl", "tr", "br", "bl"] as const;
-
-/* The dim around a rounded corner: the square about the corner point less
-   the region's quarter, whose corner is rounded to the marks' 6px. Drawn
-   for the top left and turned for the others. */
-const FILL = "M-6 -6H6V0A6 6 0 0 0 0 6H-6Z";
 
 /* The viewfinder's pieces. They never re-render: where they stand comes
    from the --x, --y, --w and --h set on the viewfinder. */
 const Viewfinder = memo(function Viewfinder() {
   return (
     <>
-      <span className={styles.dim}>
-        {SIDES.map((side) => (
-          <span key={side} className={styles.panel} data-side={side} />
-        ))}
-        {SIDES.map((side) => (
-          <span key={side} className={styles.piece} data-edge={side}>
-            <span className={styles.edge} data-side={side} />
-          </span>
-        ))}
-        {CORNERS.map((c) => (
-          <span key={c} className={styles.piece} data-corner={c}>
-            <svg className={styles.fill} data-c={c} viewBox="-6 -6 12 12">
-              <path d={FILL} />
-            </svg>
-          </span>
-        ))}
-      </span>
+      {SIDES.map((side) => (
+        <span key={side} className={styles.piece} data-edge={side}>
+          <span className={styles.edge} data-side={side} />
+        </span>
+      ))}
       {CORNERS.map((c) => (
         <span key={c} className={styles.piece} data-corner={c}>
           <span className={styles.corner} data-c={c} />
