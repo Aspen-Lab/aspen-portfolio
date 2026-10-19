@@ -28,12 +28,12 @@
 .caseLink svg { transition: transform 180ms ease; }
 .caseLink:hover svg { transform: translate(2px, -2px); }
 .activity { margin-top: 25px; border-top: 1px solid var(--color-line); padding-top: 17px; }
-.activity > .smallHeading { margin-bottom: 10px; font: 11px/18px var(--font-sans); letter-spacing: 0; color: var(--color-mute); }
+.activity > .smallHeading { margin-bottom: 10px; font: 13px/20px var(--font-sans); letter-spacing: 0; color: var(--color-mute); }
 .personalGrid { display: grid; grid-template-columns: 1.08fr 1fr; gap: 64px; border-top: 1px solid var(--color-line); margin-top: 56px; padding-top: 32px; }
 .personality { max-width: 420px; }
-.personalHeader { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 32px; margin-bottom: 12px; color: var(--color-mute); font-size: 11px; }
+.personalHeader { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 32px; margin-bottom: 12px; color: var(--color-mute); font-size: 13px; }
 /* Hover lifts opacity, not color, so it never repaints the label */
-.flipButton { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; color: var(--color-ink); opacity: .64; font-size: 11px; transition: opacity 140ms; }
+.flipButton { display: inline-flex; align-items: center; gap: 7px; min-height: 32px; color: var(--color-ink); opacity: .64; font-size: 13px; transition: opacity 140ms; }
 .flipButton:hover, .flipButton:focus-visible { opacity: 1; }
 .flipButton:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 .flipButton svg { transition: transform 240ms cubic-bezier(.2,.8,.2,1); }
@@ -41,18 +41,20 @@
 .cardStage { perspective: 1000px; height: 194px; }
 .cardTurn { position: relative; height: 100%; transform-style: preserve-3d; transition: transform 420ms cubic-bezier(.22,.75,.22,1); }
 .cardStage[data-flipped="true"] .cardTurn { transform: rotateY(180deg); }
-.cardFace { position: absolute; inset: 0; overflow: hidden; border: 1px solid #303332; border-radius: 5px; padding: 19px 22px; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #151716; color: #e3e7e2; }
-.faceLabel { position: relative; font-size: 10px; color: #99a098; }
-.personalityType { position: relative; margin-top: 17px; font: 61px/.9 var(--font-newsreader), Georgia, serif; letter-spacing: -.045em; }
+/* Each face is a label up top and its statement at the foot: the big type
+   sits on the bottom edge (margin-top: auto), so no footnote line is needed
+   to fill the card. */
+.cardFace { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; border: 1px solid #303332; border-radius: 5px; padding: 19px 22px 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #151716; color: #e3e7e2; }
+.faceLabel { position: relative; font-size: 13px; line-height: 1.4; color: #99a098; }
+.personalityType { position: relative; margin-top: auto; font: 61px/.9 var(--font-newsreader), Georgia, serif; letter-spacing: -.045em; }
 .personalityType span { margin-left: 4px; font: 25px var(--font-newsreader), Georgia, serif; color: #a6afa3; letter-spacing: -.02em; }
-.faceCopy { position: relative; margin-top: 13px; font-size: 12px; color: #c2c9bf; }
-.faceFoot { position: absolute; bottom: 17px; left: 22px; right: 20px; font: 10px/1.5 var(--font-sans); color: #929990; }
+.faceCopy { position: relative; margin-top: 14px; font-size: 14.5px; line-height: 1.45; color: #c2c9bf; }
 .fingerprint { position: absolute; right: 17px; top: 28px; color: #adb8a7; opacity: .2; pointer-events: none; }
 .cardBack { transform: rotateY(180deg); background: #171717; border-color: #333332; }
-.cardBack .faceLabel, .cardBack .faceFoot { color: #989893; }
-.educationTitle { position: relative; font: 29px/1.08 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; margin-top: 16px; }
+.cardBack .faceLabel { color: #989893; }
+.educationTitle { position: relative; font: 29px/1.08 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; margin-top: auto; }
 .educationTitle span { color: #babbb4; }
-.school { font-size: 11px; color: #c0c1ba; margin-top: 11px; }
+.school { font-size: 13px; line-height: 1.4; color: #c0c1ba; margin-top: 12px; }
 .personalNote { max-width: 420px; color: var(--color-mute); font-size: 14.5px; line-height: 1.65; margin-top: 13px; text-wrap: balance; }
 @media (max-width: 1150px) {
   .intro, .practiceGrid, .personalGrid { gap: 36px; }
@@ -65,8 +67,7 @@
   .intro, .practiceGrid, .personalGrid { grid-template-columns: 1fr; gap: 32px; }
   .intro { margin: 34px 0 36px; gap: 24px; }
   .intro h2 { font-size: 46px; }
-  .introCopy p { font-size: 14px; margin-top: 10px; }
-  .role { font-size: 9px; letter-spacing: .05em; }
+  .introCopy p { font-size: 14.5px; margin-top: 10px; }
   .practiceGrid { gap: 38px; }
   .personalGrid { margin-top: 38px; padding-top: 24px; gap: 38px; }
   .metrics p { font-size: clamp(30px, 8vw, 42px); }
@@ -76,11 +77,10 @@
   .metrics { gap: 9px; }
   .metrics > div + div { padding-left: 10px; }
   .metrics p { font-size: 28px; }
-  .metrics p span { font-size: 9px; }
+  .metrics p span { font-size: 10px; }
   .cardFace { padding-left: 18px; padding-right: 18px; }
   .personalityType { font-size: 55px; }
   .fingerprint { width: 86px; right: 9px; opacity: .14; }
-  .faceFoot { left: 18px; right: 18px; font-size: 9px; }
   .educationTitle { font-size: 27px; }
 }
 @media (prefers-reduced-motion: reduce) {

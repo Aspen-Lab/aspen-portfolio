@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type CSSProperties } from "react";
+import { useRef, type CSSProperties, type ReactNode } from "react";
 import { useInView } from "motion/react";
 import { useLocale } from "next-intl";
 import type { SpanRow } from "@/lib/work";
@@ -8,14 +8,19 @@ import styles from "./SpanChart.module.css";
 
 /* What one role covers, drawn as a Latent sheet (latenthealth.com): the
    stages from a problem to production run across the top, and each area of
-   the work is a flat bar over exactly the stages it covers, carrying what
-   it is made of. Under a sum rule, one accent rail is the union of the
-   bars: it starts where the first bar starts and ends where the last one
-   ends, so the whole chain reads as one person's. The focus (a dashed
-   hexagon and a boxed tag on a dashed leader) sits at its Ship end.
-   The entries above are the bars' legend and the accessible copy. Point
-   at, focus or tap an entry or a bar: that area and its entry stay lit,
-   the stages it covers are banded and the rest steps back. Tap pins.
+   the work is a flat bar over exactly the stages it covers, carrying its
+   number and what it is made of. Under a sum rule, one accent rail is the
+   union of the bars: it starts where the first bar starts and ends where
+   the last one ends, so the whole chain reads as one person's. The focus
+   (a dashed hexagon and a boxed tag on a dashed leader) sits at its Ship
+   end.
+   The entries above are the bars' legend and the accessible copy, so the
+   bars carry no names of their own: each is keyed to its entry by number
+   (on phones, where the bars are too short for their items, by its short
+   name). Point at, focus or tap an entry or a bar: that area and its entry
+   stay lit, the stages it covers are banded and the rest steps back. The
+   highlight moves only from one area to the next; the gaps between them
+   keep it, and leaving the figure lets it go. Tap pins.
    The state is written straight to the DOM as data-* attributes, so a
    hover never re-renders React; CSS answers with opacity alone. The bars
    draw in once, left to right, when the sheet comes into view; reduced
@@ -33,6 +38,36 @@ function hexagon(r: number) {
 }
 
 const num = (i: number) => String(i + 1).padStart(2, "0");
+
+/* Chinese may wrap between any two hanzi, so a narrow column splits a word
+   (会 / 员, 创 / 意). As on the page (Hanzi in the work page), the copy is
+   cut into words and a word of two or more hanzi is held whole; a lone
+   hanzi the dictionary leaves over (复, 用, 组, 件; 的, 和) joins the
+   hanzi before it, so 可复用组件 holds too. The lines still break between
+   words. Node and the browser segment alike, so the markup hydrates. */
+const zhWords = typeof Intl.Segmenter === "function" ? new Intl.Segmenter("zh", { granularity: "word" }) : null;
+const HAN = /^\p{Script=Han}+$/u;
+
+function hold(text: string): ReactNode {
+  if (zhWords === null || !/\p{Script=Han}/u.test(text)) return text;
+  const words: string[] = [];
+  let afterHan = false;
+  for (const { segment } of zhWords.segment(text)) {
+    const han = HAN.test(segment);
+    if (han && segment.length === 1 && afterHan) words[words.length - 1] += segment;
+    else words.push(segment);
+    afterHan = han;
+  }
+  return words.map((word, i) =>
+    word.length > 1 && HAN.test(word) ? (
+      <span key={i} className={styles.word}>
+        {word}
+      </span>
+    ) : (
+      word
+    ),
+  );
+}
 
 /** The key of the entry or bar under an event target, if any. */
 function keyOf(target: EventTarget | null) {
@@ -92,8 +127,11 @@ export function SpanChart({ stages, total, rows }: { stages: string[]; total: st
       style={{ ["--n" as string]: n, ["--rows" as string]: rows.length } as CSSProperties}
       onPointerOver={(e) => {
         if (e.pointerType !== "mouse") return;
+        // Only another area moves the highlight. Crossing a gap between
+        // entries, or from the entries to the sheet, keeps it, so the
+        // chart never pulses back to full on the way; leaving lets go.
         const key = keyOf(e.target);
-        if (key === held.current.hover) return;
+        if (key === null || key === held.current.hover) return;
         held.current.hover = key;
         show();
       }}
@@ -127,8 +165,8 @@ export function SpanChart({ stages, total, rows }: { stages: string[]; total: st
                 <span className={styles.num}>{num(i)}</span>
                 <span className={styles.kicker}>{row.kicker}</span>
               </span>
-              <span className={styles.title}>{row.title}</span>
-              <span className={styles.text}>{row.text}</span>
+              <span className={styles.title}>{hold(row.title)}</span>
+              <span className={styles.text}>{hold(row.text)}</span>
               <span className="sr-only">
                 {cn ? `覆盖${stages[row.from]}到${stages[row.to]}。` : `Covers ${stages[row.from]} to ${stages[row.to]}.`}
               </span>
@@ -172,19 +210,20 @@ export function SpanChart({ stages, total, rows }: { stages: string[]; total: st
                   data-key={i}
                   style={{ ["--i" as string]: i } as CSSProperties}
                 >
-                  <span className={styles.label} style={{ gridColumn: `${row.from + 1} / -1` }}>
-                    <span className={styles.rowNum}>{num(i)}</span>
-                    {row.kicker}
-                  </span>
                   <span className={styles.bar} style={{ gridColumn: `${row.from + 1} / ${row.to + 2}` }}>
                     <span className={styles.fill} />
                     <span className={styles.ring} />
-                    <span className={styles.items}>
-                      {row.items.map((item) => (
-                        <span key={item} className={styles.item}>
-                          {item}
-                        </span>
-                      ))}
+                    <span className={styles.content}>
+                      <span className={styles.key}>{num(i)}</span>
+                      {/* Phones: the short name in place of the items */}
+                      <span className={styles.name}>{row.kicker}</span>
+                      <span className={styles.items}>
+                        {row.items.map((item) => (
+                          <span key={item} className={styles.item}>
+                            {item}
+                          </span>
+                        ))}
+                      </span>
                     </span>
                   </span>
                 </div>

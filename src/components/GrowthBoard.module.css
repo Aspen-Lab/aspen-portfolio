@@ -54,7 +54,10 @@
 }
 
 /* ── The figures: two and one on a phone, a row from a tablet up,
-   revenue's column set wider so the row keeps its own rhythm ── */
+   revenue's column set wider so the row keeps its own rhythm. Each figure
+   spans two shared rows (a subgrid), so the numbers and the revenue
+   baseline stand on one line, whatever the line above them is, and the
+   labels all sit on the next. ── */
 .figs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -63,22 +66,27 @@
 }
 .fig {
   display: grid;
-  align-content: start;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
   row-gap: 10px;
 }
 .fig[data-trend="true"] { grid-column: 1 / -1; }
 
+/* Users and GMV are context (the ledger above states them), so a size
+   down; revenue's drawing is what stands tallest on the line */
 .value {
   grid-row: 1;
+  align-self: end;
   height: 1.1em;
   color: var(--color-ink);
-  font-size: 44px;
+  font-size: 36px;
   font-weight: 300;
   line-height: 1.1;
   letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+.fig[data-trend="true"] .value { height: auto; }
 .label {
   grid-row: 2;
   color: var(--color-mute);
@@ -86,6 +94,8 @@
   line-height: 1.45;
   text-wrap: pretty;
 }
+/* The direction, said in the label's own row */
+.said { color: var(--color-ink); }
 /* Chinese lines break at their spaces and commas, not mid-word */
 .label,
 .stage,
@@ -122,13 +132,13 @@
   line-height: var(--slot);
 }
 
-/* Revenue: a box as tall as a capital, standing on the baseline like the
-   numbers beside it; the line runs corner to corner. */
+/* Revenue: a box standing on the numbers' baseline, taller than their
+   capitals; the line runs corner to corner. */
 .trend {
   position: relative;
   display: inline-block;
-  width: 1.5em;
-  height: 0.7em;
+  width: 112px;
+  height: 52px;
 }
 .glyph {
   position: absolute;
@@ -306,7 +316,8 @@
   .wrap { --pad-x: 32px; }
   .sheet { padding: 26px var(--pad-x) 30px; }
   .figs { gap: 34px 28px; margin-top: 26px; }
-  .value { font-size: clamp(48px, 5.2vw, 60px); }
+  .value { font-size: clamp(40px, 3.6vw, 46px); }
+  .trend { width: 148px; height: 66px; }
   .pathBand { margin-top: 36px; padding-top: 26px; }
   .path { margin-top: 26px; }
   .rail {
@@ -404,4 +415,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .spin { animation: none; will-change: auto; }
+}
+
+/* ── Chinese: no capitals to set, so the tags take the sans a size up,
+   as SpanChart's do ── */
+:global(html[lang="zh-CN"]) .boxTag,
+:global(html[lang="zh-CN"]) .tag {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.06em;
 }

@@ -22,10 +22,13 @@ import styles from "./IconList.module.css";
      02 the code diff beside the preview it changes,
      03 review that deepens with impact, from visual details up to the
         sensitive flows engineering reviews with me.
-   They are schematics: no axis carries a number. Each one draws itself
-   once on arrival (stroke offsets on small paths, opacity, transforms);
-   the hexagon turns on its own composited layer. Reduced motion shows the
-   finished drawing, still. Flat fills only; no gradients. */
+   They are schematics: no axis carries a number. The words come first:
+   every name, axis and tag on a sheet is in place within 200 ms of its
+   entry arriving, so a reader who only glances already has what the
+   sheet says, and the drawing then fills in under the words (stroke
+   offsets on small paths, opacity, transforms). The hexagon turns on its
+   own composited layer. Reduced motion shows the finished drawing,
+   still. Flat fills only; no gradients. */
 
 type Item = {
   icon?: Parameters<typeof Icon>[0]["name"];
@@ -100,7 +103,9 @@ const H = 200;
 const q = (n: number) => Math.round(n * 100) / 100;
 const pctX = (x: number) => `${q((x / W) * 100)}%`;
 const pctY = (y: number) => `${q((y / H) * 100)}%`;
-/** When a mark arrives, in ms after its entry starts drawing; o = its final opacity. */
+/** When a mark arrives, in ms after its entry starts drawing; o = its final opacity.
+    Words (Note, Tag, the axis word) keep to 0–200: they arrive with the
+    sheet, never after the drawing. */
 const at = (ms: number, o?: number) =>
   ({ ["--d" as string]: `${Math.round(ms)}ms`, ...(o !== undefined && { ["--o" as string]: o }) }) as CSSProperties;
 /** A line that draws at an even pace from `ms` for `dur`. */
@@ -203,8 +208,9 @@ function Chevron({ x, y, deg, ms, className }: { x: number; y: number; deg: numb
    stack; review takes it back round to the next decision. The way out,
    from the decision to the working change, is the brighter half: that is
    the distance the AI tools shorten. The working change is the focus.
-   The line draws clockwise at an even pace, and each station lands as the
-   line reaches it. */
+   The names are on the sheet from the start; the line then draws
+   clockwise at an even pace, and each station lands as the line reaches
+   it. */
 const RECT = { x0: 52, x1: 268, y0: 38, y1: 154, r: 24 };
 const CX = (RECT.x0 + RECT.x1) / 2;
 const CY = (RECT.y0 + RECT.y1) / 2;
@@ -219,9 +225,9 @@ const LOOP = (() => {
   const early = straight / 2 / half;
   return { out, back, early, late: 1 - early, straight };
 })();
-const OUT = 1000;
-const BACK_AT = OUT + 120;
-const BACK = 900;
+const OUT = 840;
+const BACK_AT = OUT + 100;
+const BACK = 720;
 
 const LOOP_COPY = {
   en: { decision: "Design decision", prototype: "AI prototype", change: "Working change", stack: "In the existing stack", review: "Review" },
@@ -242,22 +248,23 @@ function LoopSheet({ cn }: { cn: boolean }) {
     <Sheet
       overlay={
         <>
-          <Note x={CX} y={y0 - 16} ms={80}>
+          {/* The words, in the order the loop reads */}
+          <Note x={CX} y={y0 - 16} ms={0}>
             {t.decision}
           </Note>
-          <Note x={x1 - 11} y={CY} align="end" ms={OUT / 2 + 80}>
+          <Note x={x1 - 11} y={CY} align="end" ms={40}>
             {t.prototype}
           </Note>
-          <Note x={x0 + 11} y={CY} align="start" ms={BACK_AT + BACK / 2 + 80}>
-            {t.review}
-          </Note>
-          <Ring x={CX} y={y1} r={ring} ms={OUT + 160} />
-          <Tag x={CX} y={tagY} side="above" ms={OUT + 360}>
+          <Tag x={CX} y={tagY} side="above" ms={100}>
             {t.change}
           </Tag>
-          <Note x={CX} y={y1 + 20} ms={OUT + 440}>
+          <Note x={CX} y={y1 + 20} ms={140}>
             {t.stack}
           </Note>
+          <Note x={x0 + 11} y={CY} align="start" ms={180}>
+            {t.review}
+          </Note>
+          <Ring x={CX} y={y1} r={ring} ms={OUT + 140} />
         </>
       }
     >
@@ -275,7 +282,7 @@ function LoopSheet({ cn }: { cn: boolean }) {
         <circle key={i} cx={s.x} cy={s.y} r={3.5} className={`${styles.station} ${styles.pop}`} style={at(s.ms)} />
       ))}
       <circle cx={CX} cy={y1} r={5} className={`${styles.focus} ${styles.pop}`} style={at(OUT)} />
-      <Leader from={[CX, y1 - ring]} to={[CX, tagY]} ms={OUT + 280} />
+      <Leader from={[CX, y1 - ring]} to={[CX, tagY]} ms={OUT + 220} />
     </Sheet>
   );
 }
@@ -331,22 +338,23 @@ const LINK = (() => {
 function DiffSheet({ cn }: { cn: boolean }) {
   const ring = 17;
   const tagY = SWITCH.y + ring + 11;
-  const linkAt = 1000;
-  const on = linkAt + LINK.beads.length * 55 + 120;
+  const linkAt = 760;
+  const bead = 45;
+  const on = linkAt + LINK.beads.length * bead + 120;
   return (
     <Sheet
       overlay={
         <>
-          <Note x={PANEL.x0 + 9} y={(PANEL.y0 + HEAD) / 2} align="start" ms={60}>
+          <Note x={PANEL.x0 + 9} y={(PANEL.y0 + HEAD) / 2} align="start" ms={0}>
             {cn ? "代码改动" : "Code diff"}
           </Note>
-          <Note x={SCREEN.x0 + 31} y={(SCREEN.y0 + HEAD) / 2} align="start" ms={180}>
+          <Note x={SCREEN.x0 + 31} y={(SCREEN.y0 + HEAD) / 2} align="start" ms={60}>
             {cn ? "运行预览" : "Preview"}
           </Note>
-          <Ring x={SWITCH.x} y={SWITCH.y} r={ring} ms={on + 180} />
-          <Tag x={(SCREEN.x0 + SCREEN.x1) / 2} y={tagY} side="below" ms={on + 420}>
+          <Tag x={(SCREEN.x0 + SCREEN.x1) / 2} y={tagY} side="below" ms={140}>
             {cn ? "受影响场景" : "Affected flow"}
           </Tag>
+          <Ring x={SWITCH.x} y={SWITCH.y} r={ring} ms={on + 160} />
         </>
       }
     >
@@ -364,7 +372,7 @@ function DiffSheet({ cn }: { cn: boolean }) {
       <line x1={PANEL.x0} x2={PANEL.x1} y1={HEAD} y2={HEAD} className={styles.rule} />
       {ROWS.map((row, i) => {
         const y = ROW0 + i * PITCH;
-        const ms = 120 + i * 65;
+        const ms = 80 + i * 50;
         const o = row.kind === "add" ? (i === KEY ? 0.92 : 0.7) : row.kind === "del" ? 0.2 : 0.3;
         return (
           <g key={i}>
@@ -425,7 +433,7 @@ function DiffSheet({ cn }: { cn: boolean }) {
           cy={p.y}
           r={1.15}
           className={`${styles.ink} ${styles.pop}`}
-          style={at(linkAt + i * 55, 0.75)}
+          style={at(linkAt + i * bead, 0.75)}
         />
       ))}
       <circle
@@ -433,7 +441,7 @@ function DiffSheet({ cn }: { cn: boolean }) {
         cy={LINK.b.y}
         r={2.4}
         className={`${styles.port} ${styles.pop}`}
-        style={at(linkAt + LINK.beads.length * 55)}
+        style={at(linkAt + LINK.beads.length * bead)}
       />
 
       {/* The switch: off until the change lands, then on in the accent.
@@ -447,7 +455,7 @@ function DiffSheet({ cn }: { cn: boolean }) {
           <circle cx={SWITCH.x - 6} cy={SWITCH.y} r={4} className={styles.knobOn} />
         </g>
       </g>
-      <Leader from={[SWITCH.x, SWITCH.y + ring]} to={[SWITCH.x, tagY]} ms={on + 320} />
+      <Leader from={[SWITCH.x, SWITCH.y + ring]} to={[SWITCH.x, tagY]} ms={on + 260} />
     </Sheet>
   );
 }
@@ -489,34 +497,35 @@ const TOP = { x: 280, y: q(band(280) - 3) };
 
 function ImpactSheet({ cn }: { cn: boolean }) {
   const ring = 13;
-  const dotsAt = 700;
-  const focusAt = dotsAt + CHANGES.length * 85 + 120;
+  const dotsAt = 560;
+  const dotStep = 65;
+  const focusAt = dotsAt + CHANGES.length * dotStep + 120;
   const tagX = TOP.x - ring - 26;
   return (
     <Sheet
       overlay={
         <>
-          {/* What the ends of the rule mean, in words */}
-          <Note x={PLOT.x0 + 10} y={PLOT.y0 + 7} align="start" ms={focusAt + 520}>
-            {cn ? "与工程师共同检查" : "Review with engineering"}
-          </Note>
-          <Note x={PLOT.x0 + 4} y={PLOT.y1 + 16} align="start" ms={dotsAt + 120}>
-            {cn ? "视觉与交互细节" : "Visual & interaction"}
-          </Note>
-          <Ring x={TOP.x} y={TOP.y} r={ring} ms={focusAt + 180} />
-          <Tag x={tagX} y={TOP.y} side="left" ms={focusAt + 420}>
-            {cn ? "敏感流程" : "Sensitive flows"}
-          </Tag>
-          <Note x={PLOT.x1} y={PLOT.y1 + 16} align="end" tone="axis" ms={380}>
+          {/* The axes first, then what the ends of the rule mean */}
+          <Note x={PLOT.x1} y={PLOT.y1 + 16} align="end" tone="axis" ms={0}>
             {cn ? "影响范围" : "Impact"}
           </Note>
           <span
             className={`${styles.word} ${styles.wordY}`}
             data-cjk={cn}
-            style={{ left: pctX(PLOT.x0 - 13), top: pctY(PLOT.y0 + 26) }}
+            style={{ left: pctX(PLOT.x0 - 13), top: pctY(PLOT.y0 + 26), ...at(40) }}
           >
             {cn ? "评审深度" : "Review depth"}
           </span>
+          <Note x={PLOT.x0 + 4} y={PLOT.y1 + 16} align="start" ms={80}>
+            {cn ? "视觉与交互细节" : "Visual & interaction"}
+          </Note>
+          <Note x={PLOT.x0 + 10} y={PLOT.y0 + 7} align="start" ms={120}>
+            {cn ? "与工程师共同检查" : "Review with engineering"}
+          </Note>
+          <Tag x={tagX} y={TOP.y} side="left" ms={180}>
+            {cn ? "敏感流程" : "Sensitive flows"}
+          </Tag>
+          <Ring x={TOP.x} y={TOP.y} r={ring} ms={focusAt + 160} />
         </>
       }
     >
@@ -531,7 +540,7 @@ function ImpactSheet({ cn }: { cn: boolean }) {
         <line x1={PLOT.x0} x2={PLOT.x0} y1={PLOT.y0} y2={PLOT.y1} className={styles.axis} />
         <polyline points={`${PLOT.x0 - 4},${PLOT.y0 + 5} ${PLOT.x0},${PLOT.y0} ${PLOT.x0 + 4},${PLOT.y0 + 5}`} className={styles.axis} />
       </g>
-      <g className={styles.fade} style={at(380)}>
+      <g className={styles.fade} style={at(300)}>
         {[80, 120, 160, 200, 240, 280].map((x) => (
           <line key={x} x1={x} x2={x} y1={PLOT.y1} y2={PLOT.y1 + 5} className={styles.axis} />
         ))}
@@ -540,7 +549,7 @@ function ImpactSheet({ cn }: { cn: boolean }) {
         ))}
       </g>
 
-      <g className={styles.grow} style={at(420)}>
+      <g className={styles.grow} style={at(340)}>
         <polygon points={BAND.area} className={styles.band} />
         <path d={BAND.mid} className={styles.mid} />
       </g>
@@ -552,11 +561,11 @@ function ImpactSheet({ cn }: { cn: boolean }) {
           cy={c.y}
           r={c.r}
           className={`${styles.dot} ${styles.pop}`}
-          style={at(dotsAt + i * 85, c.o)}
+          style={at(dotsAt + i * dotStep, c.o)}
         />
       ))}
       <circle cx={TOP.x} cy={TOP.y} r={5.5} className={`${styles.focus} ${styles.pop}`} style={at(focusAt)} />
-      <Leader from={[TOP.x - ring * 0.87, TOP.y]} to={[tagX, TOP.y]} ms={focusAt + 320} />
+      <Leader from={[TOP.x - ring * 0.87, TOP.y]} to={[tagX, TOP.y]} ms={focusAt + 260} />
     </Sheet>
   );
 }

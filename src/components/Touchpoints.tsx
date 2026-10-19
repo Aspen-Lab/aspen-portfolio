@@ -22,10 +22,12 @@ import styles from "./Touchpoints.module.css";
    mountains) and one small pink dot-matrix sign, the site's FOUND badge
    with the word taken out. Text is placeholder bars; the only word in any
    frame is "Axel".
-   The focus dot rides the rail from frame to frame, slowly; where it stops,
-   that frame's sign flickers on. Point at or focus a frame and the dot
-   goes there, the frame lifts and its note shows while the others step
-   back. Reduced motion parks the dot at the end of the chain, the email.
+   Every frame's note is always there to read; the tour only says which
+   one to read now. The focus dot rides the rail from frame to frame,
+   slowly; where it stops, that frame's sign flickers on and its note comes
+   up to full ink. Point at or focus a frame and the dot goes there, the
+   frame lifts and the others step back. Reduced motion parks the dot at
+   the end of the chain, the email.
    The frames are a drawing, not screenshots, and imply no measurements.
    Pointing is cheap: the drawings are memoised, so a hover re-renders the
    labels and never the night skies; the dot is its own layer, moved by
@@ -690,17 +692,20 @@ const Stop = memo(
   },
 );
 
-/* Two-up, the notes would each get a sliver: they share one line */
+/* Two-up, a note under each frame would get a sliver, so the four stand
+   together under the sheet as one short numbered list: all of them
+   readable at once, the one the dot is at in full ink. The buttons carry
+   the same notes for a screen reader, so the list is hidden from one. */
 const Caption = memo(function Caption({ at, cn }: { at: number; cn: boolean }) {
   return (
-    <div aria-hidden className={styles.caption}>
+    <ol aria-hidden className={styles.caption}>
       {STOPS.map((s, i) => (
-        <p key={s.id} data-on={i === at}>
+        <li key={s.id} data-on={i === at}>
           <span className={styles.capNum}>{String(i + 1).padStart(2, "0")}</span>
-          {cn ? s.note.cn : s.note.en}
-        </p>
+          <span>{cn ? phrases(s.note.cn) : s.note.en}</span>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 });
 

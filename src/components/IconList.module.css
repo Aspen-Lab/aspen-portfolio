@@ -294,16 +294,22 @@
   letter-spacing: 0.3em;
 }
 
-/* ── Arrival ── marks wait, then draw, grow or settle on their delay. */
+/* ── Arrival ── the words first, then the marks. The words keep to the
+   first 200 ms and to half the stagger between columns, so every sheet
+   says what it is before its drawing is under way; the marks then wait,
+   draw, grow or settle on their own delays. */
 .draw,
 .fade,
 .pop,
 .grow,
 .rise,
-.ring,
-.tag,
-.note {
+.ring {
   transition-delay: calc(var(--stagger) + var(--d, 0ms));
+}
+.tag,
+.note,
+.word {
+  transition-delay: calc(var(--stagger) / 2 + var(--d, 0ms));
 }
 .draw {
   stroke-dasharray: 1 1;
@@ -334,6 +340,8 @@
   transition-duration: 320ms, 520ms;
   transition-timing-function: ease, var(--ease-arrive);
 }
+/* The axis word's transform places and turns it, so it only fades */
+.word { opacity: 0; transition-property: opacity; transition-duration: 320ms; transition-timing-function: ease; }
 
 .item[data-in="true"] .draw { stroke-dashoffset: 0; }
 .item[data-in="true"] .fade,
@@ -343,6 +351,7 @@
 .item[data-in="true"] .ring,
 .item[data-in="true"] .tag,
 .item[data-in="true"] .note { opacity: 1; transform: none; }
+.item[data-in="true"] .word { opacity: 1; }
 
 /* Reduced motion: the finished drawing, nothing turning */
 @media (prefers-reduced-motion: reduce) {
@@ -358,6 +367,7 @@
   .ring,
   .tag,
   .note,
+  .word,
   .trackOn,
   .knobOn,
   .knobOff,
@@ -370,7 +380,11 @@
   .rise { opacity: var(--o, 1); transform: none; }
   .ring,
   .tag,
-  .note { opacity: 1; transform: none; }
+  .note,
+  .word { opacity: 1; }
+  .ring,
+  .tag,
+  .note { transform: none; }
   .trackOn,
   .knobOn { opacity: 1; }
   .knobOff { opacity: 0; }

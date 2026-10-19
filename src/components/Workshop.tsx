@@ -18,7 +18,7 @@ function PersonalityCard({ cn }: { cn: boolean }) {
       <div className={styles.personalHeader}>
         <span>{cn ? "关于我" : "A little about me"}</span>
         <button type="button" className={styles.flipButton} aria-controls={cardId} aria-pressed={flipped} onClick={() => setFlipped((value) => !value)}>
-          <ArrowLeftRight size={13} strokeWidth={1.5} aria-hidden />
+          <ArrowLeftRight size={14} strokeWidth={1.5} aria-hidden />
           {cn ? (flipped ? "看性格" : "看背景") : (flipped ? "Personality" : "Background")}
         </button>
       </div>
@@ -29,13 +29,11 @@ function PersonalityCard({ cn }: { cn: boolean }) {
             <span className={styles.faceLabel}>{cn ? "性格 · 自我描述" : "Personality, self-described"}</span>
             <p className={styles.personalityType}>INFJ<span>-A</span></p>
             <p className={styles.faceCopy}>{cn ? "一个人，也有很多面。" : "One mind. Many ways to make."}</p>
-            <span className={styles.faceFoot}>{cn ? "设计、工程，还有生活里的小实验。" : "Design, engineering & little experiments."}</span>
           </div>
           <div className={`${styles.cardFace} ${styles.cardBack}`} aria-hidden={!flipped}>
             <span className={styles.faceLabel}>{cn ? "教育背景" : "Education"}</span>
             <p className={styles.educationTitle}>{cn ? <>工业设计<br /><span>× 心理学</span></> : <>Industrial design<br /><span>× Psychology</span></>}</p>
             <p className={styles.school}>Georgia Tech</p>
-            <span className={styles.faceFoot}>{cn ? "关注人，也关心东西如何运作。" : "Attention to people. Curiosity about things."}</span>
           </div>
         </div>
       </div>

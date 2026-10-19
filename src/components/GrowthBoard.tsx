@@ -11,14 +11,19 @@ type Stage = { stage: string; work: string };
    (latenthealth.com, "Platform"): a flat card on a second sheet, hairline
    rules, one accent. It draws the two halves of the section's claim and
    keeps them apart, the way the copy does.
-   Top, the team's milestones as figures. Each number rolls up from 0 to
-   its value once, digit by digit, which is what "from 0" means; a digit
-   never passes its own value, so the roll never shows more than the
-   milestone. Revenue has no number to give, only a direction, so it is
-   drawn as one: a line rising off a baseline, its tip the sheet's focus
-   (the accent, a dashed hexagon, a leader, a boxed tag saying it). The
-   revenue figure is set wider than the others, so the figures keep their
-   own rhythm and never stand over a stage as if one caused the other.
+   Top, the team's milestones. Users and GMV are context here (the ledger
+   above already states them), so they are set a size down; each rolls up
+   from 0 to its value once, digit by digit, which is what "from 0" means,
+   and a digit never passes its own value. The section's new fact is
+   revenue, which has no number to give, only a direction, so it is drawn
+   as one and drawn largest: a line rising off a baseline, its tip the
+   sheet's focus (the accent, a dashed hexagon, a leader, a boxed tag
+   marking that the tip is now). The direction itself is said in words, in
+   the same 14px row as the other labels ("Revenue, growing fast"), never
+   only in the small tag. The figures share two rows, so every number and
+   the revenue baseline stand on one line and every label sits on the
+   next; revenue's column is set wider, so the figures keep their own
+   rhythm and never stand over a stage as if one caused the other.
    Below, a traveler's path from discovering Axel to after the booking, on
    a dashed line with an arrow, and the work I do at each stop: the
    experience people discover, the product they use and the messages they
@@ -28,8 +33,8 @@ type Stage = { stage: string; work: string };
    finished sheet. */
 
 const COPY = {
-  en: { work: "My work at each stage" },
-  cn: { work: "我在每个阶段的工作" },
+  en: { work: "My work at each stage", now: "Now", sep: ", " },
+  cn: { work: "我在每个阶段的工作", now: "现在", sep: "，" },
 };
 
 /* Hexagon, point up: its flat right edge is where the leader leaves. */
@@ -94,15 +99,16 @@ function Rolling({ value }: { value: string }) {
 }
 
 /** Revenue's direction, in place of a number: a line rising off a
-    baseline, the sheet's one focus on its tip, the note on the tag. */
-function Rising({ note }: { note: string }) {
+    baseline, the sheet's one focus on its tip, the tag marking the tip as
+    now. Drawn only; the direction is read from the label row. */
+function Rising({ tag }: { tag: string }) {
   return (
-    <span className={styles.trend}>
-      <svg aria-hidden className={styles.glyph} viewBox="0 0 100 100" preserveAspectRatio="none">
+    <span aria-hidden className={styles.trend}>
+      <svg className={styles.glyph} viewBox="0 0 100 100" preserveAspectRatio="none">
         <line x1="0" y1="100" x2="100" y2="100" className={styles.base} />
         <line x1="0" y1="100" x2="100" y2="0" className={styles.rise} />
       </svg>
-      <span aria-hidden className={styles.tip}>
+      <span className={styles.tip}>
         <span className={styles.spin}>
           <svg className={styles.hex} viewBox={`${-HEX - 1} ${-HEX - 1} ${HEX * 2 + 2} ${HEX * 2 + 2}`}>
             <polygon points={HEX_POINTS} />
@@ -114,7 +120,7 @@ function Rising({ note }: { note: string }) {
         </svg>
       </span>
       <span className={styles.tag} style={{ left: `calc(100% + ${Math.round(HEX * COS30 + 22)}px)` }}>
-        {note}
+        {tag}
       </span>
     </span>
   );
@@ -129,7 +135,8 @@ export function GrowthBoard({
   journey: Stage[];
   tag: string;
 }) {
-  const copy = COPY[useLocale() === "cn" ? "cn" : "en"];
+  const cn = useLocale() === "cn";
+  const copy = COPY[cn ? "cn" : "en"];
   const top = useArrival<HTMLDivElement>();
   const path = useArrival<HTMLDivElement>();
   const root = useRef<HTMLDivElement>(null);
@@ -153,6 +160,11 @@ export function GrowthBoard({
           <dl className={styles.figs}>
             {figures.map((f, i) => {
               const trend = !f.value;
+              // A trend's note runs on in its label, as one phrase:
+              // "Revenue, growing fast", "收入，快速增长中"
+              const said = !trend || !f.note
+                ? ""
+                : cn ? f.note : f.note.charAt(0).toLowerCase() + f.note.slice(1);
               return (
                 <div
                   key={f.label}
@@ -162,10 +174,23 @@ export function GrowthBoard({
                 >
                   <dt className={styles.label}>
                     {f.label}
+                    {said && (
+                      <span aria-hidden>
+                        {copy.sep}
+                        <span className={styles.said}>{said}</span>
+                      </span>
+                    )}
                     {!trend && f.note && <span className={styles.note}>{f.note}</span>}
                   </dt>
                   <dd className={styles.value}>
-                    {trend ? <Rising note={f.note ?? ""} /> : <Rolling value={f.value} />}
+                    {trend ? (
+                      <>
+                        <Rising tag={copy.now} />
+                        <span className="sr-only">{f.note}</span>
+                      </>
+                    ) : (
+                      <Rolling value={f.value} />
+                    )}
                   </dd>
                 </div>
               );
