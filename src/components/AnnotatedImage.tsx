@@ -3,6 +3,7 @@
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type { ImageNote } from "@/lib/work";
+import { hold } from "@/lib/hold";
 import styles from "./AnnotatedImage.module.css";
 
 /* An image that explains itself. Numbered markers sit on the picture and
@@ -10,7 +11,8 @@ import styles from "./AnnotatedImage.module.css";
    a region or a note and the picture dims around that region, held in a
    viewfinder; the other notes step back. Touch and keyboard pin a note
    with a tap or Enter. The notes are the accessible copy; the markers and
-   regions are pointer conveniences on top of the image.
+   regions are pointer conveniences on top of the image. Nothing moves on
+   its own: the markers are still discs until someone points at them.
 
    The viewfinder moves by transform only; nothing in it is ever laid out
    again. It is drawn in pieces as big as the frame, so a translate in per cent is a share of the
@@ -147,7 +149,7 @@ const Marker = memo(function Marker({
       data-n={i + 1}
       data-on={on}
       data-dim={dim}
-      style={{ left: `${note.at[0]}%`, top: `${note.at[1]}%`, ["--i" as string]: i }}
+      style={{ left: `${note.at[0]}%`, top: `${note.at[1]}%` }}
       onPointerEnter={point(i)}
       onClick={() => pin(i)}
     >
@@ -175,6 +177,10 @@ const Note = memo(function Note({
   hover: (i: number | null) => void;
   pin: (i: number) => void;
 }) {
+  // Chinese is held word by word, so a line never ends inside a word.
+  // Worked out once per note, not on every hover.
+  const title = useMemo(() => hold(note.title, styles.word), [note.title]);
+  const text = useMemo(() => hold(note.text, styles.word), [note.text]);
   return (
     <li>
       <button
@@ -189,8 +195,8 @@ const Note = memo(function Note({
         onClick={() => pin(i)}
       >
         <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
-        <span className={styles.title}>{note.title}</span>
-        <span className={styles.text}>{note.text}</span>
+        <span className={styles.title}>{title}</span>
+        <span className={styles.text}>{text}</span>
       </button>
     </li>
   );
@@ -207,6 +213,8 @@ export function AnnotatedImage({
   priority,
   sizes = "(max-width: 1280px) 100vw, 1024px",
   caption,
+  showCaption = false,
+  stage,
 }: {
   src: string;
   width: number;
@@ -219,6 +227,10 @@ export function AnnotatedImage({
   priority?: boolean;
   sizes?: string;
   caption?: string;
+  /** Set the caption under the picture; otherwise it is for screen readers only. */
+  showCaption?: boolean;
+  /** "wide": a photograph on the full container stage (the page sets the width). */
+  stage?: "wide";
 }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [pinned, setPinned] = useState<number | null>(null);
@@ -245,42 +257,59 @@ export function AnnotatedImage({
     },
     [hover],
   );
+  const leave = useCallback(() => hover(null), [hover]);
+
+  const captionText = useMemo(() => (caption ? hold(caption, styles.word) : null), [caption]);
+  const visibleCaption = showCaption && captionText !== null;
 
   const [x, y, w, h] = notes[spot].box;
 
+  /* The picture and its caption are the figure; the notes follow it as a
+     list, so the caption stays the figure's last child (valid HTML) while
+     it still reads directly under the picture. */
   return (
-    <figure className={styles.figure} onPointerLeave={() => hover(null)}>
-      <div
-        className={styles.frame}
-        style={{ aspectRatio: aspect ?? `${width} / ${height}` }}
-        data-active={shown !== null}
-      >
-        <Picture src={src} alt={alt} sizes={sizes} preload={priority} position={position} />
-        <Regions notes={notes} onPoint={point} onPin={pin} />
-
-        <span
-          aria-hidden
-          className={styles.spot}
-          data-on={shown !== null}
-          style={{ ["--x" as string]: x, ["--y" as string]: y, ["--w" as string]: w, ["--h" as string]: h }}
+    <div className={styles.figure} data-stage={stage} onPointerLeave={leave}>
+      <figure>
+        <div
+          className={styles.frame}
+          style={{ aspectRatio: aspect ?? `${width} / ${height}` }}
+          data-active={shown !== null}
         >
-          <Viewfinder />
-        </span>
+          <Picture src={src} alt={alt} sizes={sizes} preload={priority} position={position} />
+          <Regions notes={notes} onPoint={point} onPin={pin} />
 
-        {notes.map((note, i) => (
-          <Marker
-            key={`marker-${i}`}
-            note={note}
-            i={i}
-            on={shown === i}
-            dim={shown !== null && shown !== i}
-            point={point}
-            pin={pin}
-          />
-        ))}
-      </div>
+          <span
+            aria-hidden
+            className={styles.spot}
+            data-on={shown !== null}
+            style={{ ["--x" as string]: x, ["--y" as string]: y, ["--w" as string]: w, ["--h" as string]: h }}
+          >
+            <Viewfinder />
+          </span>
 
-      <ol className={styles.notes} style={{ ["--n" as string]: notes.length }}>
+          {notes.map((note, i) => (
+            <Marker
+              key={`marker-${i}`}
+              note={note}
+              i={i}
+              on={shown === i}
+              dim={shown !== null && shown !== i}
+              point={point}
+              pin={pin}
+            />
+          ))}
+        </div>
+
+        {captionText !== null && (
+          <figcaption className={visibleCaption ? styles.caption : "sr-only"}>{captionText}</figcaption>
+        )}
+      </figure>
+
+      <ol
+        className={styles.notes}
+        data-after-caption={visibleCaption}
+        style={{ ["--n" as string]: notes.length }}
+      >
         {notes.map((note, i) => (
           <Note
             key={note.title}
@@ -295,8 +324,6 @@ export function AnnotatedImage({
           />
         ))}
       </ol>
-
-      {caption && <figcaption className="sr-only">{caption}</figcaption>}
-    </figure>
+    </div>
   );
 }

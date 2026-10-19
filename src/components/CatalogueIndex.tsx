@@ -241,7 +241,9 @@ const Entry = memo(function Entry({ row, i, active, cn, replay, onReplay }: {
 });
 
 /* One stacked cover. Each layer is its own composited sheet from the
-   start (see the stylesheet), so a swap is only two opacities moving. */
+   start (see the stylesheet), so a swap is only opacity on the
+   compositor: the incoming cover rises over the outgoing one, which holds
+   until it is fully in. */
 const Layer = memo(function Layer({ row, i, active, warm, inView, replay }: {
   row: CatalogueRow;
   i: number;
@@ -326,17 +328,20 @@ function Stage({ rows, active, cn, replays, onReplay }: {
   return (
     <aside className={styles.preview}>
       <div ref={plate} className="group/preview plate relative overflow-hidden aspect-[16/10]">
-        {rows.map((row, i) => (
-          <Layer
-            key={row.key}
-            row={row}
-            i={i}
-            active={active}
-            warm={warm}
-            inView={row.cover?.demo ? seenWell : seen}
-            replay={replays[row.key] ?? 0}
-          />
-        ))}
+        {/* The covers stack in their own context, under the marks and the link */}
+        <div className={styles.layers}>
+          {rows.map((row, i) => (
+            <Layer
+              key={row.key}
+              row={row}
+              i={i}
+              active={active}
+              warm={warm}
+              inView={row.cover?.demo ? seenWell : seen}
+              replay={replays[row.key] ?? 0}
+            />
+          ))}
+        </div>
         <span className="reg-mark tl" />
         <span className="reg-mark tr" />
         <span className="reg-mark br" />

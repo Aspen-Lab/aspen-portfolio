@@ -1,34 +1,35 @@
 "use client";
 
-import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { useLocale } from "next-intl";
 import styles from "./EmailRender.module.css";
 
-/* A render check, drawn on Latent's sheet. Left, a short Liquid template;
-   right, what it sends, in Axel's dark manner: the wordmark beside a pixel
-   moon (the night sky from helloaxel.com), a headline, the SEA ✈ LAX trip
-   line from the flight card, a button. A toggle feeds the template event
-   data or leaves the destination city out. Without the city the `default`
-   filter takes over: that token is the one accent on the sheet, with a
-   dashed hexagon and a boxed tag, and the headline swaps one word in place
-   while the line closes up around it.
+/* A render check, drawn on Latent's flat sheet. Left, a short Liquid
+   template; right, what it sends, in Axel's dark manner: the wordmark
+   beside a pixel moon (the night sky from helloaxel.com), a headline, the
+   SEA ✈ LAX trip line from the flight card, a button. A toggle feeds the
+   template event data or leaves the destination city out. Without the
+   city the `default` filter takes over: that token, its dashed hexagon and
+   its boxed tag are the one pink focus on the sheet, and the headline swaps
+   one word in place while the line closes up around it. With event data
+   the sheet carries no pink at all.
 
-   It is an example, and says so on its edge: the route is the Seattle to
-   Los Angeles search from the case study's own screenshots, the variable
-   names are illustrative, nothing here is a production template. The two
-   states alternate while the sheet is on screen and nobody is pointing at
-   it; a choice made by hand stays put. Reduced motion holds still.
+   It is an example, and the caption under the sheet says so: the route is
+   the Seattle to Los Angeles search from the case study's own screenshots,
+   the variable names are illustrative, nothing here is a production
+   template. Once the sheet is on screen it switches to the missing value
+   by itself, once, and holds there; a choice made by hand cancels that.
+   Reduced motion never switches by itself.
    Every change of state is a fade or a transform: the line around the
-   fallback opens by sliding the closing braces, the headline closes up by
-   sliding the words after the slot from where they stood (measured once
-   per change, never per frame), and pointing at the sheet re-renders only
-   the toggle. */
+   fallback opens by sliding the closing braces, and the headline closes up
+   by sliding the words after the slot from where they stood (measured once
+   per change, never per frame). */
 
 type Kind = "d" | "k" | "v" | "s" | "h" | "t" | "o" | "miss" | "city" | "fb";
 type Tok = [Kind, string];
 
-const DWELL = 5200;
+const AUTO = 1400; // ms on screen before the one switch to the missing value
 const FOCUS_LINE = 3;
 
 function template(cn: boolean): Tok[][] {
@@ -44,7 +45,7 @@ function template(cn: boolean): Tok[][] {
   ];
 }
 
-/* Axel's sky, a pixel at a time: m = moon, s = a star that twinkles,
+/* Axel's sky, a pixel at a time: m = moon, s = a faint star,
    p = a brighter star. */
 const SKY = [
   "........p..........mmm..",
@@ -57,7 +58,7 @@ const SKY = [
 ];
 const PX = 2.5;
 
-/* A top-down plane facing +x, centred on the origin (as in RouteFlow). */
+/* A top-down plane facing +x, centred on the origin (as on Axel's flight card). */
 const PLANE =
   "M12 0 L4 -1.6 L-2 -9 L-4.6 -9 L-1.2 -1.6 L-7 -1.4 L-9.6 -4.6 L-11.2 -4.6 L-9.8 0 L-11.2 4.6 L-9.6 4.6 L-7 1.4 L-1.2 1.6 L-4.6 9 L-2 9 L4 1.6 Z";
 
@@ -284,13 +285,18 @@ const Template = memo(function Template({ cn }: { cn: boolean }) {
                 {line.map(([kind, text], j) =>
                   kind === "fb" ? (
                     <Fallback key={j} value={text} tag={cn ? "兜底" : "Fallback"} />
+                  ) : fb >= 0 && j > fb ? (
+                    // A sliding token keeps its leading space outside its box,
+                    // so on a phone the line can break there and the braces
+                    // start the next line at the indent
+                    <Fragment key={j}>
+                      {text.match(/^\s*/)![0]}
+                      <span data-k={kind} data-after="">
+                        {text.trimStart()}
+                      </span>
+                    </Fragment>
                   ) : (
-                    <span
-                      key={j}
-                      data-k={kind}
-                      data-t={kind === "miss" ? text : undefined}
-                      data-after={fb >= 0 && j > fb ? "" : undefined}
-                    >
+                    <span key={j} data-k={kind} data-t={kind === "miss" ? text : undefined}>
                       {text}
                     </span>
                   ),
@@ -316,15 +322,7 @@ const Sky = memo(function Sky() {
       {SKY.flatMap((row, y) =>
         [...row].map((c, x) =>
           c === "." ? null : (
-            <rect
-              key={`${x}-${y}`}
-              x={x * PX}
-              y={y * PX}
-              width={PX}
-              height={PX}
-              data-px={c}
-              style={{ ["--d" as string]: `${((x * 7 + y * 13) % 11) * 0.37}s` }}
-            />
+            <rect key={`${x}-${y}`} x={x * PX} y={y * PX} width={PX} height={PX} data-px={c} />
           ),
         ),
       )}
@@ -335,21 +333,25 @@ const Sky = memo(function Sky() {
 export function EmailRender() {
   const cn = useLocale() === "cn";
   const reduce = useReducedMotion();
-  const root = useRef<HTMLDivElement>(null);
-  const inView = useInView(root, { amount: 0.5 });
+  const sheet = useRef<HTMLElement>(null);
+  const inView = useInView(sheet, { amount: 0.5 });
   const [missing, setMissing] = useState(false);
-  const [held, setHeld] = useState(false);
-  const [chosen, setChosen] = useState(false);
-  const running = inView && !held && !chosen && !reduce;
+  // Until the one switch happens, or a hand makes the choice
+  const [auto, setAuto] = useState(true);
 
+  // Half on screen for a beat: show the fallback once, then hold. Scrolled
+  // away before the beat is up, it waits for the next visit.
   useEffect(() => {
-    if (!running) return;
-    const timer = setTimeout(() => setMissing((m) => !m), DWELL);
+    if (!auto || !inView || reduce !== false) return;
+    const timer = setTimeout(() => {
+      setAuto(false);
+      setMissing(true);
+    }, AUTO);
     return () => clearTimeout(timer);
-  }, [running, missing]);
+  }, [auto, inView, reduce]);
 
   const choose = (next: boolean) => {
-    setChosen(true);
+    setAuto(false);
     setMissing(next);
   };
 
@@ -359,31 +361,21 @@ export function EmailRender() {
   const after = cn ? "航班已订好" : " flight is booked";
 
   return (
-    <div
-      ref={root}
-      className={styles.wrap}
-      onPointerEnter={(e) => e.pointerType === "mouse" && setHeld(true)}
-      onPointerLeave={() => setHeld(false)}
-      onFocus={() => setHeld(true)}
-      onBlur={() => setHeld(false)}
-    >
+    <div className={styles.wrap}>
       <figure
+        ref={sheet}
         className={styles.sheet}
         data-state={missing ? "missing" : "data"}
-        data-run={inView && !reduce}
+        data-cn={cn}
         aria-label={
           cn
             ? "示例：同一个 Liquid 邮件模板在有数据和缺失值时的渲染结果"
             : "Example: one Liquid email template rendered with event data and with a missing value"
         }
       >
-        <span className={styles.example}>{cn ? "示例" : "Example"}</span>
-
         <div className={styles.bar}>
           <div className={styles.toggle} role="group" aria-label={cn ? "模板数据" : "Template data"}>
-            <span aria-hidden className={styles.thumb}>
-              {running && <span key={String(missing)} className={styles.run} />}
-            </span>
+            <span aria-hidden className={styles.thumb} />
             <button
               type="button"
               className={styles.seg}
@@ -392,7 +384,7 @@ export function EmailRender() {
               onClick={() => choose(false)}
             >
               <span aria-hidden className={styles.glyph} data-kind="data" />
-              {cn ? "有数据" : "Event data"}
+              {cn ? "事件数据" : "Event data"}
             </button>
             <button
               type="button"
@@ -446,6 +438,9 @@ export function EmailRender() {
           </div>
         </div>
       </figure>
+      <p className={styles.caption}>
+        {cn ? "示例模板，已简化。" : "Example template, simplified."}
+      </p>
     </div>
   );
 }

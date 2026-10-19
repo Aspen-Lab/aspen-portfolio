@@ -68,9 +68,9 @@
     "more": "More work",
     "projects": {
       "axel": {
-        "title": "Axel — design, code & growth",
+        "title": "Axel — design that ships",
         "category": "Travel · Fintech",
-        "summary": "I turn product ideas into production PRs at Axel, connecting design and engineering in both directions. The same hands-on approach extends into brand and growth, with AI coding tools accelerating iteration.",
+        "summary": "I design product experiences at Axel and ship them as production React PRs with working previews. The brand, ad creative and email are part of my work too.",
         "role": "Founding Design Engineer · Full-time"
       },
       "nutra": {

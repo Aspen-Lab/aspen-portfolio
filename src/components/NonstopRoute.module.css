@@ -1,0 +1,294 @@
+/* Axel's result card as one flat Latent sheet: cream plane, one hairline,
+   4px corners. No echo sheet, shadow, glow or gradient fill. Everything is
+   ink, mute or hairline; the SHIPPED sign is the only pink. */
+.root {
+  width: 100%;
+  max-width: 1024px;
+}
+
+.sheet {
+  position: relative;
+  padding: 48px 56px 40px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+
+/* SHIPPED, on the sheet's top edge, in lit pixels: the mask leaves one dot
+   per 2px cell, so the letters read as Axel's dot-matrix sign. Unlit until
+   the plane lands, then it flickers on once. */
+.sign {
+  position: absolute;
+  top: -15px;
+  right: 40px;
+  padding: 7px 11px 6px;
+  border: 1px solid rgb(255 111 147 / 35%);
+  border-radius: 4px;
+  background: #1b1315;
+  opacity: 0.22;
+  transition: opacity 240ms ease;
+}
+.sign[data-on="true"] {
+  opacity: 1;
+  animation: sign 520ms steps(1, end);
+}
+.signText {
+  display: block;
+  color: var(--accent, #ff6f93);
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  -webkit-mask-image: radial-gradient(circle, #000 0.8px, transparent 1.05px);
+  mask-image: radial-gradient(circle, #000 0.8px, transparent 1.05px);
+  -webkit-mask-size: 2px 2px;
+  mask-size: 2px 2px;
+}
+@keyframes sign {
+  0% { opacity: 0.35; }
+  20% { opacity: 1; }
+  35% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.meta {
+  color: var(--color-mute);
+  font-size: 15px;
+  line-height: 1;
+}
+.carrier {
+  color: var(--color-ink);
+}
+
+/* Problem ····✈···· PR: the two ends and the route between them */
+.route {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: 28px;
+  align-items: center;
+  margin-top: 40px;
+  padding-bottom: 26px;
+}
+
+.end {
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: clamp(44px, 4.4vw + 8px, 64px);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.track {
+  position: relative;
+  height: 64px;
+}
+
+.dots,
+.flown {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.dots line,
+.flown line {
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 0 8;
+}
+.dots line { stroke: color-mix(in srgb, var(--color-ink) 26%, transparent); }
+.flown line { stroke: color-mix(in srgb, var(--color-ink) 82%, transparent); }
+
+/* The window opens behind the plane; the dots inside it hold still */
+.window {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform: translateX(-100%);
+  will-change: transform;
+}
+.hold {
+  position: absolute;
+  inset: 0;
+  transform: translateX(100%);
+  will-change: transform;
+}
+
+/* A stop: a hairline ring on the line that fills as the plane passes */
+.stop {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--at) * 100%);
+  width: 0;
+  height: 0;
+}
+.node {
+  position: absolute;
+  top: -3.5px;
+  left: -3.5px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 45%, transparent);
+  border-radius: 999px;
+  background: var(--color-cream);
+}
+.node::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.label {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  color: var(--color-ink);
+  font-size: 14px;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0.5;
+  transform: translateX(-50%);
+  transition: opacity 200ms ease;
+}
+.stop[data-on="true"] .node::after,
+.stop[data-on="true"] .label {
+  opacity: 1;
+}
+
+/* The plane, level, on its own layer: it starts on the line's first 26px
+   and lands on its last. */
+.flight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 26px;
+  transform: translateX(0);
+  will-change: transform;
+  pointer-events: none;
+}
+.plane {
+  position: absolute;
+  top: 50%;
+  left: -26px;
+  width: 26px;
+  height: 22px;
+  margin-top: -11px;
+  overflow: visible;
+}
+.plane path {
+  fill: var(--color-cream);
+  stroke: var(--color-ink);
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+}
+
+/* The manifest: what the PR carries */
+.cargo {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid var(--color-line);
+}
+.cargoLabel {
+  color: var(--color-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+:global(html[lang="zh-CN"]) .cargoLabel {
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.items li {
+  color: color-mix(in srgb, var(--color-ink) 85%, transparent);
+  font-size: 16px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.items li + li::before {
+  content: "·";
+  margin: 0 12px;
+  color: var(--color-soft);
+}
+
+/* Phones: Problem on top, the route across the full width, PR under it on
+   the right; the manifest becomes a two-column list. */
+@media (max-width: 639px) {
+  .sheet { padding: 30px 20px 24px; }
+  .sign { top: -13px; right: 16px; }
+  .signText { font-size: 15px; }
+  .meta { font-size: 14px; }
+
+  .route {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "from" "track" "to";
+    margin-top: 26px;
+    padding-bottom: 0;
+  }
+  .end[data-end="from"] { grid-area: from; justify-self: start; font-size: 44px; }
+  .end[data-end="to"] { grid-area: to; justify-self: end; font-size: 44px; }
+  .track {
+    grid-area: track;
+    height: 36px;
+    margin: 8px 0 32px;
+  }
+  .label { font-size: 13px; }
+
+  .cargo {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  /* A manifest, one item a line; Chinese items are short enough for two
+     columns, so they pair up. */
+  .items {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px 16px;
+  }
+  :global(html[lang="zh-CN"]) .items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 8px;
+  }
+  .items li {
+    font-size: 15px;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  .items li + li::before { content: none; }
+}
+
+/* Reduced motion: the landed frame, in CSS; the script does nothing. */
+@media (prefers-reduced-motion: reduce) {
+  .flight { transform: translateX(100%) !important; }
+  .window,
+  .hold { transform: none !important; }
+  .stop .node::after,
+  .stop .label { opacity: 1; transition: none; }
+  .sign { opacity: 1; animation: none; transition: none; }
+}

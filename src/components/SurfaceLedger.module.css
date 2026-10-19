@@ -1,0 +1,281 @@
+/* One flat sheet (Latent's: cream, a hairline, 4px), four frames on one
+   baseline, two lanes ruled under them. The only colour is the frames' own
+   pink signs. No gradient anywhere: the night is a flat fill, the
+   mountains and the moon are a dot pattern. */
+.sheet {
+  --accent-ink: var(--accent, var(--color-ink));
+  --night: #0b0b0c;
+  position: relative;
+  padding: 20px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-cream);
+}
+
+/* ── Phone: one row per surface, the frame on the left ── */
+.grid { display: block; }
+.lane { display: none; }
+
+.col {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  /* The name takes the slack, so the three lines sit on the frame's floor */
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  column-gap: 20px;
+  padding: 18px 0;
+}
+.col + .col { border-top: 1px solid var(--color-line); }
+.col:first-of-type { padding-top: 0; }
+.col:last-of-type { padding-bottom: 0; }
+
+.stage {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 112px;
+}
+/* Every frame on one scale: on a phone the landing page fills the box */
+.frame {
+  width: calc(var(--w) * 100%);
+}
+.svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.name {
+  grid-column: 2;
+  align-self: end;
+  margin-bottom: 8px;
+  color: var(--color-ink);
+  font-size: 16px;
+  line-height: 1.3;
+}
+.cell {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-mute);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.cell[data-off="true"] { opacity: 0.5; }
+.sq {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+}
+.sq[data-fill="true"] { background: rgb(244 244 242 / 92%); }
+.sq[data-fill="false"] { border: 1px solid rgb(244 244 242 / 30%); }
+.tech { color: var(--color-ink); }
+
+/* ── From 640px: the ledger. A lane column, then four surfaces ── */
+@media (min-width: 640px) {
+  /* The last lane's own air sits under its squares, so the bottom pad is
+     short: the space under the code lane matches the space over the frames */
+  .sheet { padding: 32px 28px 12px; }
+  .grid {
+    display: grid;
+    grid-template-columns: 72px repeat(4, minmax(0, 1fr));
+  }
+  .col { display: contents; }
+  .col + .col { border-top: 0; }
+
+  /* As tall as the tallest frame (the phone, 224 units at 86% of a 220
+     column), never over 176px, so a narrow sheet has no empty sky */
+  .stage {
+    grid-column: var(--c);
+    grid-row: 1;
+    height: auto;
+    aspect-ratio: 220 / 192.64;
+    max-height: 176px;
+  }
+  .frame { width: min(calc(var(--w) * 86%), var(--cap)); }
+
+  .name {
+    grid-column: var(--c);
+    grid-row: 2;
+    align-self: start;
+    margin: 18px 0 0;
+    padding: 0 4px;
+    text-align: center;
+  }
+
+  /* Each lane is a 60px row with a hairline above it, drawn by every cell
+     in the row at once, so it runs the full width of the grid */
+  .lane,
+  .cell {
+    height: 60px;
+    border-top: 1px solid var(--color-line);
+  }
+  .lane[data-lane="design"],
+  .cell[data-lane="design"] { grid-row: 3; margin-top: 24px; }
+  .lane[data-lane="code"],
+  .cell[data-lane="code"] { grid-row: 4; }
+
+  .lane {
+    display: flex;
+    grid-column: 1;
+    align-items: center;
+    color: var(--color-soft);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .sheet[data-cn="true"] .lane {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+
+  /* The square stands at the column's centre, under its frame; the tech's
+     name hangs to its right, so the squares line up as a lattice */
+  .cell {
+    display: grid;
+    grid-column: var(--c);
+    grid-template-columns: minmax(0, 1fr) 12px minmax(0, 1fr);
+    align-items: center;
+    gap: 0;
+    font-size: 15px;
+  }
+  .cell[data-off="true"] { opacity: 1; }
+  .sq { grid-column: 2; width: 12px; height: 12px; }
+  .text { grid-column: 3; padding-left: 10px; color: var(--color-mute); }
+  .term,
+  .sep { display: none; }
+  .tech { color: var(--color-mute); }
+}
+@media (min-width: 900px) {
+  .sheet { padding: 40px 40px 18px; }
+  .grid { grid-template-columns: 88px repeat(4, minmax(0, 1fr)); }
+}
+
+/* ── Once, on entry: the frames rise, the squares fill lane by lane, then
+   the signs flicker on left to right. Transform and opacity only. ── */
+@media (prefers-reduced-motion: no-preference) {
+  .sheet[data-in="false"] .frame,
+  .sheet[data-in="false"] .sq,
+  .sheet[data-in="false"] .text { opacity: 0; }
+
+  .sheet[data-in="true"] .frame {
+    animation: rise 420ms var(--ease-arrive) backwards;
+    animation-delay: calc(var(--i) * 70ms);
+  }
+  /* A square pops from half size; the words beside it only fade */
+  .sheet[data-in="true"] .sq { animation: fill 200ms var(--ease-arrive) backwards; }
+  .sheet[data-in="true"] .text { animation: show 200ms ease backwards; }
+  .sheet[data-in="true"] .cell[data-lane="design"] > * { animation-delay: calc(360ms + var(--i) * 50ms); }
+  .sheet[data-in="true"] .cell[data-lane="code"] > * { animation-delay: calc(560ms + var(--i) * 50ms); }
+  .sheet[data-in="true"] .sign {
+    animation: flicker 300ms steps(1, end) backwards;
+    animation-delay: calc(900ms + var(--i) * 80ms);
+  }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+}
+@keyframes fill {
+  from { opacity: 0; transform: scale(0.5); }
+}
+@keyframes show {
+  from { opacity: 0; }
+}
+/* Like FOUND on helloaxel.com: off, on, a stutter, on */
+@keyframes flicker {
+  0% { opacity: 0.25; }
+  30% { opacity: 1; }
+  50% { opacity: 0.4; }
+  70% { opacity: 1; }
+}
+
+/* ── Inside the frames (frame units) ── */
+.night { fill: var(--night); }
+.mail { fill: #131314; }
+.chrome { fill: #151516; }
+.edge {
+  fill: none;
+  stroke: rgb(244 244 242 / 30%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.inner {
+  fill: none;
+  stroke: rgb(244 244 242 / 12%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.bezel {
+  fill: none;
+  stroke: rgb(244 244 242 / 7%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.island { fill: #000; stroke: rgb(244 244 242 / 10%); stroke-width: 0.6; }
+.panel {
+  fill: #1b1b1d;
+  stroke: rgb(244 244 242 / 12%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.rule {
+  stroke: rgb(244 244 242 / 11%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.t1 { fill: rgb(244 244 242 / 90%); }
+.t2 { fill: rgb(244 244 242 / 48%); }
+.t3 { fill: rgb(244 244 242 / 24%); }
+.t4 { fill: rgb(244 244 242 / 10%); }
+.hole { fill: var(--night); }
+.stroke {
+  fill: none;
+  stroke: rgb(244 244 242 / 85%);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.arrow {
+  fill: none;
+  stroke: var(--night);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.word {
+  fill: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.route {
+  fill: none;
+  stroke: rgb(244 244 242 / 50%);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-dasharray: 0.01 2.6;
+}
+.plane { fill: var(--color-ink); }
+
+/* The night */
+.px { fill: var(--color-ink); }
+.far { opacity: 0.22; }
+.near { opacity: 0.36; }
+.snow { opacity: 0.6; }
+.ground { fill: var(--night); }
+.moon { fill: rgb(244 244 242 / 85%); }
+.cloud { fill: rgb(244 244 242 / 26%); }
+.star { fill: rgb(244 244 242 / 45%); }
+.bright { fill: rgb(244 244 242 / 62%); }
+
+/* The sign: a plate tinted with the accent, lit dots in it */
+.plate {
+  fill: color-mix(in srgb, var(--accent-ink) 12%, var(--night));
+  stroke: color-mix(in srgb, var(--accent-ink) 45%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.pink { fill: var(--accent-ink); }

@@ -1,13 +1,25 @@
 /* Flat throughout: a dim, a hairline and four corner marks — no gradient
-   fills (Aspen, 2026-10-19). */
+   fills (Aspen, 2026-10-19). The photograph runs the full stage, on the
+   page's one sheet: 4px corners and a #252528 hairline, no inner padding. */
 .figure { position: relative; }
 
 .frame {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 4px;
   background: var(--color-cream);
   isolation: isolate;
+}
+/* The hairline is drawn over the picture, not round it, so the notes'
+   per cent stay a share of the picture itself. */
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border: 1px solid var(--color-line);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .hit {
@@ -28,7 +40,7 @@
   opacity: 0;
   pointer-events: none;
   will-change: opacity;
-  transition: opacity 220ms ease;
+  transition: opacity 180ms ease;
 }
 .spot[data-on="true"] { opacity: 1; }
 
@@ -101,8 +113,8 @@
 .corner[data-c="br"] { left: -11px; top: -11px; border-right-width: 1.5px; border-bottom-width: 1.5px; border-bottom-right-radius: 6px; }
 .corner[data-c="bl"] { left: -1px; top: -11px; border-left-width: 1.5px; border-bottom-width: 1.5px; border-bottom-left-radius: 6px; }
 
-/* Numbered markers: a flat disc with a hairline, a slow ping so the
-   picture reads as something to point at. */
+/* Numbered markers: a still, flat disc with a hairline. Ink, never the
+   accent; they never pulse. */
 .marker {
   position: absolute;
   z-index: 3;
@@ -116,10 +128,11 @@
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
   cursor: help;
-  transition: opacity 220ms ease, transform 300ms var(--ease-arrive);
+  transition: opacity 180ms ease, transform 300ms var(--ease-arrive);
 }
 /* Lit, the disc turns ink: an ink disc with the number in paper fades in
    over it, so the change is an opacity, not a repaint */
@@ -133,51 +146,43 @@
   background: var(--color-ink);
   color: var(--color-paper);
   opacity: 0;
-  transition: opacity 200ms ease;
-}
-.marker::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border: 1px solid rgb(244 244 242 / 55%);
-  border-radius: inherit;
-  opacity: 0;
-  animation: ping 3.2s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
-  animation-delay: calc(var(--i) * 260ms);
+  transition: opacity 180ms ease;
 }
 .marker[data-on="true"] { transform: scale(1.08); }
 .marker[data-on="true"]::before { opacity: 1; }
-.marker[data-dim="true"] { opacity: 0.35; }
-.frame[data-active="true"] .marker::after { animation: none; }
+.marker[data-dim="true"] { opacity: 0.4; }
 
 /* On a phone the picture is a third as wide; the markers shrink with it
-   so they sit beside the details instead of on them. */
+   so they sit beside the details instead of on them, and the number
+   stays at 12px. */
 @media (max-width: 639px) {
   .marker {
-    width: 18px;
-    height: 18px;
-    margin: -9px 0 0 -9px;
-    font-size: 9.5px;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
   }
 }
 
-@keyframes ping {
-  0% { opacity: 0.7; transform: scale(1); }
-  45%, 100% { opacity: 0; transform: scale(1.9); }
+/* The one line under the picture, when the page shows it */
+.caption {
+  margin-top: 16px;
+  color: var(--color-mute);
+  font-size: 15px;
+  line-height: 1.5;
+  text-wrap: pretty;
 }
 
-/* The notes: phones one under another, then two up, then one column per
-   note under the picture. A rule lights above the note in view. */
+/* The notes: phones one under another, then one column per note under
+   the picture (three notes, three columns: no orphan in a second row).
+   A rule lights above the note in view. */
 .notes {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 4px 24px;
-  margin-top: 20px;
+  gap: 4px 32px;
+  margin-top: 24px;
 }
+.notes[data-after-caption="true"] { margin-top: 16px; }
 @media (min-width: 640px) {
-  .notes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (min-width: 1024px) {
   .notes { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
 }
 
@@ -192,11 +197,11 @@
   column-gap: 10px;
   width: 100%;
   height: 100%;
-  padding: 14px 0 12px;
+  padding: 16px 0 12px;
   border-top: 1px solid var(--color-line);
   text-align: left;
   cursor: pointer;
-  transition: opacity 220ms ease;
+  transition: opacity 180ms ease;
 }
 .note::before {
   content: "";
@@ -207,10 +212,10 @@
   height: 1px;
   background: var(--color-ink);
   opacity: 0;
-  transition: opacity 220ms ease;
+  transition: opacity 180ms ease;
 }
 .note[data-on="true"]::before { opacity: 1; }
-.note[data-dim="true"] { opacity: 0.45; }
+.note[data-dim="true"] { opacity: 0.4; }
 .note:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 
 /* Ink at 43% reads as the soft grey; lit, it is full ink */
@@ -220,24 +225,33 @@
   color: var(--color-ink);
   opacity: 0.43;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
-  transition: opacity 220ms ease;
+  transition: opacity 180ms ease;
 }
 .note[data-on="true"] .num { opacity: 1; }
 .title {
   color: var(--color-ink);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
   line-height: 1.35;
+  text-wrap: balance;
 }
 .text {
   margin-top: 4px;
   color: var(--color-mute);
-  font-size: 13.5px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
   text-wrap: pretty;
 }
+
+/* Chinese breaks only between words (each held in a .word) and never
+   before closing punctuation. No keep-all: it would hold a long mixed
+   run like “Seattle to LA, Friday morning”， whole and overflow. */
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .title,
+:global(html[lang="zh-CN"]) .text,
+:global(html[lang="zh-CN"]) .caption { line-break: strict; }
 
 @media (hover: none) {
   .hit, .marker { cursor: pointer; }
@@ -252,5 +266,4 @@
   .note,
   .note::before,
   .num { transition: none; }
-  .marker::after { animation: none; }
 }

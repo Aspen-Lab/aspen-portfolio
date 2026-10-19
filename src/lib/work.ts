@@ -10,17 +10,23 @@ export type ImageNote = {
   text: string;
 };
 
-/** One area of a SpanChart: the list copy and the stages it covers. */
-export type SpanRow = {
-  kicker: string;
-  title: string;
-  text: string;
-  /** First and last stage index it covers (inclusive). */
-  from: number;
-  to: number;
-  /** Short items written on the bar. */
-  items: string[];
+/** One owner's route drawn as Axel's flight card: `from` ····✈···· `to`
+    through the stops, the PR's contents underneath, the sign lit on landing. */
+export type RouteCard = {
+  /** "Aspen · Nonstop": the carrier, then the kind of flight. */
+  meta: string;
+  from: string;
+  to: string;
+  stops: string[];
+  cargoLabel: string;
+  cargo: string[];
+  /** The dot-matrix sign on the sheet's edge (stays Latin, like FOUND). */
+  sign: string;
+  /** Screen-reader summary of the whole figure. */
+  caption: string;
 };
+/** The same shape under the name NonstopRoute was first written against. */
+export type NonstopRouteData = RouteCard;
 
 export type Project = {
   slug: string;
@@ -32,6 +38,9 @@ export type Project = {
   date: string;
   category: string;
   theme?: "light";
+  /** "editorial": the calm case-study layout (no chapters or Themes row,
+      wide photo stages). Every template change it brings is gated on it. */
+  layout?: "editorial";
   summary: string;
   tags: string[];
   cover?: string;
@@ -49,6 +58,8 @@ export type Project = {
   accent?: string;
   /** Notes on the cover, in % of the 16:9 case-study frame. */
   coverNotes?: ImageNote[];
+  /** One visible line under the cover, above its notes. */
+  coverCaption?: string;
   metrics?: { label: string; value: string }[];
   sections?: {
     heading: string;
@@ -62,6 +73,8 @@ export type Project = {
       height: number;
       alt: string;
       caption?: string;
+      /** "wide": the full container, like the cover, uncropped. */
+      stage?: "wide";
       /** Turns the figure into an annotated image (notes in % of the image). */
       notes?: ImageNote[];
     }[];
@@ -88,16 +101,14 @@ export type Project = {
       text: string;
       attribution?: string;
     };
-    /** Code-drawn figures: the design⇄engineering lanes, the brand touchpoints chain, the email render check. */
-    visual?: "loop-diagram" | "touchpoints" | "email-render";
-    /** Areas of work as spans on a stage axis (what the role covers). */
-    span?: { stages: string[]; total: string; rows: SpanRow[] };
-    /** Current figures above a traveler's path with the work at each step. */
-    growth?: {
-      figures: { value: string; label: string; note?: string }[];
-      journey: { stage: string; work: string }[];
-      tag: string;
-    };
+    /** Code-drawn figures: the design-and-code surface ledger, the email render check. */
+    visual?: "surfaces" | "email-render";
+    /** One owner's route from a problem to a PR, as Axel's flight card. */
+    route?: RouteCard;
+    /** @deprecated No case sets it any more. Kept only because the about
+        page's Moat widget still reads it (and now finds nothing); move
+        that widget onto `route`, then delete this. */
+    span?: { stages: string[]; total: string };
     statGrid?: {
       items: {
         value: string;
@@ -141,8 +152,6 @@ export type Project = {
       }[];
     };
     userFlow?: {
-      /** "route" draws the steps as a flight route (Axel's own flight card). */
-      variant?: "route";
       title?: string;
       steps: {
         id: string;

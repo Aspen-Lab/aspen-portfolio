@@ -486,3 +486,36 @@
   .nextRow:hover .plate :global(.reg-mark),
   .nextRow:hover .nextArrow { transform: none; }
 }
+
+/* ── Editorial layout (Axel) ── three widths only: text at its own
+   measure (heading max-w-3xl, body 40rem, set in the template), diagrams
+   at 1024px, photographs on the full container. This sheet is unlayered
+   and so outranks Tailwind's utilities whatever their specificity: the
+   heading and body are left out here, or their measures would widen to
+   the diagrams'. Every rule is scoped to the flag; the other cases never
+   see it. */
+.case[data-layout="editorial"] section > :not(header, p, [data-stage="wide"]) {
+  max-width: 64rem;
+}
+/* A figure's moving layer may stand past the page's edge before it
+   lands; it never widens the page. Clip (not hidden) makes no scroll box,
+   so nothing sticky breaks, and the vertical axis stays open for the
+   signs that sit on a sheet's top edge. */
+.case[data-layout="editorial"] { overflow-x: clip; }
+.case[data-layout="editorial"] .kicker,
+.case[data-layout="editorial"] .nextKicker {
+  font-size: 12px;
+}
+.case[data-layout="editorial"] .ledger { margin-top: 64px; }
+.case[data-layout="editorial"] .metricLabel {
+  max-width: 26ch;
+  font-size: 15px;
+}
+/* The next case's Chinese title and summary keep each word whole: they
+   break at spaces and punctuation, and only a run too long for the line
+   breaks inside. */
+:global(html[lang="zh-CN"]) .case[data-layout="editorial"] .nextTitle,
+:global(html[lang="zh-CN"]) .case[data-layout="editorial"] .nextSummary {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}

@@ -12,7 +12,6 @@ import { Carousel } from "@/components/Carousel";
 import { AnimatedMetric } from "@/components/AnimatedMetric";
 import { LayerStack } from "@/components/LayerStack";
 import { ChapterNav } from "@/components/ChapterNav";
-import { LoopDiagram } from "@/components/LoopDiagram";
 import { StatGrid } from "@/components/StatGrid";
 import { MarketsRow } from "@/components/MarketsRow";
 import { IconList } from "@/components/IconList";
@@ -20,11 +19,9 @@ import { RichText } from "@/components/RichText";
 import { Callout } from "@/components/Callout";
 import { Chart } from "@/components/Chart";
 import { UserFlow } from "@/components/UserFlow";
-import { RouteFlow } from "@/components/RouteFlow";
 import { AnnotatedImage } from "@/components/AnnotatedImage";
-import { SpanChart } from "@/components/SpanChart";
-import { GrowthBoard } from "@/components/GrowthBoard";
-import { Touchpoints } from "@/components/Touchpoints";
+import { NonstopRoute } from "@/components/NonstopRoute";
+import { SurfaceLedger } from "@/components/SurfaceLedger";
 import { EmailRender } from "@/components/EmailRender";
 import styles from "./case.module.css";
 
@@ -68,6 +65,11 @@ function Stacked({ parts }: { parts: string[] }) {
 const zhWords = new Intl.Segmenter("zh", { granularity: "word" });
 /** Inline markup RichText would parse; such copy keeps RichText. */
 const MARKUP = /[*`[]/;
+/* Running Chinese (the editorial summary and section bodies) is too long
+   for phrase blocks, and the word segmenter splits words it does not know
+   (预|览, 动|效). Lines there break only at punctuation and spaces; a run
+   longer than the line still breaks rather than overflow. */
+const KEEP_WORDS = "[word-break:keep-all] [overflow-wrap:anywhere]";
 
 function Hanzi({ text }: { text: string }) {
   const words = (phrase: string) =>
@@ -120,6 +122,11 @@ export default async function CaseStudy({
   if (!source) notFound();
   const project = localizeProject(source, locale);
   const cn = locale === "cn";
+  /* Axel's calm layout: no Themes row or chapters, a visible cover line,
+     wider air between sections, photographs on the full stage. Every
+     change it brings is gated on this flag (and data-layout in the CSS),
+     so the other cases render exactly as before. */
+  const editorial = project.layout === "editorial";
 
   const idx = projects.findIndex((p) => p.slug === slug);
   const nextSource = projects[(idx + 1) % projects.length];
@@ -146,13 +153,14 @@ export default async function CaseStudy({
     { label: cn ? "角色" : "Role", parts: project.role.split(" · ") },
     { label: cn ? "时间" : "Period", parts: [project.period] },
     { label: cn ? "公司 / 客户" : "Client", parts: project.client.split(" · ") },
-    { label: cn ? "方向" : "Themes", parts: project.tags },
+    ...(editorial ? [] : [{ label: cn ? "方向" : "Themes", parts: project.tags }]),
   ];
 
   return (
     <article
       className={`container-fluid pt-12 pb-24 ${styles.case}`}
       data-project-theme={project.theme}
+      data-layout={project.layout}
       style={project.accent ? ({ "--accent": project.accent } as React.CSSProperties) : undefined}
     >
       <Link href="/#work" className={styles.back}>
@@ -173,7 +181,9 @@ export default async function CaseStudy({
           >
             {cn ? <Hanzi text={project.title} /> : project.title}
           </h1>
-          <p className="mt-8 text-[18px] leading-[1.6] text-mute max-w-2xl">
+          <p
+            className={`mt-8 text-[18px] leading-[1.6] text-mute max-w-2xl${cn && editorial ? ` ${KEEP_WORDS}` : ""}`}
+          >
             {project.summary}
           </p>
           {project.liveUrl && (
@@ -191,9 +201,13 @@ export default async function CaseStudy({
       </Reveal>
 
       <Reveal delay={0.08}>
-        <dl className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-1 gap-x-8 gap-y-7 lg:gap-y-5 border-t border-line pt-7 lg:pt-6 max-w-4xl">
-          {facts.map((f) => (
-            <div key={f.label}>
+        <dl className={`grid grid-cols-2 ${editorial ? "sm:grid-cols-3" : "sm:grid-cols-4"} lg:grid-cols-1 gap-x-8 gap-y-7 lg:gap-y-5 border-t border-line pt-7 lg:pt-6 max-w-4xl`}>
+          {facts.map((f, i) => (
+            <div
+              key={f.label}
+              // Three facts on a phone's two columns: the last takes the row
+              className={editorial && i === facts.length - 1 ? "col-span-2 sm:col-span-1" : undefined}
+            >
               <dt className={styles.factLabel}>{f.label}</dt>
               <dd className={styles.factValue}>
                 <Stacked parts={f.parts} />
@@ -211,8 +225,10 @@ export default async function CaseStudy({
               src={project.cover}
               width={project.coverWidth ?? 1600}
               height={project.coverHeight ?? 1000}
-              alt={project.title}
+              alt={project.coverCaption ?? project.title}
               notes={project.coverNotes}
+              caption={project.coverCaption}
+              showCaption={editorial}
               aspect="16 / 9"
               position={project.coverPosition}
               sizes="(max-width: 1280px) 100vw, 1280px"
@@ -264,7 +280,22 @@ export default async function CaseStudy({
               <li key={m.label} className={styles.metric}>
                 <AnimatedMetric value={m.value} className={styles.metricValue} />
                 <p className={styles.metricLabel}>
-                  {cn ? <Hanzi text={m.label} /> : m.label}
+                  {cn ? (
+                    <Hanzi text={m.label} />
+                  ) : editorial ? (
+                    // "team milestone" wraps whole, its dot kept on the line before
+                    m.label.split(" · ").map((part, j, all) => (
+                      <span key={part}>
+                        <span className="inline-block">
+                          {part}
+                          {j < all.length - 1 && "\u00a0·"}
+                        </span>
+                        {j < all.length - 1 && " "}
+                      </span>
+                    ))
+                  ) : (
+                    m.label
+                  )}
                 </p>
               </li>
             ))}
@@ -286,7 +317,7 @@ export default async function CaseStudy({
 
       {chapters.length > 1 && <ChapterNav chapters={chapters} />}
 
-      <div className={chapters.length > 1 ? "mt-12" : "mt-24"}>
+      <div className={editorial ? "mt-[104px] md:mt-40" : chapters.length > 1 ? "mt-12" : "mt-24"}>
         {sections.map((s, i) => {
           const prevChapter = i > 0 ? sections[i - 1].chapter : undefined;
           const isFirstInChapter = s.chapter && s.chapter !== prevChapter;
@@ -310,13 +341,23 @@ export default async function CaseStudy({
               {/* A section runs 800–1500px tall on a phone: it rises as its
                   heading enters, not once a fifth of it is on screen. */}
               <Reveal delay={0.04} amount="some">
+                {/* Editorial: no max-w-5xl here; the CSS holds each child
+                    to 64rem and lets a wide photograph take the container. */}
                 <section
-                  className={`max-w-5xl ${isFirstInChapter ? "mt-0" : "mt-24"}`}
+                  className={
+                    editorial
+                      ? i === 0
+                        ? undefined
+                        : "mt-[104px] md:mt-40"
+                      : `max-w-5xl ${isFirstInChapter ? "mt-0" : "mt-24"}`
+                  }
                 >
-                  <header className="mb-10 max-w-3xl">
+                  <header className={editorial ? "mb-6 max-w-3xl" : "mb-10 max-w-3xl"}>
                     {/* With chapter dividers, a second count is only more small print. */}
                     {chapters.length <= 1 && (
-                      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-soft tabular-nums mb-4">
+                      <p
+                        className={`font-mono ${editorial ? "text-[12px]" : "text-[11px]"} uppercase tracking-[0.2em] text-soft tabular-nums mb-4`}
+                      >
                         {sectionNumber}
                       </p>
                     )}
@@ -332,20 +373,21 @@ export default async function CaseStudy({
                       )}
                     </h2>
                   </header>
-                  <RichText className="text-[17px] leading-[1.7] text-ink/85 max-w-2xl">
+                  <RichText
+                    className={
+                      editorial
+                        ? `text-[18px] leading-[1.65] text-ink/85 max-w-[40rem] ${cn ? KEEP_WORDS : "text-pretty"}`
+                        : "text-[17px] leading-[1.7] text-ink/85 max-w-2xl"
+                    }
+                  >
                     {s.body}
                   </RichText>
                   {/* Every drawing sits right under the text it draws; the
                       callout follows them all as the footnote, and a pull
                       quote closes the section. */}
-                  {s.span && (
+                  {s.route && (
                     <div className="mt-14">
-                      <SpanChart stages={s.span.stages} total={s.span.total} rows={s.span.rows} />
-                    </div>
-                  )}
-                  {s.growth && (
-                    <div className="mt-12">
-                      <GrowthBoard figures={s.growth.figures} journey={s.growth.journey} tag={s.growth.tag} />
+                      <NonstopRoute {...s.route} />
                     </div>
                   )}
                   {s.chart && (
@@ -359,30 +401,21 @@ export default async function CaseStudy({
                     </div>
                   )}
                   {s.userFlow && (
-                    <div className={s.userFlow.variant === "route" ? "mt-14" : "mt-10"}>
-                      {s.userFlow.variant === "route" ? (
-                        <RouteFlow steps={s.userFlow.steps} title={s.userFlow.title} />
-                      ) : (
-                        <UserFlow
-                          steps={s.userFlow.steps}
-                          branches={s.userFlow.branches}
-                          title={s.userFlow.title}
-                        />
-                      )}
+                    <div className="mt-10">
+                      <UserFlow
+                        steps={s.userFlow.steps}
+                        branches={s.userFlow.branches}
+                        title={s.userFlow.title}
+                      />
                     </div>
                   )}
-                  {s.visual === "loop-diagram" && (
-                    <div className="mt-12 max-w-4xl">
-                      <LoopDiagram />
-                    </div>
-                  )}
-                  {s.visual === "touchpoints" && (
-                    <div className="mt-12">
-                      <Touchpoints />
+                  {s.visual === "surfaces" && (
+                    <div className="mt-14">
+                      <SurfaceLedger />
                     </div>
                   )}
                   {s.visual === "email-render" && (
-                    <div className="mt-12">
+                    <div className={editorial ? "mt-14" : "mt-12"}>
                       <EmailRender />
                     </div>
                   )}
@@ -503,7 +536,11 @@ export default async function CaseStudy({
                     </div>
                   )}
                   {s.figures?.map((figure) => figure.notes ? (
-                    <div key={figure.src} className="mt-12">
+                    <div
+                      key={figure.src}
+                      className={editorial ? "mt-14" : "mt-12"}
+                      data-stage={figure.stage}
+                    >
                       <AnnotatedImage
                         src={figure.src}
                         width={figure.width}
@@ -511,6 +548,12 @@ export default async function CaseStudy({
                         alt={figure.alt}
                         notes={figure.notes}
                         caption={figure.caption}
+                        stage={figure.stage}
+                        sizes={
+                          figure.stage === "wide"
+                            ? "(max-width: 1280px) 100vw, 1184px"
+                            : undefined
+                        }
                       />
                     </div>
                   ) : (

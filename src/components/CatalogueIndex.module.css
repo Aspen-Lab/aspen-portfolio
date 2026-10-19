@@ -19,20 +19,37 @@
 .preview { display: none; }
 
 /* The viewfinder's stacked covers. Only the active one shows; the swap is
-   a crossfade, and it is CSS so the server and the first client render
-   carry the same markup whatever the visitor's motion setting.
+   CSS so the server and the first client render carry the same markup
+   whatever the visitor's motion setting.
+   The swap is a cover laid over a cover, not a crossfade through the dark
+   plate: the incoming layer rises to the top and fades in, while the
+   outgoing one stays exactly as it was until the fade is done (its own
+   fade to 0 waits the fade's length, then cuts, unseen, underneath). In a
+   quick sweep the cover being left holds under the next one the same way.
    will-change keeps every layer a composited sheet even at opacity 0, so
    the browser paints and rasterises it (decoding its cover) while it
-   waits, and a hover is two opacities on the compositor — not a layer
-   promoted, painted and decoded in the first frame of the fade. */
+   waits, and a swap is opacities on the compositor — not a layer
+   promoted, painted and decoded in the first frame of the fade. The
+   stack is isolated, so the active layer's z-index never lifts it over
+   the plate's marks or link. */
+.layers {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+}
 .layer {
   position: absolute;
   inset: 0;
+  z-index: 0;
   opacity: 0;
-  transition: opacity 360ms var(--ease-arrive);
+  transition: opacity 0ms linear 360ms;
   will-change: opacity;
 }
-.layer[data-active="true"] { opacity: 1; }
+.layer[data-active="true"] {
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 360ms var(--ease-arrive);
+}
 
 /* At tablet widths, keep the picture attached to its project. This also
    applies to larger touch screens, where hovering is not an available action. */
@@ -73,7 +90,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .layer { transition: none; }
+  .layer,
+  .layer[data-active="true"] { transition: none; }
   /* The demos do not play (CatalogueMedia), so there is nothing to replay. */
   .replay { display: none; }
   .rowArrow { transition: none; }

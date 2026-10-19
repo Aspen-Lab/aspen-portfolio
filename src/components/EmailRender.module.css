@@ -1,46 +1,23 @@
-/* Latent's sheet with a second sheet under it, split in two: the template
-   in mono on the left, the message on the right. Ink tones for the syntax,
-   one accent for the fallback, hairlines throughout; no gradient fills. */
+/* Latent's flat sheet, split in two: the template in mono on the left,
+   the message on the right. Ink tones for the syntax, one pink focus for
+   the fallback, hairlines throughout; no gradient fills. */
 .wrap {
   --accent-ink: var(--accent, var(--color-ink));
-  position: relative;
-  isolation: isolate;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
-.wrap::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  transform: translate(10px, 10px);
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: #131314;
 }
 .sheet {
   position: relative;
+  margin: 0;
   border: 1px solid var(--color-line);
   border-radius: 4px;
   background: var(--color-cream);
 }
 
-/* The boxed tag on the sheet's edge: this is an example, not production */
-.example {
-  position: absolute;
-  z-index: 2;
-  top: -11px;
-  right: 18px;
-  padding: 5px 8px 4px;
-  border: 1px solid rgb(244 244 242 / 55%);
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.1;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  pointer-events: none;
+/* What the sheet is, said plainly under it */
+.caption {
+  margin-top: 16px;
+  color: var(--color-mute);
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 /* ── The toggle ── */
@@ -75,19 +52,6 @@
 }
 .sheet[data-state="missing"] .thumb { transform: translateX(100%); }
 
-/* The hairline that runs out the dwell time */
-.run {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--accent-ink);
-  transform-origin: left;
-  animation: run 5200ms linear both; /* DWELL in EmailRender.tsx */
-}
-@keyframes run { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-
 /* Ink at 63% reads as the muted grey on the toggle; chosen or pointed at,
    full ink. A fade, not a repaint. */
 .seg {
@@ -98,7 +62,7 @@
   gap: 9px;
   padding: 8px 16px;
   color: var(--color-ink);
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.2;
   white-space: nowrap;
   cursor: pointer;
@@ -132,14 +96,14 @@
   align-content: center;
   min-width: 0;
   margin: 0;
-  padding: 22px 0 24px;
+  padding: 24px 0 26px;
   font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 22px;
+  font-size: 14px;
+  line-height: 26px;
   color: var(--color-mute);
 }
 @media (min-width: 640px) {
-  .code { padding: 28px 0 30px; font-size: 14px; line-height: 28px; }
+  .code { padding: 28px 0 30px; line-height: 28px; }
 }
 .lines { display: block; }
 
@@ -147,10 +111,10 @@
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  column-gap: 10px;
+  grid-template-columns: 22px minmax(0, 1fr);
+  column-gap: 8px;
   align-items: baseline;
-  padding: 0 16px;
+  padding: 0 14px;
 }
 @media (min-width: 640px) {
   .row { grid-template-columns: 30px minmax(0, 1fr); column-gap: 12px; padding: 0 24px; }
@@ -174,8 +138,8 @@
 .num {
   color: var(--color-ink);
   opacity: 0.28;
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
+  font-size: 12px;
+  letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
   user-select: none;
   transition: opacity 300ms ease;
@@ -184,7 +148,8 @@
 
 .src {
   min-width: 0;
-  padding-left: 2ch;
+  /* room on the right for the closing braces to slide over by */
+  padding: 0 14px 0 2ch;
   text-indent: -2ch;
   white-space: pre-wrap;
   /* break at the template's spaces, never inside a word or a CJK phrase */
@@ -217,6 +182,8 @@
   position: absolute;
   top: 0;
   left: 0;
+  text-indent: 0;
+  white-space: pre;
   color: transparent;
   text-decoration: underline wavy var(--color-ink);
   text-decoration-thickness: 1px;
@@ -309,9 +276,9 @@
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.1;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
   pointer-events: none;
@@ -324,6 +291,13 @@
   opacity: 1;
   transform: translate(-50%, 0);
   transition-delay: 220ms;
+}
+/* Chinese is never set in mono capitals */
+.sheet[data-cn="true"] .tag {
+  padding: 4px 8px 4px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.04em;
 }
 
 /* ── The message ── */
@@ -370,18 +344,7 @@
 .sky rect { fill: var(--color-ink); shape-rendering: crispEdges; }
 .sky [data-px="m"] { opacity: 0.88; }
 .sky [data-px="p"] { opacity: 0.7; }
-.sky [data-px="s"] {
-  opacity: 0.32;
-  animation: twinkle 4.4s steps(1, end) infinite paused;
-  animation-delay: var(--d);
-}
-/* Off screen the stars hold still */
-.sheet[data-run="true"] .sky [data-px="s"] { animation-play-state: running; }
-@keyframes twinkle {
-  0%, 62%, 100% { opacity: 0.32; }
-  70% { opacity: 0.9; }
-  78% { opacity: 0.5; }
-}
+.sky [data-px="s"] { opacity: 0.4; }
 
 .headline {
   display: grid;
@@ -515,6 +478,4 @@
   .lead,
   .tag,
   .word { transition: none; }
-  .run,
-  .sky [data-px="s"] { animation: none; }
 }
