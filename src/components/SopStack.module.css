@@ -1,77 +1,84 @@
-/* The SOP as documents: paper sheets on their back sheets (global
-   .paper-stack > .paper, which flips the tokens to ink on paper), then a
-   black slab (global .slab) with the cycle. Solid marks, 1px and 2px
-   rules, no gradients. */
+/* The SOP as documents: three dark sheets on their back sheets (global
+   .paper-stack > .paper, static), then a black slab (global .slab) with
+   the cycle. Ink and grey marks, 1px / 1.5px / 2px lines, no gradients;
+   the page accent only on the 'With the SOP' bar. */
 .root { width: 100%; }
 
 .docs {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 24px;
+  gap: 16px;
 }
-@media (min-width: 768px) {
+@media (min-width: 640px) {
+  .docs { gap: 24px; }
+}
+@media (min-width: 1024px) {
   .docs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 /* The sheet fills its grid cell, so the three stand the same height */
-.stack {
-  display: flex;
-  border-radius: 2px;
-}
-.stack:focus-visible {
-  outline: 1px dashed var(--color-ink);
-  outline-offset: 6px;
-}
+.stack { display: flex; }
 .doc {
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: 0;
-  min-height: 300px;
-  padding: 24px 24px 20px;
+  padding: 20px;
+}
+@media (min-width: 640px) {
+  .doc { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .doc { padding: 40px; }
 }
 
+/* S7: 'SOP · 01' is a Latin code in both languages */
 .head {
-  color: var(--color-soft);
+  color: #8a8a90;
   font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.14em;
-  line-height: 1.4;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
-.head:lang(zh) {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
+/* S4 */
 .title {
-  margin-top: 6px;
-  color: var(--color-ink);
+  margin-top: 8px;
+  color: #f4f4f2;
   font-size: 22px;
   font-weight: 400;
-  letter-spacing: -0.01em;
   line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 .title:lang(zh) { word-break: keep-all; }
+@media (max-width: 639px) {
+  .title { font-size: 20px; }
+}
 
+/* A fixed drawing height, so the three drawings and foot rules align */
 .drawing {
   display: flex;
   align-items: center;
   height: 120px;
-  margin: 18px 0;
+  margin: 24px 0;
 }
 
+/* S6, under a 1px rule straight after the drawing, so the three rules
+   and the three texts start on one line whatever their length */
 .text {
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid var(--color-line);
-  color: var(--color-mute);
-  font-size: 14px;
+  padding-top: 16px;
+  border-top: 1px solid #252528;
+  color: #a0a0a5;
+  font-size: 15px;
+  font-weight: 400;
   line-height: 1.5;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 .text:lang(zh) {
+  line-height: 1.65;
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
@@ -85,15 +92,15 @@
   overflow: visible;
 }
 .rule {
-  stroke: var(--color-ink);
+  stroke: #f4f4f2;
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
 }
-.stage { fill: var(--color-ink); }
-.owner { fill: var(--mark, #717172); }
+.stage { fill: #f4f4f2; }
+.owner { fill: #6b6b71; }
 .gate {
   fill: none;
-  stroke: rgb(10 10 10 / 55%);
+  stroke: #6b6b71;
   stroke-width: 1.5;
   stroke-dasharray: 3 3;
   vector-effect: non-scaling-stroke;
@@ -110,35 +117,40 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 0;
+  padding: 8px 0;
 }
-.check + .check { border-top: 1px solid var(--color-line); }
+.check + .check { border-top: 1px solid #252528; }
 .tick {
   display: block;
   flex: none;
   width: 14px;
   height: 14px;
 }
-.tickBox { fill: var(--color-ink); }
+.tickBox { fill: #f4f4f2; }
 .tickMark {
   fill: none;
-  stroke: var(--color-paper);
+  stroke: #0a0a0a;
   stroke-width: 1.6;
   stroke-linecap: square;
 }
+/* S6 */
 .checkLabel {
   min-width: 0;
-  color: var(--color-ink);
-  font-size: 14px;
-  line-height: 1.3;
+  color: #f4f4f2;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
 }
-.checkLabel:lang(zh) { word-break: keep-all; }
+.checkLabel:lang(zh) {
+  line-height: 1.65;
+  word-break: keep-all;
+}
 
 /* ── Delivery: tokens, components, markets ── */
 .delivery {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   min-width: 0;
 }
 .swatches,
@@ -147,22 +159,26 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
 }
+.swatches { gap: 4px; }
+.components { gap: 12px; }
+.codes { gap: 8px; }
 .swatch {
+  box-sizing: border-box;
   width: 18px;
   height: 18px;
-  background: var(--mark, #717172);
-  opacity: var(--o, 1);
 }
-.swatchAccent { background: var(--accent, var(--color-ink)); }
-.components { gap: 10px; }
+.swatch[data-swatch="ink"] { background: #f4f4f2; }
+.swatch[data-swatch="grey1"] { background: #a0a0a5; }
+.swatch[data-swatch="grey2"] { background: #6b6b71; }
+.swatch[data-swatch="grey3"] { background: #3a3a3f; }
+.swatch[data-swatch="hollow"] { border: 1px solid #6b6b71; }
 .button {
   position: relative;
   width: 64px;
   height: 20px;
   border-radius: 10px;
-  background: var(--color-ink);
+  background: #f4f4f2;
 }
 /* the button's label, as a bar */
 .button::after {
@@ -172,14 +188,14 @@
   left: 20px;
   width: 24px;
   height: 2px;
-  background: var(--color-paper);
+  background: #0a0a0a;
 }
 .input {
   position: relative;
   box-sizing: border-box;
   width: 96px;
   height: 20px;
-  border: 1.5px solid var(--color-ink);
+  border: 1.5px solid #f4f4f2;
   border-radius: 2px;
 }
 /* the input's caret */
@@ -190,84 +206,91 @@
   bottom: 3.5px;
   left: 7px;
   width: 1px;
-  background: var(--color-ink);
-}
-.code {
-  padding: 4px 6px 3px;
-  border: 1px solid var(--color-ink);
-  border-radius: 2px;
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  line-height: 1;
+  background: #f4f4f2;
 }
 
 /* ── The cycle slab ── */
 .cycle {
   display: grid;
   align-items: center;
-  gap: 20px;
-  margin-top: 24px;
+  gap: 24px;
+  margin-top: 16px;
   padding: 24px 20px;
+}
+@media (min-width: 640px) {
+  .cycle {
+    margin-top: 24px;
+    padding: 40px;
+  }
 }
 @media (min-width: 768px) {
   .cycle {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-    gap: 32px;
-    padding: 28px 32px;
+    gap: 40px;
   }
 }
+/* S6 */
 .cycleLabel {
-  color: var(--color-mute);
+  color: #a0a0a5;
   font-size: 15px;
-  line-height: 1.4;
+  font-weight: 400;
+  line-height: 1.5;
 }
-.cycleLabel:lang(zh) { word-break: keep-all; }
+.cycleLabel:lang(zh) {
+  line-height: 1.65;
+  word-break: keep-all;
+}
+/* S2 */
 .cycleValue {
-  margin-top: 6px;
-  color: var(--accent, var(--color-ink));
+  margin-top: 8px;
+  color: #f4f4f2;
   font-size: clamp(44px, 3vw + 20px, 64px);
   font-weight: 300;
-  letter-spacing: -0.03em;
   line-height: 1;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .bars {
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 .barRow {
   display: grid;
-  grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
+  grid-template-columns: 120px minmax(0, 1fr);
   align-items: center;
   gap: 16px;
   margin: 0;
 }
+/* S6 */
 .barLabel {
-  color: var(--color-ink);
-  font-size: 14px;
-  line-height: 1.3;
+  color: #f4f4f2;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
 }
-.barLabel:lang(zh) { word-break: keep-all; }
+.barLabel:lang(zh) {
+  line-height: 1.65;
+  word-break: keep-all;
+}
 .track {
   position: relative;
   width: 100%;
-  max-width: 420px;
   height: 12px;
 }
 .bar {
   position: absolute;
   inset: 0 auto 0 0;
-  transform-origin: left center;
+  transform-origin: 0 50%;
 }
 .barBefore {
   width: 100%;
-  background: color-mix(in srgb, var(--color-ink) 30%, transparent);
+  background: #6b6b71;
 }
+/* The figure's one focus */
 .barAfter {
   width: calc(var(--w) * 100%);
-  background: var(--accent, var(--color-ink));
+  background: var(--accent, #f4f4f2);
 }
 /* What the SOP cut, outlined where the old cycle ran on */
 .barCut {
@@ -276,38 +299,35 @@
   bottom: 0;
   left: calc(var(--w) * 100%);
   right: 0;
-  border: 1px dashed color-mix(in srgb, var(--color-ink) 35%, transparent);
+  border: 1px dashed #6b6b71;
   border-left: 0;
 }
 
-/* ── Entry ── */
-.pop {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.root:not([data-lit="true"]) .pop { opacity: 0; }
-.root[data-lit="true"] .pop {
-  animation: pop 420ms var(--ease-arrive) calc(240ms + var(--k) * 70ms) backwards;
+/* ── Entrance: each sheet's marks fade in reading order, 60ms apart from
+   240ms; the bars run out (Before, then After), then the cut appears.
+   Opacity and transform only. ── */
+.stack:not([data-lit="true"]) .mark { opacity: 0; }
+.stack[data-lit="true"] .mark {
+  animation: fade var(--t-2, 360ms) var(--ease-arrive) calc(240ms + var(--k) * var(--step, 60ms)) backwards;
 }
 .cycle:not([data-lit="true"]) .bar { transform: scaleX(0); }
 .cycle:not([data-lit="true"]) .barCut { opacity: 0; }
 .cycle[data-lit="true"] .bar {
-  animation: drawX 900ms var(--ease-arrive) 200ms backwards;
+  animation: drawX var(--t-3, 720ms) var(--ease-arrive) backwards;
 }
-.cycle[data-lit="true"] .barAfter { animation-delay: 350ms; }
+.cycle[data-lit="true"] .barAfter { animation-delay: 120ms; }
 .cycle[data-lit="true"] .barCut {
-  animation: fade 400ms ease 1150ms backwards;
+  animation: fade var(--t-1, 160ms) var(--ease-arrive) 840ms backwards;
 }
 
-@keyframes pop { from { opacity: 0; transform: scale(0.5); } }
 @keyframes drawX { from { transform: scaleX(0); } }
 @keyframes fade { from { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .root:not([data-lit="true"]) .pop { opacity: var(--o, 1); }
-  .root[data-lit="true"] .pop,
-  .cycle[data-lit="true"] .bar,
-  .cycle[data-lit="true"] .barCut { animation: none; }
+  .stack:not([data-lit="true"]) .mark { opacity: 1; }
   .cycle:not([data-lit="true"]) .bar { transform: none; }
   .cycle:not([data-lit="true"]) .barCut { opacity: 1; }
+  .stack[data-lit="true"] .mark,
+  .cycle[data-lit="true"] .bar,
+  .cycle[data-lit="true"] .barCut { animation: none; }
 }

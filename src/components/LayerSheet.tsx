@@ -7,12 +7,11 @@ import { hold } from "@/lib/hold";
 import styles from "./LayerSheet.module.css";
 
 /* The three layers of TikTok's KYC problem as Latent's tabbed platform
-   chart (latenthealth.com, "Platform"): the tabs on the left, one paper
+   chart (latenthealth.com, "Platform"): the tabs on the left, one dark
    sheet on the right whose whole state changes with the tab. Each state
-   is the layer drawn twice, BEFORE on the left in grey with dashed
-   connectors, AFTER on the right in solid ink with one red focus in a
-   dashed hexagon. The red is TikTok's own "selected / your next action"
-   colour from its KYC screens, so it marks only the fix.
+   is the layer drawn twice: BEFORE on the left in grey (#6b6b71 plates,
+   1px lines), AFTER on the right in solid ink (2px rail), with one focus
+   mark in the page accent, the only accent on the sheet.
 
      UX          a rail through the flow; the verify step forks into a
                  silent drop-off → the "Not My ID" escape path into manual
@@ -29,7 +28,8 @@ import styles from "./LayerSheet.module.css";
    stacks them (Before over After), each in a 16:9 frame of its own with
    its secondary words left out. All three states stay mounted and swap
    by PlatformTabs' opacity contract; nothing here re-renders on a
-   switch. Flat fills and 1px lines only. */
+   switch. The sheet carries ~40 words of prose, so it never advances by
+   itself. Flat fills and 1px lines only. */
 
 type Layer = { label: string; problem: string; approach: string; title?: string };
 type F = "desk" | "phone";
@@ -77,6 +77,10 @@ type Copy = (typeof COPY)["en"];
 
 const MARKETS = ["VN", "MY", "ID", "US"];
 
+/* A line never opens on a joiner: the space before —, +, ↔ or · is a
+   no-break space, so the sign stays at the end of the line before. */
+const tidy = (s: string) => s.replace(/ ([—+↔·×])/g, " $1");
+
 export function LayerTabs({ intro, layers }: { intro: ReactNode; layers: Layer[] }) {
   const cn = useLocale() === "cn";
   const t = COPY[cn ? "cn" : "en"];
@@ -92,7 +96,7 @@ export function LayerTabs({ intro, layers }: { intro: ReactNode; layers: Layer[]
     ),
     [layers, t, cn],
   );
-  return <PlatformTabs intro={intro} tabs={tabs} sheet={sheet} dwell={8000} label={t.tabs} />;
+  return <PlatformTabs intro={intro} tabs={tabs} sheet={sheet} autoplay={false} label={t.tabs} />;
 }
 
 /* The active layer's own Problem and Approach, on the sheet under the
@@ -105,13 +109,13 @@ const LayerDetails = memo(function LayerDetails({ layers, t, cn }: { layers: Lay
     <div className={styles.details} data-cn={cn}>
       {layers.map((l, i) => (
         <div key={l.label} data-pt={i} className={styles.detail}>
-          <div className={styles.block}>
-            <p className={styles.dLabel}>{t.problem}</p>
-            <p className={styles.problem}>{hold(l.problem, styles.word)}</p>
+          <div className={styles.block} data-side="before">
+            <p className={`t-label ${styles.dLabel}`}>{t.problem}</p>
+            <p className={`t-small ${styles.problem}`}>{hold(tidy(l.problem), styles.word)}</p>
           </div>
-          <div className={styles.block}>
-            <p className={styles.dLabel}>{t.approach}</p>
-            <p className={styles.approach}>{hold(l.approach, styles.word)}</p>
+          <div className={styles.block} data-side="after">
+            <p className={`t-label ${styles.dLabel}`}>{t.approach}</p>
+            <p className={`t-small ${styles.approach}`}>{hold(tidy(l.approach), styles.word)}</p>
           </div>
         </div>
       ))}
@@ -134,17 +138,21 @@ const LayerSheet = memo(function LayerSheet({ layers, t, cn }: { layers: Layer[]
           <div key={l.label} data-pt={i} className={styles.state}>
             <div aria-hidden className={styles.box}>
               <div className={styles.half} data-side="before">
-                <span className={styles.head}>{t.before}</span>
+                <span className={`t-label ${styles.head}`}>{t.before}</span>
                 <Before f="desk" t={t} />
                 <Before f="phone" t={t} />
               </div>
+              {/* The fold: a dashed 1px line with the arrow from BEFORE to AFTER */}
               <span className={styles.divider}>
+                <svg className={styles.fold}>
+                  <line x1="0.5" x2="0.5" y1="0" y2="100%" />
+                </svg>
                 <svg viewBox="0 0 10 12" className={styles.arrow}>
                   <path d="M1 0 L9 6 L1 12 Z" />
                 </svg>
               </span>
               <div className={styles.half} data-side="after">
-                <span className={styles.head}>{t.after}</span>
+                <span className={`t-label ${styles.head}`}>{t.after}</span>
                 <After f="desk" t={t} />
                 <After f="phone" t={t} />
               </div>
@@ -194,6 +202,7 @@ function Pin({
   x,
   y,
   a = "c",
+  code,
   className,
   style,
   children,
@@ -202,13 +211,19 @@ function Pin({
   x: number;
   y: number;
   a?: "c" | "l" | "r";
+  /** a Latin code, which stays in mono on the Chinese page */
+  code?: boolean;
   className?: string;
   style?: CSSProperties;
   children: ReactNode;
 }) {
   const { w, h } = FRAME[f];
   return (
-    <span className={`${styles.pin} ${className ?? ""}`} data-a={a} style={{ left: pc(x, w), top: pc(y, h), ...style }}>
+    <span
+      className={`${styles.pin} ${className ?? ""}`}
+      data-a={a}
+      data-code={code ? "" : undefined}
+      style={{ left: pc(x, w), top: pc(y, h), ...style }}>
       {children}
     </span>
   );
@@ -237,12 +252,14 @@ const UX = {
 };
 const BLOCK = { w: 44, h: 26 };
 const HEX = { hw: 24, hh: 16, tip: 10 };
+/* A point mark: ~8px at the sheet's usual scale */
+const POINT = 9;
 
 function Rail({ f, solid }: { f: F; solid: boolean }) {
   const g = UX[f];
   return (
     <g className={solid ? styles.ink : styles.was}>
-      <line x1={8} x2={312} y1={g.rail} y2={g.rail} className={styles.rail} />
+      <line x1={8} x2={312} y1={g.rail} y2={g.rail} className={solid ? styles.rail : styles.line} />
       {[0, 1, 3].map((k) => (
         <rect
           key={k}
@@ -250,7 +267,6 @@ function Rail({ f, solid }: { f: F; solid: boolean }) {
           y={g.rail - BLOCK.h / 2}
           width={BLOCK.w}
           height={BLOCK.h}
-          rx={2}
           className={styles.fill}
         />
       ))}
@@ -272,17 +288,17 @@ function UxBefore({ f, t }: DrawProps) {
         <>
           <Rail f={f} solid={false} />
           <g className={styles.was}>
-            <line x1={x} x2={x} y1={g.rail + HEX.hh} y2={g.ring - 6} className={styles.dashed} />
-            <circle cx={x} cy={g.ring} r={6} className={styles.outline} />
+            <line x1={x} x2={x} y1={g.rail + HEX.hh} y2={g.ring - POINT / 2} className={styles.dashed} />
+            <rect x={x - POINT / 2} y={g.ring - POINT / 2} width={POINT} height={POINT} className={styles.outline} />
           </g>
         </>
       }
       words={
         <>
-          <Pin f={f} x={x} y={g.label} className={styles.step}>
+          <Pin f={f} x={x} y={g.label} className={`t-small ${styles.step}`}>
             {t.verify}
           </Pin>
-          <Pin f={f} x={x} y={g.ringLabel} className={styles.note}>
+          <Pin f={f} x={x} y={g.ringLabel} className={`t-small ${styles.note}`}>
             {t.drop}
           </Pin>
         </>
@@ -295,8 +311,8 @@ function UxAfter({ f, t }: DrawProps) {
   const g = UX[f];
   const x = g.b[2];
   const x4 = g.b[3];
-  const seg = 18;
-  const gap = 3;
+  const seg = 16;
+  const gap = 4;
   const m0 = x4 - (4 * seg + 3 * gap) / 2;
   const foot = g.rail + BLOCK.h / 2;
   const r = 8;
@@ -315,15 +331,15 @@ function UxAfter({ f, t }: DrawProps) {
             {/* Goal Gradient: the progress shown, 3 of 4 */}
             {[0, 1, 2, 3].map((k) =>
               k < 3 ? (
-                <rect key={k} x={m0 + k * (seg + gap)} y={g.meter - 3} width={seg} height={6} className={styles.fill} />
+                <rect key={k} x={m0 + k * (seg + gap)} y={g.meter - 2} width={seg} height={4} className={styles.fill} />
               ) : (
                 <rect
                   key={k}
-                  x={m0 + k * (seg + gap) + 0.75}
-                  y={g.meter - 2.25}
-                  width={seg - 1.5}
-                  height={4.5}
-                  className={styles.outline}
+                  x={m0 + k * (seg + gap) + 0.5}
+                  y={g.meter - 1.5}
+                  width={seg - 1}
+                  height={3}
+                  className={styles.hollow}
                 />
               ),
             )}
@@ -336,7 +352,7 @@ function UxAfter({ f, t }: DrawProps) {
               named in BEFORE, and the meter says 3 of 4 itself */}
           {f === "desk" && (
             <>
-              <Pin f={f} x={x} y={g.label} className={styles.step}>
+              <Pin f={f} x={x} y={g.label} className={`t-small ${styles.step}`}>
                 {t.verify}
               </Pin>
               <Pin f={f} x={x4} y={g.count} className={styles.tagPin}>
@@ -346,11 +362,13 @@ function UxAfter({ f, t }: DrawProps) {
           )}
           <Pin f={f} x={x} y={g.tag} className={styles.focusPin}>
             <svg viewBox="0 0 136 50" className={styles.focusRing}>
-              <polygon points={hexRing(68, 25, 67.25, 24.25, 12)} />
+              <polygon points={hexRing(68, 25, 67.5, 24.5, 12)} />
             </svg>
-            <span className={styles.red}>{t.escape}</span>
+            <span className={`t-label ${styles.focusChip}`} data-code="">
+              {t.escape}
+            </span>
           </Pin>
-          <Pin f={f} x={x} y={g.dest} className={styles.dest}>
+          <Pin f={f} x={x} y={g.dest} className={`t-small ${styles.dest}`}>
             {t.reenter}
           </Pin>
         </>
@@ -403,10 +421,10 @@ function SchemaBefore({ f }: DrawProps) {
       }
       words={
         <>
-          <Pin f={f} x={my} y={g.head} a="l" className={styles.code}>
+          <Pin f={f} x={my} y={g.head} a="l" code className={`t-label ${styles.code}`}>
             MY
           </Pin>
-          <Pin f={f} x={vn} y={g.head} a="l" className={styles.code}>
+          <Pin f={f} x={vn} y={g.head} a="l" code className={`t-label ${styles.code}`}>
             VN
           </Pin>
         </>
@@ -422,7 +440,6 @@ function SchemaAfter({ f, t }: DrawProps) {
   const cx = mid + w / 2;
   const headH = 24;
   const last = y(5) + g.bar / 2;
-  const sq = 16;
   const mx = [cx - 84, cx - 28, cx + 28, cx + 84];
   return (
     <Frame
@@ -441,8 +458,8 @@ function SchemaAfter({ f, t }: DrawProps) {
               <line x1={mid + w} x2={vn} y1={y(i)} y2={y(i)} />
             </g>
           ))}
-          {/* The schema's head: the one red mark, in its hexagon */}
-          <rect x={mid} y={g.head - headH / 2} width={w} height={headH} className={styles.redFill} />
+          {/* The schema's head: the one accent mark, in its hexagon */}
+          <rect x={mid} y={g.head - headH / 2} width={w} height={headH} className={styles.focusFill} />
           <polygon points={hexRing(cx, g.head, w / 2 + 14, g.ringH, 10)} className={styles.ring} />
           {f === "desk" ? (
             <>
@@ -451,7 +468,7 @@ function SchemaAfter({ f, t }: DrawProps) {
               <line x1={cx} x2={cx} y1={last} y2={g.mk} className={styles.hairLine} />
               <line x1={mx[0]} x2={mx[3]} y1={g.mk} y2={g.mk} className={styles.hairLine} />
               {mx.map((x) => (
-                <rect key={x} x={x - sq / 2} y={g.mk - sq / 2} width={sq} height={sq} className={styles.fill} />
+                <rect key={x} x={x - POINT / 2} y={g.mk - POINT / 2} width={POINT} height={POINT} className={styles.fill} />
               ))}
             </>
           ) : (
@@ -461,13 +478,13 @@ function SchemaAfter({ f, t }: DrawProps) {
       }
       words={
         <>
-          <Pin f={f} x={my} y={g.head} a="l" className={styles.code}>
+          <Pin f={f} x={my} y={g.head} a="l" code className={`t-label ${styles.code}`}>
             MY
           </Pin>
-          <Pin f={f} x={vn} y={g.head} a="l" className={styles.code}>
+          <Pin f={f} x={vn} y={g.head} a="l" code className={`t-label ${styles.code}`}>
             VN
           </Pin>
-          <Pin f={f} x={cx} y={g.head} className={styles.onRed}>
+          <Pin f={f} x={cx} y={g.head} code className={`t-label ${styles.onFocus}`}>
             {t.schema}
           </Pin>
           <Pin f={f} x={cx} y={g.tag} className={styles.tagPin}>
@@ -475,7 +492,7 @@ function SchemaAfter({ f, t }: DrawProps) {
           </Pin>
           {f === "desk" &&
             mx.map((x, k) => (
-              <Pin key={x} f={f} x={x} y={g.mk + 24} className={styles.mono}>
+              <Pin key={x} f={f} x={x} y={g.mk + 20} code className={`t-label ${styles.code}`}>
                 {MARKETS[k]}
               </Pin>
             ))}
@@ -511,8 +528,8 @@ const UI_BEFORE = {
   ],
 };
 
-/* A solid grey plate with its parts cut out of it in paper, so BEFORE
-   has the same weight as the other layers' grey blocks. */
+/* A solid grey plate with its parts cut out of it in the sheet's own
+   colour, so BEFORE has the same weight as the other layers' grey blocks. */
 function VendorScreen({ x0, y0, p }: { x0: number; y0: number; p: Vendor }) {
   const by = y0 + 92;
   return (
@@ -557,13 +574,45 @@ function UiBefore({ f }: DrawProps) {
 }
 
 /* The one template (112×184 at scale 1): a solid ink plate with its parts
-   cut out in paper, a red header (the focus), a field, the standard error
-   line, a pill button; the markets it is varied for hang below it, or
-   beside it in a narrow frame. */
+   cut out in the sheet's colour, an accent header (the focus), a field,
+   the standard error line, a pill button; the markets it is varied for
+   hang below it, or beside it in two rows in a narrow frame. */
 const TEMPLATE = { w: 112, h: 184, head: 37 };
-const UI_AFTER = {
-  desk: { x0: 104, y0: 100, s: 1, tag: [160, 58], chips: [85, 135, 185, 235], chipY: 334, bus: 308 },
-  phone: { x0: 24, y0: 21, s: 0.75, tag: [204, 49], chips: [150, 194, 238, 282], chipY: 132, bus: 132 },
+type UiGeo = {
+  x0: number;
+  y0: number;
+  s: number;
+  tag: [number, number];
+  chips: [number, number][];
+  bus: number;
+};
+const UI_AFTER: Record<F, UiGeo> = {
+  desk: {
+    x0: 104,
+    y0: 100,
+    s: 1,
+    tag: [160, 58],
+    chips: [
+      [52, 342],
+      [124, 342],
+      [196, 342],
+      [268, 342],
+    ],
+    bus: 312,
+  },
+  phone: {
+    x0: 24,
+    y0: 21,
+    s: 0.75,
+    tag: [216, 49],
+    chips: [
+      [180, 106],
+      [252, 106],
+      [180, 150],
+      [252, 150],
+    ],
+    bus: 128,
+  },
 };
 
 function UiAfter({ f, t }: DrawProps) {
@@ -573,6 +622,8 @@ function UiAfter({ f, t }: DrawProps) {
   const hy = y0 + TEMPLATE.head * s;
   const ring = { hw: 50 * s, hh: 20 * s };
   const bottom = y0 + TEMPLATE.h * s;
+  const right = x0 + TEMPLATE.w * s;
+  const xs = g.chips.map(([x]) => x);
   return (
     <Frame
       f={f}
@@ -580,30 +631,34 @@ function UiAfter({ f, t }: DrawProps) {
         <g className={styles.ink}>
           <g transform={`translate(${x0} ${y0}) scale(${s})`} className={styles.onInk}>
             <rect x={0} y={0} width={TEMPLATE.w} height={TEMPLATE.h} rx={12} className={styles.frameLine} />
-            <rect x={16} y={TEMPLATE.head - 7} width={80} height={14} rx={1} className={styles.redFill} />
+            <rect x={16} y={TEMPLATE.head - 7} width={80} height={14} className={styles.focusFill} />
             <rect x={16} y={68} width={46} height={5} className={styles.fill} />
             <rect x={16.75} y={82.75} width={78.5} height={17.5} rx={3} className={styles.outline} />
             <rect x={16} y={112} width={5} height={5} className={styles.fill} />
             <rect x={25} y={112} width={44} height={5} className={styles.fill} />
             <rect x={16} y={152} width={80} height={18} rx={9} className={styles.fill} />
           </g>
-          {/* The hexagon sits on the ink plate, so it is drawn light */}
+          {/* The hexagon sits on the ink plate, so it is cut in the sheet's colour */}
           <polygon points={hexRing(cx, hy, ring.hw, ring.hh, 12 * s)} className={styles.ringOnInk} />
           {f === "desk" ? (
             <>
-              {/* The tag's leader: dark on the paper, light once on the plate */}
+              {/* The tag's leader: grey on the sheet, cut once on the plate */}
               <line x1={cx} x2={cx} y1={g.tag[1]} y2={y0} className={styles.leader} />
               <line x1={cx} x2={cx} y1={y0} y2={hy - ring.hh} className={styles.leaderOnInk} />
               <line x1={cx} x2={cx} y1={bottom} y2={g.bus} className={styles.hairLine} />
-              <line x1={g.chips[0]} x2={g.chips[3]} y1={g.bus} y2={g.bus} className={styles.hairLine} />
-              {g.chips.map((x) => (
-                <line key={x} x1={x} x2={x} y1={g.bus} y2={g.chipY} className={styles.hairLine} />
+              <line x1={Math.min(...xs)} x2={Math.max(...xs)} y1={g.bus} y2={g.bus} className={styles.hairLine} />
+              {xs.map((x) => (
+                <line key={x} x1={x} x2={x} y1={g.bus} y2={g.chips[0][1]} className={styles.hairLine} />
               ))}
             </>
           ) : (
             <>
-              <line x1={x0 + TEMPLATE.w * s} x2={g.tag[0]} y1={hy} y2={hy} className={styles.leader} />
-              <line x1={x0 + TEMPLATE.w * s} x2={g.chips[3]} y1={g.bus} y2={g.bus} className={styles.hairLine} />
+              <line x1={right} x2={g.tag[0]} y1={hy} y2={hy} className={styles.leader} />
+              {/* Two rows of markets off one bus */}
+              <line x1={right} x2={Math.max(...xs)} y1={g.bus} y2={g.bus} className={styles.hairLine} />
+              {[...new Set(xs)].map((x) => (
+                <line key={x} x1={x} x2={x} y1={g.chips[0][1]} y2={g.chips[3][1]} className={styles.hairLine} />
+              ))}
             </>
           )}
         </g>
@@ -613,9 +668,11 @@ function UiAfter({ f, t }: DrawProps) {
           <Pin f={f} x={g.tag[0]} y={g.tag[1]} className={styles.tagPin}>
             <span className="boxed-tag">{t.template}</span>
           </Pin>
-          {g.chips.map((x, k) => (
-            <Pin key={x} f={f} x={x} y={g.chipY} className={styles.chip}>
-              {MARKETS[k]}
+          {g.chips.map(([x, y], k) => (
+            <Pin key={MARKETS[k]} f={f} x={x} y={y} className={styles.tagPin}>
+              <span className="chip" data-code="">
+                {MARKETS[k]}
+              </span>
             </Pin>
           ))}
         </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState, type CSSProperties } from "react";
+import { Fragment, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useInView } from "motion/react";
 import { useLocale } from "next-intl";
 import styles from "./UserFlow.module.css";
@@ -33,25 +33,23 @@ type Props = {
   title?: string;
 };
 
-/* A flow drawn on Latent's plotted sheet (latenthealth.com, "Platform"),
-   given weight: a dark sheet on a black back sheet, every step a solid
-   paper plate strung on one solid path, the decision a solid paper
-   hexagon. The step that forks is the chart's one focus — it carries the
-   dashed hexagon ring, and its branch leaves as Latent's leader does: a
-   dashed line down to the branch's tag (a solid chip in the page accent,
-   the product's own "your next action" red), then a side path into the
-   place the branch leads. A step whose caption counts its progress
-   ("3 of 4") carries a meter of that many segments. Start and end are
-   marked on the path itself (a ring in, a dot out).
+/* A flow drawn on a chart sheet (the global .paper-stack > .paper, with a
+   faint dot canvas): every step a raised plate on one 1px grey path, the
+   decision a raised hexagon with a dashed grey-1 edge. The step that forks
+   drops a dashed leader to the branch's chip, the one accent on the sheet
+   (the product's own "your next action" red), then runs on into the place
+   the branch leads, a raised plate with a dashed edge. A step whose
+   caption counts its progress ("3 of 4") carries a meter of that many
+   segments. Start and end are marked on the path itself: a hollow ink
+   square in, a solid one out.
    From a wide sheet the steps run left to right and the branches hang
    below; on a narrow one the path runs down the left and each branch sits
-   under its step. The steps light along the path once, when the sheet
-   comes into view. Hovering or focusing the branch draws its leaders
-   solid (an overlay fading in; nothing mounts). Reduced motion: the
-   finished drawing. The ring never turns. */
+   under its step. It is a statement figure: no hover, nothing to focus.
+   It draws once when it comes into view (steps, then the path, the drop,
+   the chip, the destination), done within 1200ms. Reduced motion: the
+   finished drawing. */
 
 const TIP = 14; // how far the hexagon's points stand off its sides, px
-const RING = 6; // the focus ring's distance from the hexagon, px (the branch's drop starts just past it)
 
 type Pt = [number, number];
 
@@ -64,29 +62,11 @@ const hexagon = (w: number, h: number): Pt[] => [
   [0, h / 2],
 ];
 
-/** Every edge pushed out by d and its neighbours re-met: a ring that keeps
-    one distance from the shape all the way round, points included. */
-function grow(pts: Pt[], d: number): Pt[] {
-  const n = pts.length;
-  const edges = pts.map((p, i) => {
-    const q = pts[(i + 1) % n];
-    const dx = q[0] - p[0];
-    const dy = q[1] - p[1];
-    const len = Math.hypot(dx, dy);
-    return { x: p[0] + (dy / len) * d, y: p[1] - (dx / len) * d, dx, dy };
-  });
-  return edges.map((b, i) => {
-    const a = edges[(i - 1 + n) % n];
-    const s = ((b.x - a.x) * b.dy - (b.y - a.y) * b.dx) / (a.dx * b.dy - a.dy * b.dx);
-    return [a.x + a.dx * s, a.y + a.dy * s];
-  });
-}
-
 const points = (pts: Pt[]) => pts.map(([x, y]) => `${(x + 0.5).toFixed(1)},${(y + 0.5).toFixed(1)}`).join(" ");
 
 /* The hexagon is drawn to the box's measured size in pixels, so its points
    keep one depth and its hairline stays one pixel at any width. */
-function Hexagon({ focus }: { focus: boolean }) {
+function Hexagon() {
   const ref = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState<Pt | null>(null);
 
@@ -99,16 +79,9 @@ function Hexagon({ focus }: { focus: boolean }) {
     return () => ro.disconnect();
   }, []);
 
-  const shape = size ? hexagon(size[0], size[1]) : null;
-
   return (
     <svg ref={ref} aria-hidden className={styles.hex}>
-      {shape && (
-        <>
-          {focus && <polygon points={points(grow(shape, RING))} className={styles.ring} />}
-          <polygon points={points(shape)} className={styles.hexShape} />
-        </>
-      )}
+      {size && <polygon points={points(hexagon(size[0], size[1]))} className={styles.hexShape} />}
     </svg>
   );
 }
@@ -120,6 +93,35 @@ function progress(caption?: string): [number, number] | null {
   const done = Number(m[1]);
   const total = Number(m[2]);
   return total > 0 && total <= 12 && done <= total ? [done, total] : null;
+}
+
+/* A line never opens on a joiner: the space before —, + or · is a
+   no-break space, so the sign stays at the end of the line before. */
+const tidy = (s: string) => s.replace(/ ([—+·×])/g, " $1");
+
+/* A version token (v1, v2) keeps its case inside an uppercase label */
+function versioned(text: string): ReactNode {
+  const parts = text.split(/\b(v\d+)\b/);
+  return parts.map((p, i) =>
+    i % 2 === 1 ? (
+      <span key={i} className={styles.ver}>
+        {p}
+      </span>
+    ) : (
+      p
+    ),
+  );
+}
+
+/** A dashed 1px leader, drawn as SVG so its dashes are exactly 3 3 */
+function Dashes({ className, down }: { className: string; down?: boolean }) {
+  return (
+    <span aria-hidden className={className}>
+      <svg>
+        {down ? <line x1="50%" x2="50%" y1="0" y2="100%" /> : <line x1="0" x2="100%" y1="50%" y2="50%" />}
+      </svg>
+    </span>
+  );
 }
 
 const HAN = /\p{Script=Han}/u;
@@ -134,14 +136,11 @@ export function UserFlow({ steps, branches, title }: Props) {
   const forks = new Map<string, Branch[]>();
   (branches ?? []).forEach((b) => forks.set(b.fromId, [...(forks.get(b.fromId) ?? []), b]));
   const forkCols = steps.flatMap((s, i) => (forks.has(s.id) ? [i] : []));
-  // One focus per chart: the first decision that forks, else the first decision
-  const decisions = steps.flatMap((s, i) => (s.kind === "decision" ? [i] : []));
-  const focus = decisions.find((i) => forkCols.includes(i)) ?? decisions[0] ?? -1;
 
   return (
-    <div className={styles.wrap}>
-      <figure ref={root} className={styles.sheet} data-lit={inView} data-cn={cn}>
-        {title && <figcaption className={styles.title}>{title}</figcaption>}
+    <div className="paper-stack">
+      <figure ref={root} className={`paper ${styles.sheet}`} data-lit={inView} data-cn={cn}>
+        {title && <figcaption className={`t-label ${styles.title}`}>{versioned(title)}</figcaption>}
         <ol className={styles.flow} style={{ ["--n" as string]: n } as CSSProperties}>
           {steps.map((s, i) => {
             const kind = s.kind ?? "step";
@@ -159,17 +158,14 @@ export function UserFlow({ steps, branches, title }: Props) {
                   data-last={i === n - 1}
                   style={{ ["--i" as string]: i, ["--col" as string]: i + 1 } as CSSProperties}
                 >
-                  {/* Steps are solid paper plates; the decision is its hexagon */}
-                  <div
-                    className={`${styles.box} ${kind === "decision" ? "" : "paper"}`}
-                    data-focus={i === focus}
-                  >
-                    {kind === "decision" && <Hexagon focus={i === focus} />}
-                    <span aria-hidden className={styles.num}>
+                  {/* Steps are raised plates; the decision is its hexagon */}
+                  <div className={styles.box} data-kind={kind}>
+                    {kind === "decision" && <Hexagon />}
+                    <span aria-hidden className={`t-label ${styles.num}`} data-code="">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <p className={styles.label}>{s.label}</p>
-                    {s.caption && <p className={styles.caption}>{s.caption}</p>}
+                    <p className={`t-small ${styles.label}`}>{tidy(s.label)}</p>
+                    {s.caption && <p className={`t-small ${styles.caption}`}>{tidy(s.caption)}</p>}
                     {meter && (
                       <span aria-hidden className={styles.meter}>
                         {Array.from({ length: meter[1] }, (_, k) => (
@@ -182,7 +178,6 @@ export function UserFlow({ steps, branches, title }: Props) {
                 {out && (
                   <li
                     className={styles.fork}
-                    data-focus={i === focus}
                     style={
                       {
                         ["--i" as string]: i,
@@ -193,18 +188,15 @@ export function UserFlow({ steps, branches, title }: Props) {
                   >
                     {out.map((b, k) => (
                       <div key={`${b.label}-${k}`} className={styles.branch} data-last={k === out.length - 1}>
-                        <span aria-hidden className={styles.drop} />
-                        <span aria-hidden className={styles.run} />
-                        {/* The same leaders drawn solid, shown while the branch is pointed at */}
-                        <span aria-hidden className={`${styles.drop} ${styles.lit}`} />
-                        <span aria-hidden className={`${styles.run} ${styles.lit}`} />
-                        <p className={styles.tag} tabIndex={0} data-cjk={HAN.test(b.label)}>
+                        <Dashes className={styles.drop} down />
+                        <Dashes className={styles.run} />
+                        <p className={`t-label ${styles.tag}`} data-code={HAN.test(b.label) ? undefined : ""}>
                           <span className="sr-only">{cn ? "分支：" : "Branch: "}</span>
                           {b.label}
                         </p>
                         <div className={styles.dest}>
-                          <p className={styles.destLabel}>{b.destination}</p>
-                          {b.caption && <p className={styles.destCaption}>{b.caption}</p>}
+                          <p className={`t-small ${styles.destLabel}`}>{tidy(b.destination)}</p>
+                          {b.caption && <p className={`t-small ${styles.destCaption}`}>{tidy(b.caption)}</p>}
                         </div>
                       </div>
                     ))}

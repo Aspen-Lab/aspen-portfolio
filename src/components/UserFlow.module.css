@@ -1,64 +1,48 @@
-/* Latent's plotted sheet, holding a flow, with weight: a dark sheet on a
-   black back sheet, solid paper plates on one solid path, a solid paper
-   hexagon, one red chip on the branch. Flat fills and 1px/2px lines
-   only. Lines on the dark sheet keep their literal light values; words
-   on the plates read the plate's own ink tokens (the global .paper). */
-.wrap {
-  position: relative;
-  isolation: isolate;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
-.wrap::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  transform: translate(10px, 10px);
-  border: 1px solid #333336;
-  border-radius: 2px;
-  background: #0a0a0a;
-}
+/* A flow on a chart sheet (the global .paper-stack > .paper): a faint dot
+   canvas, raised plates on one 1px grey path, a raised hexagon with a
+   dashed edge, one accent chip on the branch. Flat fills and 1px lines
+   only. The marks palette is the system's own, pinned here so it reads
+   the same on any plane. Entrance by opacity and transform alone. */
 
 .sheet {
-  --path: rgb(244 244 242 / 55%);
-  --dash: rgb(244 244 242 / 60%);
+  --k-ink: var(--color-ink);
+  --k-g1: var(--grey-1);
+  --k-g2: var(--grey-2);
+  --k-g3: var(--grey-3);
+  --k-sheet: var(--sheet);
+  --k-raised: var(--raised);
+  --k-edge: var(--edge);
+  --k-mute: var(--color-mute);
+  --k-on: var(--on-fill);
   /* narrow sheets: the path runs down the left, at --rail */
   --rail: 24px;
   --vgap: 24px;
-  --gap: 32px;
+  --gap: 24px;
   --elbow: 80px;
   --x: 88px;
   --lift: var(--vgap);
   container-type: inline-size;
-  position: relative;
-  padding: 22px 18px 28px;
-  border: 1px solid #333336;
-  border-radius: 2px;
-  /* a canvas of faint dots under the plates (the gradient is the dot only) */
-  background-color: #131315;
-  background-image: radial-gradient(circle, rgb(244 244 242 / 6%) 0 1px, transparent 1.5px);
+  padding: 20px;
+  /* the canvas: 1px grey-3 dots on the sheet (the radial is the dot only) */
+  background-color: var(--k-sheet);
+  background-image: radial-gradient(circle, var(--k-g3) 0 1px, transparent 1.5px);
   background-size: 16px 16px;
   background-position: -8px -8px;
+  color: var(--k-ink);
 }
 @media (min-width: 640px) {
-  .sheet { padding: 30px 32px 36px; }
+  .sheet { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .sheet { padding: 40px; }
 }
 
-.title {
-  margin-bottom: 26px;
-  color: var(--color-soft);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.5;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.sheet[data-cn="true"] .title {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.04em;
+/* S7 (.t-label): the title, the step numbers */
+.title { margin-bottom: 24px; }
+/* v1, v2: the version keeps its case */
+.ver {
   text-transform: none;
+  letter-spacing: 0.04em;
 }
 
 /* ── Narrow: one column, the path down the left ── */
@@ -69,94 +53,90 @@
   max-width: 560px;
 }
 
+/* The steps fade in along the path, 60ms apart */
 .step {
   position: relative;
-  opacity: 0.28;
-  transition: opacity 420ms ease;
-  transition-delay: calc(var(--i) * 200ms);
+  opacity: 0;
+  transition: opacity 360ms var(--ease-arrive);
+  transition-delay: calc(var(--i) * 60ms);
 }
 .sheet[data-lit="true"] .step { opacity: 1; }
 
-/* The solid path from each step to the next */
+/* The path from each step to the next: 1px grey-2, drawn by scale once
+   its step is in */
 .step:not([data-last="true"])::after,
 .fork::before {
   content: "";
   position: absolute;
-  left: calc(var(--rail) - 1px);
+  left: calc(var(--rail) - 0.5px);
   top: 100%;
+  width: 1px;
   height: var(--vgap);
-  border-left: 2px solid var(--path);
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path 260ms linear;
-  transition-delay: calc(var(--i) * 200ms + 120ms);
+  background: var(--k-g2);
+  transform: scaleY(0);
+  transform-origin: center top;
+  transition: transform 360ms var(--ease-arrive);
+  transition-delay: calc(var(--i) * 60ms + 120ms);
 }
 /* where a branch sits between two steps, the path runs on past it */
 .fork { position: relative; }
 .fork::before { top: 0; height: calc(100% + var(--vgap)); }
 .sheet[data-lit="true"] .step::after,
-.sheet[data-lit="true"] .fork::before { clip-path: inset(0); }
+.sheet[data-lit="true"] .fork::before { transform: none; }
 
-/* ── The plates (global .paper: #e1e1e1, a 1px edge, ink tokens) ── */
+/* ── The plates: raised, one 1px edge ── */
 .box {
   position: relative;
   height: 100%;
-  padding: 14px 16px;
+  padding: 16px;
+  border: 1px solid var(--k-edge);
+  border-radius: 2px;
+  background: var(--k-raised);
 }
-/* The decision is its hexagon alone: no plate box, the plate's inks */
-.step[data-kind="decision"] .box {
-  --color-ink: #0a0a0a;
-  --color-mute: #3f3f44;
-  --color-soft: #5e5e63;
-  padding: 14px 28px;
-  color: var(--color-ink);
+/* The decision is its hexagon alone: no plate box */
+.box[data-kind="decision"] {
+  padding: 16px 28px;
+  border: 0;
+  background: none;
 }
 
-/* Start: a ring where the path comes in. End: a dot where it leaves. */
+/* Start: a hollow ink square where the path comes in. End: a solid one
+   where it leaves. 8px, centred on the plate's edge. */
 .step[data-first="true"] .box::before,
 .step[data-last="true"] .box::after {
   content: "";
   position: absolute;
   z-index: 1;
-  top: -7px;
-  left: calc(var(--rail) - 6px);
-  width: 12px;
-  height: 12px;
-  border: 2px solid rgb(244 244 242 / 85%);
-  border-radius: 999px;
-  background: #131315;
+  top: -5px;
+  left: calc(var(--rail) - 5px);
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--k-ink);
+  background: var(--k-sheet);
 }
 .step[data-last="true"] .box::after {
   top: auto;
-  bottom: -7px;
-  background: #f4f4f2;
+  bottom: -5px;
+  background: var(--k-ink);
 }
 
 .num,
 .label,
 .caption,
 .meter { position: relative; }
-.num {
-  display: block;
-  color: var(--color-soft);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1;
-  letter-spacing: 0.12em;
-  font-variant-numeric: tabular-nums;
-}
+.num { display: block; }
+/* S6 (.t-small): the step's name in ink, its caption in mute */
+.label,
+.caption,
+.destLabel,
+.destCaption { text-wrap: balance; }
 .label {
-  margin-top: 9px;
-  color: var(--color-ink);
-  font-size: 16px;
-  line-height: 1.3;
-  letter-spacing: -0.005em;
+  margin-top: 8px;
+  color: var(--k-ink);
 }
 .caption {
-  margin-top: 5px;
-  color: var(--color-mute);
-  font-size: 13.5px;
-  line-height: 1.45;
-  text-wrap: balance;
+  margin-top: 4px;
+  color: var(--k-mute);
 }
 .sheet[data-cn="true"] .label,
 .sheet[data-cn="true"] .caption,
@@ -166,24 +146,24 @@
   overflow-wrap: anywhere;
 }
 
-/* Progress the caption counts ("3 of 4"), as that many segments */
+/* Progress the caption counts ("3 of 4"): 16×4 ink bars, the rest hollow */
 .meter {
   display: flex;
-  gap: 3px;
-  margin-top: 10px;
+  gap: 4px;
+  margin-top: 12px;
 }
 .meter span {
-  width: 18px;
-  height: 6px;
-  border: 1.5px solid rgb(10 10 10 / 40%);
+  width: 16px;
+  height: 4px;
+  border: 1px solid var(--k-g2);
 }
 .meter span[data-on="true"] {
-  border-color: #0a0a0a;
-  background: #0a0a0a;
+  border: 0;
+  background: var(--k-ink);
 }
 
-/* The decision: a solid paper hexagon drawn behind the text, to the
-   box's own size */
+/* The decision: a raised hexagon with a dashed grey-1 edge, drawn behind
+   the text to the box's own size */
 .hex {
   position: absolute;
   inset: 0;
@@ -192,131 +172,100 @@
   overflow: visible;
 }
 .hexShape {
-  fill: #e1e1e1;
-  stroke: none;
-}
-/* The focus ring: dashed, static */
-.ring {
-  fill: none;
-  stroke: rgb(244 244 242 / 55%);
+  fill: var(--k-raised);
+  stroke: var(--k-g1);
   stroke-width: 1;
-  stroke-dasharray: 3 4;
+  stroke-dasharray: 3 3;
 }
 
-/* ── A branch: a dashed drop to the red chip, then a side path into
-   where it leads. The drop leaves from the focus ring's edge. ── */
+/* ── A branch: a dashed drop to the accent chip, then a dashed run into
+   where it leads. The drop leaves from the hexagon's foot. ── */
 .branch {
   position: relative;
-  padding: calc(var(--elbow) - 27px) 0 0 calc(var(--x) + 28px);
+  padding: calc(var(--elbow) - 28px) 0 0 calc(var(--x) + 24px);
 }
-.branch + .branch { margin-top: 18px; }
+.branch + .branch { margin-top: 16px; }
 .drop,
 .run {
   position: absolute;
-  left: calc(var(--x) - 0.75px);
-  transition: clip-path 360ms var(--ease-arrive);
-  transition-delay: calc(var(--i) * 200ms + 260ms);
+  display: block;
+  pointer-events: none;
+}
+.drop svg,
+.run svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.drop line,
+.run line {
+  stroke: var(--k-g1);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  shape-rendering: crispEdges;
 }
 /* Down to the elbow; the first reaches up to the step (on a narrow sheet
    across the gap under it), the others carry on to the next branch. */
 .drop {
+  left: calc(var(--x) - 0.5px);
   top: 0;
   bottom: calc(100% - var(--elbow));
-  border-left: 1.5px dashed var(--dash);
-  clip-path: inset(0 0 100% 0);
+  width: 1px;
+  transform: scaleY(0);
+  transform-origin: center top;
+  transition: transform 360ms var(--ease-arrive) 480ms;
 }
 .branch:first-child .drop { top: calc(0px - var(--lift)); }
-.fork[data-focus="true"] .branch:first-child .drop { top: calc(7px - var(--lift)); }
-.branch:not([data-last="true"]) .drop { bottom: -18px; }
+.branch:not([data-last="true"]) .drop { bottom: -16px; }
 .run {
-  top: calc(var(--elbow) - 0.75px);
-  width: 28px;
-  border-top: 1.5px dashed var(--dash);
-  clip-path: inset(0 100% 0 0);
-  transition-delay: calc(var(--i) * 200ms + 560ms);
+  left: var(--x);
+  top: calc(var(--elbow) - 0.5px);
+  width: 24px;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 360ms var(--ease-arrive) 720ms;
 }
 .sheet[data-lit="true"] .drop,
-.sheet[data-lit="true"] .run { clip-path: inset(0); }
+.sheet[data-lit="true"] .run { transform: none; }
 
-/* The same leaders drawn solid, over the dashed ones, while the branch
-   is pointed at or focused: opacity only */
-.lit {
-  border-style: solid;
-  border-color: rgb(244 244 242 / 85%);
-  opacity: 0;
-}
-.drop.lit {
-  transition:
-    clip-path 360ms var(--ease-arrive) calc(var(--i) * 200ms + 260ms),
-    opacity 240ms ease;
-}
-.run.lit {
-  transition:
-    clip-path 360ms var(--ease-arrive) calc(var(--i) * 200ms + 560ms),
-    opacity 240ms ease;
-}
-.fork:focus-within .lit { opacity: 1; }
-@media (hover: hover) {
-  .fork:hover .lit { opacity: 1; }
-}
-
-/* The branch's chip: solid, in the page accent, ink words */
+/* The branch's chip: the one accent on the sheet, S7 (.t-label) at 500
+   in on-fill */
 .tag {
   position: absolute;
   z-index: 1;
-  top: 18px;
+  top: 16px;
   left: var(--x);
-  padding: 6px 10px;
+  padding: 5px 8px;
   border-radius: 2px;
-  background: var(--accent, #f4f4f2);
-  color: #0f0f10;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  background: var(--accent);
+  color: var(--k-on);
+  font-weight: 500;
   white-space: nowrap;
   translate: -50% 0;
   opacity: 0;
-  transition: opacity 300ms ease;
-  transition-delay: calc(var(--i) * 200ms + 460ms);
+  transition: opacity 160ms var(--ease-arrive) 720ms;
 }
-.tag[data-cjk="true"] {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
-.tag:focus-visible {
-  outline: 2px solid rgb(244 244 242 / 70%);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
+/* Where the branch leads: a raised plate with a dashed grey-1 edge */
 .dest {
   position: relative;
   width: fit-content;
-  max-width: 460px;
-  padding: 16px 18px;
-  border: 1px dashed rgb(244 244 242 / 50%);
+  max-width: 100%;
+  padding: 16px;
+  border: 1px dashed var(--k-g1);
   border-radius: 2px;
-  background: #131315;
+  background: var(--k-raised);
   opacity: 0;
-  transition: opacity 360ms ease;
-  transition-delay: calc(var(--i) * 200ms + 680ms);
+  transition: opacity 360ms var(--ease-arrive) 840ms;
 }
 .sheet[data-lit="true"] .tag,
 .sheet[data-lit="true"] .dest { opacity: 1; }
-.destLabel {
-  color: var(--color-ink);
-  font-size: 16px;
-  line-height: 20px;
-}
+.destLabel { color: var(--k-ink); }
 .destCaption {
-  margin-top: 6px;
-  color: var(--color-mute);
-  font-size: 14px;
-  line-height: 1.5;
-  text-wrap: pretty;
+  max-width: 36ch;
+  margin-top: 4px;
+  color: var(--k-mute);
 }
 
 /* ── Wide: the steps run left to right, the branches hang below ── */
@@ -339,22 +288,21 @@
 
   .step:not([data-last="true"])::after {
     left: 100%;
-    top: calc(50% - 1px);
+    top: calc(50% - 0.5px);
     width: var(--gap);
-    height: 0;
-    border-left: 0;
-    border-top: 2px solid var(--path);
-    clip-path: inset(0 100% 0 0);
+    height: 1px;
+    transform: scaleX(0);
+    transform-origin: left center;
   }
-  .sheet[data-lit="true"] .step::after { clip-path: inset(0); }
+  .sheet[data-lit="true"] .step::after { transform: none; }
 
   .step[data-first="true"] .box::before,
   .step[data-last="true"] .box::after {
-    top: calc(50% - 6px);
+    top: calc(50% - 4px);
     bottom: auto;
-    left: -7px;
+    left: -5px;
   }
-  .step[data-last="true"] .box::after { left: auto; right: -7px; }
+  .step[data-last="true"] .box::after { left: auto; right: -5px; }
 }
 
 /* Reduced motion: the finished drawing from the first paint */
@@ -364,15 +312,13 @@
   .fork::before,
   .drop,
   .run,
-  .drop.lit,
-  .run.lit,
   .tag,
   .dest { transition: none; }
   .step,
   .tag,
   .dest { opacity: 1; }
-  .step:not([data-last="true"])::after,
+  .step.step:not([data-last="true"])::after,
   .fork::before,
   .drop,
-  .run { clip-path: inset(0); }
+  .run { transform: none; }
 }

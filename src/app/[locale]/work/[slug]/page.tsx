@@ -45,8 +45,9 @@ const latinWidth = (s: string) => s.length + (s.match(/\p{Script=Han}/gu)?.lengt
     column, where "Full-time" would otherwise break at its hyphen. A short
     tag never splits (交付, "Brand & growth"), and its dot travels with it,
     so a line can end on a dot but never start with one. `held` (the
-    banded pages' Chinese) also holds each word, and a dash travels with
-    the word after it: "2025 年 12 月 / — 至今", never "至 / 今". */
+    banded pages' Chinese) also holds each word, and a dash stays with
+    the word before it: "2025 年 12 月 — / 至今", never "/ — 至今" or
+    "至 / 今". */
 function Stacked({ parts, held = false }: { parts: string[]; held?: boolean }) {
   return parts.map((part, i) => {
     const last = i === parts.length - 1;
@@ -54,7 +55,7 @@ function Stacked({ parts, held = false }: { parts: string[]; held?: boolean }) {
     const kept = part.replace(/(\d) (?=\p{Script=Han})/gu, "$1\u00a0");
     const text = (
       <>
-        {held && HAN.test(part) ? heldWords(kept.replace(/ — /g, " —\u00a0")) : kept}
+        {held && HAN.test(part) ? heldWords(kept.replace(/ — /g, "\u00a0— ")) : kept}
         {!last && <span className="lg:hidden">{"\u00a0·"}</span>}
       </>
     );
@@ -115,8 +116,9 @@ const hanCount = (s: string) => s.replace(/⁠/g, "").length;
 const JOIN_MAX = 8;
 /** Words the segmenter cuts wrongly in this site's copy (see hold.tsx):
     普通人 comes out 普通 | 人的, 马来西亚 马来 | 西亚; 逃生通道 and
-    目标梯度 are the case's own terms. */
-const GLOSSED = /(一句话|方形|像素|普通人|马来西亚|逃生通道|目标梯度)/u;
+    目标梯度 are the case's own terms; 游戏化体验 is Nutra's, held where
+    its summary closes a banded page's Up next card. */
+const GLOSSED = /(一句话|方形|像素|普通人|马来西亚|逃生通道|目标梯度|游戏化体验)/u;
 /** Lone hanzi that lead the word after them (可 | 运行, 最 | 自豪,
     某 | 一条), so they join forward instead of onto the word before. */
 const LEADS = /^[可不最第每各某非超再更被]$/u;
@@ -176,11 +178,12 @@ function emit(units: Unit[]): ReactNode[] {
   const out: ReactNode[] = [];
   const styled = (r: Run, key: number) =>
     r.tag === "strong" ? (
-      <strong key={key} className="font-semibold text-ink">
+      <strong key={key} className="font-medium text-ink">
         {r.text}
       </strong>
     ) : r.tag === "em" ? (
-      <em key={key} className="italic">
+      // Hanzi have no italic: emphasis in Chinese is ink, upright
+      <em key={key} className="not-italic text-ink">
         {r.text}
       </em>
     ) : (
@@ -232,12 +235,13 @@ function heldProse(text: string): ReactNode[] {
 }
 
 /** Large Chinese (titles, headings, quotes): each phrase up to and
-    including its comma is a block of its own, held word by word inside. */
+    including its comma is a block of its own, held word by word inside.
+    (data-phrase lets the pull quote hang its open mark from the first.) */
 function Held({ text }: { text: string }) {
   const phrases = text.split(/(?<=[，、：；])/).filter(Boolean);
   if (phrases.length === 1 && !/[，、：；]$/.test(text)) return <>{heldWords(text)}</>;
   return phrases.map((phrase, i) => (
-    <span key={i} className="inline-block">
+    <span key={i} className="inline-block" data-phrase="">
       {heldWords(phrase)}
     </span>
   ));
@@ -859,53 +863,34 @@ export default async function CaseStudy({
 }
 
 /* ══ The banded layout ══════════════════════════════════════════════════
-   Latent's rhythm (latenthealth.com): full-bleed bands, dark hero → dark
-   evidence → one light band for the page's tabbed signature chart → dark
-   evidence → a grey band for statements and quotes → dark close. Each
-   band carries opaque planes: charts on paper sheets, notes on black
-   slabs, numbers on solid tiles. Only pages with Project.bands come here;
-   the accent is the project's own, used as solid fills and at most a few
-   heading phrases. */
+   One dark system (Axel, TikTok): a hero band, then one content band on
+   the same ground. Mass comes from opaque dark planes: charts on sheets,
+   notes on slabs, numbers on tiles. Headings, body and figures are ink;
+   the project's accent reaches only a chart's single focus mark, which
+   the chart draws itself. Only pages with Project.bands come here. */
 
 type Section = NonNullable<Project["sections"]>[number];
-type Tone = "dark" | "light" | "grey";
 type Fact = { label: string; parts: string[] };
 type Block =
-  | { kind: "section"; s: Section; i: number; tone: Tone }
-  | { kind: "quote"; text: string; attribution?: string; i: number; tone: "grey" }
-  | { kind: "next"; tone: "dark" };
+  | { kind: "section"; s: Section; i: number }
+  | { kind: "quote"; text: string; attribution?: string; i: number }
+  | { kind: "next" };
 
 const pad = (n: number) => String(n).padStart(2, "0");
-const ESCAPE = /[.*+?^${}()|[\]\\]/g;
 
-/** Where `accent` stands in `text`: exactly, or reading the spaces,
-    no-break spaces and word joiners that hold a title together as one. */
-function findAccent(text: string, accent?: string): [number, number] | null {
-  if (!accent) return null;
-  const exact = text.indexOf(accent);
-  if (exact >= 0) return [exact, exact + accent.length];
-  const chars = Array.from(accent.replace(/[\s ⁠]+/gu, " ").trim());
-  if (chars.length === 0) return null;
-  const source = chars
-    .map((c) => (c === " " ? "[\\s\\u00a0\\u2060]+" : c.replace(ESCAPE, "\\$&")))
-    .join("\\u2060?");
-  const m = new RegExp(source, "u").exec(text);
-  return m ? [m.index, m.index + m[0].length] : null;
+/** The banded entrance: fade and rise 8px over 720ms on --ease-arrive */
+const ARRIVE = { y: 8, duration: 0.72, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] };
+
+/** Large text, Chinese held word by word (a heading, the title) */
+function Plain({ text, cn }: { text: string; cn: boolean }) {
+  return cn ? <Held text={text} /> : <>{text}</>;
 }
 
-/** A title or heading with its accent phrase in the page accent; Chinese
-    held word by word on either side of it. */
-function Accented({ text, accent, cn }: { text: string; accent?: string; cn: boolean }) {
-  const words = (t: string) => (cn ? <Held text={t} /> : t);
-  const at = findAccent(text, accent);
-  if (!at) return <>{words(text)}</>;
-  return (
-    <>
-      {at[0] > 0 && words(text.slice(0, at[0]))}
-      <span className={styles.accentPhrase}>{words(text.slice(at[0], at[1]))}</span>
-      {at[1] < text.length && words(text.slice(at[1]))}
-    </>
-  );
+/** "Name — claim" as two pieces, so a wrapped title breaks after the dash
+    and never inside the name. Titles hold the dash with a no-break space. */
+function splitTitle(title: string): [string, string] | null {
+  const m = /^(.+?)[\s ]+—\s+(.+)$/u.exec(title);
+  return m ? [m[1], m[2]] : null;
 }
 
 function BandedCase({
@@ -928,27 +913,22 @@ function BandedCase({
   const editorial = project.layout === "editorial";
   const sections = project.sections ?? [];
 
-  /* Blocks in reading order, each with its band; a pull quote leaves its
-     section's band for a grey one, and "Up next" closes on dark. Runs of
-     one tone share a band. */
+  /* Blocks in reading order, all on the one content band: each section,
+     its pull quote after it, and "Up next" to close. */
   const blocks: Block[] = [];
   sections.forEach((s, i) => {
-    blocks.push({ kind: "section", s, i, tone: s.band ?? "dark" });
+    blocks.push({ kind: "section", s, i });
     if (s.pullQuote) {
-      blocks.push({ kind: "quote", text: s.pullQuote.text, attribution: s.pullQuote.attribution, i, tone: "grey" });
+      blocks.push({ kind: "quote", text: s.pullQuote.text, attribution: s.pullQuote.attribution, i });
     }
   });
-  blocks.push({ kind: "next", tone: "dark" });
-  const groups: { tone: Tone; blocks: Block[] }[] = [];
-  for (const b of blocks) {
-    const last = groups[groups.length - 1];
-    if (last && last.tone === b.tone) last.blocks.push(b);
-    else groups.push({ tone: b.tone, blocks: [b] });
-  }
+  blocks.push({ kind: "next" });
 
   const host = project.liveUrl?.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  /* An image frame is a tile: the tile fill, the one plane edge */
+  const frame = "rounded-[2px] border border-(--edge) bg-(--tile)";
 
-  const renderSection = (s: Section, i: number, tone: Tone) => {
+  const renderSection = (s: Section, i: number) => {
     const prevChapter = i > 0 ? sections[i - 1].chapter : undefined;
     const isFirstInChapter = s.chapter && s.chapter !== prevChapter;
     const chapterIndex = s.chapter ? chapters.indexOf(s.chapter) : -1;
@@ -957,12 +937,12 @@ function BandedCase({
       <>
         <header className="max-w-3xl">
           {chapters.length <= 1 && <p className={styles.sectionNum}>{pad(i + 1)}</p>}
-          <h2 className={tone === "grey" ? styles.statement : styles.h2}>
+          <h2 className={styles.h2}>
             {/* Headings may carry `code` too — never print backticks */}
             {MARKUP.test(s.heading) ? (
               <RichText as="span">{s.heading}</RichText>
             ) : (
-              <Accented text={s.heading} accent={s.headingAccent} cn={cn} />
+              <Plain text={s.heading} cn={cn} />
             )}
           </h2>
         </header>
@@ -970,7 +950,7 @@ function BandedCase({
           cn ? (
             <p className={`${styles.bandBody} ${CN_PROSE}`}>{heldProse(s.body)}</p>
           ) : (
-            <RichText className={`${styles.bandBody} text-pretty`}>{s.body}</RichText>
+            <RichText className={styles.bandBody}>{s.body}</RichText>
           )
         )}
       </>
@@ -991,8 +971,8 @@ function BandedCase({
         intro
       );
 
-    /* Every drawing sits right under the text it draws; the callout
-       follows them all as the section's footnote. */
+    /* Every drawing sits right under the text it draws, 56px apart; the
+       callout follows them all as the section's footnote. */
     const figures: ReactNode[] = [];
     const fig = (key: string, node: ReactNode) =>
       figures.push(
@@ -1028,11 +1008,11 @@ function BandedCase({
       fig(
         "stats",
         <OutcomeTiles
+          columns={2}
           items={s.statGrid.items.map((it) => ({
             value: it.value,
             label: it.label,
             text: it.hint,
-            accent: true,
             href: it.href,
           }))}
         />,
@@ -1055,7 +1035,7 @@ function BandedCase({
     if (s.images && s.images.length === 1) {
       fig(
         "image",
-        <div className="overflow-hidden rounded-[2px] border border-line bg-cream">
+        <div className={`overflow-hidden ${frame}`}>
           <Image
             src={s.images[0]}
             alt={`${s.heading} — figure`}
@@ -1101,7 +1081,7 @@ function BandedCase({
               target="_blank"
               rel="noreferrer"
               aria-label={`${figure.alt} — ${cn ? "查看原图" : "View full-size image"}`}
-              className="block overflow-hidden rounded-[2px] border border-line bg-cream"
+              className={`block overflow-hidden ${frame}`}
             >
               <Image
                 src={figure.src}
@@ -1112,9 +1092,9 @@ function BandedCase({
                 className="block h-auto w-full"
               />
             </a>
-            <figcaption className="mt-3 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[14px] leading-relaxed text-mute">
+            <figcaption className={styles.figCaption}>
               <span>{cn ? heldWords(figure.caption ?? figure.alt) : (figure.caption ?? figure.alt)}</span>
-              <span className="text-soft">
+              <span className={styles.figCaptionHint}>
                 {cn ? "点击图片查看原图 ↗" : "Open image at full size ↗"}
               </span>
             </figcaption>
@@ -1134,11 +1114,11 @@ function BandedCase({
             playsInline
             preload="none"
             aria-label={video.title}
-            className="block h-auto w-full rounded-[2px] border border-line bg-cream"
+            className={`block h-auto w-full ${frame}`}
           >
             <a href={video.src}>{cn ? "观看演示视频" : "Watch the prototype video"}</a>
           </video>
-          <figcaption className="mt-3 text-[14px] leading-relaxed text-mute">
+          <figcaption className={styles.figCaption}>
             {cn ? heldWords(video.title) : video.title}
           </figcaption>
         </figure>,
@@ -1152,7 +1132,6 @@ function BandedCase({
           label={s.callout.label}
           title={s.callout.title}
           tone="slab"
-          accent={s.callout.accent}
         >
           {s.callout.text}
         </Callout>,
@@ -1162,11 +1141,9 @@ function BandedCase({
     return (
       <>
         {isFirstInChapter && (
-          <Reveal>
+          <Reveal {...ARRIVE}>
             <div data-chapter={chapterIndex} className={`${styles.chapter} ${styles.bandChapter}`}>
-              <span className={styles.chapterNum}>
-                {cn ? "章节" : "Chapter"} {pad(chapterIndex + 1)}
-              </span>
+              <span className={styles.chapterNum}>{pad(chapterIndex + 1)}</span>
               <span className={styles.chapterTitle}>{cn && s.chapter ? heldWords(s.chapter) : s.chapter}</span>
               <span aria-hidden className={styles.chapterRule} />
             </div>
@@ -1174,7 +1151,7 @@ function BandedCase({
         )}
         {/* A section runs 800–1500px tall on a phone: it rises as its
             heading enters, not once a fifth of it is on screen. */}
-        <Reveal delay={0.04} amount="some">
+        <Reveal {...ARRIVE} delay={0.06} amount="some">
           <section id={`s-${pad(i + 1)}`} className={styles.bandSection}>
             {lead}
             {figures}
@@ -1187,10 +1164,10 @@ function BandedCase({
   const renderQuote = (text: string, attribution?: string) => {
     const quoted = /^[“"]/.test(text) ? text : `“${text}”`;
     return (
-      <Reveal>
+      <Reveal {...ARRIVE}>
         <figure className={styles.quoteBand}>
           <blockquote>
-            <p className={`type-display ${styles.quoteBandText}`} data-hang={cn ? undefined : ""}>
+            <p className={styles.quoteBandText} data-hang="">
               {cn ? <Held text={quoted} /> : quoted}
             </p>
           </blockquote>
@@ -1202,10 +1179,15 @@ function BandedCase({
     );
   };
 
-  /* Up next as Latent's split card: the next cover beside a black slab */
+  /* Up next as Latent's split card: the next cover (a tile) beside a slab.
+     The title breaks after its dash: "Name —" / "the claim". */
+  const nextParts = splitTitle(nextTitle);
+  /* The slab keeps the summary's first sentence (to its first "。" or
+     ". "), word for word: a clamp would cut a claim before its figure. */
+  const nextLead = next.summary.match(/^.*?(?:。|[.!?](?= ))/)?.[0] ?? next.summary;
   const renderNext = () => (
     <div data-chapters-end>
-      <Reveal delay={0.1}>
+      <Reveal {...ARRIVE}>
         <Link href={`/work/${next.slug}`} className={styles.nextSplit}>
           <span className={styles.nextMedia}>
             {/* The print always fills: the hero's "contain" and its edge
@@ -1230,11 +1212,22 @@ function BandedCase({
               <span aria-hidden className={styles.kickerSquare} />
               {cn ? "下一个项目" : "Up next"}
             </span>
-            <span className={`type-display ${styles.nextSplitTitle}`}>
-              {cn ? <Held text={nextTitle} /> : nextTitle}
+            <span className={styles.nextSplitTitle}>
+              {nextParts ? (
+                <>
+                  <span className={styles.nextName}>{`${nextParts[0]} —`}</span>{" "}
+                  <span className={styles.nextClaim}>
+                    {cn ? <Held text={nextParts[1]} /> : nextParts[1]}
+                  </span>
+                </>
+              ) : cn ? (
+                <Held text={nextTitle} />
+              ) : (
+                nextTitle
+              )}
             </span>
             {!nextInEnglish && (
-              <span className={styles.nextSplitSummary}>{cn ? heldWords(next.summary) : next.summary}</span>
+              <span className={styles.nextSplitSummary}>{cn ? heldWords(nextLead) : nextLead}</span>
             )}
             <span className={styles.nextSplitGo}>
               {cn ? "阅读案例" : "Read the case study"}
@@ -1254,40 +1247,32 @@ function BandedCase({
       data-bands=""
       data-project-theme={project.theme}
       data-layout={project.layout}
-      style={
-        {
-          "--accent": project.accent,
-          "--accent-deep": project.accentDeep ?? project.accent,
-        } as React.CSSProperties
-      }
+      style={{ "--accent": project.accent } as React.CSSProperties}
     >
-      <Band tone="dark" className={bandStyles.hero}>
+      <Band className={bandStyles.hero}>
         <Link href="/#work" className={styles.back}>
           <span aria-hidden className={styles.backArrow}>←</span>
           {cn ? "返回作品" : "Back to work"}
         </Link>
 
-        <div className="mt-12 grid gap-y-14 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-end lg:gap-x-16 xl:gap-x-24">
-          <Reveal>
+        <div className={styles.heroGrid}>
+          <Reveal {...ARRIVE}>
             <header className="max-w-4xl">
               <span className={styles.kicker}>{project.category}</span>
-              <h1
-                className="mt-6 type-display leading-[1.0] text-ink text-balance"
-                style={{ fontSize: "clamp(40px, 6vw, 84px)" }}
-              >
-                <Accented text={project.title} accent={project.titleAccent} cn={cn} />
+              <h1 className={styles.heroTitle}>
+                <Plain text={project.title} cn={cn} />
               </h1>
-              <p className={`mt-8 text-[18px] leading-[1.6] text-mute max-w-2xl${cn ? ` ${CN_PROSE}` : ""}`}>
+              <p className={`${styles.heroSummary}${cn ? ` ${CN_PROSE}` : ""}`}>
                 {cn ? heldWords(project.summary) : project.summary}
               </p>
-              {/* The page's one solid button: the accent, ink words */}
+              {/* The page's one solid button: an ink fill, dark words */}
               {project.liveUrl && project.accent ? (
-                <a href={project.liveUrl} target="_blank" rel="noreferrer" className={`mt-9 ${styles.cta}`}>
+                <a href={project.liveUrl} target="_blank" rel="noreferrer" className={`mt-10 ${styles.cta}`}>
                   {cn ? "访问" : "Visit"} {host}
                   <span aria-hidden className={styles.ctaArrow}>↗</span>
                 </a>
               ) : project.liveUrl ? (
-                <a href={project.liveUrl} target="_blank" rel="noreferrer" className={`mt-7 ${styles.live}`}>
+                <a href={project.liveUrl} target="_blank" rel="noreferrer" className={`mt-8 ${styles.live}`}>
                   {cn ? "访问" : "Visit"} {host}
                   <span aria-hidden className={styles.liveArrow}>↗</span>
                 </a>
@@ -1295,8 +1280,8 @@ function BandedCase({
             </header>
           </Reveal>
 
-          <Reveal delay={0.08}>
-            <dl className={`grid grid-cols-2 ${editorial ? "sm:grid-cols-3" : "sm:grid-cols-4"} lg:grid-cols-1 gap-x-8 gap-y-7 lg:gap-y-5 border-t border-line pt-7 lg:pt-6 max-w-4xl`}>
+          <Reveal {...ARRIVE} delay={0.06}>
+            <dl className={`${styles.facts} grid grid-cols-2 ${editorial ? "sm:grid-cols-3" : "sm:grid-cols-4"} lg:grid-cols-1 max-w-4xl`}>
               {facts.map((f, i) => (
                 <div
                   key={f.label}
@@ -1312,7 +1297,7 @@ function BandedCase({
           </Reveal>
         </div>
 
-        <Reveal delay={0.14}>
+        <Reveal {...ARRIVE} delay={0.12}>
           {project.cover && project.coverNotes ? (
             <div className="mt-14">
               <AnnotatedImage
@@ -1332,7 +1317,7 @@ function BandedCase({
             </div>
           ) : (
             <div
-              className="mt-14 aspect-[16/9] rounded-[2px] border border-line overflow-hidden bg-cream relative"
+              className={`mt-14 aspect-[16/9] overflow-hidden relative ${frame}`}
               style={project.coverBg ? { backgroundColor: project.coverBg } : undefined}
             >
               {project.heroVideo ? (
@@ -1363,11 +1348,11 @@ function BandedCase({
           )}
         </Reveal>
 
-        {/* The outcome tiles: the team's figures in ink, the owner's or the
-            work's own in the accent, each linked to its evidence */}
+        {/* The outcome tiles: every figure in ink, each linked to the
+            section that shows its evidence */}
         {project.metrics && project.metrics.length > 0 && (
-          <Reveal delay={0.18}>
-            <div className="mt-6">
+          <Reveal {...ARRIVE} delay={0.18}>
+            <div className="mt-4 sm:mt-6">
               <OutcomeTiles items={project.metrics} />
             </div>
           </Reveal>
@@ -1376,26 +1361,18 @@ function BandedCase({
 
       {chapters.length > 1 && <ChapterNav chapters={chapters} plate />}
 
-      {groups.map((g, gi) => (
-        <Band
-          key={gi}
-          tone={g.tone}
-          className={gi === 0 && g.tone === "dark" ? bandStyles.tight : undefined}
-        >
-          {g.blocks.map((b) => (
-            <div
-              key={b.kind === "next" ? "next" : `${b.kind}-${b.i}`}
-              className={styles.block}
-            >
-              {b.kind === "section"
-                ? renderSection(b.s, b.i, b.tone)
-                : b.kind === "quote"
-                  ? renderQuote(b.text, b.attribution)
-                  : renderNext()}
-            </div>
-          ))}
-        </Band>
-      ))}
+      {/* One content band: every block sits on the same dark ground */}
+      <Band className={bandStyles.tight}>
+        {blocks.map((b) => (
+          <div key={b.kind === "next" ? "next" : `${b.kind}-${b.i}`} className={styles.block}>
+            {b.kind === "section"
+              ? renderSection(b.s, b.i)
+              : b.kind === "quote"
+                ? renderQuote(b.text, b.attribution)
+                : renderNext()}
+          </div>
+        ))}
+      </Band>
     </article>
   );
 }

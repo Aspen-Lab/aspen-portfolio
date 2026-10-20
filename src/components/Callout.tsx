@@ -52,9 +52,10 @@ type Props = {
   /** Optional title above the body. */
   title?: string;
   /** "slab": the banded pages' black block (Latent's split-card text half):
-      one column, the kicker in plain type, the title large. */
+      one column, an S7 kicker, an S4 title, the note in S5 body. */
   tone?: "slab";
-  /** An exact substring of `title`, set in the page accent (slab only). */
+  /** Accepted for the data's sake and unused: the banded system keeps the
+      accent off text. */
   accent?: string;
 };
 
@@ -115,31 +116,19 @@ function heldRich(text: string): ReactNode[] {
   });
 }
 
-/** The title with its accent phrase picked out; Chinese held word by word */
-function accented(title: string, accent: string | undefined, cn: boolean): ReactNode {
-  const words = (t: string) => (cn ? held(t) : t);
-  const at = accent ? title.indexOf(accent) : -1;
-  if (!accent || at < 0) return words(title);
-  return (
-    <>
-      {words(title.slice(0, at))}
-      <span className={styles.accent}>{words(accent)}</span>
-      {words(title.slice(at + accent.length))}
-    </>
-  );
+/** The title in plain words, Chinese held word by word */
+function accented(title: string, cn: boolean): ReactNode {
+  return cn ? held(title) : title;
 }
 
-export function Callout({ variant = "info", label, children, title, tone: ground, accent }: Props) {
+export function Callout({ variant = "info", label, children, title, tone: ground }: Props) {
   const cn = useLocale() === "cn";
   const tone = TONES[variant];
   if (ground === "slab") {
     return (
       <aside role="note" className={`slab ${styles.slab}`} data-variant={variant}>
-        <p className={styles.slabKicker}>
-          <Mark variant={variant} />
-          {label ?? (cn ? tone.cn : tone.en)}
-        </p>
-        {title && <p className={styles.slabTitle}>{accented(title, accent, cn)}</p>}
+        <p className={styles.slabKicker}>{label ?? (cn ? tone.cn : tone.en)}</p>
+        {title && <p className={styles.slabTitle}>{accented(title, cn)}</p>}
         {cn ? (
           <p className={styles.slabText}>{heldRich(children)}</p>
         ) : (

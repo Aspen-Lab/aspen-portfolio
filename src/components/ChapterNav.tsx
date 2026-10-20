@@ -61,7 +61,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
       setActive(current);
 
       const rail = railRef.current?.getBoundingClientRect();
-      if (!rail || rail.height === 0) return; // the rail is off below lg
+      if (!rail || rail.height === 0) return; // the rail is off (below lg, or 1360 on a plate)
 
       // Labels or dots. The chapter divider runs the column's full width,
       // so its right edge is where the charts stop; the widest label has
@@ -143,17 +143,34 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
   const RailPlate = plate ? "div" : Fragment;
   /* Hanzi in the mono role at 10px with wide tracking turn to specks: the
      Chinese labels are set in the sans at 12px, closed up; numbers stay mono. */
-  const labelType = cn
-    ? "font-sans text-[12px] tracking-[0.04em]"
-    : "font-mono text-[10px] uppercase tracking-[0.22em]";
+  const labelType = plate
+    ? cn
+      ? "font-sans text-[13px] tracking-[0.04em]"
+      : "font-mono text-[12px] uppercase tracking-[0.12em]"
+    : cn
+      ? "font-sans text-[12px] tracking-[0.04em]"
+      : "font-mono text-[10px] uppercase tracking-[0.22em]";
+  /* Plate mode (banded pages): the indicator glides on --ease-arrive over
+     360ms, no spring */
+  const glide = reduceMotion
+    ? { duration: 0 }
+    : plate
+      ? { duration: 0.36, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }
+      : null;
 
   return (
     <>
       {/* Where the full-width cover block ends: the rail waits for it */}
       <div ref={startRef} aria-hidden />
 
-      {/* Mobile: horizontal sticky bar (lg-) */}
-      <div ref={mobileNavRef} className={`lg:hidden sticky top-24 sm:top-16 z-30 mt-16 bg-paper/90 backdrop-blur-md border-y border-line/80 ${plate ? "mx-0" : "-mx-[max(1.25rem,4vw)]"}`}>
+      {/* Horizontal sticky bar: below lg, and on a banded page below
+          1360px. There the gutter beside the 1280 column is too narrow
+          for the rail's plate: from 1024 to ~1350 it sat on the right
+          edge of the chart sheets and their back sheets. At 1360 the
+          plate clears the back sheet by ~19px, and more above that.
+          On a plate the bar sticks 1px higher, so its top edge tucks
+          under the header's rule: one line at the seam, not two. */}
+      <div ref={mobileNavRef} className={`sticky z-30 mt-16 ${plate ? "top-[95px] sm:top-[63px] min-[1360px]:hidden mx-0 border-y border-[#333336] bg-[#141416]" : "top-24 sm:top-16 lg:hidden bg-paper/90 backdrop-blur-md border-y border-line/80 -mx-[max(1.25rem,4vw)]"}`}>
         <motion.div
           ref={scrollerRef}
           layoutScroll
@@ -171,21 +188,29 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
               type="button"
               onClick={() => handleJump(i)}
               aria-current={active === i ? "true" : undefined}
-              className={`relative flex items-baseline gap-2 py-1 whitespace-nowrap shrink-0 cursor-pointer transition-colors duration-200 motion-reduce:transition-none ${
-                active === i ? "text-ink" : "text-soft hover:text-mute"
+              /* Plate mode fades the chip by opacity; inline, because the
+                 global `a, button` colour transition (unlayered) outranks
+                 Tailwind's transition utilities. The same 160ms fade under
+                 reduced motion (a plain opacity fade is allowed there), so
+                 the server and client render the same style. */
+              style={plate ? { transition: "opacity 160ms cubic-bezier(0.16, 1, 0.3, 1)" } : undefined}
+              className={`relative flex items-baseline gap-2 py-1 whitespace-nowrap shrink-0 cursor-pointer motion-reduce:transition-none ${
+                plate
+                  ? `text-ink ${active === i ? "opacity-100" : "opacity-45 hover:opacity-75 focus-visible:opacity-75"}`
+                  : `transition-colors duration-200 ${active === i ? "text-ink" : "text-soft hover:text-mute"}`
               }`}
             >
-              <span className={`font-mono ${cn ? "text-[11px] tracking-[0.06em]" : "text-[10px] uppercase tracking-[0.22em]"} opacity-70 tabular-nums`}>
+              <span className={`font-mono ${plate ? "text-[12px] tracking-[0.12em]" : cn ? "text-[11px] tracking-[0.06em]" : "text-[10px] uppercase tracking-[0.22em]"} opacity-70 tabular-nums`}>
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <span className="font-display text-[14px] tracking-[-0.005em]">
+              <span className={plate ? "font-sans text-[15px]" : "font-display text-[14px] tracking-[-0.005em]"}>
                 {c}
               </span>
               {active === i && (
                 <motion.span
                   layoutId="chapter-nav-indicator-mobile"
                   className="absolute -bottom-3.5 left-0 right-0 h-px bg-ink"
-                  transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
+                  transition={glide ?? { type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
             </button>
@@ -193,7 +218,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
         </motion.div>
       </div>
 
-      {/* Desktop: fixed side rail (lg+). Labelled where the gutter holds
+      {/* Desktop: fixed side rail (lg+, banded pages 1360+). Labelled where the gutter holds
           the widest label; otherwise dots in the gutter, each naming its
           chapter in a boxed tag on hover or focus. */}
       <nav
@@ -201,13 +226,13 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
         aria-label={cn ? "章节导航" : "Chapter navigation"}
         inert={hidden}
         data-mode={dots ? "dots" : "labels"}
-        className={`hidden lg:block fixed right-3 xl:right-7 top-1/2 -translate-y-1/2 z-30 pointer-events-none transition-opacity duration-300 motion-reduce:transition-none ${
+        className={`hidden ${plate ? "min-[1360px]:block" : "lg:block"} fixed right-3 xl:right-7 top-1/2 -translate-y-1/2 z-30 pointer-events-none transition-opacity ${plate ? "duration-[360ms] ease-(--ease-arrive)" : "duration-300"} motion-reduce:transition-none ${
           hidden ? "opacity-0" : "opacity-100"
         }`}
       >
         {/* On a banded page the rail stands on a solid plate (it passes
             over light bands); without one the markup is as it always was */}
-        <RailPlate {...(plate ? { className: "rounded-[2px] border border-[#333336] bg-[#131315] px-3 py-2.5" } : {})}>
+        <RailPlate {...(plate ? { className: "rounded-[2px] border border-[#333336] bg-[#141416] px-3 py-2.5" } : {})}>
         {/* Kept in the flow when hidden, so the rail never shifts between
             modes; on a plate the dots stand alone and the plate hugs them */}
         <p
@@ -239,10 +264,10 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
                   <span
                     className={
                       dots
-                        ? `absolute right-full top-1/2 mr-3 -translate-y-1/2 border border-ink/55 bg-paper px-2 py-1.5 pointer-events-none opacity-0 translate-x-1 transition-[opacity,translate] duration-200 ease-(--ease-arrive) group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 motion-reduce:transition-none motion-reduce:translate-x-0 after:absolute after:left-full after:top-1/2 after:w-2 after:h-px after:bg-ink/55 after:content-[''] ${
+                        ? `absolute right-full top-1/2 mr-3 -translate-y-1/2 border border-ink/55 ${plate ? "rounded-[2px] bg-[#1e1e21] px-2 py-1 duration-[160ms]" : "bg-paper px-2 py-1.5 duration-200"} pointer-events-none opacity-0 translate-x-1 transition-[opacity,translate] ease-(--ease-arrive) group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 motion-reduce:transition-none motion-reduce:translate-x-0 after:absolute after:left-full after:top-1/2 after:w-2 after:h-px after:bg-ink/55 after:content-[''] ${
                             isActive ? "text-ink" : "text-mute"
                           }`
-                        : `transition-opacity duration-250 motion-reduce:transition-none group-hover:opacity-100 group-focus-visible:opacity-100 ${
+                        : `transition-opacity ${plate ? "duration-[160ms] ease-(--ease-arrive)" : "duration-250"} motion-reduce:transition-none group-hover:opacity-100 group-focus-visible:opacity-100 ${
                             isActive ? "text-ink opacity-100" : "text-mute opacity-0"
                           }`
                     }
@@ -253,7 +278,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
                       }}
                       className={`block ${labelType} whitespace-nowrap leading-none`}
                     >
-                      <span className={`opacity-55 mr-2 tabular-nums${cn ? " font-mono text-[11px]" : ""}`}>
+                      <span className={`opacity-55 mr-2 tabular-nums${cn ? (plate ? " font-mono text-[12px] tracking-[0.12em]" : " font-mono text-[11px]") : ""}`}>
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       {c}
@@ -263,15 +288,15 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
                   {/* Dot */}
                   <motion.span
                     animate={{ scale: isActive ? 1.5 : 1 }}
-                    transition={reduceMotion ? { duration: 0 } : {
+                    transition={glide ?? {
                       type: "spring",
                       stiffness: 350,
                       damping: 24,
                     }}
-                    className={`relative shrink-0 w-1.5 h-1.5 rounded-full transition-colors duration-300 motion-reduce:transition-none z-10 ${
-                      isActive
-                        ? "bg-ink"
-                        : "bg-soft/40 group-hover:bg-mute group-focus-visible:bg-mute"
+                    className={`relative shrink-0 w-1.5 h-1.5 motion-reduce:transition-none z-10 ${
+                      plate
+                        ? `bg-ink transition-opacity duration-[160ms] ease-(--ease-arrive) ${isActive ? "opacity-100" : "opacity-35 group-hover:opacity-75 group-focus-visible:opacity-75"}`
+                        : `rounded-full transition-colors duration-300 ${isActive ? "bg-ink" : "bg-soft/40 group-hover:bg-mute group-focus-visible:bg-mute"}`
                     }`}
                   />
                 </button>

@@ -1,14 +1,15 @@
 /* Latent's platform section: text and numbered tabs on the left, the
-   paper sheet on the right at lg; below lg the sheet comes straight after
-   the text, then the tabs (2×2 blocks for four, rows for three), then the
-   details. */
+   sheet stack on the right at lg; below lg the tabs sit between the text
+   and the sheet (2×2 tiles for four, rows for three), then the details.
+   One dark system: the sheet is --sheet on the global stack, the tabs are
+   S7 numbers and kickers over S4 titles, the fill is ink. */
 .root {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: "intro" "panel" "tabs" "details";
+  grid-template-areas: "intro" "tabs" "panel" "details";
 }
 .intro { grid-area: intro; min-width: 0; }
-.panel { grid-area: panel; min-width: 0; margin-top: 48px; }
+.panel { grid-area: panel; min-width: 0; margin-top: 32px; }
 .tabs { grid-area: tabs; display: grid; margin-top: 32px; }
 .details { grid-area: details; min-width: 0; margin-top: 24px; }
 @media (min-width: 1024px) {
@@ -16,86 +17,94 @@
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     grid-template-rows: auto auto 1fr;
     grid-template-areas: "intro panel" "tabs panel" "details panel";
-    column-gap: 64px;
+    column-gap: 56px;
     align-items: start;
   }
   .panel { margin-top: 0; }
   .tabs { margin-top: 40px; }
-  .details { margin-top: 28px; }
+  .details { margin-top: 24px; }
 }
 
 .sheet { padding: 20px; }
 @media (min-width: 640px) {
-  .sheet { padding: 40px 44px 32px; }
+  .sheet { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .sheet { padding: 40px; }
 }
 
-/* ── Tabs ── a mono number, a mono kicker, the title; the row's lower edge
-   carries the progress fill in the accent. Inactive rows rest at .42. */
+/* ── Tabs ── an S7 number and kicker, an S4 title; each row has a 1px
+   rule, and its lower edge carries the 2px ink fill. Inactive rows rest
+   at .45, hover lifts them to .75, the selected row is full. Focus shows
+   what hover shows, plus the ring. */
 .tab {
   position: relative;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr);
   align-items: baseline;
   width: 100%;
-  padding: 18px 0 20px;
+  padding: 16px 0 24px;
   border: 0;
   border-top: 1px solid var(--color-line);
   border-radius: 0;
   background: none;
   color: var(--color-ink);
   text-align: left;
+  transition: transform var(--t-1) var(--ease-arrive);
 }
 .tab:last-child { border-bottom: 1px solid var(--color-line); }
-.tab:focus-visible {
-  outline: 2px solid var(--hair-strong);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
+.tab:active { transform: translateY(1px); }
 .num,
 .words {
-  opacity: 0.42;
-  transition: opacity 240ms ease;
+  opacity: 0.45;
+  transition: opacity var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
   .tab:hover .num,
-  .tab:hover .words { opacity: 0.7; }
+  .tab:hover .words { opacity: 0.75; }
 }
+.tab:focus-visible .num,
+.tab:focus-visible .words { opacity: 0.75; }
 .tab[aria-selected="true"] .num,
 .tab[aria-selected="true"] .words { opacity: 1; }
 
-.num {
+/* S7 */
+.num,
+.kicker {
+  color: var(--color-soft);
   font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.08em;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   font-variant-numeric: tabular-nums;
 }
 .words {
   display: grid;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
 }
-.kicker {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  line-height: 1.3;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
+/* S4 */
 .title {
-  font-family: var(--font-display);
-  font-size: 24px;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 22px;
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+@media (max-width: 639px) {
+  .title { font-size: 20px; }
 }
 .word { white-space: nowrap; }
 :global(html[lang="zh-CN"]) .kicker {
   font-family: var(--font-sans);
-  font-size: 12.5px;
+  font-size: 13px;
   letter-spacing: 0.04em;
   text-transform: none;
 }
-:global(html[lang="zh-CN"]) .title { font-size: 22px; }
 
 .bar {
   position: absolute;
@@ -110,10 +119,13 @@
 .fill {
   display: block;
   height: 100%;
-  background: var(--accent-text, var(--color-ink));
+  background: var(--color-ink);
   transform: scaleX(0);
   transform-origin: left;
 }
+/* A chosen tab: the old fill retracts and the new one wipes in, as the
+   EmailRender tabs do. Autoplay drives the fill with the keyframes below. */
+.root[data-auto="false"] .fill { transition: transform var(--t-2) var(--ease-arrive); }
 .root[data-auto="false"] .tab[aria-selected="true"] .fill { transform: none; }
 .root[data-auto="true"] .tab[aria-selected="true"] .fill {
   animation: ptFill var(--dwell) linear forwards;
@@ -132,7 +144,8 @@
   to { transform: scaleX(1); }
 }
 
-/* Below lg: four tabs as a 2×2 block grid, three or fewer as rows */
+/* Below lg: four tabs as a 2×2 grid of tiles, three or fewer as rows.
+   The opacities are the same as on desktop. */
 @media (max-width: 1023px) {
   .root[data-count="4"] .tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -142,8 +155,8 @@
   .root[data-count="4"] .tab:last-child {
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
-    gap: 10px;
-    padding: 14px;
+    gap: 8px;
+    padding: 16px;
     border: 1px solid var(--tile-line);
     border-radius: 2px;
     background: var(--tile);
@@ -152,115 +165,83 @@
     right: -1px;
     left: -1px;
   }
-  .root[data-count="4"] .num,
-  .root[data-count="4"] .words { opacity: 0.55; }
-  .root[data-count="4"] .tab[aria-selected="true"] .num,
-  .root[data-count="4"] .tab[aria-selected="true"] .words { opacity: 1; }
-  .root[data-count="4"] .title { font-size: 18px; }
-  :global(html[lang="zh-CN"]) .root[data-count="4"] .title { font-size: 17px; }
 }
 
 /* ── The sheet contract ── a caller's panels and marks, keyed by tab k:
    [data-pt="k"]      a whole state, shown only while k is active
    [data-pt-lit="k"]  fades in while k is active
    [data-pt-dim="k"]  rests at .45, full while k is active
-   The outgoing state fades in 180ms; the incoming follows after 120ms,
-   rising 8px over 420ms. Opacity, transform and visibility only. */
+   A crossfade: both sides start at once. The outgoing state fades out
+   over 160ms and only then hides and drops back 8px; the incoming fades
+   in and rises 8px over 360ms. Opacity, transform and visibility only. */
 .root :global([data-pt]) {
   opacity: 0;
   transform: translateY(8px);
   visibility: hidden;
   transition:
-    opacity 180ms ease,
-    transform 420ms var(--ease-arrive),
-    visibility 0s linear 180ms;
+    opacity var(--t-1) var(--ease-arrive),
+    transform 0s linear var(--t-1),
+    visibility 0s linear var(--t-1);
 }
-.root :global([data-pt-lit]) {
-  opacity: 0;
-  transition: opacity 240ms ease;
-}
-.root :global([data-pt-dim]) {
-  opacity: 0.45;
-  transition: opacity 240ms ease;
-}
-.root:global([data-active="0"]) :global([data-pt="0"]) {
-  opacity: 1;
-  transform: none;
-  visibility: visible;
-  transition:
-    opacity 420ms ease 120ms,
-    transform 420ms var(--ease-arrive) 120ms,
-    visibility 0s;
-}
-.root:global([data-active="0"]) :global([data-pt-lit="0"]),
-.root:global([data-active="0"]) :global([data-pt-dim="0"]) { opacity: 1; }
-.root:global([data-active="1"]) :global([data-pt="1"]) {
-  opacity: 1;
-  transform: none;
-  visibility: visible;
-  transition:
-    opacity 420ms ease 120ms,
-    transform 420ms var(--ease-arrive) 120ms,
-    visibility 0s;
-}
-.root:global([data-active="1"]) :global([data-pt-lit="1"]),
-.root:global([data-active="1"]) :global([data-pt-dim="1"]) { opacity: 1; }
-.root:global([data-active="2"]) :global([data-pt="2"]) {
-  opacity: 1;
-  transform: none;
-  visibility: visible;
-  transition:
-    opacity 420ms ease 120ms,
-    transform 420ms var(--ease-arrive) 120ms,
-    visibility 0s;
-}
-.root:global([data-active="2"]) :global([data-pt-lit="2"]),
-.root:global([data-active="2"]) :global([data-pt-dim="2"]) { opacity: 1; }
-.root:global([data-active="3"]) :global([data-pt="3"]) {
-  opacity: 1;
-  transform: none;
-  visibility: visible;
-  transition:
-    opacity 420ms ease 120ms,
-    transform 420ms var(--ease-arrive) 120ms,
-    visibility 0s;
-}
-.root:global([data-active="3"]) :global([data-pt-lit="3"]),
-.root:global([data-active="3"]) :global([data-pt-dim="3"]) { opacity: 1; }
-.root:global([data-active="4"]) :global([data-pt="4"]) {
-  opacity: 1;
-  transform: none;
-  visibility: visible;
-  transition:
-    opacity 420ms ease 120ms,
-    transform 420ms var(--ease-arrive) 120ms,
-    visibility 0s;
-}
-.root:global([data-active="4"]) :global([data-pt-lit="4"]),
-.root:global([data-active="4"]) :global([data-pt-dim="4"]) { opacity: 1; }
+.root:global([data-active="0"]) :global([data-pt="0"]),
+.root:global([data-active="1"]) :global([data-pt="1"]),
+.root:global([data-active="2"]) :global([data-pt="2"]),
+.root:global([data-active="3"]) :global([data-pt="3"]),
+.root:global([data-active="4"]) :global([data-pt="4"]),
 .root:global([data-active="5"]) :global([data-pt="5"]) {
   opacity: 1;
   transform: none;
   visibility: visible;
   transition:
-    opacity 420ms ease 120ms,
-    transform 420ms var(--ease-arrive) 120ms,
+    opacity var(--t-2) var(--ease-arrive),
+    transform var(--t-2) var(--ease-arrive),
     visibility 0s;
 }
-.root:global([data-active="5"]) :global([data-pt-lit="5"]),
-.root:global([data-active="5"]) :global([data-pt-dim="5"]) { opacity: 1; }
+.root :global([data-pt-lit]) {
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.root :global([data-pt-dim]) {
+  opacity: 0.45;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.root:global([data-active="0"]) :global(:is([data-pt-lit="0"], [data-pt-dim="0"])),
+.root:global([data-active="1"]) :global(:is([data-pt-lit="1"], [data-pt-dim="1"])),
+.root:global([data-active="2"]) :global(:is([data-pt-lit="2"], [data-pt-dim="2"])),
+.root:global([data-active="3"]) :global(:is([data-pt-lit="3"], [data-pt-dim="3"])),
+.root:global([data-active="4"]) :global(:is([data-pt-lit="4"], [data-pt-dim="4"])),
+.root:global([data-active="5"]) :global(:is([data-pt-lit="5"], [data-pt-dim="5"])) { opacity: 1; }
 
+/* Reduced motion: no autoplay, no rise, no press; swaps keep a 160ms
+   opacity fade */
 @media (prefers-reduced-motion: reduce) {
-  .num,
-  .words { transition: none; }
+  .tab { transition: none; }
+  .tab:active { transform: none; }
   .fill,
   .root[data-auto="true"] .tab[aria-selected="true"] .fill { animation: none; }
+  .root[data-auto="false"] .fill { transition: none; }
   .tab[aria-selected="true"] .fill { transform: none; }
   /* doubled class: outranks the per-tab rules above */
-  .root.root :global([data-pt]),
+  .root.root :global([data-pt]) {
+    transform: none;
+    transition:
+      opacity var(--t-1) var(--ease-arrive),
+      visibility 0s linear var(--t-1);
+  }
+  .root.root:global([data-active="0"]) :global([data-pt="0"]),
+  .root.root:global([data-active="1"]) :global([data-pt="1"]),
+  .root.root:global([data-active="2"]) :global([data-pt="2"]),
+  .root.root:global([data-active="3"]) :global([data-pt="3"]),
+  .root.root:global([data-active="4"]) :global([data-pt="4"]),
+  .root.root:global([data-active="5"]) :global([data-pt="5"]) {
+    transform: none;
+    transition:
+      opacity var(--t-1) var(--ease-arrive),
+      visibility 0s;
+  }
   .root.root :global([data-pt-lit]),
   .root.root :global([data-pt-dim]) {
     transform: none;
-    transition: none;
+    transition: opacity var(--t-1) var(--ease-arrive);
   }
 }

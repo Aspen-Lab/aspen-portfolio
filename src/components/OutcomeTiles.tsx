@@ -2,24 +2,23 @@
 
 import { useRef, type CSSProperties } from "react";
 import { useInView } from "motion/react";
-import { AnimatedMetric } from "./AnimatedMetric";
 import { hold } from "@/lib/hold";
 import styles from "./OutcomeTiles.module.css";
 
 /* Latent's outcome cards (latenthealth.com, "The outcomes"): solid tiles
    with one 1px edge, the figure large, a short label and text, a footer
-   with a chip or a drawing on the left and an arrow on the right. The
-   accent fills only the owner's or the work's own figures, so a row says
-   at a glance which numbers are the team's (ink) and which are mine.
-   A tile with an href is one link to the section that shows its evidence.
-   Hover moves only the arrow (transform) and fades an ink edge in
-   (opacity); nothing mounts. */
+   with a quiet tag or a drawing on the left and an arrow on the right.
+   Every figure is ink and is printed as it is (the server HTML carries
+   the true value; nothing counts up). A tile with an href is one link to
+   the section that shows its evidence. Hover moves only the arrow
+   (transform) and fades an ink edge in (opacity); nothing mounts. */
 
 export type OutcomeTile = {
   value: string;
   label: string;
   text?: string;
   tag?: string;
+  /** Kept for the data's sake; the banded system has no accent figures. */
   accent?: boolean;
   href?: string;
   /** "matrix": one lit square per unit; "codes": the value split at " · " into code blocks */
@@ -76,10 +75,7 @@ function Tile({ item }: { item: OutcomeTile }) {
           ))}
         </span>
       ) : (
-        <AnimatedMetric
-          value={item.value}
-          className={`${styles.value}${item.accent ? ` ${styles.accent}` : ""}`}
-        />
+        <span className={styles.value}>{item.value}</span>
       )}
       <span className={styles.label}>{hold(item.label, styles.word)}</span>
       {item.text && <span className={styles.text}>{hold(item.text, styles.word)}</span>}
@@ -110,7 +106,14 @@ function Tile({ item }: { item: OutcomeTile }) {
   );
 }
 
-export function OutcomeTiles({ items }: { items: OutcomeTile[] }) {
+export function OutcomeTiles({
+  items,
+  columns,
+}: {
+  items: OutcomeTile[];
+  /** Columns from 1024px up (two from 640px); defaults to one per item */
+  columns?: 2 | 3 | 4;
+}) {
   // One type size for the row, set by its longest figure (code blocks
   // are drawn, not set, so they do not count)
   const chars = Math.max(3, ...items.filter((it) => it.viz !== "codes").map((it) => it.value.length));
@@ -118,6 +121,7 @@ export function OutcomeTiles({ items }: { items: OutcomeTile[] }) {
     <ul
       className={styles.tiles}
       data-count={items.length}
+      data-cols={columns ?? Math.min(4, Math.max(1, items.length))}
       style={{ "--chars": chars } as CSSProperties}
     >
       {items.map((it) => (

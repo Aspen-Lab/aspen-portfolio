@@ -10,6 +10,10 @@ type RevealProps = {
   className?: string;
   /** Long case-study sections must reveal when their heading enters. */
   amount?: "some" | "all" | number;
+  /** Seconds. The banded case studies pass their entrance tempo (0.72). */
+  duration?: number;
+  /** A cubic-bezier. The banded case studies pass --ease-arrive. */
+  ease?: [number, number, number, number];
 };
 
 export function Reveal({
@@ -18,6 +22,8 @@ export function Reveal({
   y = 14,
   className,
   amount = 0.2,
+  duration = 0.55,
+  ease = [0.22, 1, 0.36, 1],
 }: RevealProps) {
   const reduce = useReducedMotion();
   // The server cannot know the motion setting, so the first render is the
@@ -28,7 +34,7 @@ export function Reveal({
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount }}
-      transition={reduce ? { duration: 0 } : { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
+      transition={reduce ? { duration: 0 } : { duration, ease, delay }}
       className={className}
     >
       {children}

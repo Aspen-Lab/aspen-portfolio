@@ -6,28 +6,31 @@ import { useLocale } from "next-intl";
 import styles from "./EmailRender.module.css";
 
 /* A render check in two blocks under two of Latent's numbered tabs. Left,
-   a short Liquid template on a black slab; right, what it sends, laid on
-   a stacked paper sheet like a print proof with crop marks: Axel's dark
-   card, the wordmark beside a pixel moon (the night sky from
-   helloaxel.com), a headline, the SEA ✈ LAX trip line from the flight
-   card, a button. The tabs feed the template event data or leave the
-   destination city out. Without the city the `default` filter takes over:
-   that token turns into a solid accent chip inside its dashed hexagon,
-   with a boxed tag, and the headline swaps one word in place, underlined
-   by a solid accent bar, while the line closes up around it. With event
-   data the blocks carry no pink at all.
+   a short Liquid template on a slab; right, what it sends, laid on the
+   dark chart sheet like a print proof with crop marks: Axel's card, the
+   wordmark beside a pixel moon (the night sky from helloaxel.com), a
+   headline, the SEA ✈ LAX trip line from the flight card, a button. The
+   tabs feed the template event data or leave the destination city out.
+   Without the city the `default` filter takes over: that token becomes a
+   solid accent chip inside a dashed hexagon, with a boxed tag, and the
+   headline swaps one word in place, underlined in ink, while the line
+   closes up around it. The chip is the chart's one focus mark; with event
+   data the blocks carry no accent at all.
 
    It is an example, and the caption under the sheet says so: the route is
    the Seattle to Los Angeles search from the case study's own screenshots,
    the variable names are illustrative, nothing here is a production
-   template. Once the sheet is half on screen the second tab's underline
-   fills, in 1.6s, and when it is full the sheet switches to the missing
-   value, once, and holds there; scrolled away, the fill waits; a choice
-   made by hand cancels it. Reduced motion never switches by itself.
-   Every change of state is a fade or a transform: the line around the
-   fallback opens by sliding the closing braces, and the headline closes up
-   by sliding the words after the slot from where they stood (measured once
-   per change, never per frame). */
+   template. Once half the sheet is on screen the second tab's underline
+   fills, over 5s, and when it is full the sheet switches to the missing
+   value, once, and holds there. The fill pauses while the pointer or the
+   keyboard focus is in the sheet and while it is scrolled away; a touch
+   inside or a choice made by hand ends it. Reduced motion never switches
+   by itself, and its swaps are plain 160ms fades.
+   Every change of state is a fade or a transform: the chip and the
+   hexagon fade in at once, the tag and the underline follow; the line
+   around the fallback opens by sliding the closing braces, and the
+   headline closes up by sliding the words after the slot from where they
+   stood (measured once per change, never per frame). */
 
 type Kind = "d" | "k" | "v" | "s" | "h" | "t" | "o" | "miss" | "city" | "fb";
 type Tok = [Kind, string];
@@ -110,7 +113,7 @@ function Fallback({ value, tag }: { value: string; tag: string }) {
       <span data-k="f">default</span>
       <span data-k="o">: </span>
       <span data-k="s">&quot;{value}&quot;</span>
-      {/* The token in the accent, faded in over the syntax colours */}
+      {/* The token as the focus chip, faded in over the syntax colours */}
       <span aria-hidden className={styles.lit}>
         default: &quot;{value}&quot;
       </span>
@@ -136,19 +139,15 @@ function Fallback({ value, tag }: { value: string; tag: string }) {
           </svg>
         </>
       )}
-      <span
-        aria-hidden
-        className={`boxed-tag ${styles.tag}`}
-        data-dark=""
-        style={{ bottom: `calc(100% + ${PAD_Y + LEAD}px)` }}
-      >
+      <span aria-hidden className={`boxed-tag ${styles.tag}`} style={{ bottom: `calc(100% + ${PAD_Y + LEAD}px)` }}>
         {tag}
       </span>
     </span>
   );
 }
 
-const CLOSE = { duration: 520, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }; // --ease-arrive
+const ARRIVE = "cubic-bezier(0.16, 1, 0.3, 1)"; // --ease-arrive
+const CLOSE = { duration: 360, easing: ARRIVE }; // --t-2
 
 /** A transform's horizontal and vertical shift as it is seen right now. */
 function shift(el: HTMLElement) {
@@ -217,7 +216,7 @@ function Headline({
       p.getAnimations().forEach((a) => a.cancel());
       const dy = was.at[k].y - at[k].y;
       if (Math.abs(dy) >= 1) {
-        p.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, delay: 200, easing: "ease", fill: "backwards" });
+        p.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 360, delay: 60, easing: ARRIVE, fill: "backwards" });
         return;
       }
       const dx = was.at[k].x + seen.x - at[k].x;
@@ -367,6 +366,10 @@ export function EmailRender() {
   // The second tab's underline fills while the sheet is half on screen;
   // when it is full, the sheet switches (onAnimationEnd below)
   const running = auto && !reduce;
+  // A touch inside the sheet ends the autoplay, as a choice would
+  const touched = (e: React.PointerEvent) => {
+    if (e.pointerType === "touch" && auto) setAuto(false);
+  };
 
   const choose = (next: boolean) => {
     setAuto(false);
@@ -399,7 +402,7 @@ export function EmailRender() {
   const active = missing ? 1 : 0;
 
   return (
-    <div className={styles.wrap}>
+    <div>
       <figure
         ref={sheet}
         className={styles.sheet}
@@ -407,6 +410,7 @@ export function EmailRender() {
         data-cn={cn}
         data-auto={running}
         data-run={inView}
+        onPointerDown={touched}
         aria-label={
           cn
             ? "示例：同一个 Liquid 邮件模板在有数据和缺失值时的渲染结果"
@@ -431,8 +435,10 @@ export function EmailRender() {
               onClick={() => choose(k === 1)}
               onKeyDown={key}
             >
-              <span className={styles.tabNum}>{String(k + 1).padStart(2, "0")}</span>
-              <span className={styles.tabLabel}>{label}</span>
+              <span className={`t-label ${styles.tabNum}`} data-code="">
+                {String(k + 1).padStart(2, "0")}
+              </span>
+              <span className={`t-small ${styles.tabLabel}`}>{label}</span>
               <span aria-hidden className={styles.fill} data-k={k} onAnimationEnd={k === 1 ? filled : undefined} />
             </button>
           ))}
@@ -484,7 +490,7 @@ export function EmailRender() {
           </div>
         </div>
       </figure>
-      <p className={styles.caption}>
+      <p className={`t-small ${styles.caption}`}>
         {cn ? "示例模板，已简化。" : "Example template, simplified."}
       </p>
     </div>

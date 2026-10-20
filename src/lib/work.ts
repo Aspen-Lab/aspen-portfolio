@@ -35,7 +35,8 @@ export type Metric = {
   value: string;
   /** boxed chip in the tile footer */
   tag?: string;
-  /** value in the page accent: the owner's or the work's own figure */
+  /** unused on banded pages: figures are set in ink; the accent is only
+      a chart's focus mark */
   accent?: boolean;
   /** "#s-04": the whole tile links to that section */
   href?: string;
@@ -47,7 +48,8 @@ export type Metric = {
 export type Ownership = {
   tools: { title: string; items: string[] };
   mine: { title: string; items: string[] };
-  note: string;
+  /** An optional line under the strip (the body usually says it already). */
+  note?: string;
 };
 
 /** The SOP documents' extra drawing data: the acceptance checklist rows,
@@ -71,11 +73,12 @@ export type Project = {
   /** "editorial": the calm case-study layout (no chapters or Themes row,
       wide photo stages). Every template change it brings is gated on it. */
   layout?: "editorial";
-  /** The Latent band layout: full-bleed dark, light and grey bands, charts
-      on paper sheets, solid tiles. Every template change it brings is
-      gated on it, so cases without it render as before. */
+  /** The banded layout: one dark system of flat planes (charts on stacked
+      sheets, notes on slabs, numbers on tiles). Every template change it
+      brings is gated on it, so cases without it render as before. */
   bands?: true;
-  /** An exact substring of `title`, set in the page accent. */
+  /** unused on banded pages: the title is set in ink. An exact substring
+      of `title`, once set in the page accent. */
   titleAccent?: string;
   summary: string;
   tags: string[];
@@ -90,10 +93,11 @@ export type Project = {
   coverPosition?: string;
   coverBg?: string;
   heroVideo?: string;
-  /** One accent for the page's charts (the project's own colour). */
+  /** The project's own colour: on banded pages, drawn only as each chart's
+      single focus mark. */
   accent?: string;
-  /** The accent for text and strokes on light and grey bands, where the
-      accent itself is too light to read. */
+  /** unused on banded pages: there are no light bands, so no deep accent
+      for text or strokes. */
   accentDeep?: string;
   /** Notes on the cover, in % of the 16:9 case-study frame. */
   coverNotes?: ImageNote[];
@@ -105,9 +109,11 @@ export type Project = {
   sections?: {
     heading: string;
     body: string;
-    /** Banded pages only: the section sits on a light or grey band (dark otherwise). */
+    /** unused on banded pages: every band is dark. Once put the section on
+        a light or grey band. */
     band?: "light" | "grey";
-    /** An exact substring of `heading`, set in the page accent. */
+    /** unused on banded pages: headings are set in ink. An exact substring
+        of `heading`, once set in the page accent. */
     headingAccent?: string;
     images?: string[];
     imageLayout?: "single" | "grid-2" | "grid-3" | "grid-4";
@@ -208,7 +214,8 @@ export type Project = {
       label?: string;
       title?: string;
       text: string;
-      /** An exact substring of `title`, set in the page accent. */
+      /** unused on banded pages: callout titles are set in ink. An exact
+          substring of `title`, once set in the page accent. */
       accent?: string;
     };
     chart?: {
@@ -434,17 +441,18 @@ export const projects: Project[] = [
   },
   {
     slug: "tiktok",
-    title: "TikTok Pay KYC, scaled across markets",
+    // A no-break space holds the dash to "KYC" (as on Axel and in Chinese):
+    // a wrapped title never opens its second line on "—"
+    title: "TikTok Pay KYC\u00a0— scaled across markets",
     bands: true,
-    titleAccent: "scaled across markets",
     client: "TikTok · PIPO UED",
-    role: "Product Designer (Intern)",
+    role: "Product Designer\u00a0(Intern)",
     period: "Jun — Sep 2025",
     year: "2025",
     date: "9/10/25",
     category: "Fintech",
     summary:
-      "KYC across Vietnam, Malaysia, Indonesia, and the US for TikTok Pay, Shop, and Live. Vietnam new-user completion 70% → 90%. Vendor docking SOP cut integration cycles by ~40%.",
+      "KYC across Vietnam, Malaysia, Indonesia, and the US for TikTok Pay, Shop, and Live. Vietnam new\u2011user completion 70%\u00a0→\u00a090%. Vendor docking SOP cut integration cycles by\u00a0~40%.",
     tags: ["Fintech", "Compliance", "Multi-region", "Design System"],
     cover: "/work/tiktok.png",
     coverWidth: 2894,
@@ -454,13 +462,13 @@ export const projects: Project[] = [
     coverBg: "#000",
     // The selected/next-action red of TikTok's own KYC screens on the
     // cover (the chosen ID radio, "Recommended", the primary button): on
-    // this page it marks only the focus, never a drop-off or an error.
+    // this page it is drawn only as each chart's single focus mark, never
+    // in headings, figures or labels, never a drop-off or an error.
     accent: "#fe2c55",
-    accentDeep: "#d0103a",
     status: "live",
     metrics: [
-      { label: "Vietnam KYC completion", value: "70 → 90%", accent: true, href: "#s-06" },
-      { label: "Vendor integration cycle", value: "−40%", accent: true, href: "#s-07" },
+      { label: "Vietnam KYC completion", value: "70 → 90%", href: "#s-06" },
+      { label: "Vendor integration cycle", value: "−40%", href: "#s-07" },
       { label: "Markets shipped", value: "VN · MY · ID · US", viz: "codes", href: "#s-02" },
     ],
     sections: [
@@ -470,9 +478,9 @@ export const projects: Project[] = [
         body: "**Regulatory gate** before any payment can run. Break it, users drop off. Loosen it, the *regulator* does.",
         iconList: {
           items: [
-            { icon: "id", label: "Identity verification", text: "Local ID + selfie + liveness check, per market." },
+            { icon: "id", label: "Identity verification", text: "Local ID\u00a0+ selfie\u00a0+ liveness check, per\u00a0market." },
             { icon: "lock", label: "Compliance contract", text: "Each regulator audits the flow, the data, the SDK." },
-            { icon: "globe", label: "4 frameworks", text: "SBV · BNM · OJK · FinCEN — same gate, different rulebooks.", chips: ["SBV", "BNM", "OJK", "FinCEN"] },
+            { icon: "globe", label: "4 frameworks", text: "Same gate, different\u00a0rulebooks.", chips: ["SBV", "BNM", "OJK", "FinCEN"] },
           ],
           columns: 3,
           variant: "tiles",
@@ -482,11 +490,10 @@ export const projects: Project[] = [
           label: "Why design has leverage here",
           // The callout's own first sentence, lifted into its title
           title: "KYC sits at the front of the funnel.",
-          accent: "front of the funnel",
-          text: "A 10-point completion lift across 4 markets compounds into hundreds of millions of payment volume. That's the slot where one designer × one engineer can move the entire business curve.",
+          text: "A 10\u2011point completion lift across 4\u00a0markets compounds into hundreds of millions of payment volume. That’s the slot where one\u00a0designer\u00a0×\u00a0one\u00a0engineer can move the entire business\u00a0curve.",
         },
         pullQuote: {
-          text: "When KYC breaks, users drop off. When it's loose, the regulator does.",
+          text: "When KYC breaks, users drop off. When it’s loose, the regulator\u00a0does.",
           attribution: "the design constraint, in one sentence",
         },
       },
@@ -506,40 +513,37 @@ export const projects: Project[] = [
       {
         chapter: "Strategy",
         heading: "Three layers of the problem",
-        band: "light",
-        headingAccent: "Three layers",
-        body: "**UX · Compliance · UI** — three distinct failures, three distinct fixes. None solvable alone.",
+        body: "**UX · Compliance · UI**\u00a0— three distinct failures, three distinct fixes. None solvable alone.",
         layers: [
           {
             label: "UX",
             title: "“Not My ID” escape path",
             problem:
-              "Users reusing historical identity data had no fallback when their ID couldn't be found — flow forked into silent drop-offs.",
+              "Users reusing historical identity data had no fallback when their ID couldn’t be found\u00a0— flow forked into silent drop\u2011offs.",
             approach:
-              "\"Not My ID\" escape path + Goal Gradient progress visibility — the user always knows where they are.",
+              "“Not\u00a0My\u00a0ID” escape path\u00a0+ Goal Gradient progress visibility\u00a0— the user always knows where they\u00a0are.",
           },
           {
             label: "Compliance",
             title: "Standardized field schema",
             problem:
-              "OCR fields inconsistent MY ↔ VN. Manual re-entry. Regulatory risk in the inconsistency itself.",
+              "OCR fields inconsistent MY\u00a0↔\u00a0VN. Manual re\u2011entry. Regulatory risk in the inconsistency\u00a0itself.",
             approach:
-              "Standardized field schema, co-authored with Legal + Risk, regulator-aligned across all four markets.",
+              "Standardized field schema, co\u2011authored with Legal\u00a0+ Risk, regulator\u2011aligned across all four\u00a0markets.",
           },
           {
             label: "UI",
             title: "SDK-AAI style alignment",
             problem:
-              "Vendor SDK type, radius, icons, errors fragmented. Trust collapsed at the handoff to vendor UI.",
+              "Vendor SDK type, radius, icons, errors fragmented. Trust collapsed at the handoff to vendor\u00a0UI.",
             approach:
-              "SDK-AAI Style Alignment + reusable templates + secondary UI encapsulation for clean country variants.",
+              "SDK\u2011AAI Style Alignment\u00a0+ reusable templates\u00a0+ secondary UI encapsulation for clean country\u00a0variants.",
           },
         ],
       },
       {
         chapter: "Strategy",
         heading: "Three audiences, one flow",
-        band: "light",
         body: "Each KYC change had to satisfy *all three* at once.",
         iconList: {
           items: [
@@ -555,14 +559,14 @@ export const projects: Project[] = [
       {
         chapter: "Execution",
         heading: "The flow, with the escape path",
-        body: "Most flows assume the happy path. KYC's failure mode is the **silent fork** — a user who can't proceed but doesn't know why. We surfaced the alternate route as a first-class step.",
+        body: "Most flows assume the happy path. KYC’s failure mode is the **silent fork**\u00a0— a user who can’t proceed but doesn’t know why. We surfaced the alternate route as a first\u2011class step.",
         userFlow: {
-          title: "Vietnam KYC · v2 · with \"Not My ID\" escape",
+          title: "Vietnam KYC · v2",
           steps: [
             { id: "s1", label: "Open TikTok Pay", caption: "Entry · prefilled identity from history", kind: "start" },
             { id: "s2", label: "Choose ID type", caption: "Citizen ID · passport · DL", kind: "step" },
-            { id: "s3", label: "Verify identity", caption: "OCR + liveness", kind: "decision" },
-            { id: "s4", label: "Confirm match", caption: "Goal Gradient progress · 3 of 4 done", kind: "step" },
+            { id: "s3", label: "Verify identity", caption: "OCR\u00a0+ liveness", kind: "decision" },
+            { id: "s4", label: "Confirm match", caption: "Goal Gradient progress · 3\u00a0of\u00a04\u00a0done", kind: "step" },
             { id: "s5", label: "KYC approved", caption: "Pay unlocked", kind: "end" },
           ],
           branches: [
@@ -570,20 +574,20 @@ export const projects: Project[] = [
               fromId: "s3",
               label: "Not My ID",
               destination: "Re-enter manually",
-              caption: "Surfaces the alternate route — drop-offs collapse from 30% to ~10%.",
+              caption: "Surfaces the alternate route\u00a0— drop\u2011offs collapse from 30% to\u00a0~10%.",
             },
           ],
         },
         callout: {
           variant: "tip",
           label: "Goal Gradient Hypothesis",
-          text: "When users see *how close they are to done*, completion goes up. We show progress as **3 of 4** explicitly, and the last step always reads as the smallest one.",
+          text: "When users see *how close they are to done*, completion goes up. We show progress as **3\u00a0of\u00a04** explicitly, and the last step always reads as the smallest\u00a0one.",
         },
       },
       {
         chapter: "Execution",
         heading: "Completion across markets",
-        body: "Vietnam was the trial — once it landed, the same pattern (escape path + Goal Gradient + standardized OCR) ported to MY · ID · US.",
+        body: "Vietnam was the trial\u00a0— once it landed, the same pattern (escape path\u00a0+ Goal Gradient\u00a0+ standardized OCR) ported to MY\u00a0·\u00a0ID\u00a0·\u00a0US.",
         chart: {
           type: "funnel",
           layout: "split",
@@ -593,22 +597,22 @@ export const projects: Project[] = [
             { label: "Upload ID", value: 92, display: "92%" },
             { label: "Pass OCR", value: 88, display: "88%", caption: "OCR taxonomy standardized · MY/VN aligned" },
             { label: "Liveness", value: 90, display: "90%" },
-            { label: "Approved", value: 90, display: "90%", caption: "Up from 70% in v1 — \"Not My ID\" + progress." },
+            { label: "Approved", value: 90, display: "90%", caption: "Up from 70% in v1\u00a0— “Not\u00a0My\u00a0ID”\u00a0+\u00a0progress." },
           ],
         },
       },
       {
         chapter: "Execution",
-        heading: "Vendor Docking SOP",
-        body: "First standardized SOP for TikTok PIPO — workflows, acceptance criteria, UI delivery priorities. The artifact I'm proudest of.",
+        heading: "Vendor docking SOP",
+        body: "First standardized SOP for TikTok PIPO\u00a0— workflows, acceptance criteria, UI delivery priorities. The artifact I’m proudest\u00a0of.",
         // Three SOP documents drawn from the iconList below; `sop` adds
         // only words already in those texts and the −40% result.
         visual: "sop",
         iconList: {
           items: [
-            { icon: "workflow", label: "Workflow", text: "Stages, owners, acceptance gates per SDK vendor." },
-            { icon: "check", label: "Acceptance", text: "Checklist tied to OCR mapping + UI templates + halts." },
-            { icon: "spark", label: "Delivery", text: "UI tokens, component library, country-variant rules." },
+            { icon: "workflow", label: "Workflow", text: "Stages, owners, acceptance gates per SDK\u00a0vendor." },
+            { icon: "check", label: "Acceptance", text: "Checklist tied to OCR\u00a0mapping\u00a0+ UI\u00a0templates\u00a0+\u00a0halts." },
+            { icon: "spark", label: "Delivery", text: "UI tokens, component library, country\u2011variant\u00a0rules." },
           ],
           columns: 3,
         },
@@ -625,15 +629,14 @@ export const projects: Project[] = [
       {
         chapter: "Outcome",
         // The old body line is the heading now; each tile links to its evidence
-        heading: "What shipped, what stuck.",
-        headingAccent: "what stuck.",
+        heading: "What shipped, what stuck",
         body: "",
         statGrid: {
           items: [
-            { value: "70 → 90%", label: "VN new-user KYC", icon: "gauge", hint: "Vietnam completion lift.", href: "#s-06" },
-            { value: "−40%", label: "Vendor cycle", icon: "arrow-up-right", hint: "Onboarding new SDKs, faster.", href: "#s-07" },
-            { value: "4", label: "Markets shipped", icon: "globe", hint: "VN · MY · ID · US.", href: "#s-02" },
-            { value: "1", label: "OCR taxonomy", icon: "shield", hint: "Co-authored with Legal + Risk.", href: "#s-03" },
+            { value: "70 → 90%", label: "Vietnam new\u2011user KYC", icon: "gauge", href: "#s-06" },
+            { value: "−40%", label: "Vendor integration cycle", icon: "arrow-up-right", hint: "Onboarding new SDKs, faster.", href: "#s-07" },
+            { value: "4", label: "Markets shipped", icon: "globe", hint: "VN · MY · ID · US", href: "#s-02" },
+            { value: "1", label: "OCR taxonomy", icon: "shield", hint: "Co\u2011authored with Legal\u00a0+\u00a0Risk.", href: "#s-03" },
           ],
           cols: 4,
         },
@@ -641,7 +644,7 @@ export const projects: Project[] = [
       {
         chapter: "Outcome",
         heading: "Reflection",
-        body: "Compliance-first UX is its **own discipline** — regulator language and human language don't compromise. The right answer was less about fixing one flow, more about making the SDK system *modular, configurable, data-driven*.",
+        body: "Compliance\u2011first UX is its **own discipline**\u00a0— regulator language and human language don’t compromise. The right answer was less about fixing one flow, more about making the SDK system *modular, configurable, data\u2011driven*.",
       },
     ],
   },

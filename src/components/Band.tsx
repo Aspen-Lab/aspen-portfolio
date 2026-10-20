@@ -1,18 +1,18 @@
 import type { ReactNode } from "react";
 import styles from "./Band.module.css";
 
-/* One full-bleed band of a banded case study (Latent's rhythm: dark, then
-   light, then grey). The tone's tokens live in globals.css under
-   [data-tone], so everything inside, headings, body, hairlines and the
-   charts' marks, flips with the ground. Dark is transparent and shows the
-   page's grain; light and grey are flat fills. */
+/* One full-bleed band of a banded case study. Every band is the dark
+   ground now (one system, no light or grey bands), so a page is a hero
+   band and one content band; the band is transparent and shows the
+   page's grain. Mass comes from the planes laid on it (globals.css:
+   .paper-stack/.paper, .slab, .tile), never from a change of ground. */
 export function Band({
-  tone,
+  tone = "dark",
   children,
   className,
   id,
 }: {
-  tone: "dark" | "light" | "grey";
+  tone?: "dark";
   children: ReactNode;
   className?: string;
   id?: string;

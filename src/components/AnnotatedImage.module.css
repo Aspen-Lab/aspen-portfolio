@@ -1,19 +1,18 @@
-/* Flat throughout: hairlines, corner marks, a dashed crosshair and solid
-   blocks — no gradient fills, and nothing over the picture ever dims it
-   (Aspen, 2026-10-19). The photograph runs the full stage: 4px corners and
-   a #252528 hairline, or, joined to a black slab, 2px corners and #333336. */
+/* Flat throughout: hairlines, corner marks, ticks and solid blocks, no
+   gradient fills, and nothing over the picture ever dims it (Aspen,
+   2026-10-19). The type comes from the ramp (.t-subhead, .t-small,
+   .t-label); this file sets colour, layout and motion only. */
 .figure { position: relative; }
 
 .frame {
   /* The picture is dark-native: its marks and markers keep the dark
      tokens wherever the frame sits */
-  --color-paper: #0f0f10;
-  --color-cream: #181819;
+  --color-cream: var(--tile, #141416);
   --color-line: #252528;
   --color-ink: #f4f4f2;
   position: relative;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 2px;
   background: var(--color-cream);
   isolation: isolate;
 }
@@ -26,7 +25,7 @@
   position: absolute;
   inset: 0;
   z-index: 4;
-  border: 1px solid var(--color-line);
+  border: 1px solid var(--edge, #333336);
   border-radius: inherit;
   pointer-events: none;
 }
@@ -39,9 +38,7 @@
 
 /* The viewfinder. Every piece is as big as the frame and moves by
    transform alone, so the glide stays on the compositor: no layout, no
-   repaint of the picture under it. The dim is one flat group: its pieces
-   are opaque and overlap, and the group's opacity dims them evenly, so
-   there is no seam where two panels meet. */
+   repaint of the picture under it. The group fades as one. */
 .spot {
   position: absolute;
   inset: 0;
@@ -49,22 +46,24 @@
   opacity: 0;
   pointer-events: none;
   will-change: opacity;
-  transition: opacity 180ms ease;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
 .spot[data-on="true"] { opacity: 1; }
 
-.piece {
+.piece,
+.cross {
   position: absolute;
   inset: 0;
   transform-origin: 0 0;
   will-change: transform;
-  transition: transform 460ms var(--ease-arrive);
+  transition: transform var(--t-2, 360ms) var(--ease-arrive);
 }
+/* Coming out of nothing it lands on its region; only the fade plays */
+.spot[data-snap] :is(.piece, .cross) { transition: none; }
 
 /* Where each piece stands, from the region on the viewfinder (--x, --y,
-   --w, --h, in per cent of the frame). Left and right panels run the full
-   height, top and bottom the full width; edges are pinned at a corner and
-   scaled to their side; fills and marks sit on their corner point. */
+   --w, --h, in per cent of the frame). Edges are pinned at a corner and
+   scaled to their side; corner marks and ticks sit on their point. */
 .piece[data-edge="top"] { transform: translate(calc(var(--x) * 1%), calc(var(--y) * 1%)) scaleX(calc(var(--w) / 100)); }
 .piece[data-edge="right"] { transform: translate(calc((var(--x) + var(--w)) * 1%), calc(var(--y) * 1%)) scaleY(calc(var(--h) / 100)); }
 .piece[data-edge="bottom"] { transform: translate(calc(var(--x) * 1%), calc((var(--y) + var(--h)) * 1%)) scaleX(calc(var(--w) / 100)); }
@@ -74,8 +73,7 @@
 .piece[data-corner="br"] { transform: translate(calc((var(--x) + var(--w)) * 1%), calc((var(--y) + var(--h)) * 1%)); }
 .piece[data-corner="bl"] { transform: translate(calc(var(--x) * 1%), calc((var(--y) + var(--h)) * 1%)); }
 
-/* The hairline round the region, drawn just outside it. Inside the group
-   it reads as the old 22% outline over the dim. */
+/* The hairline round the region, drawn just outside it */
 .edge {
   position: absolute;
   background: rgb(244 244 242 / 60%);
@@ -85,122 +83,83 @@
 .edge[data-side="left"] { left: -1px; top: 0; width: 1px; height: 100%; }
 .edge[data-side="right"] { left: 0; top: 0; width: 1px; height: 100%; }
 
-/* The four marks, each on its corner point */
+/* The four corner marks, square, each on its corner point */
 .corner {
   position: absolute;
   width: 12px;
   height: 12px;
   border: 0 solid var(--color-ink);
 }
-.corner[data-c="tl"] { left: -1px; top: -1px; border-left-width: 1.5px; border-top-width: 1.5px; border-top-left-radius: 6px; }
-.corner[data-c="tr"] { left: -11px; top: -1px; border-right-width: 1.5px; border-top-width: 1.5px; border-top-right-radius: 6px; }
-.corner[data-c="br"] { left: -11px; top: -11px; border-right-width: 1.5px; border-bottom-width: 1.5px; border-bottom-right-radius: 6px; }
-.corner[data-c="bl"] { left: -1px; top: -11px; border-left-width: 1.5px; border-bottom-width: 1.5px; border-bottom-left-radius: 6px; }
+.corner[data-c="tl"] { left: -1px; top: -1px; border-left-width: 1.5px; border-top-width: 1.5px; }
+.corner[data-c="tr"] { left: -11px; top: -1px; border-right-width: 1.5px; border-top-width: 1.5px; }
+.corner[data-c="br"] { left: -11px; top: -11px; border-right-width: 1.5px; border-bottom-width: 1.5px; }
+.corner[data-c="bl"] { left: -1px; top: -11px; border-left-width: 1.5px; border-bottom-width: 1.5px; }
 
-/* The crosshair: a dashed line across and one down, through the region's
-   centre, and a dark square where they cross (Latent's hero). Each piece
-   is as big as the frame, so a per cent of it is a per cent of the frame;
-   the lines are drawn at the piece's top and left edges and carried to the
-   centre by transform. */
-.cross {
-  position: absolute;
-  inset: 0;
-  transform-origin: 0 0;
-  will-change: transform;
-  transition: transform 460ms var(--ease-arrive);
-}
+/* The crosshair, as Latent's viewfinder ticks: a 12px line at the middle
+   of each edge, pointing out of the region */
+.cross[data-tick="top"] { transform: translate(calc((var(--x) + var(--w) / 2) * 1%), calc(var(--y) * 1%)); }
+.cross[data-tick="right"] { transform: translate(calc((var(--x) + var(--w)) * 1%), calc((var(--y) + var(--h) / 2) * 1%)); }
+.cross[data-tick="bottom"] { transform: translate(calc((var(--x) + var(--w) / 2) * 1%), calc((var(--y) + var(--h)) * 1%)); }
+.cross[data-tick="left"] { transform: translate(calc(var(--x) * 1%), calc((var(--y) + var(--h) / 2) * 1%)); }
 .cross::before {
   content: "";
   position: absolute;
+  background: rgb(244 244 242 / 60%);
 }
-.cross[data-axis="x"] { transform: translateY(calc((var(--y) + var(--h) / 2) * 1%)); }
-.cross[data-axis="x"]::before {
-  top: 0;
-  left: 0;
-  right: 0;
-  border-top: 1px dashed rgb(244 244 242 / 35%);
-}
-.cross[data-axis="y"] { transform: translateX(calc((var(--x) + var(--w) / 2) * 1%)); }
-.cross[data-axis="y"]::before {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  border-left: 1px dashed rgb(244 244 242 / 35%);
-}
-.cross[data-axis="dot"] {
-  transform: translate(calc((var(--x) + var(--w) / 2) * 1%), calc((var(--y) + var(--h) / 2) * 1%));
-}
-.cross[data-axis="dot"]::before {
-  top: -4px;
-  left: -4px;
-  width: 8px;
-  height: 8px;
-  border: 1px solid rgb(244 244 242 / 60%);
-  background: #0a0a0a;
-}
+.cross[data-tick="top"]::before { left: 0; top: -13px; width: 1px; height: 12px; }
+.cross[data-tick="right"]::before { left: 1px; top: 0; width: 12px; height: 1px; }
+.cross[data-tick="bottom"]::before { left: 0; top: 1px; width: 1px; height: 12px; }
+.cross[data-tick="left"]::before { left: -13px; top: 0; width: 12px; height: 1px; }
 
-/* Numbered markers: a still, flat disc with a hairline. Ink, never the
-   accent; they never pulse. */
+/* Numbered markers: a still 28px ring, digits in ink. Lit, an ink disc
+   with dark digits fades in over it, so the change is an opacity, not a
+   repaint; they never pulse or grow. */
 .marker {
   position: absolute;
   z-index: 3;
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
-  margin: -13px 0 0 -13px;
-  border: 1px solid rgb(244 244 242 / 70%);
-  border-radius: 999px;
-  background: var(--color-paper);
-  color: var(--color-ink);
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  /* the label's tracking trails the last digit: even it out */
+  padding-left: 0.12em;
+  border: 1px solid rgb(244 244 242 / 55%);
+  border-radius: 2px;
+  color: #f4f4f2;
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1;
+  letter-spacing: 0.12em;
   font-variant-numeric: tabular-nums;
   cursor: help;
-  transition: opacity 180ms ease, transform 300ms var(--ease-arrive);
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
-/* Lit, the disc turns ink: an ink disc with the number in paper fades in
-   over it, so the change is an opacity, not a repaint */
 .marker::before {
   content: attr(data-n);
   position: absolute;
   inset: -1px;
   display: grid;
   place-items: center;
+  padding-left: 0.12em;
   border-radius: inherit;
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: #f4f4f2;
+  color: #0a0a0a;
   opacity: 0;
-  transition: opacity 180ms ease;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
-.marker[data-on="true"] { transform: scale(1.08); }
 .marker[data-on="true"]::before { opacity: 1; }
-.marker[data-dim="true"] { opacity: 0.4; }
-
-/* On a phone the picture is a third as wide; the markers shrink with it
-   so they sit beside the details instead of on them, and the number
-   stays at 12px. */
-@media (max-width: 639px) {
-  .marker {
-    width: 22px;
-    height: 22px;
-    margin: -11px 0 0 -11px;
-  }
-}
+.marker[data-dim="true"] { opacity: var(--dim, 0.45); }
 
 /* The one line under the picture, when the page shows it */
 .caption {
-  margin-top: 16px;
+  margin-top: 12px;
   color: var(--color-mute);
-  font-size: 15px;
-  line-height: 1.5;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 
 /* The notes: phones one under another, then one column per note under
-   the picture (three notes, three columns: no orphan in a second row).
-   A rule lights above the note in view. */
+   the picture (three notes, three columns: no orphan in a second row). */
 .notes {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -214,21 +173,25 @@
 
 /* Every note is as tall as the longest in its row; align-content: start
    keeps the spare height at the bottom, so titles and copy share one
-   baseline across the row instead of the short notes' rows stretching. */
+   baseline across the row. A 1px ink rule lights above the note in view
+   and its number turns ink; the others step back. */
 .note {
   position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-content: start;
-  column-gap: 10px;
+  column-gap: 12px;
   width: 100%;
   height: 100%;
   padding: 16px 0 12px;
   border-top: 1px solid var(--color-line);
   text-align: left;
   cursor: pointer;
-  transition: opacity 180ms ease;
+  transition:
+    opacity var(--t-1, 160ms) var(--ease-arrive),
+    transform var(--t-1, 160ms) var(--ease-arrive);
 }
+.note:active { transform: translateY(1px); }
 .note::before {
   content: "";
   position: absolute;
@@ -238,37 +201,33 @@
   height: 1px;
   background: var(--color-ink);
   opacity: 0;
-  transition: opacity 180ms ease;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
 .note[data-on="true"]::before { opacity: 1; }
-.note[data-dim="true"] { opacity: 0.4; }
-.note:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
+.note[data-dim="true"] { opacity: var(--dim, 0.45); }
 
-/* Ink at 43% reads as the soft grey; lit, it is full ink */
+/* The number in soft grey; lit, an ink copy fades in over it */
 .num {
+  position: relative;
   grid-row: span 2;
-  padding-top: 3px;
-  color: var(--color-ink);
-  opacity: 0.43;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  transition: opacity 180ms ease;
+  padding-top: 5px;
+  color: #8a8a90;
 }
-.note[data-on="true"] .num { opacity: 1; }
-.title {
+.num::before {
+  content: attr(data-n);
+  position: absolute;
+  top: 5px;
+  left: 0;
   color: var(--color-ink);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.35;
-  text-wrap: balance;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
+.note[data-on="true"] .num::before { opacity: 1; }
+.title { color: var(--color-ink); }
 .text {
   margin-top: 4px;
   color: var(--color-mute);
-  font-size: 15px;
-  line-height: 1.55;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 
 /* Chinese breaks only between words (each held in a .word) and never
@@ -283,68 +242,94 @@
   .hit, .marker { cursor: pointer; }
 }
 
-/* ── Joined layouts: the picture and a black slab in one 1px box ── */
+/* ── Joined layouts: the picture and a slab in one 1px box ── */
 .joined { margin: 0; }
+/* Each note's box reaches 12px past its copy into the slab's padding
+   (--ml, --mr), and the rules keep to the copy's measure. The inset focus
+   ring then lies exactly on the note's own rule (and on the uprights
+   beside it) and stays 12px clear of its number and copy: no line is
+   doubled and no digit is crossed. The focused note sits on top, so its
+   ring covers the neighbour's rule it shares. */
+.joined .note {
+  --ml: 12px;
+  --mr: 12px;
+}
+.joined .note:focus-visible { z-index: 1; }
+.joined .note::before {
+  z-index: 1;
+  left: var(--ml);
+  right: var(--mr);
+}
+/* The resting rule, at the copy's measure (the lit one fades in over it) */
+.joined .note::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: var(--ml);
+  right: var(--mr);
+  height: 1px;
+  background: var(--color-line);
+}
 .slab { display: block; }
 .slab .caption {
   display: block;
-  margin: 0 0 16px;
+  margin: 0 0 24px;
 }
 .kicker {
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.2;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  gap: 12px;
 }
 .kickerMark {
   flex: none;
   width: 6px;
   height: 6px;
-  background: var(--accent, var(--color-ink));
-}
-:global(html[lang="zh-CN"]) .kicker {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: none;
+  background: var(--color-ink);
 }
 
 /* Attached (the cover): the frame keeps its 1px edge; the slab hangs from
    it with no top edge of its own, so the two read as one block. */
 .figure[data-layout="attached"] .frame { border-radius: 2px 2px 0 0; }
-.figure[data-layout="attached"] .frame::after { border-color: #333336; }
 .figure[data-layout="attached"] .slab.slab {
-  padding: 20px;
+  padding: 24px 20px;
   border-top: 0;
   border-radius: 0 0 2px 2px;
 }
-.figure[data-layout="attached"] .notes { gap: 0; margin-top: 0; }
+/* Phones: one row per note; each row's foot overlaps the next row's rule */
+.figure[data-layout="attached"] .notes { gap: 0; margin: 0 -12px; }
 .figure[data-layout="attached"] .note {
-  padding: 16px 0 14px;
-  border-top-color: #2a2a2d;
+  padding: 16px 12px 17px;
+  border-top-color: transparent;
 }
-.figure[data-layout="attached"] .title {
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.3;
+@media (max-width: 639.98px) {
+  .figure[data-layout="attached"] .notes > li + li { margin-top: -1px; }
+  .figure[data-layout="attached"] .notes > li:last-child .note { padding-bottom: 16px; }
 }
 @media (min-width: 640px) {
-  .figure[data-layout="attached"] .slab.slab { padding: 24px 28px 26px; }
+  .figure[data-layout="attached"] .slab.slab { padding: 40px; }
   /* Three columns under one rule, split by 1px uprights; the rule over
-     the note in view lights, like Latent's tab underline */
-  .figure[data-layout="attached"] .notes { border-top: 1px solid #2a2a2d; }
-  .figure[data-layout="attached"] .notes > li + li { border-left: 1px solid #2a2a2d; }
+     the note in view lights, like Latent's tab underline. The rule and
+     uprights belong to the list, so they never dim; each note's box lies
+     over the rule and the uprights beside it (1px), and the outer two
+     reach 12px into the slab's padding. Its copy stays where it was. */
+  .figure[data-layout="attached"] .notes {
+    margin: 0 0 -12px;
+    border-top: 1px solid var(--color-line);
+  }
+  .figure[data-layout="attached"] .notes > li + li { border-left: 1px solid var(--color-line); }
   .figure[data-layout="attached"] .note {
-    padding: 20px 24px 4px;
+    --ml: 1px;
+    --mr: 1px;
+    width: calc(100% + var(--ml) + var(--mr));
+    height: calc(100% + 1px);
+    margin: -1px calc(-1 * var(--mr)) 0 calc(-1 * var(--ml));
+    padding: 25px calc(24px + var(--mr)) 12px calc(24px + var(--ml));
     border-top: 0;
   }
-  .figure[data-layout="attached"] .notes > li:first-child .note { padding-left: 0; }
-  .figure[data-layout="attached"] .notes > li:last-child .note { padding-right: 0; }
+  .figure[data-layout="attached"] .notes > li:first-child .note { --ml: 12px; padding-left: 12px; }
+  .figure[data-layout="attached"] .notes > li:last-child .note { --mr: 12px; padding-right: 12px; }
+  .figure[data-layout="attached"] .note::before { top: 0; }
+  .figure[data-layout="attached"] .note::after { content: none; }
 }
 
 /* Split (§02): picture left, slab right, inside one box */
@@ -352,7 +337,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border: 1px solid #333336;
+  border: 1px solid var(--edge, #333336);
   border-radius: 2px;
 }
 .figure[data-layout="split"] .frame { border-radius: 0; }
@@ -362,80 +347,47 @@
   flex-direction: column;
   padding: 24px 20px;
   border: 0;
-  border-top: 1px solid #333336;
+  border-top: 1px solid var(--edge, #333336);
   border-radius: 0;
 }
 @media (min-width: 640px) {
-  .figure[data-layout="split"] .slab.slab { padding: 32px; }
+  .figure[data-layout="split"] .slab.slab { padding: 40px; }
 }
 @media (min-width: 1024px) {
   .figure[data-layout="split"] .joined { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
   .figure[data-layout="split"] .slab.slab {
-    padding: 40px;
     border-top: 0;
-    border-left: 1px solid #333336;
+    border-left: 1px solid var(--edge, #333336);
   }
 }
-/* The rows sit at the slab's foot, the kicker at its head, as on Latent */
+/* The rows sit at the slab's foot, the kicker at its head, as on Latent.
+   The list reaches 12px into the slab's padding on three sides; each row's
+   foot overlaps the next row's rule, so a focused row's ring lies on its
+   own rule above and the next one below. */
 .figure[data-layout="split"] .notes {
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
-  margin-top: 24px;
+  margin: 24px -12px -12px;
 }
 @media (min-width: 1024px) {
   .figure[data-layout="split"] .notes { margin-top: auto; padding-top: 32px; }
 }
+.figure[data-layout="split"] .notes > li + li { margin-top: -1px; }
 .figure[data-layout="split"] .note {
   grid-template-columns: 32px minmax(0, 1fr);
   column-gap: 12px;
-  padding: 22px 0;
-  border-top-color: #2a2a2d;
+  padding: 24px 12px 25px;
+  border-top-color: transparent;
 }
-.figure[data-layout="split"] .notes > li:last-child .note { padding-bottom: 0; }
-/* No lit rule here: the number's square is the mark */
-.figure[data-layout="split"] .note::before { content: none; }
-.figure[data-layout="split"] .num {
-  position: relative;
-  display: grid;
-  place-items: center;
-  align-self: start;
-  width: 22px;
-  height: 22px;
-  margin-top: 2px;
-  padding: 0;
-  color: var(--color-soft);
-  opacity: 1;
-  line-height: 1;
-}
-.figure[data-layout="split"] .num::before {
-  content: attr(data-n);
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: var(--accent, var(--color-ink));
-  color: #0f0f10;
-  opacity: 0;
-  transition: opacity 180ms ease;
-}
-.figure[data-layout="split"] .note[data-on="true"] .num::before { opacity: 1; }
-.figure[data-layout="split"] .title {
-  font-size: 22px;
-  font-weight: 400;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-}
+.figure[data-layout="split"] .notes > li:last-child .note { padding-bottom: 12px; }
+.figure[data-layout="split"] .num { padding-top: 6px; }
+.figure[data-layout="split"] .num::before { top: 6px; }
 .figure[data-layout="split"] .text { margin-top: 8px; }
-.figure[data-layout="split"] .note:focus-visible { outline-offset: -1px; }
 
+/* Reduced motion: the viewfinder jumps; fades stay, as 160ms opacity */
 @media (prefers-reduced-motion: reduce) {
-  .spot,
   .piece,
-  .cross,
-  .figure[data-layout="split"] .num::before,
-  .marker,
-  .marker::before,
-  .note,
-  .note::before,
-  .num { transition: none; }
+  .cross { transition: none; }
+  .note { transition: opacity var(--t-1, 160ms) var(--ease-arrive); }
+  .note:active { transform: none; }
 }

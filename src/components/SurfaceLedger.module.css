@@ -1,15 +1,16 @@
-/* One flat sheet (Latent's: cream, a hairline, 4px), four frames on one
-   baseline, two lanes ruled under them. The only colour is the frames' own
-   pink signs. No gradient anywhere: the night is a flat fill, the
-   mountains and the moon are a dot pattern. */
+/* Four frames drawn in Axel's manner, on one baseline, and two lanes ruled
+   under them. The frames are product drawings in the system's greys; the
+   ledger's marks are the system's: 12px squares in grey, the column in
+   view lit in ink and, on its code square, the accent. No gradient
+   anywhere: the night is a flat fill, the mountains and the moon a dot
+   pattern. The type comes from the ramp (.t-small, .t-label). */
 .sheet {
-  --accent-ink: var(--accent, var(--color-ink));
-  --night: #0b0b0c;
+  --night: #0a0a0a;
   position: relative;
   padding: 20px;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: var(--sheet, #17171a);
 }
 
 /* ── Phone: one row per surface, the frame on the left ── */
@@ -21,8 +22,8 @@
   grid-template-columns: 96px minmax(0, 1fr);
   /* The name takes the slack, so the three lines sit on the frame's floor */
   grid-template-rows: minmax(0, 1fr) auto auto;
-  column-gap: 20px;
-  padding: 18px 0;
+  column-gap: 24px;
+  padding: 16px 0;
 }
 .col + .col { border-top: 1px solid var(--color-line); }
 .col:first-of-type { padding-top: 0; }
@@ -41,8 +42,6 @@
   width: calc(var(--w) * 100%);
 }
 .svg {
-  /* The frames are dark-native: on paper, where --color-ink turns black,
-     their light marks stay light */
   --frame-ink: #f4f4f2;
   display: block;
   width: 100%;
@@ -55,35 +54,27 @@
   align-self: end;
   margin-bottom: 8px;
   color: var(--color-ink);
-  font-size: 16px;
-  line-height: 1.3;
 }
 .cell {
   grid-column: 2;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: var(--color-mute);
-  font-size: 14px;
-  line-height: 1.6;
   white-space: nowrap;
 }
-.cell[data-off="true"] { opacity: 0.5; }
 .sq {
   flex: none;
-  width: 10px;
-  height: 10px;
-  border-radius: 1px;
+  width: 12px;
+  height: 12px;
 }
-.sq[data-fill="true"] { background: rgb(244 244 242 / 92%); }
-.sq[data-fill="false"] { border: 1px solid rgb(244 244 242 / 30%); }
+.sq[data-fill="true"] { background: var(--grey-2, #6b6b71); }
+.sq[data-fill="false"] { border: 1.5px solid var(--grey-2, #6b6b71); }
 .tech { color: var(--color-ink); }
 
 /* ── From 640px: the ledger. A lane column, then four surfaces ── */
 @media (min-width: 640px) {
-  /* The last lane's own air sits under its squares, so the bottom pad is
-     short: the space under the code lane matches the space over the frames */
-  .sheet { padding: 32px 28px 12px; }
+  .sheet { padding: 32px 32px 16px; }
   .grid {
     display: grid;
     grid-template-columns: 72px repeat(4, minmax(0, 1fr));
@@ -91,8 +82,6 @@
   .col { display: contents; }
   .col + .col { border-top: 0; }
 
-  /* As tall as the tallest frame (the phone, 224 units at 86% of a 220
-     column), never over 176px, so a narrow sheet has no empty sky */
   .stage {
     grid-column: var(--c);
     grid-row: 1;
@@ -106,38 +95,26 @@
     grid-column: var(--c);
     grid-row: 2;
     align-self: start;
-    margin: 18px 0 0;
+    margin: 16px 0 0;
     padding: 0 4px;
     text-align: center;
   }
 
-  /* Each lane is a 60px row with a hairline above it, drawn by every cell
+  /* Each lane is a 56px row with a hairline above it, drawn by every cell
      in the row at once, so it runs the full width of the grid */
   .lane,
   .cell {
-    height: 60px;
+    height: 56px;
     border-top: 1px solid var(--color-line);
   }
   .lane[data-lane="design"],
   .cell[data-lane="design"] { grid-row: 3; margin-top: 24px; }
   .lane[data-lane="code"],
   .cell[data-lane="code"] { grid-row: 4; }
-
   .lane {
     display: flex;
     grid-column: 1;
     align-items: center;
-    color: var(--color-soft);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-  .sheet[data-cn="true"] .lane {
-    font-family: var(--font-sans);
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    text-transform: none;
   }
 
   /* The square stands at the column's centre, under its frame; the tech's
@@ -148,62 +125,44 @@
     grid-template-columns: minmax(0, 1fr) 12px minmax(0, 1fr);
     align-items: center;
     gap: 0;
-    font-size: 15px;
   }
-  .cell[data-off="true"] { opacity: 1; }
-  .sq { grid-column: 2; width: 12px; height: 12px; }
-  .text { grid-column: 3; padding-left: 10px; color: var(--color-mute); }
+  .sq { grid-column: 2; }
+  .text { grid-column: 3; padding-left: 12px; color: var(--color-ink); }
   .term,
   .sep { display: none; }
-  .tech { color: var(--color-mute); }
 }
-@media (min-width: 900px) {
-  .sheet { padding: 40px 40px 18px; }
+@media (min-width: 1024px) {
+  .sheet { padding: 40px 40px 16px; }
   .grid { grid-template-columns: 88px repeat(4, minmax(0, 1fr)); }
 }
 
-/* ── Once, on entry: the frames rise, the squares fill lane by lane, then
-   the signs flicker on left to right. Transform and opacity only. ── */
+/* ── Once, on entry: the frames fade in, the squares fade on lane by
+   lane, the signs come on last. Opacity only. ── */
 @media (prefers-reduced-motion: no-preference) {
   .sheet[data-in="false"] .frame,
   .sheet[data-in="false"] .sq,
-  .sheet[data-in="false"] .text { opacity: 0; }
+  .sheet[data-in="false"] .text,
+  .sheet[data-in="false"] .sign { opacity: 0; }
 
   .sheet[data-in="true"] .frame {
-    animation: rise 420ms var(--ease-arrive) backwards;
-    animation-delay: calc(var(--i) * 70ms);
+    animation: show var(--t-2, 360ms) var(--ease-arrive) backwards;
+    animation-delay: calc(var(--i) * var(--step, 60ms));
   }
-  /* A square pops from half size; the words beside it only fade */
-  .sheet[data-in="true"] .sq { animation: fill 200ms var(--ease-arrive) backwards; }
-  .sheet[data-in="true"] .text { animation: show 200ms ease backwards; }
-  .sheet[data-in="true"] .cell[data-lane="design"] > * { animation-delay: calc(360ms + var(--i) * 50ms); }
-  .sheet[data-in="true"] .cell[data-lane="code"] > * { animation-delay: calc(560ms + var(--i) * 50ms); }
-  .sheet[data-in="true"] .sign {
-    animation: flicker 300ms steps(1, end) backwards;
-    animation-delay: calc(900ms + var(--i) * 80ms);
-  }
-}
-@keyframes rise {
-  from { opacity: 0; transform: translateY(8px); }
-}
-@keyframes fill {
-  from { opacity: 0; transform: scale(0.5); }
+  .sheet[data-in="true"] .sq,
+  .sheet[data-in="true"] .text { animation: show var(--t-1, 160ms) var(--ease-arrive) backwards; }
+  .sheet[data-in="true"] .cell[data-lane="design"] > * { animation-delay: calc(240ms + var(--i) * var(--step, 60ms)); }
+  .sheet[data-in="true"] .cell[data-lane="code"] > * { animation-delay: calc(480ms + var(--i) * var(--step, 60ms)); }
+  .sheet[data-in="true"] .sign { animation: show var(--t-2, 360ms) var(--ease-arrive) 840ms backwards; }
 }
 @keyframes show {
   from { opacity: 0; }
 }
-/* Like FOUND on helloaxel.com: off, on, a stutter, on */
-@keyframes flicker {
-  0% { opacity: 0.25; }
-  30% { opacity: 1; }
-  50% { opacity: 0.4; }
-  70% { opacity: 1; }
-}
 
-/* ── Inside the frames (frame units) ── */
+/* ── Inside the frames (frame units): product drawings in the system's
+   greys; the pixel art keeps its own opacities ── */
 .night { fill: var(--night); }
-.mail { fill: #131314; }
-.chrome { fill: #151516; }
+.mail { fill: #141416; }
+.chrome { fill: #1e1e21; }
 .edge {
   fill: none;
   stroke: rgb(244 244 242 / 30%);
@@ -224,7 +183,7 @@
 }
 .island { fill: #000; stroke: rgb(244 244 242 / 10%); stroke-width: 0.6; }
 .panel {
-  fill: #1b1b1d;
+  fill: #1e1e21;
   stroke: rgb(244 244 242 / 12%);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
@@ -234,14 +193,14 @@
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
-.t1 { fill: rgb(244 244 242 / 90%); }
-.t2 { fill: rgb(244 244 242 / 48%); }
-.t3 { fill: rgb(244 244 242 / 24%); }
-.t4 { fill: rgb(244 244 242 / 10%); }
+.t1 { fill: #f4f4f2; }
+.t2 { fill: #a0a0a5; }
+.t3 { fill: #6b6b71; }
+.t4 { fill: #3a3a3f; }
 .hole { fill: var(--night); }
 .stroke {
   fill: none;
-  stroke: rgb(244 244 242 / 85%);
+  stroke: #f4f4f2;
   stroke-width: 1.3;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -279,25 +238,24 @@
 .star { fill: rgb(244 244 242 / 45%); }
 .bright { fill: rgb(244 244 242 / 62%); }
 
-/* The sign: a plate tinted with the accent, lit dots in it */
+/* The sign: a raised plate, lit dots in ink. No accent in the frames. */
 .plate {
-  fill: color-mix(in srgb, var(--accent-ink) 12%, var(--night));
-  stroke: color-mix(in srgb, var(--accent-ink) 45%, transparent);
+  fill: #1e1e21;
+  stroke: rgb(244 244 242 / 30%);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
-.pink { fill: var(--accent-ink); }
+.dots { fill: #f4f4f2; }
 
-/* ── SurfaceTabs: the paper sheet (inside the tabs' .paper) ──
+/* ── SurfaceTabs: the chart sheet (inside the tabs' .paper) ──
    A stage on a 40px drafting grid with one surface drawn large, then the
-   ledger, always whole. Ink here is #0a0a0a; the frames keep their own. */
+   ledger, always whole. */
 .board {
-  --accent-ink: var(--accent, var(--color-ink));
-  --night: #0b0b0c;
+  --night: #0a0a0a;
   --label: 48px;
   --fh: 190px;
   --tagrow: 40px;
-  --head: 36px;
+  --head: 48px;
   --lane: 48px;
   position: relative;
   margin: 0;
@@ -310,7 +268,7 @@
   position: relative;
   display: grid;
   height: 220px;
-  border: 1px solid var(--grid, #d0d0d2);
+  border: 1px solid var(--color-line);
   overflow: hidden;
 }
 @media (min-width: 640px) { .drafting { height: 340px; } }
@@ -322,7 +280,7 @@
 }
 .gridLine {
   fill: none;
-  stroke: var(--grid, #d0d0d2);
+  stroke: var(--grid);
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
@@ -349,17 +307,21 @@
 @media (min-width: 640px) {
   .ledger { margin-top: 24px; }
 }
+/* The column names rest at .45 and light with their tab (data-pt-dim).
+   On a phone (no tech words) the column is a centred lattice; from 640px
+   every column hangs off one left edge: name, both squares, the word. */
 .colName {
   grid-row: 1;
   align-self: center;
   padding: 0 2px;
   color: var(--color-ink);
-  font-size: 13px;
   line-height: 1.2;
   text-align: center;
   word-break: keep-all;
 }
-@media (min-width: 640px) { .colName { font-size: 15px; } }
+@media (min-width: 640px) {
+  .colName { padding: 0 8px 0 0; text-align: left; }
+}
 
 .laneName,
 .lcell { border-top: 1px solid var(--color-line); }
@@ -367,27 +329,16 @@
   grid-column: 1;
   display: flex;
   align-items: center;
-  color: var(--color-soft);
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-@media (min-width: 640px) {
-  .laneName { font-size: 12px; letter-spacing: 0.16em; }
-}
-.board[data-cn="true"] .laneName {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: none;
 }
 .laneName[data-lane="design"],
 .lcell[data-lane="design"] { grid-row: 2; }
 .laneName[data-lane="code"],
 .lcell[data-lane="code"] { grid-row: 3; border-bottom: 1px solid var(--color-line); }
 
-/* The square stands at the column's centre; the tech hangs to its right */
+/* Phone: the square stands at the column's centre. From 640px it stands
+   on the column's left edge, under the name, and the tech word follows it
+   at 16px: clear of the hexagon that rings the code square in view
+   (it reaches 10px past the square). */
 .lcell {
   position: relative;
   display: grid;
@@ -397,30 +348,35 @@
 .lsq {
   position: relative;
   grid-column: 2;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
 }
-@media (min-width: 640px) { .lsq { width: 16px; height: 16px; } }
-.lsq[data-fill="true"] { background: var(--mark, #717172); }
-.lsq[data-fill="false"] { border: 1.5px solid var(--mark, #717172); }
-/* The accent copy, lit by the tab in view (opacity only) */
+@media (min-width: 640px) {
+  .lcell {
+    grid-template-columns: 12px auto minmax(0, 1fr);
+    column-gap: 16px;
+  }
+  .lsq { grid-column: 1; }
+}
+.lsq[data-fill="true"] { background: var(--grey-2, #6b6b71); }
+.lsq[data-fill="false"] { border: 1.5px solid var(--grey-2, #6b6b71); }
+/* The lit copy, shown by the tab in view (opacity only): ink in the
+   design lane, the accent in the code lane, the chart's one focus mark */
 .lit {
   position: absolute;
   inset: 0;
-  background: var(--accent, var(--color-ink));
+  background: var(--color-ink);
 }
-.lit[data-hollow="true"] {
+.lcell[data-lane="code"] .lit { background: var(--accent); }
+.lcell[data-lane="code"] .lit[data-hollow="true"] {
   inset: -1.5px;
-  border: 1.5px solid var(--accent-deep, var(--color-ink));
+  border: 1.5px solid var(--accent);
   background: transparent;
 }
 .ltech {
   display: none;
-  grid-column: 3;
-  /* clear of the hexagon that rings the square in view */
-  padding-left: 18px;
-  color: var(--color-mute);
-  font-size: 14px;
+  grid-column: 2;
+  color: var(--color-ink);
   white-space: nowrap;
 }
 @media (min-width: 640px) { .ltech { display: block; } }
@@ -435,51 +391,70 @@
   width: calc((100% - var(--label)) / 4);
   pointer-events: none;
   transform: translateX(calc(var(--active, 0) * 100%));
-  transition: transform 520ms var(--ease-arrive);
+  transition: transform var(--t-2, 360ms) var(--ease-arrive);
   will-change: transform;
 }
+/* The tags span the column. On a phone each sits on the column's centre,
+   the last one flush with the ledger's right rule so it never passes it;
+   from 640px each hangs off the column's left edge, like the rest of it */
 .tags {
   position: absolute;
-  top: 6px;
-  left: 50%;
-  display: grid;
-  justify-items: center;
-  transform: translateX(-50%);
+  top: 4px;
+  left: 0;
+  right: 0;
 }
 .tag {
-  grid-area: 1 / 1;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
   white-space: nowrap;
 }
-/* Ringed round the code square: the centre of the code row */
+.tag:last-child {
+  left: auto;
+  right: 0;
+  translate: none;
+}
+/* The tag rides with the column and only fades: no rise of its own */
+.focus .tags > [data-pt] { transform: none; }
+/* Ringed round the code square: the centre of the code row, on the
+   square's own centre (the column's, on a phone) */
 .hex {
   position: absolute;
   left: 50%;
   top: calc(var(--tagrow) + var(--head) + var(--lane) + var(--lane) / 2);
   overflow: visible;
-  transform: translate(-50%, -50%) scale(0.86);
+  transform: translate(-50%, -50%);
 }
 @media (min-width: 640px) {
-  .hex { transform: translate(-50%, -50%); }
+  .tag,
+  .tag:last-child {
+    left: 0;
+    right: auto;
+    translate: none;
+  }
+  .hex { left: 6px; }
 }
 .hex polygon {
   fill: none;
-  stroke: rgb(10 10 10 / 55%);
-  stroke-width: 1.25;
-  stroke-dasharray: 3 4;
+  stroke: var(--grey-1, #a0a0a5);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
 }
 
-/* Once, on entry: the surface rises, the squares pop lane by lane, then
-   the signs flicker on. Transform and opacity only. */
+/* Once, at a third in view: the surface fades in, the squares fade on
+   lane by lane, the signs come on last. Opacity only, done by 1200ms. */
 @media (prefers-reduced-motion: no-preference) {
   .board[data-in="false"] .shot,
   .board[data-in="false"] .lsq,
-  .board[data-in="false"] .ltech { opacity: 0; }
-  .board[data-in="true"] .shot { animation: rise 520ms var(--ease-arrive) backwards; }
-  .board[data-in="true"] .lsq { animation: fill 220ms var(--ease-arrive) backwards; }
-  .board[data-in="true"] .ltech { animation: show 220ms ease backwards; }
-  .board[data-in="true"] .lcell[data-lane="design"] > * { animation-delay: calc(320ms + var(--i) * 60ms); }
-  .board[data-in="true"] .lcell[data-lane="code"] > * { animation-delay: calc(560ms + var(--i) * 60ms); }
-  .board[data-in="true"] .sign { animation: flicker 300ms steps(1, end) 880ms backwards; }
+  .board[data-in="false"] .ltech,
+  .board[data-in="false"] .sign { opacity: 0; }
+  .board[data-in="true"] .shot { animation: show var(--t-2, 360ms) var(--ease-arrive) backwards; }
+  .board[data-in="true"] .lsq,
+  .board[data-in="true"] .ltech { animation: show var(--t-1, 160ms) var(--ease-arrive) backwards; }
+  .board[data-in="true"] .lcell[data-lane="design"] > * { animation-delay: calc(240ms + var(--i) * var(--step, 60ms)); }
+  .board[data-in="true"] .lcell[data-lane="code"] > * { animation-delay: calc(480ms + var(--i) * var(--step, 60ms)); }
+  .board[data-in="true"] .sign { animation: show var(--t-2, 360ms) var(--ease-arrive) 840ms backwards; }
 }
 @media (prefers-reduced-motion: reduce) {
   .focus { transition: none; }

@@ -1,39 +1,59 @@
 "use client";
 
-import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import type { ImageNote } from "@/lib/work";
 import { hold } from "@/lib/hold";
 import styles from "./AnnotatedImage.module.css";
 
 /* An image that explains itself. Numbered markers sit on the picture and
-   the notes are written out under it, one column each. Point at a marker,
-   a region or a note and a viewfinder settles on that region — a hairline
-   and four corner marks; the picture around it stays as it is (Aspen,
-   2026-10-19: 「图片 zoom 不要加暗附近」) — and the other notes step back.
+   the notes are written out beside or under it. Point at a marker, a
+   region or a note and a viewfinder settles on that region (a hairline,
+   four corner marks and four ticks at the middle of its edges); the
+   picture around it stays exactly as it is (Aspen, 2026-10-19: 「图片 zoom
+   不要加暗附近」), and the other notes and markers step back to 0.45.
    Touch and keyboard pin a note with a tap or Enter. The notes are the
    accessible copy; the markers and regions are pointer conveniences on top
    of the image.
 
    The viewfinder moves by transform only; nothing in it is ever laid out
    again. Its hairline edges are as big as the frame, pinned at a corner
-   and scaled to their side, and the corner marks sit on their corner
-   points. The picture, the regions, the viewfinder's pieces and every note
-   are memoised: a hover re-renders only the notes and markers whose state
-   it changes.
+   and scaled to their side, and the corner marks and ticks sit on their
+   points. Between two regions it glides; coming out of nothing it lands
+   on its region at once (data-snap) and only fades in, so the first frame
+   of a hover is already on the target. The picture, the regions, the
+   viewfinder's pieces and every note are memoised: a hover re-renders
+   only the notes and markers whose state it changes.
 
-   Two joined layouts, after Latent's outcome card. "attached" (the cover)
-   hangs the notes under the picture on a black slab that shares the
-   frame's bottom edge. "split" puts the picture on the left and the notes
-   on a black slab on the right, one numbered row each; the row in view
-   lights its number on a solid accent square. Both carry Latent's L-marks
-   in the frame's corners and a dashed crosshair with a dark centre square
-   that glides, with the viewfinder, to the region in view. Nothing in the
-   picture is ever dimmed. */
+   Two joined layouts, after Latent's split card. "attached" (the cover)
+   hangs the notes under the picture on a slab that shares the frame's
+   bottom edge. "split" puts the picture on the left and the notes on a
+   slab on the right, one numbered row each. In both the row in view lights
+   its rule and its number in ink. Latent's L-marks stand in the frame's
+   corners. No accent anywhere: the picture is the colour. */
+
+/* Tidy lines. Chinese is held word by word (hold), so a line never ends
+   inside a word. Latin copy holds a hyphenated word whole ("one-line"
+   never ends a line on its hyphen) and ties a dash to the word before it
+   (no line opens on "—"). */
+function keep(text: string): ReactNode {
+  if (/\p{Script=Han}/u.test(text)) return hold(text, styles.word);
+  const parts = text.replace(/ ([—–])/g, "\u00a0$1").split(/(\S+-\S+)/);
+  if (parts.length === 1) return parts[0];
+  return parts.map((part, k) =>
+    k % 2 === 1 ? (
+      <span key={k} className={styles.word}>
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
 
 const SIDES = ["top", "right", "bottom", "left"] as const;
 const CORNERS = ["tl", "tr", "br", "bl"] as const;
-const AXES = ["x", "y", "dot"] as const;
+const TICKS = ["top", "right", "bottom", "left"] as const;
 
 /* The viewfinder's pieces. They never re-render: where they stand comes
    from the --x, --y, --w and --h set on the viewfinder. */
@@ -54,11 +74,11 @@ const Viewfinder = memo(function Viewfinder() {
   );
 });
 
-/* The crosshair: two dashed lines through the region's centre and a dark
-   square where they cross. Like the viewfinder, each piece is as big as
-   the frame and moves by transform alone. */
+/* The crosshair: four 12px ticks, one at the middle of each edge of the
+   region, pointing out. Like the viewfinder, each piece is as big as the
+   frame and moves by transform alone. */
 const Crosshair = memo(function Crosshair() {
-  return AXES.map((axis) => <span key={axis} className={styles.cross} data-axis={axis} />);
+  return TICKS.map((side) => <span key={side} className={styles.cross} data-tick={side} />);
 });
 
 /* Latent's L-marks in the frame's corners: still, light on the picture. */
@@ -116,6 +136,7 @@ const Regions = memo(function Regions({
       <span
         key={`hit-${i}`}
         aria-hidden
+        data-hover=""
         className={styles.hit}
         style={{ left: `${left}%`, top: `${top}%`, width: `${w}%`, height: `${h}%` }}
         onPointerEnter={onPoint(i)}
@@ -142,18 +163,20 @@ const Marker = memo(function Marker({
   point: Point;
   pin: (i: number) => void;
 }) {
+  const n = String(i + 1).padStart(2, "0");
   return (
     <span
       aria-hidden
+      data-hover=""
       className={styles.marker}
-      data-n={i + 1}
+      data-n={n}
       data-on={on}
       data-dim={dim}
       style={{ left: `${note.at[0]}%`, top: `${note.at[1]}%` }}
       onPointerEnter={point(i)}
       onClick={() => pin(i)}
     >
-      {i + 1}
+      {n}
     </span>
   );
 });
@@ -164,6 +187,7 @@ const Note = memo(function Note({
   on,
   dim,
   pressed,
+  inset,
   point,
   hover,
   pin,
@@ -173,14 +197,18 @@ const Note = memo(function Note({
   on: boolean;
   dim: boolean;
   pressed: boolean;
+  /** Joined layouts: the focus ring is drawn on the cell's own edge, where
+      it lies on the note's rule and uprights, 12px clear of its copy */
+  inset: boolean;
   point: Point;
   hover: (i: number | null) => void;
   pin: (i: number) => void;
 }) {
   // Chinese is held word by word, so a line never ends inside a word.
   // Worked out once per note, not on every hover.
-  const title = useMemo(() => hold(note.title, styles.word), [note.title]);
-  const text = useMemo(() => hold(note.text, styles.word), [note.text]);
+  const title = useMemo(() => keep(note.title), [note.title]);
+  const text = useMemo(() => keep(note.text), [note.text]);
+  const n = String(i + 1).padStart(2, "0");
   return (
     <li>
       <button
@@ -188,17 +216,18 @@ const Note = memo(function Note({
         className={styles.note}
         data-on={on}
         data-dim={dim}
+        data-ring={inset ? "inset" : undefined}
         aria-pressed={pressed}
         onPointerEnter={point(i)}
         onFocus={() => hover(i)}
         onBlur={() => hover(null)}
         onClick={() => pin(i)}
       >
-        <span className={styles.num} data-n={String(i + 1).padStart(2, "0")}>
-          {String(i + 1).padStart(2, "0")}
+        <span className={`t-label ${styles.num}`} data-code="" data-n={n}>
+          {n}
         </span>
-        <span className={styles.title}>{title}</span>
-        <span className={styles.text}>{text}</span>
+        <span className={`t-subhead ${styles.title}`}>{title}</span>
+        <span className={`t-small ${styles.text}`}>{text}</span>
       </button>
     </li>
   );
@@ -235,31 +264,55 @@ export function AnnotatedImage({
   showCaption?: boolean;
   /** "wide": a photograph on the full container stage (the page sets the width). */
   stage?: "wide";
-  /** "attached": the notes on a black slab joined under the picture.
-      "split": the picture left, the notes on a black slab right. */
+  /** "attached": the notes on a slab joined under the picture.
+      "split": the picture left, the notes on a slab right. */
   layout?: "split" | "attached";
-  /** The split slab's first row, after a small accent square. */
+  /** The split slab's first row, after a small ink square. */
   kicker?: string;
 }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [pinned, setPinned] = useState<number | null>(null);
   // Where the viewfinder last stood, so it fades out in place
   const [spot, setSpot] = useState(0);
+  const hoveredNow = useRef<number | null>(null);
   const pinnedNow = useRef<number | null>(null);
+  const spotEl = useRef<HTMLSpanElement>(null);
+  const snap = useRef(false);
   const shown = hovered ?? pinned;
 
-  const hover = useCallback((i: number | null) => {
-    setHovered(i);
-    if (i !== null) setSpot(i);
+  /* Out of nothing, the viewfinder lands on its region instead of gliding
+     there from where it last stood: data-snap turns its transitions off
+     before the new region is committed, and is cleared once it has been
+     drawn there (below). */
+  const arm = useCallback(() => {
+    if (hoveredNow.current !== null || pinnedNow.current !== null) return;
+    snap.current = true;
+    spotEl.current?.setAttribute("data-snap", "");
   }, []);
+
+  const hover = useCallback(
+    (i: number | null) => {
+      if (i !== null) arm();
+      hoveredNow.current = i;
+      setHovered(i);
+      if (i !== null) setSpot(i);
+    },
+    [arm],
+  );
   // A second tap on the pinned note lets go, even while it keeps focus
-  const pin = useCallback((i: number) => {
-    const next = pinnedNow.current === i ? null : i;
-    pinnedNow.current = next;
-    setPinned(next);
-    if (next === null) setHovered(null);
-    else setSpot(i);
-  }, []);
+  const pin = useCallback(
+    (i: number) => {
+      const next = pinnedNow.current === i ? null : i;
+      if (next !== null) arm();
+      pinnedNow.current = next;
+      setPinned(next);
+      if (next === null) {
+        hoveredNow.current = null;
+        setHovered(null);
+      } else setSpot(i);
+    },
+    [arm],
+  );
   const point = useCallback<Point>(
     (i) => (e) => {
       if (e.pointerType === "mouse") hover(i);
@@ -268,12 +321,24 @@ export function AnnotatedImage({
   );
   const leave = useCallback(() => hover(null), [hover]);
 
-  const captionText = useMemo(() => (caption ? hold(caption, styles.word) : null), [caption]);
+  // The jump is resolved with transitions off (reading the style settles
+  // it now), then the next frame turns the glide back on
+  useLayoutEffect(() => {
+    if (!snap.current) return;
+    snap.current = false;
+    const el = spotEl.current;
+    const piece = el?.firstElementChild;
+    if (!el || !piece) return;
+    void getComputedStyle(piece).transform;
+    requestAnimationFrame(() => el.removeAttribute("data-snap"));
+  }, [spot, hovered, pinned]);
+
+  const captionText = useMemo(() => (caption ? keep(caption) : null), [caption]);
   const visibleCaption = showCaption && captionText !== null;
 
   const [x, y, w, h] = notes[spot].box;
 
-  const kickerText = useMemo(() => (kicker ? hold(kicker, styles.word) : null), [kicker]);
+  const kickerText = useMemo(() => (kicker ? keep(kicker) : null), [kicker]);
 
   const frame = (
     <div
@@ -285,6 +350,7 @@ export function AnnotatedImage({
       <Regions notes={notes} onPoint={point} onPin={pin} />
 
       <span
+        ref={spotEl}
         aria-hidden
         className={styles.spot}
         data-on={shown !== null}
@@ -320,6 +386,7 @@ export function AnnotatedImage({
           on={shown === i}
           dim={shown !== null && shown !== i}
           pressed={pinned === i}
+          inset={layout !== undefined}
           point={point}
           hover={hover}
           pin={pin}
@@ -337,13 +404,13 @@ export function AnnotatedImage({
           {frame}
           <figcaption className={`slab ${styles.slab}`}>
             {layout === "split" && kickerText !== null && (
-              <span className={styles.kicker}>
+              <span className={`t-label ${styles.kicker}`}>
                 <span aria-hidden className={styles.kickerMark} />
                 <span>{kickerText}</span>
               </span>
             )}
             {captionText !== null && (
-              <span className={visibleCaption ? styles.caption : "sr-only"}>{captionText}</span>
+              <span className={visibleCaption ? `t-small ${styles.caption}` : "sr-only"}>{captionText}</span>
             )}
             {list(visibleCaption)}
           </figcaption>
@@ -360,7 +427,7 @@ export function AnnotatedImage({
       <figure>
         {frame}
         {captionText !== null && (
-          <figcaption className={visibleCaption ? styles.caption : "sr-only"}>{captionText}</figcaption>
+          <figcaption className={visibleCaption ? `t-small ${styles.caption}` : "sr-only"}>{captionText}</figcaption>
         )}
       </figure>
 

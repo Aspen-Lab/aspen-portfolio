@@ -1,21 +1,26 @@
 import type { Project } from "./work";
 
+/** Holds a run of hanzi whole: a word joiner (U+2060, renders as nothing)
+    between every character, so a line never breaks inside it, whether or
+    not the component also cuts the copy into words. */
+const keep = (run: string) => Array.from(run).join("\u2060");
+
 // Business milestones supplied by Aspen, September 2026. GMV is not ARR;
 // no currency or annualization is implied. Attribute growth to the team.
 //
-// The editorial layout on Latent bands: five numbered sections, each one
-// claim in its heading, one or two plain sentences, and one piece of
-// Axel's own evidence. No chapters, callouts, pull quotes or bold. Team
+// The editorial layout in the one dark system: five numbered sections,
+// each one claim in its heading, one or two plain sentences, and one piece
+// of Axel's own evidence. No chapters, callouts, pull quotes or bold. Team
 // figures live only in the first-screen tiles, each carrying a 'Team
-// milestone' tag; the one pink figure is mine.
+// milestone' tag. Every heading, figure and label is set in ink; the
+// accent appears only as a chart's single focus mark.
 export const axelProject: Project = {
   slug: "axel",
   // No-break spaces hold the dash to the name and the claim together: a
   // narrow H1 reads "Axel —" / "design that ships", never opens on "—".
   title: "Axel\u00a0— design\u00a0that\u00a0ships",
-  // The page's Latent bands; the title phrase is set in the accent
+  // The banded case-study layout (one dark system)
   bands: true,
-  titleAccent: "design\u00a0that\u00a0ships",
   client: "Axel · Gordian Software (YC W19)",
   role: "Founding Design Engineer · Full-time",
   period: "Dec 2025 — Present",
@@ -33,10 +38,9 @@ export const axelProject: Project = {
   coverWidth: 2000,
   coverHeight: 1333,
   coverPosition: "50% 0%",
-  // helloaxel.com's pink (its FOUND sign): the one accent on this page
+  // helloaxel.com's pink (its FOUND sign): drawn only as a chart's single
+  // focus mark, never in headings, figures or labels
   accent: "#ff6f93",
-  // The same pink, deep enough for text and strokes on light bands
-  accentDeep: "#c42e5e",
   coverCaption: "helloaxel.com — the landing experience I design and build.",
   // In % of the 16:9 hero, which shows the top 84% of the 3:2 shot.
   coverNotes: [
@@ -51,7 +55,7 @@ export const axelProject: Project = {
     { label: "Users from 0", value: "150K", tag: "Team milestone" },
     // Owner, 2026-10-19: revenue is growing fast — no figure given, so none is shown
     { label: "Revenue, growing fast", value: "↑", tag: "Team milestone" },
-    { label: "Email templates I design and build", value: "79", accent: true, viz: "matrix", href: "#s-04" },
+    { label: "Email templates I design and build", value: "79", viz: "matrix", href: "#s-04" },
   ],
   sections: [
     {
@@ -99,8 +103,6 @@ export const axelProject: Project = {
     },
     {
       heading: "One pair of hands, from ad to inbox",
-      band: "light",
-      headingAccent: "One pair of hands",
       body: "I design Axel’s brand and core ad creative, and carry one visual language through landing pages, the product and email. The last three I also build in code.",
       visual: "surfaces",
     },
@@ -111,15 +113,12 @@ export const axelProject: Project = {
     },
     {
       heading: "AI makes me faster. I still own the result.",
-      band: "grey",
-      headingAccent: "I still own the result.",
       body: "I prototype and implement with AI coding tools. The code, the experience and the testing stay my responsibility, and I work closely with our lead engineer.",
       // Every word restates the body: what the tools do, what stays mine
       visual: "ownership",
       ownership: {
         tools: { title: "AI coding tools", items: ["Prototype", "Implement"] },
         mine: { title: "Stays mine", items: ["The code", "The experience", "The testing"] },
-        note: "Working closely with our lead engineer",
       },
     },
   ],
@@ -131,7 +130,6 @@ export const axelProjectCn: Project = {
   // keeps the claim whole, so a narrow H1 reads "Axel —" / "把设计做到上线"
   // and never strands 把 at a line end.
   title: "Axel\u00a0— 把\u2060设计\u2060做到\u2060上线",
-  titleAccent: "把\u2060设计\u2060做到\u2060上线",
   role: "创始设计工程师 · 全职",
   period: "2025 年 12 月 — 至今",
   category: "旅行 · 金融科技",
@@ -148,7 +146,7 @@ export const axelProjectCn: Project = {
     { label: "GMV 从 0 起", value: "30M", tag: "团队成果" },
     { label: "用户从 0 起", value: "150K", tag: "团队成果" },
     { label: "收入快速增长", value: "↑", tag: "团队成果" },
-    { label: "我设计并实现的邮件模板", value: "79", accent: true, viz: "matrix", href: "#s-04" },
+    { label: "我设计并实现的邮件模板", value: "79", viz: "matrix", href: "#s-04" },
   ],
   sections: [
     {
@@ -190,9 +188,7 @@ export const axelProjectCn: Project = {
     },
     {
       heading: "从广告到收件箱，同一双手",
-      band: "light",
-      headingAccent: "同一双手",
-      body: "Axel 的品牌和核心广告创意由我设计，同一套视觉语言再延续到落地页、产品和邮件；后三处，我也亲手写成代码。",
+      body: `Axel 的品牌和核心广告创意由我设计，同一套${keep("视觉语言")}再延续到落地页、产品和邮件；后三处，我也${keep("亲手写成代码")}。`,
       visual: "surfaces",
     },
     {
@@ -202,14 +198,11 @@ export const axelProjectCn: Project = {
     },
     {
       heading: "AI 提速，责任不外包",
-      band: "grey",
-      headingAccent: "责任不外包",
       body: "原型和实现，我都借助 AI 编码工具提速；代码、体验和测试，始终由我负责。我也与首席工程师紧密协作。",
       visual: "ownership",
       ownership: {
         tools: { title: "AI 编码工具", items: ["原型", "实现"] },
         mine: { title: "始终由我负责", items: ["代码", "体验", "测试"] },
-        note: "与首席工程师紧密协作",
       },
     },
   ],

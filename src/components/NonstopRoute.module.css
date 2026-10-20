@@ -1,9 +1,9 @@
-/* Axel's result card printed on a Latent paper sheet. The global
-   .paper-stack > .paper supplies the #e1e1e1 sheet, its two back sheets and
-   the paper tokens (ink, mute, soft, line, grid, axis); this file only lays
-   the card out on it. Data marks are solid: dotted route, 3px ink rail,
-   16px stop squares, a solid plane, black cargo chips. No gradient fills,
-   no shadow; the SHIPPED sign is the only pink and pins its own colours. */
+/* Axel's result card on the dark chart sheet. The global .paper-stack >
+   .paper supplies the sheet and its two back sheets; the type comes from
+   the ramp (.t-figure, .t-small, .t-label) and the cargo from .chip. This
+   file lays the card out and draws the marks: a grey dotted route, a 2px
+   ink rail, 10px stop squares on 1px ticks, an ink plane. Flat fills, 1px
+   lines, no gradient, no shadow. SHIPPED is the one accent. */
 .root {
   width: 100%;
   margin: 0;
@@ -11,54 +11,44 @@
 
 .sheet {
   position: relative;
-  padding: 48px 56px 40px;
+  padding: 20px;
+}
+@media (min-width: 640px) {
+  .sheet { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .sheet { padding: 40px; }
 }
 
-/* SHIPPED, on the sheet's top edge, in lit pixels: the mask leaves one dot
-   per 2px cell, so the letters read as Axel's dot-matrix sign. The dark
-   plate is always there (the heaviest contrast on the sheet); the letters
-   stay unlit until the plane lands, then flicker on once. */
+/* SHIPPED: the focus chip, hung on the sheet's top edge over the content's
+   right edge. It fades in last, once the plane is home. */
 .sign {
   position: absolute;
-  top: -15px;
-  right: 40px;
-  padding: 7px 11px 6px;
-  border: 1px solid rgb(255 111 147 / 35%);
+  top: 0;
+  right: 20px;
+  padding: 6px 10px;
   border-radius: 2px;
-  background: #1b1315;
+  background: var(--accent);
+  color: #0a0a0a;
+  font-weight: 500;
+  white-space: nowrap;
+  transform: translateY(-50%);
+  opacity: 0;
 }
-.signText {
-  display: block;
-  color: #ff6f93;
-  font-family: var(--font-mono);
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  opacity: 0.26;
-  transition: opacity 240ms ease;
-  -webkit-mask-image: radial-gradient(circle, #000 0.8px, transparent 1.05px);
-  mask-image: radial-gradient(circle, #000 0.8px, transparent 1.05px);
-  -webkit-mask-size: 2px 2px;
-  mask-size: 2px 2px;
+@media (min-width: 640px) {
+  .sign { right: 32px; }
 }
-.sign[data-on="true"] .signText {
+@media (min-width: 1024px) {
+  .sign { right: 40px; }
+}
+.sheet[data-go] .sign {
   opacity: 1;
-  animation: sign 520ms steps(1, end);
-}
-@keyframes sign {
-  0% { opacity: 0.35; }
-  20% { opacity: 1; }
-  35% { opacity: 0.5; }
-  50% { opacity: 1; }
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive) 840ms;
 }
 
 .meta {
   margin: 0;
   color: var(--color-mute);
-  font-size: 15px;
-  line-height: 1;
 }
 .carrier {
   color: var(--color-ink);
@@ -70,17 +60,7 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   column-gap: 32px;
   align-items: center;
-  margin-top: 36px;
-}
-
-.end {
-  color: var(--color-ink);
-  font-family: var(--font-display);
-  font-size: clamp(56px, 5vw + 16px, 96px);
-  font-weight: 300;
-  line-height: 1;
-  letter-spacing: -0.035em;
-  white-space: nowrap;
+  margin-top: 40px;
 }
 
 .track {
@@ -88,7 +68,7 @@
   height: 72px;
 }
 
-.grid,
+.ticks,
 .dots,
 .flown {
   position: absolute;
@@ -97,23 +77,22 @@
   height: 100%;
   overflow: visible;
 }
-/* Latent's plot strip: 1px verticals at both ends and at every stop */
-.grid line {
-  stroke: var(--grid, #d0d0d2);
+/* 1px verticals at both ends and at every stop */
+.ticks line {
+  stroke: var(--color-line);
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
-/* Axel's dotted route, heavier: 3px dots on a 10px pitch */
+/* Axel's dotted route: 2px square dots on an 8px pitch, grey at rest */
 .dots line {
-  stroke: var(--axis, #9a9a9f);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-dasharray: 0 10;
+  stroke: var(--grey-2, #6b6b71);
+  stroke-width: 2;
+  stroke-dasharray: 2 6;
 }
-/* The flown route: one solid ink rail, never broken */
+/* The flown route: one 2px ink rail, never broken */
 .flown line {
   stroke: var(--color-ink);
-  stroke-width: 3;
+  stroke-width: 2;
 }
 
 /* The window opens behind the plane; the rail inside it holds still */
@@ -131,8 +110,8 @@
   will-change: transform;
 }
 
-/* A stop: a 16px hollow ink square on the rail that fills as the plane
-   passes; its label hangs under it on the grid vertical. */
+/* A stop: a 10px square on the rail, hollow until the plane passes, then
+   filled by an ink copy fading in. Its label hangs under it on the tick. */
 .stop {
   position: absolute;
   top: 50%;
@@ -142,41 +121,35 @@
 }
 .node {
   position: absolute;
-  top: -8px;
-  left: -8px;
-  width: 16px;
-  height: 16px;
-  border: 1.5px solid var(--color-ink);
-  border-radius: 1px;
-  background: var(--color-paper);
+  top: -5px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--grey-2, #6b6b71);
+  background: var(--sheet, #17171a);
 }
 .node::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -1.5px;
   background: var(--color-ink);
   opacity: 0;
-  transition: opacity 200ms ease;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
-/* The label sits on the paper and breaks the grid vertical, like a tag on
-   its leader. */
+.stop[data-on="true"] .node::after {
+  opacity: 1;
+}
+/* The label sits on the sheet and breaks the tick, like a tag on its
+   leader, 12px under the rail. */
 .label {
   position: absolute;
-  top: 17px;
+  top: 13px;
   left: 0;
-  padding: 1px 6px;
-  background: var(--color-paper);
+  padding: 0 8px;
+  background: var(--sheet, #17171a);
   color: var(--color-ink);
-  font-size: 16px;
-  line-height: 1.2;
   white-space: nowrap;
-  opacity: 0.5;
   transform: translateX(-50%);
-  transition: opacity 200ms ease;
-}
-.stop[data-on="true"] .node::after,
-.stop[data-on="true"] .label {
-  opacity: 1;
 }
 
 /* The plane, level, on its own layer: it starts on the strip's first 32px
@@ -205,30 +178,18 @@
   stroke: none;
 }
 
-/* The manifest: what the PR carries, unloaded as solid cargo on landing */
+/* The manifest: what the PR carries, raised chips that fade in on landing */
 .cargo {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 24px;
-  margin-top: 30px;
-  padding-top: 22px;
+  margin-top: 32px;
+  padding-top: 24px;
   border-top: 1px solid var(--color-line);
 }
 .cargoLabel {
   flex: none;
-  color: var(--color-soft);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.5;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
   white-space: nowrap;
-}
-:global(html[lang="zh-CN"]) .cargoLabel {
-  font-family: inherit;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: none;
 }
 .items {
   display: flex;
@@ -239,79 +200,40 @@
   list-style: none;
 }
 .items li {
-  padding: 8px 12px;
-  border-radius: 2px;
-  background: var(--color-ink);
-  color: #f4f4f2;
-  font-size: 15px;
-  line-height: 1.3;
-  white-space: nowrap;
-}
-.cargo[data-on="false"] li {
   opacity: 0;
-  transform: translateY(6px);
 }
-.cargo[data-on="true"] li {
+.sheet[data-go] .items li {
   opacity: 1;
-  transform: none;
-  transition:
-    opacity 260ms ease,
-    transform 420ms var(--ease-arrive, cubic-bezier(0.16, 1, 0.3, 1));
-  transition-delay: calc(var(--i, 0) * 60ms);
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
+  transition-delay: calc(480ms + var(--i, 0) * var(--step, 60ms));
 }
 
 /* Tablets: a little less air around the strip */
 @media (min-width: 640px) and (max-width: 1023px) {
-  .sheet { padding: 44px 40px 36px; }
-  .route { column-gap: 22px; }
-  .label { font-size: 15px; }
+  .route { column-gap: 24px; }
 }
 
 /* Phones: Problem on top, the strip across the full width, PR under it on
    the right; the manifest goes under its label and wraps. */
 @media (max-width: 639px) {
-  .sheet { padding: 28px 20px 24px; }
-  .sign { top: -13px; right: 16px; }
-  .signText { font-size: 15px; }
-  .meta { font-size: 14px; }
-
   .route {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "from" "track" "to";
     margin-top: 24px;
   }
-  .end[data-end="from"] { grid-area: from; justify-self: start; font-size: 44px; }
-  .end[data-end="to"] { grid-area: to; justify-self: end; font-size: 44px; }
+  .end[data-end="from"] { grid-area: from; justify-self: start; }
+  .end[data-end="to"] { grid-area: to; justify-self: end; }
   .track {
     grid-area: track;
     height: 40px;
-    margin: 8px 0 36px;
+    margin: 8px 0 40px;
   }
-  .label { top: 15px; padding: 1px 4px; font-size: 14px; }
-
+  .label { padding: 0 4px; }
   .cargo {
     flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+    align-items: flex-start;
+    gap: 16px;
     margin-top: 24px;
-    padding-top: 18px;
-  }
-  /* Chinese items are short: a two-column grid of solid chips */
-  :global(html[lang="zh-CN"]) .items {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  /* Latin chips tighten a little so they pair up two to a line */
-  .items li {
-    padding: 7px 10px;
-    font-size: 14px;
-    white-space: normal;
-    word-break: keep-all;
-    overflow-wrap: anywhere;
-  }
-  :global(html[lang="zh-CN"]) .items li {
-    padding: 8px 12px;
-    font-size: 15px;
   }
 }
 
@@ -320,9 +242,7 @@
   .flight { transform: translateX(100%) !important; }
   .window,
   .hold { transform: none !important; }
-  .stop .node::after,
-  .stop .label { opacity: 1; transition: none; }
-  .signText,
-  .sign[data-on="true"] .signText { opacity: 1; animation: none; transition: none; }
-  .cargo[data-on] li { opacity: 1; transform: none; transition: none; }
+  .node::after,
+  .sign,
+  .items li { opacity: 1; transition: none; }
 }

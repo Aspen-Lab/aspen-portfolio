@@ -23,12 +23,13 @@ import styles from "./PlatformTabs.module.css";
    are created once, so React skips them and CSS swaps the states by
    opacity and transform (the [data-pt] contract in the module's CSS).
 
-   Autoplay is the active tab's own progress fill: a CSS scaleX over
-   --dwell whose animationend advances the tab. It plays 01 → last once
-   and rests on the last; it runs only while half the sheet is in view,
-   pauses under the pointer or keyboard focus, and the first choice a
-   reader makes ends it for good. Reduced motion: no autoplay, instant
-   switches, the active fill drawn full. */
+   Autoplay (only for sheets that are pure drawing; a caller passes
+   autoplay={false} otherwise) is the active tab's own progress fill: a
+   CSS scaleX over --dwell whose animationend advances the tab. It plays
+   01 → last once and rests on the last; it runs only while half the
+   sheet is in view, pauses under the pointer or keyboard focus, and the
+   first choice a reader makes, or a touch anywhere inside, ends it for
+   good. Reduced motion: no autoplay, 160ms fades, the active fill full. */
 
 export type PlatformTab = { kicker: string; title: string };
 
@@ -51,11 +52,13 @@ type Props = {
   details?: ReactNode;
   /** ms each tab dwells while autoplay runs */
   dwell?: number;
+  /** false: the reader alone changes tabs (a sheet a reader must study) */
+  autoplay?: boolean;
   /** the tab list's accessible name */
   label: string;
 };
 
-export function PlatformTabs({ intro, tabs, sheet, details, dwell = 6000, label }: Props) {
+export function PlatformTabs({ intro, tabs, sheet, details, dwell = 5000, autoplay = true, label }: Props) {
   const id = useId();
   const panel = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -63,7 +66,7 @@ export function PlatformTabs({ intro, tabs, sheet, details, dwell = 6000, label 
   const [chosen, setChosen] = useState(false);
   const run = useInView(panel, { amount: 0.5 });
   const reduce = useReduce();
-  const auto = !chosen && !reduce;
+  const auto = autoplay && !chosen && !reduce;
   const n = tabs.length;
 
   const choose = (i: number, focus = false) => {
@@ -103,6 +106,8 @@ export function PlatformTabs({ intro, tabs, sheet, details, dwell = 6000, label 
       data-count={n}
       className={styles.root}
       style={{ "--active": active, "--tabs": n, "--dwell": `${dwell}ms` } as CSSProperties}
+      // A touch inside (a scroll that starts on the sheet, a tap) ends autoplay
+      onPointerDown={auto ? (e) => e.pointerType === "touch" && setChosen(true) : undefined}
     >
       <div className={styles.intro}>{intro}</div>
 

@@ -477,86 +477,67 @@ html:has([data-project-theme="light"]) :focus-visible {
   color: var(--project-accent);
 }
 
-/* ══ Latent bands ══════════════════════════════════════════════════════
-   The banded case-study pages (Project.bands): full-bleed dark, light and
-   grey bands carrying opaque planes. A paper sheet on two back sheets for
-   every chart, a black slab for every note, a solid tile for every
-   number. Flat fills and 1px lines only; no gradients, no shadows.
-
-   Every token is re-declared wherever the ground changes (a tone, a
-   paper, a slab): a var() inside a custom property resolves where it is
-   declared, so --hair or --accent-text set once at the top would keep the
-   dark page's value inside a light band. */
+/* ══ Latent bands (one dark system) ══════════════════════════════════════════════════════
+   The banded case studies (Project.bands: Axel, TikTok) as ONE dark
+   system. Every band is the ground; mass comes from opaque dark planes in
+   a narrow grey family, each with one 1px edge, radius 2px, no shadow and
+   no gradient: a sheet on two back sheets for every chart, a slab for
+   every note, a tile for every number, raised chips on a sheet. The page
+   accent is never a token here: it fills only a chart's one focus mark.
+   Nothing on these pages is light, so nothing re-declares a token. */
 :root {
+  /* planes */
   --slab: #0a0a0a;
+  --tile: #141416;
+  --sheet: #17171a;
+  --raised: #1e1e21;
+  --edge: #333336;
+  /* kept aliases */
   --slab-line: #333336;
-  --slab-rule: #2a2a2d;
-  --tile: #131315;
   --tile-line: #333336;
-  --paper: #e1e1e1;
-  --paper-edge: #cfcfd1;
-  --paper-back-1: #b4b4b6;
-  --paper-back-1-edge: #a3a3a6;
-  --paper-back-2: #7c7c80;
-  --paper-back-2-edge: #6a6a6e;
-  --grid: rgb(244 244 242 / 7%);
+  --paper-edge: #333336;
+  --slab-rule: #252528;
+  --paper: #17171a;
+  /* the stack behind every chart sheet */
+  --paper-back-1: #121214;
+  --paper-back-1-edge: #2c2c30;
+  --paper-back-2: #0d0d0e;
+  --paper-back-2-edge: #252528;
+  /* chart structure and marks */
+  --grid: rgb(244 244 242 / 6%);
   --axis: rgb(244 244 242 / 24%);
-  --mark: rgb(244 244 242 / 42%);
+  --grey-1: #a0a0a5;
+  --grey-2: #6b6b71;
+  --grey-3: #3a3a3f;
+  --mark: #6b6b71;
   --tick: #8a8a90;
+  --on-fill: #0a0a0a;
+  /* motion: feedback, state, entrance; stagger, rise, dim */
+  --t-1: 160ms;
+  --t-2: 360ms;
+  --t-3: 720ms;
+  --step: 60ms;
+  --rise: 8px;
+  --dim: 0.45;
 }
 
-/* LIGHT (#fafafa) holds the page's tabbed signature chart; GREY (#ebebeb)
-   holds statements and quotes. Neither carries the grain. */
-[data-tone="light"],
-[data-tone="grey"] {
-  --color-paper: #fafafa;
-  --color-cream: #f0f0f1;
-  --color-line: #dcdcde;
-  --color-ink: #0a0a0a;
-  --color-mute: #4a4a4f;
-  --color-soft: #6b6b70;
-  --hair: rgb(10 10 10 / 18%);
-  --hair-strong: rgb(10 10 10 / 50%);
-  --grid: #d3d3d4;
-  --axis: #a9a9ad;
-  --mark: #717172;
-  --tick: #5e5e63;
-  --tile: #e1e1e1;
-  --tile-line: #cfcfd1;
-  --accent-text: var(--accent-deep, var(--color-ink));
-  /* On a light ground the stack fades out, as on Latent's platform sheet */
-  --paper-back-1: #d9d9da;
-  --paper-back-1-edge: #c6c5c6;
-  --paper-back-2: #e8e8e8;
-  --paper-back-2-edge: #d3d3d4;
-  background-color: var(--color-paper);
-  color: var(--color-ink);
+/* The banded pages' one focus ring: 1px ink, 3px off, square-ish. The
+   inset variant is for cells inside a clipped box. */
+[data-bands] :focus-visible {
+  outline: 1px solid #f4f4f2;
+  outline-offset: 3px;
+  border-radius: 2px;
 }
-[data-tone="grey"] {
-  --color-paper: #ebebeb;
-  --color-cream: #e1e1e1;
-  --color-line: #d3d3d5;
-  --color-mute: #3a3a3e;
-  --color-soft: #5a5a5f;
-  --accent-text: var(--accent-deep, var(--color-ink));
-}
-[data-tone="light"] ::selection,
-[data-tone="grey"] ::selection {
-  background: #0a0a0a;
-  color: #fafafa;
-}
-[data-tone="light"] :focus-visible,
-[data-tone="grey"] :focus-visible {
-  outline-color: rgb(10 10 10 / 55%);
+[data-bands] [data-ring="inset"]:focus-visible {
+  outline-offset: -1px;
 }
 
 /* Layered, so a component's own module (unlayered) and Tailwind's
    utilities both override these without a specificity fight. */
 @layer components {
-  /* ── Paper sheet ── Latent's chart sheet, measured from its platform
-     section at 3×: the front sheet on two back sheets offset (4, 8) and
-     (9, 16), the second turned a quarter degree. The margins keep the
-     back sheets inside the wrapper's box. */
+  /* ── Sheet stack ── Latent's chart sheet: the front sheet on two back
+     sheets offset (4, 8) and (9, 16), no rotation. The margins keep the
+     back sheets inside the wrapper's box. The stack is static. */
   .paper-stack {
     position: relative;
     isolation: isolate;
@@ -580,15 +561,15 @@ html:has([data-project-theme="light"]) :focus-visible {
     z-index: -2;
     border: 1px solid var(--paper-back-2-edge);
     background: var(--paper-back-2);
-    transform: translate(9px, 16px) rotate(0.25deg);
+    transform: translate(9px, 16px);
   }
   @media (max-width: 639px) {
     .paper-stack { margin: 0 6px 11px 0; }
     .paper-stack::before { transform: translate(3px, 5px); }
     .paper-stack::after { transform: translate(6px, 11px); }
   }
-  /* [data-lift]: the front sheet rises off the stack under a real pointer
-     or keyboard focus. Transform only. */
+  /* [data-lift] (unused on the banded pages now): the front sheet rises
+     off the stack under a real pointer or keyboard focus. Transform only. */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .paper-stack[data-lift] > .paper,
     .paper-stack[data-lift]::before,
@@ -597,31 +578,11 @@ html:has([data-project-theme="light"]) :focus-visible {
     }
     .paper-stack[data-lift]:is(:hover, :focus-within) > .paper { transform: translate(-3px, -3px); }
     .paper-stack[data-lift]:is(:hover, :focus-within)::before { transform: translate(6px, 11px); }
-    .paper-stack[data-lift]:is(:hover, :focus-within)::after { transform: translate(13px, 22px) rotate(0.25deg); }
+    .paper-stack[data-lift]:is(:hover, :focus-within)::after { transform: translate(13px, 22px); }
   }
 
-  /* The sheet flips every token inside it, so text, hairlines and marks
-     drawn with the page's tokens read as ink on paper on any band. */
+  /* The front sheet: a dark plane a step above the ground */
   .paper {
-    --color-paper: #e1e1e1;
-    --color-cream: #d8d8d9;
-    --color-line: #c4c4c6;
-    --color-ink: #0a0a0a;
-    --color-mute: #3f3f44;
-    --color-soft: #5e5e63;
-    --hair: rgb(10 10 10 / 22%);
-    --hair-strong: rgb(10 10 10 / 55%);
-    --grid: #d0d0d2;
-    --axis: #9a9a9f;
-    --mark: #717172;
-    --tick: #5e5e63;
-    --tile: #d6d6d7;
-    --tile-line: #c4c4c6;
-    --accent-text: var(--accent-deep, var(--color-ink));
-    --paper-back-1: #d9d9da;
-    --paper-back-1-edge: #c6c5c6;
-    --paper-back-2: #e8e8e8;
-    --paper-back-2-edge: #d3d3d4;
     position: relative;
     border: 1px solid var(--paper-edge);
     border-radius: 2px;
@@ -629,28 +590,9 @@ html:has([data-project-theme="light"]) :focus-visible {
     color: var(--color-ink);
   }
 
-  /* ── Slab ── the black block of Latent's split card. It pins the dark
-     tokens, so it still reads as a slab inside a light or grey band. */
+  /* ── Slab ── the text half of a card, the one plane darker than the
+     ground */
   .slab {
-    --color-paper: #0a0a0a;
-    --color-cream: #161618;
-    --color-line: #2a2a2d;
-    --color-ink: #f4f4f2;
-    --color-mute: #a0a0a5;
-    --color-soft: #8a8a90;
-    --hair: rgb(244 244 242 / 22%);
-    --hair-strong: rgb(244 244 242 / 55%);
-    --grid: rgb(244 244 242 / 7%);
-    --axis: rgb(244 244 242 / 24%);
-    --mark: rgb(244 244 242 / 42%);
-    --tick: #8a8a90;
-    --tile: #131315;
-    --tile-line: #333336;
-    --accent-text: var(--accent, var(--color-ink));
-    --paper-back-1: #b4b4b6;
-    --paper-back-1-edge: #a3a3a6;
-    --paper-back-2: #7c7c80;
-    --paper-back-2-edge: #6a6a6e;
     border: 1px solid var(--slab-line);
     border-radius: 2px;
     background: var(--slab);
@@ -666,31 +608,127 @@ html:has([data-project-theme="light"]) :focus-visible {
     background: var(--tile);
   }
 
-  /* ── Boxed tag ── the label a chart hangs on its focus: a light chip,
-     its edge tinted toward the page accent, the words always in ink. */
-  .boxed-tag {
+  /* ── Boxed tag ── the label a chart hangs on its focus: a raised box,
+     a firm ink edge, the words in ink. No accent. */
+  .boxed-tag,
+  .boxed-tag[data-dark] {
     display: inline-block;
-    padding: 5px 8px 4px;
-    border: 1px solid color-mix(in srgb, var(--accent-deep, #0a0a0a) 45%, #e1e1e1);
-    border-radius: 1px;
-    background: #f5f5f5;
-    color: #0a0a0a;
+    padding: 4px 8px;
+    border: 1px solid rgb(244 244 242 / 55%);
+    border-radius: 2px;
+    background: #1e1e21;
+    color: #f4f4f2;
     font-family: var(--font-mono);
     font-size: 12px;
-    line-height: 1.25;
+    font-weight: 400;
+    line-height: 1.35;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     white-space: nowrap;
-  }
-  .boxed-tag[data-dark] {
-    border-color: rgb(244 244 242 / 55%);
-    background: #0f0f10;
-    color: #f4f4f2;
   }
   html[lang="zh-CN"] .boxed-tag {
     font-family: var(--font-sans);
     font-size: 13px;
     letter-spacing: 0.04em;
     text-transform: none;
+  }
+
+  /* ── Chip ── a content item set on a sheet (cargo, regulators, tools,
+     SOP codes): a raised box, one edge, words in S6 or a code in S7. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border: 1px solid #333336;
+    border-radius: 2px;
+    background: #1e1e21;
+    color: #f4f4f2;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .chip[data-code] {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ── Type ramp (S2–S7) ── exact values; a component picks a style and
+     sets no other size. S1 is the H1 alone (case.module.css). */
+  .t-figure {
+    color: #f4f4f2;
+    font-family: var(--font-sans);
+    font-size: clamp(44px, 3vw + 20px, 64px);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .t-heading {
+    max-width: 48rem;
+    color: #f4f4f2;
+    font-family: var(--font-sans);
+    font-size: clamp(28px, 2.4vw + 12px, 44px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  /* No "halt": PingFang ignores it in Chrome (measured) */
+  html[lang="zh-CN"] .t-heading {
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .t-subhead {
+    color: #f4f4f2;
+    font-family: var(--font-sans);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .t-body {
+    max-width: 40rem;
+    color: #d2d2d0;
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+  .t-body strong { font-weight: 500; color: #f4f4f2; }
+  .t-body em { font-style: italic; }
+  html[lang="zh-CN"] .t-body { line-height: 1.8; }
+  html[lang="zh-CN"] .t-body em { font-style: normal; color: #f4f4f2; }
+  .t-small {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  html[lang="zh-CN"] .t-small { line-height: 1.65; }
+  .t-label {
+    color: #8a8a90;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.35;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+  html[lang="zh-CN"] .t-label:not([data-code]) {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+  @media (max-width: 639px) {
+    .t-subhead { font-size: 20px; }
+    .t-body { font-size: 17px; }
   }
 }

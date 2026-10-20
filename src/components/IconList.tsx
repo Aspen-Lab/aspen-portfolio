@@ -30,14 +30,15 @@ import styles from "./IconList.module.css";
    own composited layer. Reduced motion shows the finished drawing,
    still. Flat fills only; no gradients.
 
-   variant="tiles" sets each entry on a solid tile (Latent's outcome
-   cards): number and glyph on top, a big title, the text, and any chips
-   (regulator names) as solid paper chips at the foot. variant="joined"
-   sets the tiles on a light band and hangs them from one solid ink bar,
-   the flow they all pass through: a leader from each tile down to the
-   bar, a red square where it meets. On a phone the bar runs down the
-   left of the stack. Both arrive once (tiles rise, the bar draws, the
-   squares pop) and are static after. */
+   variant="tiles" sets each entry on a solid tile (the global .tile, as
+   Latent's outcome cards): the glyph on top, the title, the text, and
+   any chips (regulator codes, the global .chip) at the foot.
+   variant="joined" hangs the same tiles from one 2px ink bar, the flow
+   they all pass through: a 1px grey leader from each tile down to the
+   bar, an 8px ink square where it meets. On a phone the bar runs down
+   the left of the stack. Both are statement figures with no hover: they
+   arrive once (the tiles fade, the bar draws, the leaders and squares
+   fade in), done within 1200ms, and are static after. */
 
 type Item = {
   icon?: Parameters<typeof Icon>[0]["name"];
@@ -113,6 +114,10 @@ function Entry({
 
 /* ── Tiles ── */
 
+/* A line never opens on a joiner: the space before —, +, · or × is a
+   no-break space, so the sign stays at the end of the line before. */
+const tidy = (s: string) => s.replace(/ ([—+·×])/g, " $1");
+
 function Tiles({
   items,
   columns,
@@ -127,8 +132,8 @@ function Tiles({
   cn: boolean;
 }) {
   const root = useRef<HTMLDivElement>(null);
-  // The bar draws once the row is in view; each tile watches for itself
-  const inView = useInView(root, { once: true, amount: 0.3 });
+  // One observer for the row: the tiles fade, then the bar, leaders and nodes draw
+  const inView = useInView(root, { once: true, amount: 0.35 });
 
   return (
     <div
@@ -139,7 +144,7 @@ function Tiles({
       data-cn={cn}
       data-in={inView}
     >
-      {joined && joinLabel && <p className={styles.joinLabel}>{joinLabel}</p>}
+      {joined && joinLabel && <p className={`t-label ${styles.joinLabel}`}>{joinLabel}</p>}
       <div className={styles.stage}>
         {joined && <span aria-hidden className={styles.bar} />}
         <ol className={styles.tileList}>
@@ -153,26 +158,21 @@ function Tiles({
 }
 
 function Tile({ item, index, joined }: { item: Item; index: number; joined: boolean }) {
-  const ref = useRef<HTMLLIElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.35 });
   const chips = !joined && item.chips && item.chips.length > 0 ? item.chips : null;
 
   return (
-    <li ref={ref} className={`tile ${styles.tile}`} data-in={inView} style={{ ["--i" as string]: index }}>
-      <div aria-hidden className={styles.tileHead}>
-        <span className={styles.tileNum}>{String(index + 1).padStart(2, "0")}</span>
-        {item.icon && (
-          <span className={styles.tileIcon}>
-            <Icon name={item.icon} size={18} strokeWidth={1.4} />
-          </span>
-        )}
-      </div>
-      <p className={styles.tileTitle}>{item.label}</p>
-      {item.text && <p className={styles.tileText}>{item.text}</p>}
+    <li className={`tile ${styles.tile}`} style={{ ["--i" as string]: index }}>
+      {item.icon && (
+        <span aria-hidden className={styles.tileIcon}>
+          <Icon name={item.icon} size={20} strokeWidth={1.5} />
+        </span>
+      )}
+      <p className={`t-subhead ${styles.tileTitle}`}>{item.label}</p>
+      {item.text && <p className={`t-small ${styles.tileText}`}>{tidy(item.text)}</p>}
       {chips && (
         <ul className={styles.chips}>
           {chips.map((c) => (
-            <li key={c} className={styles.chip}>
+            <li key={c} className="chip" data-code="">
               {c}
             </li>
           ))}

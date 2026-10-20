@@ -1,5 +1,7 @@
 /* Solid outcome tiles. The fill and edge come from the global .tile
-   (var(--tile) on the band), so the same tile reads on dark and light. */
+   (--tile #141416, one #333336 edge). Every figure is ink (S2); the label
+   is S6 in ink, the text S6 in mute, the tag a quiet tag (S7 in mute).
+   Siblings sit 24px apart, 16px on phones. */
 .tiles {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -10,10 +12,11 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
   }
+  .tiles[data-cols="1"] { grid-template-columns: minmax(0, 1fr); }
 }
 @media (min-width: 1024px) {
-  .tiles[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .tiles[data-count="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tiles[data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tiles[data-cols="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .item {
   display: flex;
@@ -35,26 +38,28 @@
   .tile { min-height: 200px; padding: 24px 22px 20px; }
 }
 
-/* The figure: one size for the row, the largest the row's longest figure
-   allows in a tile, never past 64px */
+/* S2: one size for the row, the largest the row's longest figure allows
+   in a tile, never past the ramp's clamp */
 .value {
   display: block;
   color: var(--color-ink);
-  font-family: var(--font-display);
-  font-size: min(64px, calc(100cqi / var(--chars) * 1.75));
+  font-family: var(--font-sans);
+  font-size: min(clamp(44px, 3vw + 20px, 64px), calc(100cqi / var(--chars) * 1.75));
   font-weight: 300;
   line-height: 1;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.accent { color: var(--accent-text); }
 
-/* "VN · MY · ID · US" drawn as four solid code blocks */
+/* "VN · MY · ID · US" drawn as four solid code blocks: ink, dark letters */
 .codes {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+  /* the figure's line box, so every label in the row shares one line */
+  min-height: min(clamp(44px, 3vw + 20px, 64px), calc(100cqi / var(--chars) * 1.75));
 }
 .code {
   display: grid;
@@ -62,29 +67,31 @@
   width: 52px;
   height: 52px;
   border-radius: 2px;
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: #f4f4f2;
+  color: #0a0a0a;
   font-family: var(--font-mono);
   font-size: 16px;
   letter-spacing: 0.04em;
 }
 @media (max-width: 639px) {
-  .code { width: 44px; height: 44px; font-size: 15px; }
+  .code { width: 44px; height: 44px; }
 }
 
+/* S6: the label in ink, the text in mute */
+.label,
+.text {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-wrap: balance;
+}
 .label {
   margin-top: 4px;
   color: var(--color-ink);
-  font-size: 16px;
-  line-height: 1.4;
-  text-wrap: pretty;
 }
-.text {
-  color: var(--color-mute);
-  font-size: 15px;
-  line-height: 1.5;
-  text-wrap: pretty;
-}
+.text { color: var(--color-mute); }
+:global(html[lang="zh-CN"]) .label,
+:global(html[lang="zh-CN"]) .text { line-height: 1.65; }
 .word { white-space: nowrap; }
 
 .foot {
@@ -95,15 +102,19 @@
   margin-top: auto;
   padding-top: 16px;
 }
+/* The quiet tag: one hairline box, S7 in mute */
 .tag {
-  padding: 5px 8px 4px;
-  border: 1px solid var(--hair);
-  border-radius: 1px;
-  color: var(--color-soft);
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid rgb(244 244 242 / 24%);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-mute);
   font-family: var(--font-mono);
   font-size: 12px;
-  line-height: 1.25;
-  letter-spacing: 0.14em;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -120,14 +131,15 @@
   width: 32px;
   height: 32px;
   border: 1px solid var(--hair);
-  border-radius: 999px;
+  border-radius: 2px;
   color: var(--color-ink);
   font-size: 15px;
   line-height: 1;
-  transition: transform 360ms var(--ease-arrive);
+  transition: transform var(--t-2) var(--ease-arrive);
 }
 
-/* The matrix: one square per unit, lit in reading order once in view */
+/* The matrix: one ink square per unit, faded in in reading order once in
+   view. Opacity only. */
 .matrix {
   display: block;
   flex: none;
@@ -136,24 +148,22 @@
   overflow: visible;
 }
 .matrix rect {
-  fill: var(--accent, var(--color-ink));
+  fill: #f4f4f2;
   opacity: 0;
 }
 .matrix[data-lit="true"] rect {
-  animation: lit 260ms ease forwards;
+  animation: lit var(--t-1) var(--ease-arrive) forwards;
   animation-delay: calc(var(--i) * 8ms);
 }
 @keyframes lit {
-  from { opacity: 0; transform: scale(0.5); }
-  to { opacity: 1; transform: none; }
-}
-.matrix rect {
-  transform-box: fill-box;
-  transform-origin: center;
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* A linked tile: an ink edge fades in over the tile's own and the arrow
-   steps toward the evidence. Transform and opacity only. */
+/* A linked tile: an ink edge fades to half over the tile's own and the
+   arrow steps toward the evidence; focus shows the same plus the ring.
+   Press sinks it 1px. Transform and opacity only. */
+.tile[data-link] { transition: transform var(--t-1) var(--ease-arrive); }
 .tile[data-link]::after {
   content: "";
   position: absolute;
@@ -162,22 +172,21 @@
   border-radius: inherit;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 240ms ease;
+  transition: opacity var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .tile[data-link]:hover::after { opacity: 0.6; }
-  .tile[data-link]:hover .arrow { transform: translateX(4px); }
+  .tile[data-link]:hover::after { opacity: 0.5; }
+  .tile[data-link]:hover .arrow { transform: translateX(3px); }
 }
-.tile[data-link]:focus-visible {
-  outline: 1px solid var(--color-ink);
-  outline-offset: 4px;
-  border-radius: 2px;
-}
-.tile[data-link]:focus-visible .arrow { transform: translateX(4px); }
+.tile[data-link]:focus-visible::after { opacity: 0.5; }
+.tile[data-link]:focus-visible .arrow { transform: translateX(3px); }
+.tile[data-link]:active { transform: translateY(1px); }
 
 @media (prefers-reduced-motion: reduce) {
   .arrow,
-  .tile[data-link]::after { transition: none; }
+  .tile[data-link] { transition: none; }
+  .tile[data-link]:is(:hover, :focus-visible) .arrow,
+  .tile[data-link]:active { transform: none; }
   .matrix rect,
   .matrix[data-lit="true"] rect {
     opacity: 1;

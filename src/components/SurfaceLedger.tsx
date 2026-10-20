@@ -10,26 +10,27 @@ import styles from "./SurfaceLedger.module.css";
    small frames drawn in Axel's own manner stand at the head of four
    columns: an ad, a landing page, the product, an email. Each carries the
    same night from helloaxel.com (a crescent moon, a pixel cloud, one
-   ridge of mountains in square pixels) and one small pink dot-matrix
-   sign, the site's FOUND badge with the word taken out. Text is
-   placeholder bars; the only word in any frame is "Axel".
+   ridge of mountains in square pixels) and one small dot-matrix sign, the
+   site's FOUND badge with the word taken out. Text is placeholder bars;
+   the only word in any frame is "Axel". The frames are drawn in the
+   system's greys: no accent inside them.
    Under the frames, two lanes make the claim a ledger: Design is filled
    in all four columns, Code in the last three, with the tech named; the
    one hollow square, the ad's code, is what makes the rest believable.
    The frames are a drawing, not screenshots, and imply no measurements.
-   It plays once, in CSS, when the sheet comes into view: the frames rise,
-   the squares fill lane by lane, then the signs flicker on left to right.
-   Nothing here responds to a pointer. Reduced motion shows the last
-   frame.
 
    SurfaceTabs is the same claim as Latent's platform chart: four numbered
-   tabs beside one paper sheet. The sheet's stage shows one surface at a
-   time, drawn large on a drafting grid, so its dark night is a heavy
-   block on the paper; under it the ledger stays whole, every square a
-   solid grey, and the tab in view lights its column in the accent. A
-   dashed hexagon rings that column's code square and a boxed tag above it
-   names the code, and both glide to the column by transform. The frames
-   keep their own dark colours on the paper (--frame-ink). */
+   tabs beside one dark chart sheet. The sheet's stage shows one surface
+   at a time, drawn large on a drafting grid; under it the ledger stays
+   whole, every square a solid grey. The tab in view lights its column:
+   the design square in ink and the code square in the accent, the
+   chart's one focus mark (on the ad, a hollow accent outline, since that
+   square is the one I don't build). A dashed hexagon rings that code
+   square and a boxed tag above it names the code; the two glide to the
+   column by transform, and the tag only fades.
+   It enters once, at a third in view: the surface fades in, the squares
+   fade on lane by lane in 60ms steps, the signs come on last; all of it
+   is done by 1200ms. Reduced motion shows the last frame. */
 
 // ── The pixel grid every frame is drawn on (frame units; a column is 220) ──
 const P = 2.5;
@@ -197,8 +198,7 @@ function Wordmark({ x, y, s = 1 }: { x: number; y: number; s?: number }) {
   );
 }
 
-/** The pink sign: a dark plate with three "words" of lit dots, no letters.
-    It is the only colour on the sheet. */
+/** The sign: a raised plate with three "words" of lit dots, no letters. */
 function Sign({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
   const pitch = 1.55;
   const rows = 4;
@@ -218,7 +218,7 @@ function Sign({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
   return (
     <g className={styles.sign}>
       <rect x={x} y={y} width={w} height={h} rx={2.4} className={styles.plate} />
-      <path d={d} className={styles.pink} />
+      <path d={d} className={styles.dots} />
     </g>
   );
 }
@@ -465,10 +465,10 @@ export function SurfaceLedger() {
   return (
     <figure ref={sheet} className={styles.sheet} data-in={inView} data-cn={cn}>
       <div aria-hidden className={styles.grid}>
-        <span className={styles.lane} data-lane="design">
+        <span className={`t-label ${styles.lane}`} data-lane="design">
           {design}
         </span>
-        <span className={styles.lane} data-lane="code">
+        <span className={`t-label ${styles.lane}`} data-lane="code">
           {code}
         </span>
 
@@ -490,14 +490,14 @@ export function SurfaceLedger() {
                 <c.Draw id={`${uid}-${c.id}`} />
               </div>
             </div>
-            <p className={styles.name}>{cn ? c.name.cn : c.name.en}</p>
-            <p className={styles.cell} data-lane="design">
+            <p className={`t-small ${styles.name}`}>{cn ? c.name.cn : c.name.en}</p>
+            <p className={`t-small ${styles.cell}`} data-lane="design">
               <span className={styles.sq} data-fill="true" />
               <span className={styles.text}>
                 <span className={styles.term}>{design}</span>
               </span>
             </p>
-            <p className={styles.cell} data-lane="code" data-off={!c.code}>
+            <p className={`t-small ${styles.cell}`} data-lane="code" data-off={!c.code}>
               <span className={styles.sq} data-fill={!!c.code} />
               <span className={styles.text}>
                 <span className={styles.term}>{code}</span>
@@ -517,7 +517,7 @@ export function SurfaceLedger() {
   );
 }
 
-// ── Tabs: one surface at a time on a paper sheet ──
+// ── Tabs: one surface at a time on a chart sheet ──
 
 const TABS = {
   en: [
@@ -537,16 +537,19 @@ const TABS = {
 /* What the code square of each column says, on the boxed tag over it */
 const TAGS = { en: ["Design only", "React", "React", "Liquid"], cn: ["只做设计", "React", "React", "Liquid"] };
 
-/* A pointy-topped hexagon round the code square (px, centred on 0,0) */
+/* A pointy-topped hexagon round the code square (px, centred on 0,0),
+   drawn at its one size on every screen, so the dash and the 1.5px line
+   stay true. It reaches 10px past the square, well inside the 16px gap
+   to the tech word. */
 const HEX = [
-  [0, -23],
-  [19.92, -11.5],
-  [19.92, 11.5],
-  [0, 23],
-  [-19.92, 11.5],
-  [-19.92, -11.5],
+  [0, -18],
+  [15.59, -9],
+  [15.59, 9],
+  [0, 18],
+  [-15.59, 9],
+  [-15.59, -9],
 ]
-  .map(([x, y]) => `${(x + 21).toFixed(2)},${(y + 24).toFixed(2)}`)
+  .map(([x, y]) => `${(x + 17).toFixed(2)},${(y + 19).toFixed(2)}`)
   .join(" ");
 
 /* The sheet is made once and never re-renders on a tab change: the tabs
@@ -584,14 +587,14 @@ const SurfaceSheet = memo(function SurfaceSheet({ cn }: { cn: boolean }) {
 
       <div aria-hidden className={styles.ledger}>
         {COLS.map((c, i) => (
-          <span key={c.id} className={styles.colName} data-pt-dim={i} style={{ gridColumn: i + 2 }}>
+          <span key={c.id} className={`t-small ${styles.colName}`} data-pt-dim={i} style={{ gridColumn: i + 2 }}>
             {cn ? c.name.cn : c.name.en}
           </span>
         ))}
-        <span className={styles.laneName} data-lane="design">
+        <span className={`t-label ${styles.laneName}`} data-lane="design">
           {design}
         </span>
-        <span className={styles.laneName} data-lane="code">
+        <span className={`t-label ${styles.laneName}`} data-lane="code">
           {code}
         </span>
         {COLS.map((c, i) => (
@@ -605,7 +608,7 @@ const SurfaceSheet = memo(function SurfaceSheet({ cn }: { cn: boolean }) {
               <span className={styles.lsq} data-fill={!!c.code}>
                 <span className={styles.lit} data-pt-lit={i} data-hollow={!c.code} />
               </span>
-              {c.code && <span className={styles.ltech}>{c.code}</span>}
+              {c.code && <span className={`t-small ${styles.ltech}`}>{c.code}</span>}
             </span>
           </Fragment>
         ))}
@@ -619,7 +622,7 @@ const SurfaceSheet = memo(function SurfaceSheet({ cn }: { cn: boolean }) {
               </span>
             ))}
           </span>
-          <svg className={styles.hex} width="42" height="48" viewBox="0 0 42 48">
+          <svg className={styles.hex} width="34" height="38" viewBox="0 0 34 38">
             <polygon points={HEX} />
           </svg>
         </span>
@@ -636,7 +639,7 @@ export function SurfaceTabs({ intro }: { intro: ReactNode }) {
     <PlatformTabs
       intro={intro}
       label={cn ? "四个界面" : "Surfaces"}
-      dwell={6000}
+      dwell={5000}
       tabs={cn ? TABS.cn : TABS.en}
       sheet={sheet}
     />
