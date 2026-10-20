@@ -1,74 +1,436 @@
-/* Axel's result card on the dark chart sheet. The global .paper-stack >
-   .paper supplies the sheet and its two back sheets; the type comes from
-   the ramp (.t-figure, .t-small, .t-label) and the cargo from .chip. This
-   file lays the card out and draws the marks: a grey dotted route, a 2px
-   ink rail, 10px stop squares on 1px ticks, an ink plane. Flat fills, 1px
-   lines, no gradient, no shadow. SHIPPED is the one accent. */
+/* Axel §01: the PR as the figure. The global .paper-stack > .paper gives
+   the sheet and its two back sheets; the type comes from the ramp
+   (.t-subhead, .t-small, .t-label). The run is grey mass with ink marks
+   and words, the checks are ink; the preview's frame and tab are the one
+   accent. Flat fills, 1px lines, no gradient, no shadow (the frame's
+   edges use an inset box-shadow only as a hard band, never a blur). */
 .root {
+  /* The run's metrics: its posts and its block. The stage reads them
+     too, to hang the preview's tab on the run's centre line. */
+  --post: 14px;
+  --block: 44px;
+  /* The frame's edge: 1.5px, which a 1x screen can only draw blurred, so
+     there it is 2 */
+  --frame: 2px;
   width: 100%;
   margin: 0;
 }
-
-.sheet {
-  position: relative;
-  padding: 20px;
+@media (min-resolution: 2dppx) {
+  .root { --frame: 1.5px; }
 }
-@media (min-width: 640px) {
-  .sheet { padding: 32px; }
+@media (max-width: 639px) {
+  .root { --post: 10px; --block: 40px; }
+}
+/* Beside the preview, the steps are S4 in the taller block */
+@media (min-width: 1024px) {
+  .root { --post: 16px; --block: 56px; }
+}
+
+/* The sheet is a split card: the PR on the sheet (7fr), its working
+   preview on the slab (5fr); stacked below 1024px */
+.sheet.sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
 }
 @media (min-width: 1024px) {
-  .sheet { padding: 40px; }
+  .sheet.sheet { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
 }
 
-/* SHIPPED: the focus chip, hung on the sheet's top edge over the content's
-   right edge. It fades in last, once the plane is home. */
-.sign {
-  position: absolute;
-  top: 0;
-  right: 20px;
-  padding: 6px 10px;
-  border-radius: 2px;
-  background: var(--accent);
-  color: #0a0a0a;
+.doc {
+  padding: 24px 20px 28px;
+}
+@media (min-width: 640px) {
+  .doc { padding: 40px 32px; }
+}
+@media (min-width: 1024px) {
+  .doc { padding: 40px; }
+}
+
+/* ── The owner lane ── one row: the owner, then one grey block holding
+   the five steps. The column lines stand as posts above and below it,
+   so the block is seen to cross every one. Each column is as wide as its
+   word, and the width left over is shared out equally, so every word
+   stands the same distance from the next line. */
+.lane {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  container-type: inline-size;
+}
+.owner {
+  padding-right: 16px;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+.run {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 5), auto);
+  grid-template-rows: var(--post) var(--block) var(--post);
+}
+.post {
+  grid-row: 1 / -1;
+  border-left: 1px solid var(--edge, #333336);
+}
+.post[data-last] { border-right: 1px solid var(--edge, #333336); }
+/* Beside the preview, the run goes on through the sheet's margin and
+   ends on the slab's edge, which is its last line: the PR arrives where
+   its preview begins */
+@media (min-width: 1024px) {
+  .lane { margin-right: -40px; }
+  .lane .post[data-last] { border-right: 0; }
+}
+/* Grey mass, not a light plane: the accent frame stays the one focus */
+.bar {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  background: var(--grey-2, #6b6b71);
+  transform-origin: 0 50%;
+}
+/* The words on a layer of their own, above the block in every frame of
+   its entrance, while it is still a transformed layer */
+.step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  grid-row: 2;
+  align-self: center;
+  padding: 0 12px;
+  color: var(--color-ink);
   font-weight: 500;
   white-space: nowrap;
-  transform: translateY(-50%);
+}
+/* Each step an ink stop on the one run */
+.stop {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--color-ink);
+}
+/* With room, the steps are set at S4, the checklist's size (S4's exact
+   values: 22px/1.25, -0.01em): beside the preview, and when stacked,
+   whenever the lane is 560px wide. Below 1200px beside the preview, the
+   posts alone mark the steps, as on phones. */
+@media (min-width: 1024px) {
+  .step {
+    gap: 10px;
+    padding: 0 16px;
+    font-size: 22px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .stop { width: 8px; height: 8px; }
+}
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .step { padding: 0 12px; }
+  .stop { display: none; }
+}
+@media (max-width: 1023px) {
+  @container (min-width: 560px) {
+    .run {
+      --post: 16px;
+      --block: 56px;
+    }
+    .step {
+      gap: 10px;
+      padding: 0 16px;
+      font-size: 22px;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+    .stop { width: 8px; height: 8px; }
+  }
+}
+
+/* ── What the PR carries ── a checklist, and the preview's legend */
+.list {
+  margin-top: 36px;
+}
+.label { margin: 0; }
+
+.items {
+  margin: 16px 0 0;
+  padding: 0;
+  border-bottom: 1px solid var(--color-line);
+  list-style: none;
+}
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  /* The check starts on the rules' left end; the arrow, slid, ends on
+     their right end */
+  padding: 14px 3px 14px 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+  background: none;
+  color: var(--color-ink);
+  text-align: left;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.itemText { flex: 1; min-width: 0; }
+/* The line being shown keeps full ink; the others step back */
+.root[data-show] .item[data-on="false"] { opacity: var(--dim, 0.45); }
+
+/* A line's focus ring is the band's ring (1px ink, radius 2) drawn on the
+   line's two rules and 12px out to each side, so it clears the check and
+   the arrow; the sheet's padding (20px and up) holds it */
+.root .item:focus-visible {
+  z-index: 1;
+  outline: none;
+}
+.item:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: -1px -12px;
+  border: 1px solid #f4f4f2;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* An arrow toward the preview on every line, grey at rest: right when
+   the preview is beside the list, down when it is below. The line being
+   shown turns its arrow ink (an ink copy fades in over the grey) and
+   slides it to the preview. */
+.arrow {
+  position: relative;
+  flex: none;
+  color: var(--grey-2, #6b6b71);
+  font-size: 15px;
+  transform: translateX(-3px);
+  transition: transform var(--t-2, 360ms) var(--ease-arrive);
+}
+.arrow::after {
+  content: "→";
+  position: absolute;
+  inset: 0;
+  color: var(--color-ink);
   opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.item[data-on="true"] .arrow { transform: translateX(3px); }
+.item[data-on="true"] .arrow::after { opacity: 1; }
+/* Turned down, it slides the same 6px about the line's centre */
+@media (max-width: 1023px) {
+  .arrow { transform: rotate(90deg) translateX(-3px); }
+  .item[data-on="true"] .arrow { transform: rotate(90deg) translateX(3px); }
+}
+
+/* An ink check square: an outlined square at rest, filled with a dark
+   tick once it is checked */
+.check {
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--grey-2, #6b6b71);
+}
+.check::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  background: var(--color-ink);
+}
+.check svg {
+  position: absolute;
+  inset: -1.5px;
+  overflow: visible;
+}
+.check path {
+  fill: none;
+  stroke: var(--on-fill, #0a0a0a);
+  stroke-width: 2;
+  stroke-linecap: square;
+}
+
+/* ── The slab: a dark stage with a fine dot grid, crop marks in its
+   corners, the preview set on it. The dots are whole on every edge: the
+   12px tiles are spaced to fit, so each edge's row sits 6px in. ── */
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 64px 20px 72px;
+  border-top: 1px solid var(--edge, #333336);
+  background-color: var(--slab, #0a0a0a);
+  background-image: radial-gradient(circle at center, var(--grey-3, #3a3a3f) 0.75px, transparent 1.25px);
+  background-size: 12px 12px;
+  background-repeat: space;
 }
 @media (min-width: 640px) {
-  .sign { right: 32px; }
+  .stage { padding: 72px 32px 80px; }
 }
+/* Beside the PR, the preview hangs from the run's centre line: its tab
+   (24px tall) is centred on the block the run arrives in */
 @media (min-width: 1024px) {
-  .sign { right: 40px; }
-}
-.sheet[data-go] .sign {
-  opacity: 1;
-  transition: opacity var(--t-2, 360ms) var(--ease-arrive) 840ms;
-}
-
-.meta {
-  margin: 0;
-  color: var(--color-mute);
-}
-.carrier {
-  color: var(--color-ink);
+  .stage {
+    align-items: start;
+    padding: calc(40px + var(--post) + var(--block) / 2 - 12px) 40px 64px;
+    border-top: 0;
+    border-left: 1px solid var(--edge, #333336);
+  }
+  .device { margin-top: 24px; }
 }
 
-/* Problem ····✈···· PR: the two ends and the plot strip between them */
-.route {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  column-gap: 32px;
-  align-items: center;
-  margin-top: 40px;
-}
-
-.track {
+/* The device: the frame and the card in it. Its box is the wide card's;
+   the phone copy sits over it, centred, and the frame narrows to it by
+   transform (--sx, --sy, --ox, --dy are measured in the script). */
+.device {
+  --sx: 1;
+  --sy: 1;
+  --ox: 0px;
+  --dy: 0px;
   position: relative;
-  height: 72px;
+  width: 100%;
+  max-width: 360px;
+}
+.surface,
+.edge {
+  position: absolute;
+  transform-origin: 0 0;
+}
+.surface,
+.edge,
+.tag {
+  transition: transform var(--t-2, 360ms) var(--ease-arrive);
+}
+.surface {
+  inset: 0;
+  background: var(--tile, #141416);
+}
+/* The one accent mark: four edges and the tab. Each edge is a band drawn
+   by an inset shadow on one side of a thin box. A 1.5px fill snaps to 1
+   or 2 pixels by where it lands and a border's width is floored, but the
+   band is drawn exactly from the box's snapped side, so all four come out
+   alike at any position (3 device pixels on a 2x screen). The script also
+   sets the frame on whole device pixels, for the narrowed frame's
+   transforms. */
+.edge[data-e="t"] { top: 0; left: 0; right: 0; height: 4px; box-shadow: inset 0 var(--frame) var(--accent); }
+.edge[data-e="b"] { bottom: 0; left: 0; right: 0; height: 4px; box-shadow: inset 0 calc(var(--frame) * -1) var(--accent); }
+.edge[data-e="l"] { top: 0; bottom: 0; left: 0; width: 4px; box-shadow: inset var(--frame) 0 var(--accent); }
+.edge[data-e="r"] { top: 0; bottom: 0; right: 0; width: 4px; box-shadow: inset calc(var(--frame) * -1) 0 var(--accent); }
+.tag {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--accent);
+  color: var(--on-fill, #0a0a0a);
+  white-space: nowrap;
 }
 
-.ticks,
+/* Responsive layouts, in sequence, so no word ever stands outside the
+   frame: narrowing, the wide card fades (--t-1), then the frame moves,
+   then the phone copy fades in; widening, the phone copy fades as the
+   frame opens, and the wide card returns once it nearly has */
+.root[data-show="narrow"] .surface { transform: translateX(var(--ox)) scale(var(--sx), var(--sy)); }
+.root[data-show="narrow"] .edge[data-e="t"] { transform: translateX(var(--ox)) scaleX(var(--sx)); }
+.root[data-show="narrow"] .edge[data-e="b"] { transform: translate(var(--ox), var(--dy)) scaleX(var(--sx)); }
+.root[data-show="narrow"] .edge[data-e="l"] { transform: translateX(var(--ox)) scaleY(var(--sy)); }
+.root[data-show="narrow"] .edge[data-e="r"] { transform: translateX(calc(var(--ox) * -1)) scaleY(var(--sy)); }
+.root[data-show="narrow"] .tag { transform: translateX(var(--ox)); }
+.root[data-show="narrow"] :is(.surface, .edge, .tag) { transition-delay: var(--t-1, 160ms); }
+
+/* ── The running card: Axel's flight card ── */
+.app {
+  position: relative;
+  display: grid;
+  padding: 24px;
+  container-type: inline-size;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.app[data-v="wide"] { transition-delay: var(--t-1, 160ms); }
+/* The phone copy: the same card at a phone's width, over the wide one */
+.app[data-v="narrow"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(240px, calc(100% - 40px));
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(var(--ox));
+}
+.root[data-show="narrow"] .app[data-v="wide"] {
+  opacity: 0;
+  pointer-events: none;
+  transition-delay: 0s;
+}
+.root[data-show="narrow"] .app[data-v="narrow"] {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive) calc(var(--t-1, 160ms) + var(--step, 60ms));
+}
+
+.brand {
+  justify-self: start;
+  color: var(--color-ink);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.title {
+  display: grid;
+  justify-self: start;
+  margin: 20px 0 0;
+}
+/* Both readings share one cell, each set as two held lines */
+.title > .swap,
+.button > .swap {
+  grid-area: 1 / 1;
+}
+.line {
+  display: block;
+  white-space: nowrap;
+}
+/* The quote's own advance in Geist, hung in the card's padding */
+.hang { margin-left: -0.36em; }
+.swap {
+  opacity: 0;
+  transform: translateY(var(--rise, 8px));
+  transition:
+    opacity var(--t-1, 160ms) var(--ease-arrive),
+    transform 0s linear var(--t-1, 160ms);
+}
+.swap[data-on="true"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--t-2, 360ms) var(--ease-arrive) 60ms,
+    transform var(--t-2, 360ms) var(--ease-arrive) 60ms;
+}
+
+/* SEA ✈ LAX on Axel's dotted line */
+.trip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--raised, #1e1e21);
+}
+.iata {
+  color: var(--color-ink);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+}
+.route {
+  position: relative;
+  flex: 1;
+  min-width: 40px;
+  height: 20px;
+}
 .dots,
 .flown {
   position: absolute;
@@ -77,172 +439,301 @@
   height: 100%;
   overflow: visible;
 }
-/* 1px verticals at both ends and at every stop */
-.ticks line {
-  stroke: var(--color-line);
-  stroke-width: 1;
-  shape-rendering: crispEdges;
-}
-/* Axel's dotted route: 2px square dots on an 8px pitch, grey at rest */
 .dots line {
-  stroke: var(--grey-2, #6b6b71);
-  stroke-width: 2;
-  stroke-dasharray: 2 6;
+  stroke: rgb(244 244 242 / 30%);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 7;
 }
-/* The flown route: one 2px ink rail, never broken */
 .flown line {
   stroke: var(--color-ink);
   stroke-width: 2;
 }
 
-/* The window opens behind the plane; the rail inside it holds still */
+/* The flown line is seen through a window that opens behind the plane
+   (the window one way, the line inside it the other) */
 .window {
   position: absolute;
   inset: 0;
   overflow: hidden;
   transform: translateX(-100%);
-  will-change: transform;
 }
 .hold {
   position: absolute;
   inset: 0;
   transform: translateX(100%);
-  will-change: transform;
 }
-
-/* A stop: a 10px square on the rail, hollow until the plane passes, then
-   filled by an ink copy fading in. Its label hangs under it on the tick. */
-.stop {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--at) * 100%);
-  width: 0;
-  height: 0;
-}
-.node {
-  position: absolute;
-  top: -5px;
-  left: -5px;
-  width: 10px;
-  height: 10px;
-  border: 1.5px solid var(--grey-2, #6b6b71);
-  background: var(--sheet, #17171a);
-}
-.node::after {
-  content: "";
-  position: absolute;
-  inset: -1.5px;
-  background: var(--color-ink);
-  opacity: 0;
-  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
-}
-.stop[data-on="true"] .node::after {
-  opacity: 1;
-}
-/* The label sits on the sheet and breaks the tick, like a tag on its
-   leader, 12px under the rail. */
-.label {
-  position: absolute;
-  top: 13px;
-  left: 0;
-  padding: 0 8px;
-  background: var(--sheet, #17171a);
-  color: var(--color-ink);
-  white-space: nowrap;
-  transform: translateX(-50%);
-}
-
-/* The plane, level, on its own layer: it starts on the strip's first 32px
-   and lands on its last. */
 .flight {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
-  left: 32px;
-  transform: translateX(0);
-  will-change: transform;
+  left: 20px;
   pointer-events: none;
 }
 .plane {
   position: absolute;
   top: 50%;
-  left: -32px;
-  width: 32px;
-  height: 27px;
-  margin-top: -13.5px;
+  left: -20px;
+  margin-top: -8.5px;
   overflow: visible;
 }
 .plane path {
   fill: var(--color-ink);
-  stroke: none;
 }
+/* Booking flies it (--t-3). Un-booking is not a rewind: the transform
+   changes at once, under the end of a flight (data-fly="lax", run by the
+   script): a fade at LAX, back in at SEA. */
+.device[data-booked="true"] :is(.window, .hold, .flight) {
+  transform: none;
+  transition: transform var(--t-3, 720ms) var(--ease-arrive);
+}
+.device[data-booked="true"] .flight { transform: translateX(100%); }
 
-/* The manifest: what the PR carries, raised chips that fade in on landing */
-.cargo {
+.foot {
   display: flex;
   align-items: center;
-  gap: 24px;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid var(--color-line);
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
 }
-.cargoLabel {
-  flex: none;
+.nonstop {
+  color: var(--color-mute);
+}
+/* A phone's width: Nonstop over a full-width button. The phone copy
+   (200px of content at most) always is one; the wide card keeps Nonstop
+   beside its button down to a 360px screen (224px), so narrowing the
+   frame always shows the card reflow. */
+@container (max-width: 209px) {
+  .foot {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .nonstop { align-self: flex-start; }
+}
+
+/* Axel's pill: ink, its hover a veil, its press a squeeze, its focus a
+   ring */
+.button {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--on-fill, #0a0a0a);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
   white-space: nowrap;
+  transition: transform var(--t-1, 160ms) var(--ease-arrive);
 }
-.items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.items li {
+.button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgb(10 10 10 / 16%);
   opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
-.sheet[data-go] .items li {
+.ring {
+  position: absolute;
+  inset: -4px;
+  border: 1px solid var(--color-ink);
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+@media (hover: hover) {
+  .button:hover::after { opacity: 1; }
+}
+.button:active { transform: scale(0.96); }
+/* The page's focus rule squares corners; the pill keeps its own and
+   shows its ring instead of an outline */
+.app .button:focus-visible {
+  outline: none;
+  border-radius: 999px;
+}
+.button:focus-visible .ring { opacity: 1; }
+
+/* ── The legend's demos ── */
+
+/* Reusable components: each part of the card outlined, one after
+   another */
+.app [data-part] { position: relative; }
+.app [data-part]::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px dashed rgb(244 244 242 / 55%);
+  border-radius: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.trip[data-part]::before { border-radius: 13px; }
+/* The search's outline takes in its hung quote */
+.device:not([data-booked="true"]) .title[data-hang]::before { left: calc(-5px - 0.36em); }
+.button[data-part]::before { border-radius: 999px; }
+.root[data-show="parts"] [data-part]::before {
   opacity: 1;
   transition: opacity var(--t-2, 360ms) var(--ease-arrive);
-  transition-delay: calc(480ms + var(--i, 0) * var(--step, 60ms));
+}
+.root[data-show="parts"] .brand::before { transition-delay: 0ms; }
+.root[data-show="parts"] .title::before { transition-delay: 60ms; }
+.root[data-show="parts"] .trip::before { transition-delay: 120ms; }
+.root[data-show="parts"] .nonstop::before { transition-delay: 180ms; }
+.root[data-show="parts"] .button::before { transition-delay: 240ms; }
+
+/* The two loops, each on its own attribute, which the script sets while
+   the line is shown and drops only once the loop has reached a rest, so
+   closing one never cuts it. Every segment is a token: 2400ms a cycle,
+   moves --t-3 (30%), fades --t-1 (6.67%) or --t-2 (15%), all on
+   --ease-arrive. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Interaction states: rest, hover, press, release, focus */
+  .root[data-press] .button { animation: press 2400ms var(--ease-arrive) infinite; }
+  .root[data-press] .button::after { animation: veil 2400ms var(--ease-arrive) infinite; }
+  .root[data-press] .ring { animation: ring 2400ms var(--ease-arrive) infinite; }
+
+  /* Motion: the plane flies SEA to LAX and inks its line (0 to 720ms),
+     holds, fades at LAX (1840 to 2000ms) and comes back in at SEA (2040
+     to 2400ms). Over a booked card it starts at 1840ms, where it holds at
+     LAX, so it never jumps to SEA. */
+  .root[data-fly] .flight { animation: fly 2400ms var(--ease-arrive) infinite; }
+  .root[data-fly] .window { animation: open 2400ms var(--ease-arrive) infinite; }
+  .root[data-fly] .hold { animation: hold 2400ms var(--ease-arrive) infinite; }
+  .root[data-fly="lax"] :is(.flight, .window, .hold) { animation-delay: -1840ms; }
+  /* Booking or un-booking under a flight changes nothing visible: the
+     flight carries on and ends where the card then rests */
+  .root[data-fly] :is(.flight, .window, .hold) { transition: none; }
+}
+@keyframes press {
+  0%, 42% { transform: none; }
+  48.67%, 58% { transform: scale(0.96); }
+  64.67%, 100% { transform: none; }
+}
+@keyframes veil {
+  0%, 18% { opacity: 0; }
+  24.67%, 58% { opacity: 1; }
+  64.67%, 100% { opacity: 0; }
+}
+@keyframes ring {
+  0%, 66.67% { opacity: 0; }
+  73.33%, 90% { opacity: 1; }
+  96.67%, 100% { opacity: 0; }
+}
+@keyframes fly {
+  0% { transform: translateX(0); opacity: 1; }
+  30%, 76.67% { transform: translateX(100%); opacity: 1; }
+  83.33% { transform: translateX(100%); opacity: 0; animation-timing-function: step-end; }
+  85% { transform: translateX(0); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes open {
+  0% { transform: translateX(-100%); opacity: 1; }
+  30%, 76.67% { transform: none; opacity: 1; }
+  83.33% { transform: none; opacity: 0; animation-timing-function: step-end; }
+  85%, 100% { transform: translateX(-100%); opacity: 1; }
+}
+@keyframes hold {
+  0% { transform: translateX(100%); }
+  30% { transform: none; }
+  83.33% { transform: none; animation-timing-function: step-end; }
+  85%, 100% { transform: translateX(100%); }
 }
 
-/* Tablets: a little less air around the strip */
-@media (min-width: 640px) and (max-width: 1023px) {
-  .route { column-gap: 24px; }
+/* Chinese is held word by word (hold()), so a line breaks only between
+   words, and never before closing punctuation */
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+/* ── Entrance, once, on view ── the bar runs, the steps arrive in it,
+   the checks fill, the preview comes last */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] .bar { transform: scaleX(0); }
+  .root[data-in="false"] .step {
+    opacity: 0;
+    transform: translateX(calc(var(--rise, 8px) * -1));
+  }
+  .root[data-in="false"] .check::before,
+  .root[data-in="false"] .check svg { opacity: 0; }
+  .root[data-in="false"] .device {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+
+  .root[data-in="true"] .bar {
+    transition: transform var(--t-3, 720ms) var(--ease-arrive);
+  }
+  .root[data-in="true"] .step {
+    transition:
+      opacity var(--t-2, 360ms) var(--ease-arrive),
+      transform var(--t-2, 360ms) var(--ease-arrive);
+    transition-delay: calc(160ms + var(--i) * var(--step, 60ms));
+  }
+  .root[data-in="true"] .check::before,
+  .root[data-in="true"] .check svg {
+    transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+    transition-delay: calc(480ms + var(--i) * var(--step, 60ms));
+  }
+  .root[data-in="true"] .device {
+    transition:
+      opacity var(--t-2, 360ms) var(--ease-arrive) 720ms,
+      transform var(--t-2, 360ms) var(--ease-arrive) 720ms;
+  }
 }
 
-/* Phones: Problem on top, the strip across the full width, PR under it on
-   the right; the manifest goes under its label and wraps. */
-@media (max-width: 639px) {
-  .route {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "from" "track" "to";
-    margin-top: 24px;
-  }
-  .end[data-end="from"] { grid-area: from; justify-self: start; }
-  .end[data-end="to"] { grid-area: to; justify-self: end; }
-  .track {
-    grid-area: track;
-    height: 40px;
-    margin: 8px 0 40px;
-  }
-  .label { padding: 0 4px; }
-  .cargo {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    margin-top: 24px;
-  }
-}
-
-/* Reduced motion: the landed frame, in CSS; the script does nothing. */
+/* Reduced motion: nothing slides or loops; every change is a fade or a
+   swap, the demos show their end state */
 @media (prefers-reduced-motion: reduce) {
-  .flight { transform: translateX(100%) !important; }
-  .window,
-  .hold { transform: none !important; }
-  .node::after,
-  .sign,
-  .items li { opacity: 1; transition: none; }
+  .swap,
+  .swap[data-on="true"] {
+    transform: none;
+    transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+  }
+  .device[data-booked] :is(.window, .hold, .flight),
+  .surface,
+  .edge,
+  .tag { transition: none; }
+  /* Narrowing, the frame still waits for the wide card to fade: a swap
+     at --t-1 */
+  .root[data-show="narrow"] :is(.surface, .edge, .tag) { transition: transform 0s var(--t-1, 160ms); }
+  .arrow,
+  .item[data-on="true"] .arrow {
+    transform: none;
+    transition: none;
+  }
+  .button,
+  .button:active { transform: none; }
+  .root[data-show="states"] .button::after,
+  .root[data-show="states"] .ring { opacity: 1; }
+  .root[data-show="motion"] :is(.window, .hold) { transform: none; }
+  .root[data-show="motion"] .flight { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) and (max-width: 1023px) {
+  .arrow,
+  .item[data-on="true"] .arrow { transform: rotate(90deg); }
+}
+
+/* Phones: the owner over the run, so the run has the full width. The
+   steps cannot take S4 there, so the checklist steps down to S6 with
+   them (15px/1.5): what the PR carries never outranks the route. */
+@media (max-width: 639px) {
+  .lane { grid-template-columns: minmax(0, 1fr); }
+  .owner { padding: 0 0 8px; }
+  .step { padding: 0 6px; }
+  /* No room for the stops: the posts alone mark the steps */
+  .stop { display: none; }
+  .item {
+    gap: 12px;
+    padding: 12px 3px 12px 0;
+    font-size: 15px;
+    line-height: 1.5;
+    letter-spacing: 0;
+  }
 }

@@ -61,7 +61,8 @@ export const axelProject: Project = {
     {
       heading: "My handoff is a pull request",
       body: "From a product problem to production React, I design, build and test the change myself. My PRs carry a working preview, so the team reviews real behavior, not a picture of it.",
-      // Axel's own result card redrawn: one unbroken route, no handoff.
+      // The PR as the figure: one unbroken lane, no handoff, and its
+      // working preview running as Axel's flight card.
       route: {
         meta: "Aspen · Nonstop",
         from: "Problem",
@@ -69,8 +70,15 @@ export const axelProject: Project = {
         stops: ["Design", "Build", "Test"],
         cargoLabel: "In the PR",
         cargo: ["Reusable components", "Responsive layouts", "Interaction states", "Motion", "Working preview"],
-        sign: "SHIPPED",
-        caption: "One owner from problem to PR: design, build and test. The PR carries reusable components, responsive layouts, interaction states, motion and a working preview.",
+        // The traveller's own words in §02's quote marks: Book turns the
+        // request into §04's confirmation
+        preview: {
+          query: ["“Seattle to LA,", "Friday morning”"],
+          booked: ["Your Los Angeles", "flight is booked"],
+          book: "Book",
+          view: "View trip",
+        },
+        caption: "One owner from problem to PR: design, build and test. The PR carries reusable components, responsive layouts, interaction states and motion, and a working preview of Axel, Seattle to LA, Friday morning, SEA to LAX, where Book books the flight.",
       },
     },
     {
@@ -159,8 +167,16 @@ export const axelProjectCn: Project = {
         stops: ["设计", "实现", "测试"],
         cargoLabel: "PR 里有",
         cargo: ["可复用组件", "响应式布局", "交互状态", "动效", "可运行预览"],
-        sign: "SHIPPED",
-        caption: "从问题到 PR，设计、实现和测试由同一个人完成。PR 里有可复用组件、响应式布局、交互状态、动效和可运行预览。",
+        // The traveller's search stays in English, in the quote marks §02
+        // prints it in; Book turns it into Axel's Chinese confirmation
+        // (§02's 预订, §04's email)
+        preview: {
+          query: ["“Seattle to LA,", "Friday morning”"],
+          booked: ["你的洛杉矶", "航班已订好"],
+          book: "预订",
+          view: "查看行程",
+        },
+        caption: "从问题到 PR，设计、实现和测试由同一个人完成。PR 里有可复用组件、响应式布局、交互状态和动效，还有可运行预览：Axel 的 Seattle to LA, Friday morning，SEA 到 LAX，预订后，航班已订好。",
       },
     },
     {

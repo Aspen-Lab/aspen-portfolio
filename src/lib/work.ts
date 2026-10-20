@@ -10,18 +10,26 @@ export type ImageNote = {
   text: string;
 };
 
-/** One owner's route drawn as Axel's flight card: `from` ····✈···· `to`
-    through the stops, the PR's contents underneath, the sign lit on landing. */
+/** Axel §01's figure (NonstopRoute), the pull request as a split card:
+    the owner's lane runs `from` through the stops to `to` in one block,
+    the PR's contents are listed under it, and the last of them, the
+    working preview, runs beside it as Axel's flight card. */
 export type RouteCard = {
-  /** "Aspen · Nonstop": the carrier, then the kind of flight. */
+  /** "Aspen · Nonstop": the lane's owner, then the flight card's kind. */
   meta: string;
   from: string;
   to: string;
   stops: string[];
   cargoLabel: string;
+  /** In this order: reusable components, responsive layouts, interaction
+      states, motion (each a line of the preview's legend), and last the
+      working preview, the name on the preview's tab. */
   cargo: string[];
-  /** The dot-matrix sign on the sheet's edge (stays Latin, like FOUND). */
-  sign: string;
+  /** The working preview's words, each already printed on the Axel page:
+      the search as §02 quotes it, quote marks and all, before Book; the
+      booking as §04's email says it, before View trip. Each headline is
+      two lines; an opening quote hangs in the card's margin. */
+  preview: { query: [string, string]; booked: [string, string]; book: string; view: string };
   /** Screen-reader summary of the whole figure. */
   caption: string;
 };
