@@ -245,105 +245,95 @@ export const tiktokProjectCn: Project = {
   ],
 };
 
-/* Nutra in Chinese: the English case restated section by section, every
-   claim and figure unchanged. "Nut" stays the mascot's name. */
+/* Nutra in Chinese: a straight translation of the English case, every
+   claim and figure unchanged. Title, role, category and summary match the
+   home page's card (messages/cn.json). "Nut" stays the mascot's name; the
+   app's own UI strings stay English inside the figures, which carry their
+   own Chinese words (src/components/nutra/*, read from the locale). */
 export const nutraProjectCn: Project = {
   ...english("nutra"),
   ...card("nutra"),
   client: "Aspen Lab · 自主发起",
   period: "2024 年 8 月",
   tags: ["金融科技", "游戏化", "UX 研究"],
+  // bands, accent and the code-drawn hero come from the English entry;
+  // metrics and sections are restated in full, so every section field is
+  // set here
   metrics: [
     { label: "自评动机提升", value: "+85%" },
     { label: "可用性正面反馈", value: "90%" },
-    { label: "设计系统覆盖范围", value: "端到端" },
+    { label: "设计系统覆盖范围", value: "端到端", href: "#s-10" },
   ],
-  sections: restate(
-    "nutra",
-    { Discovery: "探索", Strategy: "策略", Process: "过程", Execution: "执行", Outcome: "成果" },
+  sections: [
     {
-      Problem: {
-        heading: "问题",
-        body: "预算管理很重要，却也很难，对刚入门的人尤其如此。大多数 App 让人不知所措，因为它们是为高度自律的人打造的。最需要帮助的人，那些想存钱却难以坚持的人，往往最先悄悄放弃。",
-      },
-      Research: {
-        heading: "研究",
-        body: "我们对自认动力不足、自律性较低的用户做了问卷和深度访谈，得到三条洞察：简单直观的交互能减轻压迫感；游戏化机制能显著提升参与度；细小而个性化的提醒能帮人坚持下去。我们面对的是一个庞大却未被充分服务的群体，他们最大的敌人是摩擦。",
-      },
-      "Mental model & journey": {
-        heading: "心智模型与用户旅程",
-        body: "我们梳理了目标用户如何看待金钱，把存钱的认知成本，与被告知“存得不够”时的情绪成本区分开来。用户旅程图让摩擦点清晰可见。",
-      },
-      "Market opportunity": {
-        heading: "市场机会",
-        body: "主流预算 App 过度偏向自律的重度用户。Nutra 瞄准的是规模大得多、缺乏动力的中间人群：他们本来就想存钱，但没有反馈循环，注意力就难以持续。",
-      },
-      "Design objectives": {
-        heading: "设计目标",
-        body: "降低入门门槛：尽量减少认知负担，让新手引导顺畅无阻。用每日存钱挑战、互动奖励和有趣的小仪式提升参与度。根据每个人的消费习惯和目标，个性化任务与建议。",
-      },
-      "Why gamification": {
-        heading: "为什么是游戏化",
-        body: "预算一旦变成苦差事就会失败。游戏化让循环变得短、看得见、有回报，把自律变成习惯，并让长期留存提升几个数量级。",
-      },
-      'Why "Nut"': {
-        heading: "为什么是“Nut”",
-        body: "我们选择 Nut（坚果）作为虚拟助手，因为它象征成长、储蓄与潜力：一个小小的东西，会长成更大的样子。这个隐喻让理财上的进步变得可感知、平易近人、友好亲切。",
-      },
-      Ideation: {
-        heading: "构思",
-        body: "两条并行的流程：仪表盘探索（钱现在流向哪里）和目标设定（钱应该流向哪里）。画了几十种变体，寻找最小可行的交互循环。",
-      },
-      "First user test": {
-        heading: "第一轮用户测试",
-        body: "在任何视觉投入之前，先用可点击的低保真原型和目标用户一起测试，验证底层的 UX 骨架。",
-      },
-      Refinement: {
-        heading: "迭代",
-        body: "第一轮测试暴露的摩擦点：目标流程一开始就要求填写太多，仪表盘把下一步操作埋得太深。我们重写了新手引导的顺序，并把每日挑战放到最显眼的位置。",
-      },
-      "Lo-fi summary": {
-        heading: "低保真小结",
-        body: "最终的低保真结构：仪表盘、每日挑战、目标设定、Nut 助手、财务概览。这个结构站稳之后，品牌层才能叠加上去。",
-      },
-      "User journey, after": {
-        heading: "测试后的用户旅程",
-        body: "测试之后，旅程大幅收拢：从意图到反馈之间的页面更少，死胡同更少，从打开 App 到存下钱，路径清晰。",
-      },
-      "Mid-fi & branding": {
-        heading: "中保真与品牌",
-        body: "结构站稳之后，再叠加品牌语气。Nut 有了自己的性格。色彩和动效保持克制，让趣味显得温暖，而不吵闹。",
-      },
-      Mockup: {
-        heading: "效果图",
-        body: "发布页的主视觉构图：Nut、仪表盘、每日挑战，一眼就能全部看到。",
-      },
-      "Branding 2.0": {
-        heading: "品牌 2.0",
-        body: "视觉识别的第二轮打磨。收紧了吉祥物的比例，确定了色彩系统，并为 Nut 做了一小套富有表现力的情绪状态。",
-      },
-      "Hi-fi user flow": {
-        heading: "高保真用户流程",
-        body: "高保真原型的端到端流程，覆盖新手引导、目标设定、每日打卡和财务概览。",
-      },
-      "What shipped": {
-        heading: "最终交付",
-        body: "目标设定（个性化、可执行的小步骤）。基于用户消费习惯的每日挑战。Nut 助手，提供视觉奖励和情绪反馈。清晰的财务概览，用诚实的数据可视化呈现习惯、预算与进展。一套完整的设计系统，让各个界面保持一致。",
-      },
-      "Design system": {
-        heading: "设计系统",
-        body: "一套完整的规范，让各个界面在视觉和交互上保持一致：色彩、字体、组件、动效 token，以及把 Nut 作为系统基础元素的使用规则。",
-      },
-      Validation: {
-        heading: "验证",
-        body: "与目标用户进行的多轮可用性测试打磨了交互。结果是：游戏化带来了更强的留存；曾被强调自律的 App 劝退的用户，存钱行为有了可观察到的改善；反馈也压倒性地正面。",
-      },
-      Reflection: {
-        heading: "反思",
-        body: "设计 Nutra 让我更深入地理解了行为心理学，以及游戏化究竟如何作用于动机。它锻炼了我在 UX 研究、迭代原型和视觉系统上的能力，也让我看到：用心加上趣味，可以做出既有效又让人愉快的产品。",
-      },
+      chapter: "探索",
+      heading: "问题",
+      body: `预算管理很重要，却也很难，对${keep("刚入门")}的人尤其如此。大多数 App 让人不知所措，因为它们是为高度自律的人打造的。最需要帮助的人，那些想存钱却难以坚持的人，往往最先悄悄放弃。主流预算 App 过度偏向自律的重度用户。Nutra 瞄准的是规模大得多、缺乏动力的中间人群：他们本来就想存钱，但没有反馈循环，注意力就难以持续。`,
+      visual: "nutra-audience",
     },
-  ),
+    {
+      chapter: "探索",
+      heading: "研究",
+      body: `我们对自认动力不足、自律性较低的用户做了问卷和深度访谈，得到三条洞察：简单直观的交互能减轻压迫感；游戏化机制能显著提升参与度；细小而个性化的提醒能帮人坚持下去。我们面对的是一个庞大却${keep("未被")}充分服务的群体，他们最大的敌人是摩擦。`,
+      visual: "nutra-research",
+    },
+    {
+      chapter: "探索",
+      heading: "心智模型与用户旅程",
+      body: "我们梳理了目标用户如何看待金钱，把存钱的认知成本，与被告知“存得不够”时的情绪成本区分开来。用户旅程图让摩擦点清晰可见。",
+      visual: "nutra-journey",
+    },
+    {
+      chapter: "策略",
+      heading: "设计目标",
+      body: `降低入门门槛：尽量减少认知负担，让新手引导顺畅无阻。用每日存钱挑战、互动奖励和有趣的${keep("小仪式")}提升参与度。根据每个人的消费习惯和目标，个性化任务与建议。`,
+      visual: "nutra-opportunity",
+    },
+    {
+      chapter: "策略",
+      heading: "为什么是游戏化，为什么是“Nut”",
+      body: "预算一旦变成苦差事就会失败。游戏化让循环变得短、看得见、有回报，把自律变成习惯，并让长期留存提升几个数量级。我们选择 Nut（坚果）作为虚拟助手，因为它象征成长、储蓄与潜力：一个小小的东西，会长成更大的样子。这个隐喻让理财上的进步变得可感知、平易近人、友好亲切。",
+      visual: "nutra-mascot",
+    },
+    {
+      chapter: "过程",
+      heading: "构思",
+      body: `两条并行的流程：仪表盘探索（钱现在流向哪里）和目标设定（钱应该流向哪里）。画了${keep("几十种")}变体，寻找最小可行的交互循环。`,
+      visual: "nutra-ideation",
+    },
+    {
+      chapter: "过程",
+      heading: "测试与迭代",
+      // 低保真 and 一开始 held whole (the segmenter cuts 低 | 保真); UX held to 骨架
+      body: `在任何视觉投入之前，先用可点击的${keep("低保真")}原型和目标用户一起测试，验证底层的 UX\u00a0骨架。第一轮测试暴露的摩擦点：目标流程${keep("一开始")}就要求填写太多，仪表盘把下一步操作埋得太深。我们重写了新手引导的顺序，并把每日挑战放到最显眼的位置。`,
+      visual: "nutra-testing",
+    },
+    {
+      chapter: "执行",
+      heading: "视觉方向",
+      body: "结构站稳之后，再叠加品牌语气。Nut 有了自己的性格。色彩和动效保持克制，让趣味显得温暖，而不吵闹。视觉识别的第二轮打磨：收紧吉祥物的比例，确定色彩系统，并为 Nut 做了一小套富有表现力的情绪状态。",
+      visual: "nutra-direction",
+    },
+    {
+      chapter: "执行",
+      heading: "最终交付",
+      body: `${keep("高保真")}原型的端到端流程，覆盖新手引导、目标设定、每日打卡和财务概览。一套完整的设计系统，让它在各个界面上保持一致。`,
+      visual: "nutra-app",
+    },
+    {
+      chapter: "执行",
+      heading: "设计系统",
+      // "token" held to 动效, so it never opens a line alone
+      body: "一套完整的规范，让各个界面在视觉和交互上保持一致：色彩、字体、组件、动效\u00a0token，以及把 Nut 作为系统基础元素的使用规则。",
+      visual: "nutra-system",
+    },
+    {
+      chapter: "成果",
+      heading: "验证与反思",
+      body: `与目标用户进行的多轮可用性测试打磨了交互。结果是：游戏化带来了更强的留存；${keep("曾被")}强调自律的 App 劝退的用户，存钱行为有了可观察到的改善；反馈也压倒性地正面。设计 Nutra 让我更深入地理解了行为心理学，以及游戏化究竟如何作用于动机。它锻炼了我在 UX 研究、迭代原型和视觉系统上的能力，也让我看到：用心加上趣味，可以做出既有效又让人愉快的产品。`,
+      visual: "nutra-journey-after",
+    },
+  ],
 };
 
 /* Field of Vision in Chinese: the short version, until the full case is

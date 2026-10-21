@@ -1,0 +1,265 @@
+/* The split card in the site's one dark system: the phone on a sheet
+   (#17171a, a faint dot grid, the four registration marks), the ledger
+   on a slab (#0a0a0a), one 1px edge round both and one between them.
+   Type is the ramp (.t-label, .t-subhead, .t-small); the accent fills
+   only the 8px square of the row in view. Inside the phone the product's
+   own language applies (app/phone.module.css). */
+/* The figure is a .paper-stack: the whole split card rests on the
+   global sheet stack, two back sheets offset under it */
+.root { display: block; }
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "kick" "rows" "stage" "detail" "foot";
+  overflow: hidden;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: var(--slab, #0a0a0a);
+}
+/* Below lg the slab's parts take their own rows round the phone */
+.slab { display: contents; }
+
+.stage {
+  --s: 0.9;
+  position: relative;
+  grid-area: stage;
+  display: grid;
+  justify-items: center;
+  padding: 28px 12px;
+  border-block: 1px solid var(--edge, #333336);
+  background-color: var(--sheet, #17171a);
+  /* a tiny dot grid, the drafting ground of the sheet */
+  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 7%) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+}
+.stage :global(.reg-mark) { opacity: 0.32; }
+
+/* The phone's box at its drawn size times the scale (--s, from the
+   ResizeObserver; the media fallbacks hold the first paint) */
+.fit {
+  position: relative;
+  width: calc(360px * var(--s));
+  height: calc(760px * var(--s));
+}
+
+.kicker {
+  grid-area: kick;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px 0;
+}
+.kickerMark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--color-ink);
+}
+
+/* ── Ledger ── */
+.rows {
+  grid-area: rows;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 16px;
+  list-style: none;
+}
+.item { min-width: 0; }
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 14px 14px 16px;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: var(--tile, #141416);
+  color: var(--color-ink);
+  text-align: left;
+  transition: transform var(--t-1) var(--ease-arrive);
+}
+.row:active { transform: translateY(1px); }
+.row:focus-visible { outline-offset: 3px; }
+
+.idx {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-soft, #8a8a90);
+}
+/* The square: grey at rest; the accent copy fades in on the row in view */
+.sq {
+  position: relative;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--grey-2, #6b6b71);
+}
+.sq::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.row[data-on="true"] .sq::after { opacity: 1; }
+
+.words {
+  display: grid;
+  min-width: 0;
+}
+.title { display: none; }
+.titleSm { color: var(--color-ink); line-height: 1.35; }
+.text {
+  display: none;
+  margin-top: 8px;
+  color: var(--color-mute, #a0a0a5);
+  text-wrap: pretty;
+}
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .words,
+:global(html[lang="zh-CN"]) .detail,
+:global(html[lang="zh-CN"]) .note { line-break: strict; }
+
+/* Every row reads at full ink; the row in view is marked by its accent
+   square alone (as Axel's ledger). A pointer on a row inks its index. */
+@media (hover: hover) {
+  .row:hover .idx { color: var(--color-ink); }
+}
+.row[data-on="true"] .idx { color: var(--color-ink); }
+
+/* Below lg: the line of the row in view, under the phone (cross-fade in
+   one cell, so the block keeps the height of the longest line) */
+.detail {
+  grid-area: detail;
+  display: grid;
+  padding: 20px 16px 0;
+}
+.detailText {
+  grid-area: 1 / 1;
+  color: var(--color-body, #d2d2d0);
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.detailText[data-on="true"] {
+  opacity: 1;
+  transition-duration: var(--t-2);
+}
+
+.foot {
+  grid-area: foot;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 16px 0;
+  padding: 16px 0 20px;
+  border-top: 1px solid var(--color-line);
+}
+.note {
+  color: var(--color-soft, #8a8a90);
+  text-wrap: balance;
+}
+.reset {
+  flex: none;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--color-mute, #a0a0a5);
+}
+@media (hover: hover) {
+  .reset:hover { color: var(--color-ink); }
+}
+
+@media (min-width: 640px) {
+  .stage { padding: 40px 24px; }
+  .kicker { padding: 32px 32px 0; }
+  .rows { padding: 20px 32px; }
+  .detail { padding: 24px 32px 0; }
+  .foot { margin: 20px 32px 0; padding-bottom: 28px; }
+}
+
+/* ── lg: the split. The phone's sheet left, the slab right; the kicker
+   heads the slab, the rows sit at its foot over the note. ── */
+@media (min-width: 1024px) {
+  .card {
+    grid-template-columns: minmax(0, 31fr) minmax(0, 27fr);
+    grid-template-areas: none;
+  }
+  .stage {
+    --s: 1;
+    grid-area: auto;
+    align-items: center;
+    padding: 48px;
+    border-block: 0;
+  }
+  .slab {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 40px;
+    border-left: 1px solid var(--edge, #333336);
+  }
+  .kicker { padding: 0; }
+  .rows {
+    display: block;
+    margin: auto -12px 0;
+    padding: 40px 0 0;
+  }
+  .item { position: relative; }
+  /* hairlines at the copy's measure, above every row and under the last */
+  .item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 12px;
+    right: 12px;
+    height: 1px;
+    background: var(--color-line);
+  }
+  .row {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 0;
+    padding: 22px 12px 24px;
+    border: 0;
+    background: none;
+  }
+  .row:focus-visible { outline-offset: -1px; }
+  .idx { align-self: start; padding-top: 6px; }
+  .title { display: block; }
+  .titleSm { display: none; }
+  .text { display: block; }
+  .detail { display: none; }
+  .foot {
+    margin: 0;
+    padding: 20px 0 0;
+  }
+}
+
+/* ── Entrance, once on view: the phone rises 8px and fades in ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] .fit {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+  .root[data-in="true"] .fit {
+    transition:
+      opacity var(--t-3) var(--ease-arrive),
+      transform var(--t-3) var(--ease-arrive);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row { transition: none; }
+  .row:active { transform: none; }
+  .sq::after { transition: opacity var(--t-1) var(--ease-arrive); }
+}

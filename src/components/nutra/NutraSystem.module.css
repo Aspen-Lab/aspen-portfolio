@@ -1,0 +1,1209 @@
+/* Nutra's design system, live. The frame is the site's: three numbered
+   tabs with an ink underline, one sheet on two back sheets, split cards of
+   a render beside a slab, square marks, 1px edges, no gradient and no site
+   accent. Inside a render the product speaks for itself: its own ground
+   (#1E1E1E, the boards'), colours (the --n-* tokens from product.ts), Red
+   Hat Text and Helvetica Neue, and radii as the boards draw them. */
+.root {
+  position: relative;
+  margin: 0;
+}
+.word { white-space: nowrap; }
+
+/* ── Tabs: 01 Colour / 02 Type / 03 Components ── */
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 16px;
+  margin-bottom: 24px;
+}
+@media (min-width: 640px) { .tabs { column-gap: 24px; } }
+.tab {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-ink);
+  text-align: left;
+  transition: transform var(--t-1) var(--ease-arrive);
+}
+.tab:active { transform: translateY(1px); }
+.tabNum,
+.tabLabel {
+  opacity: var(--dim);
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+@media (hover: hover) {
+  .tab:hover .tabNum,
+  .tab:hover .tabLabel { opacity: 0.75; }
+}
+.tab:focus-visible .tabNum,
+.tab:focus-visible .tabLabel { opacity: 0.75; }
+.tab[aria-selected="true"] .tabNum,
+.tab[aria-selected="true"] .tabLabel { opacity: 1; }
+.tabNum { flex: none; }
+.tabLabel {
+  min-width: 0;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+.fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: #f4f4f2;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+.tab[aria-selected="true"] .fill { transform: none; }
+/* Phones: the number over the word, so "Components" keeps its line */
+@media (max-width: 639.98px) {
+  .tab {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 0 14px;
+  }
+}
+
+/* ── The stage: every panel in one cell, and the panel in view alone sets
+   the height (Components runs ~270px taller than Colour and Type, which
+   would otherwise float in its frame). ── */
+.stage.stage {
+  display: grid;
+  overflow: hidden;
+}
+.panel {
+  display: grid;
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  visibility: hidden;
+  transition:
+    opacity var(--t-1) var(--ease-arrive),
+    transform 0s linear var(--t-1),
+    visibility 0s linear var(--t-1);
+}
+.root[data-tab="0"] .panel[data-k="0"],
+.root[data-tab="1"] .panel[data-k="1"],
+.root[data-tab="2"] .panel[data-k="2"] {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity var(--t-2) var(--ease-arrive),
+    transform var(--t-2) var(--ease-arrive),
+    visibility 0s;
+}
+.panel {
+  height: 0;
+  overflow: hidden;
+}
+.root[data-tab="0"] .panel[data-k="0"],
+.root[data-tab="1"] .panel[data-k="1"],
+.root[data-tab="2"] .panel[data-k="2"] {
+  height: auto;
+  overflow: visible;
+}
+
+/* ── The split card: a render on the sheet beside a slab ── */
+.card {
+  display: grid;
+  min-width: 0;
+}
+.split { grid-template-columns: minmax(0, 1fr); }
+.stack { grid-template-rows: minmax(0, 1fr) auto; }
+@media (min-width: 1024px) {
+  .split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+}
+.render {
+  display: grid;
+  min-width: 0;
+  padding: 12px;
+}
+@media (min-width: 640px) { .render { padding: 20px; } }
+
+/* The board's own ground, framed as a site plane */
+.ground {
+  min-width: 0;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--n-ground);
+  color: #fff;
+}
+
+.slab.slab {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 20px;
+  border: 0;
+  border-top: 1px solid var(--edge);
+  border-radius: 0;
+}
+@media (min-width: 640px) { .slab.slab { padding: 32px; } }
+@media (min-width: 1024px) {
+  .split > .slab.slab {
+    padding: 40px;
+    border-top: 0;
+    border-left: 1px solid var(--edge);
+  }
+}
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.kmark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: #f4f4f2;
+}
+.note { color: var(--color-mute); }
+
+/* ── 01 Colour ── board 043's right half: Grey down the left, Brand and
+   Background beside it */
+.colourGround {
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+}
+@media (min-width: 640px) { .colourGround { padding: 48px 40px; } }
+.swatches {
+  display: grid;
+  grid-template-columns: minmax(0, auto);
+  row-gap: 32px;
+}
+@media (min-width: 640px) {
+  .swatches {
+    grid-template-columns: auto auto;
+    grid-template-areas: "grey brand" "grey bg";
+    align-content: start;
+    column-gap: clamp(56px, 7vw, 104px);
+    row-gap: 44px;
+  }
+  .group[data-g="brand"] { grid-area: brand; }
+  .group[data-g="bg"] { grid-area: bg; }
+  .group[data-g="grey"] { grid-area: grey; }
+}
+.gname {
+  margin: 0 0 18px;
+  color: #fff;
+  font-family: var(--n-rht);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.discs {
+  display: grid;
+  gap: 18px;
+}
+.disc {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 2px;
+  text-align: left;
+}
+.dot {
+  position: relative;
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--c);
+}
+/* The selected disc: a 1px ink ring, 3px off */
+.dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid #f4f4f2;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.disc[aria-checked="true"] .dot::after { opacity: 1; }
+@media (hover: hover) {
+  .disc[aria-checked="false"]:hover .dot::after { opacity: 0.45; }
+}
+.dlab {
+  min-width: 4ch;
+  color: #bbbbbb;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+/* Phones: Brand and Background two to a row, Grey in two rows with the
+   labels under the discs */
+@media (max-width: 639.98px) {
+  .group[data-g="brand"] .discs,
+  .group[data-g="bg"] .discs {
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 28px;
+  }
+  .group[data-g="grey"] .discs {
+    grid-template-columns: repeat(4, max-content);
+    gap: 18px 20px;
+  }
+  .group[data-g="grey"] .disc {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dot {
+    width: 44px;
+    height: 44px;
+  }
+  .disc { gap: 14px; }
+}
+
+/* The readout: every token's readout is mounted, one shows. A mouse on a
+   disc writes data-peek on the panel and its readout shows instead. */
+.reads {
+  display: grid;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-line);
+}
+@media (min-width: 1024px) { .reads { margin-block: auto; } }
+.read {
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.read[data-on="true"] { opacity: 1; pointer-events: auto; }
+[data-colour][data-peek] .read[data-on="true"] { opacity: 0; }
+[data-colour][data-peek="orange"] .read[data-read="orange"],
+[data-colour][data-peek="green"] .read[data-read="green"],
+[data-colour][data-peek="bg"] .read[data-read="bg"],
+[data-colour][data-peek="surface"] .read[data-read="surface"],
+[data-colour][data-peek="g1000"] .read[data-read="g1000"],
+[data-colour][data-peek="g700"] .read[data-read="g700"],
+[data-colour][data-peek="g500"] .read[data-read="g500"],
+[data-colour][data-peek="g150"] .read[data-read="g150"],
+[data-colour][data-peek="g100"] .read[data-read="g100"],
+[data-colour][data-peek="g50"] .read[data-read="g50"],
+[data-colour][data-peek="g25"] .read[data-read="g25"] { opacity: 1; }
+.readName { margin: 0; }
+.readHex {
+  margin: 12px 0 0;
+  color: #f4f4f2;
+}
+.sep {
+  margin: 0 10px;
+  color: #6b6b71;
+}
+.readNote {
+  max-width: 34ch;
+  margin: 16px 0 0;
+  color: #d2d2d0;
+  text-wrap: pretty;
+}
+
+/* ── 02 Type ── the faces, then board 043's seven-row ladder at 0.75 of
+   its relative sizes */
+.typeGround {
+  display: grid;
+  align-content: center;
+  gap: 36px;
+  padding: 28px 20px;
+}
+@media (min-width: 640px) { .typeGround { padding: 44px 32px; gap: 44px; } }
+.faces {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 480px;
+}
+.faceCard {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 18px 20px 20px;
+  border-radius: 20px;
+  background: var(--n-50);
+  color: #fff;
+  text-align: left;
+}
+.faceCard::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid #f4f4f2;
+  border-radius: 24px;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.faceCard[aria-pressed="true"]::after { opacity: 1; }
+@media (hover: hover) {
+  .faceCard[aria-pressed="false"]:hover::after { opacity: 0.45; }
+}
+.aa {
+  font-size: 48px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.faceName {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.aa[data-f="rht"],
+.faceName[data-f="rht"] { font-family: var(--n-rht); }
+.aa[data-f="hv"],
+.faceName[data-f="hv"] { font-family: var(--n-hv); }
+@media (max-width: 639.98px) {
+  .faceCard { padding: 16px; border-radius: 16px; }
+  .faceCard::after { border-radius: 20px; }
+  .aa { font-size: 40px; }
+  .faceName { font-size: 14px; }
+}
+
+.ladder {
+  display: grid;
+  gap: 22px;
+}
+.lrow {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 20px;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.lname { white-space: nowrap; }
+.spec {
+  min-width: 0;
+  color: #fff;
+}
+@media (max-width: 639.98px) {
+  .ladder { gap: 18px; }
+  .lrow {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 6px;
+  }
+}
+.h1 { font-family: var(--n-rht); font-size: 39px; font-weight: 500; line-height: 1.15; letter-spacing: -0.01em; }
+.h2 { font-family: var(--n-rht); font-size: 23px; font-weight: 700; line-height: 1.2; }
+.h3 { font-family: var(--n-rht); font-size: 19.5px; font-weight: 500; line-height: 1.25; }
+.h4,
+.b1,
+.b2,
+.ann {
+  max-width: 403px;
+  font-family: var(--n-hv);
+}
+.h4 { font-size: 15.75px; font-weight: 500; line-height: 1.55; }
+.b1 { font-size: 15.75px; font-weight: 300; line-height: 1.52; }
+.b2 { font-size: 13.9px; font-weight: 300; line-height: 1.54; }
+.ann { font-size: 12px; font-weight: 300; line-height: 1.5; }
+@media (max-width: 639.98px) {
+  .h1 { font-size: 32px; }
+}
+
+/* A face lights the rows it sets; the rest step back */
+[data-type][data-face="rht"] .lrow[data-row-face="hv"],
+[data-type][data-face="hv"] .lrow[data-row-face="rht"],
+[data-type][data-face="rht"] .faceRow[data-face-btn="hv"],
+[data-type][data-face="hv"] .faceRow[data-face-btn="rht"] { opacity: var(--dim); }
+@media (hover: hover) {
+  [data-type]:has([data-face-btn="rht"]:hover) .lrow[data-row-face="hv"],
+  [data-type]:has([data-face-btn="rht"]:hover) .faceRow[data-face-btn="hv"],
+  [data-type]:has([data-face-btn="hv"]:hover) .lrow[data-row-face="rht"],
+  [data-type]:has([data-face-btn="hv"]:hover) .faceRow[data-face-btn="rht"] { opacity: var(--dim); }
+  [data-type]:has([data-face-btn="rht"]:hover) .lrow[data-row-face="rht"],
+  [data-type]:has([data-face-btn="rht"]:hover) .faceRow[data-face-btn="rht"],
+  [data-type]:has([data-face-btn="hv"]:hover) .lrow[data-row-face="hv"],
+  [data-type]:has([data-face-btn="hv"]:hover) .faceRow[data-face-btn="hv"] { opacity: 1; }
+}
+
+.slabFoot {
+  display: grid;
+  gap: 24px;
+  margin-top: 40px;
+}
+@media (min-width: 1024px) { .slabFoot { margin-block: auto; } }
+.faceRows {
+  margin: 0 -12px;
+  padding: 0;
+  list-style: none;
+}
+.faceRows > li + li { margin-top: -1px; }
+.faceRow {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 20px 12px;
+  text-align: left;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.faceRow::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12px;
+  right: 12px;
+  height: 1px;
+  background: var(--color-line);
+}
+.faceRow[aria-pressed="true"]::before { background: #f4f4f2; }
+.faceRow:focus-visible { outline-offset: -1px; }
+.faceRowRows { color: var(--color-mute); }
+
+/* ── 03 Components ── specimen plates on the sheet, three columns from
+   1024px, two from 640px, one on a phone */
+.stack > .render { padding: 12px; }
+@media (min-width: 640px) { .stack > .render { padding: 20px; } }
+.masonry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-content: start;
+}
+.col { display: contents; }
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  .masonry {
+    display: block;
+    columns: 2;
+    column-gap: 20px;
+  }
+  .cell {
+    break-inside: avoid;
+    margin-bottom: 20px;
+  }
+}
+@media (min-width: 1024px) {
+  .masonry {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+  .col {
+    display: grid;
+    gap: 20px;
+    align-content: start;
+  }
+}
+.cell {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.plate {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--n-ground);
+  color: #fff;
+  font-family: var(--n-hv);
+}
+.plate[data-cell="nav"],
+.plate[data-cell="sheet"] { padding: 16px; }
+/* A narrow plate (three columns just past 1024px, a 360px phone) sets the two-word
+   options a step smaller so each keeps to its half */
+.plate { container-type: inline-size; }
+@container (max-width: 270px) {
+  .plate .seg { margin-inline: -6px; }
+  .plate .segOpt { padding: 0 4px; font-size: 13.5px; }
+}
+.cap { margin: 0; }
+
+.slabStrip.slabStrip { gap: 16px; }
+@media (min-width: 1024px) {
+  .slabStrip.slabStrip {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    align-items: baseline;
+    column-gap: 24px;
+    padding: 24px 40px;
+  }
+}
+.uses {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 1024px) {
+  .uses {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 32px;
+  }
+}
+.use {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  column-gap: 16px;
+  align-items: baseline;
+}
+.useHex { color: #f4f4f2; }
+.useNote { color: #d2d2d0; text-wrap: pretty; }
+
+/* Stepper (042): done rows green with their values, the current row
+   orange on a sliding pill, the rest an open ring */
+.stepper {
+  --pitch: 40px;
+  position: relative;
+}
+.stepList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stepRow {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 14px;
+  width: 100%;
+  height: var(--pitch);
+  padding: 0 16px 0 5px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 300;
+  text-align: left;
+}
+.stepPill {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--n-100);
+  transform: translateY(calc(var(--cur) * var(--pitch)));
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+.stepLine {
+  position: absolute;
+  top: calc(var(--pitch) / 2);
+  bottom: calc(var(--pitch) / 2);
+  left: 15.5px;
+  width: 1px;
+  background: var(--n-700);
+}
+.stepIcon {
+  display: grid;
+  width: 22px;
+  height: 22px;
+}
+.stepIcon > span {
+  display: grid;
+  grid-area: 1 / 1;
+  place-items: center;
+  border-radius: 50%;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.stepRing {
+  border: 1px solid var(--n-500);
+  background: var(--n-ground);
+}
+.stepDone,
+.stepNow {
+  color: #fff;
+  opacity: 0;
+}
+.stepDone { background: var(--n-green); }
+.stepNow { background: var(--n-orange); }
+.stepRow[data-state="done"] .stepDone,
+.stepRow[data-state="now"] .stepNow { opacity: 1; }
+.stepName { white-space: nowrap; }
+.stepValue {
+  color: var(--n-700);
+  white-space: nowrap;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.stepRow:not([data-state="done"]) .stepValue { opacity: 0; }
+
+/* Fields (042): pills with a 1px outline */
+.inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+.field {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--n-edge);
+  border-radius: 999px;
+  background: var(--n-field);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 300;
+}
+.ph {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--n-700);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ph[data-tone="ink"] { color: #fff; }
+.fieldIcon { flex: none; color: #fff; }
+.dollar {
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1;
+}
+.unit { white-space: nowrap; }
+
+/* Segmented control (042): a dark track, the selected half slides */
+.seg {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--n-track);
+}
+.segThumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 999px;
+  background: var(--n-seg-on);
+  transform: translateX(calc(var(--seg) * 100%));
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+.segOpt {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 15px;
+}
+.segOff,
+.segOnText {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.segOff { color: var(--n-500); font-weight: 500; }
+.segOnText { color: #fff; font-weight: 700; opacity: 0; }
+.segOpt[aria-checked="true"] .segOff { opacity: 0; }
+.segOpt[aria-checked="true"] .segOnText { opacity: 1; }
+
+/* Radios, checkboxes, toggles (042) */
+.selection {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px 24px;
+}
+.selRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.radio {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--n-edge);
+  border-radius: 50%;
+}
+.radioDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  transform: scale(0);
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+.radio[aria-checked="true"] .radioDot,
+.listRow[aria-checked="true"] .radioDot { transform: none; }
+.check {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--n-edge);
+  border-radius: 5px;
+}
+.checkFill {
+  position: absolute;
+  inset: -1px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--n-edge);
+  border-radius: 5px;
+  background: var(--n-100);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity var(--t-1) var(--ease-arrive),
+    transform var(--t-2) var(--ease-arrive);
+}
+.check[aria-checked="true"] .checkFill { opacity: 1; transform: none; }
+.toggles {
+  display: grid;
+  gap: 8px;
+}
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--n-off);
+}
+.toggleOn {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--n-green);
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+.toggle[aria-checked="true"] .toggleOn { opacity: 1; }
+.toggle[aria-checked="true"] .knob { transform: translateX(20px); }
+
+/* Chips (042) */
+.chips {
+  display: grid;
+  gap: 20px;
+}
+.eyeRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.eye {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 15px;
+}
+.eyeFill {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--n-button);
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.eyeText,
+.eyeBold {
+  position: relative;
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.eyeText { font-weight: 300; }
+.eyeBold { font-weight: 700; opacity: 0; }
+.eye[aria-pressed="true"] .eyeFill,
+.eye[aria-pressed="true"] .eyeBold { opacity: 1; }
+.eye[aria-pressed="true"] .eyeText { opacity: 0; }
+.saves {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+.save {
+  background: var(--n-100);
+  color: var(--n-orange);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform var(--t-1) var(--ease-arrive);
+}
+.save:active { transform: scale(0.97); }
+.save[data-size="l"] { height: 46px; padding: 0 24px; border-radius: 14px; font-size: 17px; }
+.save[data-size="m"] { height: 36px; padding: 0 18px; border-radius: 999px; font-size: 16px; }
+.save[data-size="s"] { height: 29px; padding: 0 14px; border-radius: 999px; font-size: 14px; }
+
+/* Tips (048, the hero video): an icon disc over a bubble with a tail */
+.tips {
+  display: grid;
+  gap: 24px;
+}
+.tip {
+  position: relative;
+  padding-top: 13px;
+}
+.tipIcon {
+  position: absolute;
+  top: 0;
+  left: 4px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: #fff;
+}
+.tipIcon[data-kind="bulb"] { background: var(--n-green); }
+.tipIcon[data-kind="warn"] { background: var(--n-orange); }
+.tipBubble {
+  position: relative;
+  margin: 0 0 8px;
+  padding: 18px 16px 14px;
+  border-radius: 14px;
+  background: var(--n-150);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+.tipBubble b { font-weight: 700; }
+.tipBubble::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 30px;
+  width: 14px;
+  height: 14px;
+  border-radius: 0 0 4px;
+  background: inherit;
+  transform: rotate(45deg);
+}
+
+/* Navigation (042): outline icons at rest, filled for the tab in view */
+.nav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  height: 70px;
+  padding: 0 6px;
+  border-radius: 24px;
+  background: var(--n-nav);
+}
+.navItem {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 6px 0;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.2;
+}
+.navIcon { display: grid; }
+.navOutline,
+.navFilled {
+  display: grid;
+  grid-area: 1 / 1;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.navOutline { opacity: 0.55; }
+.navFilled { opacity: 0; }
+.navLabel {
+  opacity: 0.55;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.navItem[aria-current="page"] .navOutline { opacity: 0; }
+.navItem[aria-current="page"] .navFilled,
+.navItem[aria-current="page"] .navLabel { opacity: 1; }
+.fab {
+  display: grid;
+  justify-self: center;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--n-orange);
+  color: #fff;
+  transition: transform var(--t-1) var(--ease-arrive);
+}
+.fab:active { transform: scale(0.94); }
+
+/* Transaction row (042), the bank's mark left out */
+.tx {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 14px;
+}
+.txDisc {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--n-button);
+}
+.txMain,
+.txSide {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.txSide { justify-items: end; }
+.txName,
+.txAmount {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.txAmount { color: var(--n-green); }
+.txSub {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Sheet header (042) */
+.sheetHead {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 6px 18px 0;
+  background: var(--n-track);
+  font-size: 16px;
+}
+.grabber {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--n-off);
+  transform: translateX(-50%);
+}
+.sheetCancel,
+.sheetSave {
+  color: var(--n-orange);
+  transition: transform var(--t-1) var(--ease-arrive);
+}
+.sheetCancel { font-weight: 300; }
+.sheetSave { font-weight: 700; }
+.sheetCancel:active,
+.sheetSave:active { transform: scale(0.96); }
+
+/* Sort and Status (042, 048): radio lists */
+.list { display: grid; }
+.listRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 34px;
+  border-radius: 2px;
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.3;
+  text-align: left;
+}
+.listText {
+  min-width: 0;
+  text-wrap: balance;
+}
+
+/* Calendar (042): a tap moves an outline to the day; Done slides the
+   selected disc after it */
+.cal {
+  padding: 16px 12px 12px;
+  border-radius: 20px;
+  background: var(--n-field);
+  color: #fff;
+}
+.calHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px 12px;
+}
+.calMonth {
+  font-size: 16px;
+  font-weight: 500;
+}
+.calWeek {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  padding-bottom: 6px;
+  color: var(--n-500);
+  font-size: 11.5px;
+  text-align: center;
+}
+.calGrid {
+  --cal-row: 36px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-auto-rows: var(--cal-row);
+}
+.calSel,
+.calPick {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / 7);
+  height: var(--cal-row);
+  transform: translate(calc(var(--col) * 100%), calc(var(--row) * 100%));
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+.calSel::before,
+.calPick::before {
+  content: "";
+  position: absolute;
+  inset: 2px 3px;
+  border-radius: 999px;
+  background: var(--n-button);
+}
+.calPick::before {
+  border: 1px solid var(--n-500);
+  background: none;
+}
+.calPick {
+  opacity: 0;
+  transition:
+    transform var(--t-2) var(--ease-arrive),
+    opacity var(--t-1) var(--ease-arrive);
+}
+.calPick[data-on="true"] { opacity: 1; }
+.calDay {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+}
+.done {
+  width: 100%;
+  height: 42px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: var(--n-button);
+  color: var(--n-orange);
+  font-size: 16px;
+  font-weight: 500;
+  transition: transform var(--t-1) var(--ease-arrive);
+}
+.done:active { transform: scale(0.98); }
+
+/* The site's focus ring (1px ink, 3px off) keeps each control's own
+   shape: the banded pages' ring rule squares corners, so the product's
+   pills, discs and cards restate theirs here. A disc's selection ring
+   sits 3px off the swatch, so its focus ring rounds the whole control,
+   swatch and label, a step further out. */
+.root .disc:focus-visible {
+  outline-offset: 7px;
+  border-radius: 999px;
+}
+.root .disc:focus-visible .dlab { color: #fff; }
+.root .stepRow:focus-visible,
+.root .segOpt:focus-visible,
+.root .toggle:focus-visible,
+.root .eye:focus-visible,
+.root .calDay:focus-visible,
+.root .done:focus-visible,
+.root .save[data-size="m"]:focus-visible,
+.root .save[data-size="s"]:focus-visible { border-radius: 999px; }
+.root .radio:focus-visible,
+.root .fab:focus-visible { border-radius: 50%; }
+.root .check:focus-visible { border-radius: 5px; }
+.root .save[data-size="l"]:focus-visible { border-radius: 14px; }
+.root .navItem:focus-visible { border-radius: 12px; }
+.root .faceCard:focus-visible { border-radius: 20px; }
+
+/* ── Entrance: once, on view; each piece steps in 60ms after the last ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] .step { opacity: 0; }
+  .root[data-in="true"] .step {
+    animation: nsStep var(--t-3) var(--ease-arrive) calc(var(--i, 0) * var(--step)) backwards;
+  }
+}
+@keyframes nsStep {
+  from { opacity: 0; transform: translateY(var(--rise)); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Reduced motion: nothing slides, rises or presses; state changes are
+   160ms fades */
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .root[data-tab="0"] .panel[data-k="0"],
+  .root[data-tab="1"] .panel[data-k="1"],
+  .root[data-tab="2"] .panel[data-k="2"] {
+    transform: none;
+    transition:
+      opacity var(--t-1) var(--ease-arrive),
+      visibility 0s linear var(--t-1);
+  }
+  .root[data-tab="0"] .panel[data-k="0"],
+  .root[data-tab="1"] .panel[data-k="1"],
+  .root[data-tab="2"] .panel[data-k="2"] {
+    transition: opacity var(--t-1) var(--ease-arrive), visibility 0s;
+  }
+  .tab,
+  .fill,
+  .stepPill,
+  .segThumb,
+  .knob,
+  .calSel,
+  .calPick,
+  .radioDot,
+  .checkFill,
+  .save,
+  .fab,
+  .done,
+  .sheetCancel,
+  .sheetSave { transition: opacity var(--t-1) var(--ease-arrive); }
+  .tab:active,
+  .save:active,
+  .fab:active,
+  .done:active,
+  .sheetCancel:active,
+  .sheetSave:active { transform: none; }
+  .lrow,
+  .faceRow { transition: opacity var(--t-1) var(--ease-arrive); }
+}

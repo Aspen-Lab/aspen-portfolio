@@ -1,0 +1,170 @@
+/* One split card: Group A on the slab, Group B on a sheet over two back
+   sheets. One 1px edge between them, flat fills, square marks, no
+   gradient. The accent fills B's letter block and nothing else. Type is
+   the ramp (.t-label, .t-subhead, .t-small). */
+.fig { margin: 0; }
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 768px) {
+  .split { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── A: the slab ── on a phone it sits on top and B's sheet draws the
+   edge between them; from 768px it is the left half, the same height as
+   B's sheet (the stack's 16px margin is matched below it) */
+.a.a {
+  min-width: 0;
+  margin: 0 6px 0 0;
+  padding: 24px;
+  border-bottom: 0;
+  border-radius: 2px 2px 0 0;
+}
+@media (min-width: 640px) {
+  .a.a { margin-right: 9px; }
+}
+@media (min-width: 768px) {
+  .a.a {
+    margin: 0 0 16px;
+    padding: 40px;
+    border-bottom: 1px solid var(--edge);
+    border-right: 0;
+    border-radius: 2px 0 0 2px;
+  }
+}
+
+/* ── B: the front sheet, its two back sheets showing under it ── */
+.bStack {
+  display: grid;
+  min-width: 0;
+}
+.b.b {
+  display: grid;
+  padding: 24px;
+  border-radius: 0 0 2px 2px;
+}
+@media (min-width: 768px) {
+  .b.b {
+    padding: 40px;
+    border-radius: 0 2px 2px 0;
+  }
+}
+
+/* ── One group ── */
+.side {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+@media (min-width: 640px) {
+  .head { gap: 20px; }
+}
+
+/* The letter block: A outlined in grey, B solid accent (the focus) */
+.letter {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #6b6b71;
+  border-radius: 2px;
+  color: #a0a0a5;
+  font-family: var(--font-sans);
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 640px) {
+  .letter {
+    width: 64px;
+    height: 64px;
+    font-size: 40px;
+  }
+}
+.letter[data-front="true"] {
+  border-color: var(--accent, #f4f4f2);
+  background: var(--accent, #f4f4f2);
+  color: #0a0a0a;
+}
+
+.names { min-width: 0; }
+.label { margin: 0; }
+.title { margin: 6px 0 0; }
+[data-side="A"] .title { color: #a0a0a5; }
+
+.rows {
+  display: grid;
+  gap: 12px;
+  margin: 32px 0 40px;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 640px) {
+  .rows { margin-top: 36px; }
+}
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  color: #d2d2d0;
+}
+[data-side="A"] .row { color: #a0a0a5; }
+/* A 6px square, centred on the first line */
+.sq {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-top: calc((1lh - 6px) / 2);
+  background: #f4f4f2;
+}
+[data-side="A"] .sq { background: #6b6b71; }
+
+/* The foot: a hairline, then who the group is served by */
+.tag {
+  margin: auto 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-line, #252528);
+}
+[data-side="B"] .tag { color: #f4f4f2; }
+
+/* Chinese is held word by word, so no line ends inside a word */
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .fig { line-break: strict; }
+
+/* ── Once, on view: A rises, B follows, B's block lands last ── */
+@media (prefers-reduced-motion: no-preference) {
+  .fig[data-in="false"] :is(.a, .bStack),
+  .fig[data-in="false"] .letter[data-front="true"] { opacity: 0; }
+  .fig[data-in="true"] .a {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) backwards;
+  }
+  .fig[data-in="true"] .bStack {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) 120ms backwards;
+  }
+  .fig[data-in="true"] .letter[data-front="true"] {
+    animation: land var(--t-2, 360ms) var(--ease-arrive) 560ms backwards;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+}
+@keyframes land {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}

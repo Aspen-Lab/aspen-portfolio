@@ -1,0 +1,234 @@
+/* The loop sheet (board 040). One sheet on the global stack; the switch
+   on top; the diagram in a frame of units scaled by container width.
+   Chips are raised planes (S6 ink), panels are tiles with an S7 head,
+   lines are 1px #6b6b71 (solid: the flow) or dashed #8a8a90 (user tests,
+   revisions). The one accent: the user-flow chip's 1.5px outline, In
+   reality only. */
+.sheet { padding: 20px; }
+@media (min-width: 640px) { .sheet { padding: 32px; } }
+@media (min-width: 1024px) { .sheet { padding: 40px; } }
+
+.top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+}
+@media (min-width: 640px) { .top { margin-bottom: 40px; } }
+
+/* ── Frames ── the stage is the container the two frames query; each
+   frame is a container too, so its marks read 1 unit = --u. */
+.stage { container-type: inline-size; }
+.frame {
+  position: relative;
+  width: 100%;
+  container-type: inline-size;
+  /* The Imagine-only hi-fi chip rests off the frame's edge In reality */
+  overflow: clip;
+  overflow-clip-margin: 8px;
+}
+.frame[data-f="desk"] {
+  display: none;
+  aspect-ratio: 1004 / 452;
+  --u: calc(100cqw / 1004);
+}
+.frame[data-f="phone"] {
+  max-width: 420px;
+  margin-inline: auto;
+  aspect-ratio: 320 / 666;
+  --u: calc(100cqw / 320);
+}
+@container (min-width: 800px) {
+  .frame[data-f="desk"] { display: block; }
+  .frame[data-f="phone"] { display: none; }
+}
+
+.group,
+.layer {
+  position: absolute;
+  inset: 0;
+}
+.svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.abs {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w, 0) * var(--u));
+  height: calc(var(--h, 0) * var(--u));
+}
+.pinWrap {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  translate: -50% -50%;
+  white-space: nowrap;
+}
+.pinWrap[data-a="l"] { translate: 0 -50%; }
+.label { display: block; }
+
+/* ── Marks ── */
+.chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 8px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  color: #f4f4f2;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.chip[data-muted] { color: var(--grey-1); }
+
+/* A panel: the tile under its iterations. The lo-fi panel is built of
+   parts so Imagine can shorten it by transform: a fill carrying the two
+   edges along the axis it grows on (they keep 1px when it scales), the
+   near edge, and the far edge riding with the style guide. */
+.fill {
+  background: var(--tile);
+  transform-origin: 0 0;
+  transition: transform var(--t-3) var(--ease-arrive);
+}
+.fill[data-axis="x"] {
+  border-top: 1px solid var(--edge);
+  border-bottom: 1px solid var(--edge);
+}
+.fill[data-axis="y"] {
+  border-left: 1px solid var(--edge);
+  border-right: 1px solid var(--edge);
+}
+.edgeV {
+  width: 1px;
+  background: var(--edge);
+}
+.edgeH {
+  height: 1px;
+  background: var(--edge);
+}
+.edgeV[data-far] { translate: -1px 0; }
+.edgeH[data-far] { translate: 0 -1px; }
+.panel {
+  border: 1px solid var(--edge);
+  background: var(--tile);
+}
+
+.line {
+  fill: none;
+  stroke: var(--grey-2);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.dash {
+  fill: none;
+  stroke: var(--tick);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  shape-rendering: crispEdges;
+}
+.head { fill: var(--grey-2); }
+.headDash { fill: var(--tick); }
+
+/* The focus: every revision returns to the user flow */
+.ring {
+  border-radius: 2px;
+  outline: 1.5px solid var(--accent);
+  outline-offset: -1px;
+  pointer-events: none;
+}
+
+/* ── States ── Imagine moves the shared marks by transform: the first row
+   to the frame's centre, the style guide and the panel's far edge back,
+   the panel's fill shorter. */
+.group { transition: transform var(--t-3) var(--ease-arrive); }
+.sheet[data-mode="imagine"] .row {
+  transform: translate(calc(var(--dx) * var(--u)), calc(var(--dy) * var(--u)));
+}
+.sheet[data-mode="imagine"] .sg {
+  transform: translate(calc(var(--sx) * var(--u)), calc(var(--sy) * var(--u)));
+}
+.sheet[data-mode="imagine"] .fill[data-axis="x"] { transform: scaleX(var(--s)); }
+.sheet[data-mode="imagine"] .fill[data-axis="y"] { transform: scaleY(var(--s)); }
+
+/* Marks of one state: In reality's step in after the move has begun,
+   a --step apart; Imagine's come back once the row has moved. Short
+   marks (chips) also grow from .94. */
+.r {
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.sheet[data-mode="reality"] .r {
+  opacity: 1;
+  transition: opacity var(--t-2) var(--ease-arrive) calc(220ms + var(--k, 0) * var(--step));
+}
+.pop {
+  transform: scale(0.94);
+  transition:
+    opacity var(--t-1) var(--ease-arrive),
+    transform var(--t-1) var(--ease-arrive);
+}
+.sheet[data-mode="reality"] .pop {
+  transform: none;
+  transition:
+    opacity var(--t-2) var(--ease-arrive) calc(220ms + var(--k, 0) * var(--step)),
+    transform var(--t-2) var(--ease-arrive) calc(220ms + var(--k, 0) * var(--step));
+}
+.i {
+  opacity: 1;
+  transition: opacity var(--t-2) var(--ease-arrive) 260ms;
+}
+.sheet[data-mode="reality"] .i {
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+
+/* ── Entrance ── once, on view: the shared marks rise into place in
+   reading order while In reality's own marks step in, a --step apart */
+@media (prefers-reduced-motion: no-preference) {
+  .sheet[data-mode="reality"]:not([data-lit="true"]) .r { opacity: 0; }
+  .sheet[data-mode="reality"]:not([data-lit="true"]) .pop { transform: scale(0.94); }
+}
+.e {
+  opacity: 0;
+  transform: translateY(var(--rise));
+  transition:
+    opacity var(--t-3) var(--ease-arrive) calc(var(--e, 0) * var(--step)),
+    transform var(--t-3) var(--ease-arrive) calc(var(--e, 0) * var(--step));
+}
+.sheet[data-lit="true"] .e {
+  opacity: 1;
+  transform: none;
+}
+
+/* Reduced motion: no entrance, no move; a switch is an instant swap of
+   places with a 160ms fade of the marks that change */
+@media (prefers-reduced-motion: reduce) {
+  .e,
+  .sheet[data-lit="true"] .e {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .group,
+  .fill { transition: none; }
+  .pop,
+  .sheet[data-mode="reality"] .pop { transform: none; }
+  .r,
+  .i,
+  .pop,
+  .sheet[data-mode="reality"] .r,
+  .sheet[data-mode="reality"] .i,
+  .sheet[data-mode="reality"] .pop { transition: opacity var(--t-1) var(--ease-arrive); }
+}

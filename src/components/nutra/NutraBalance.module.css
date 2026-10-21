@@ -1,0 +1,287 @@
+/* The balance (board 039) on the chart sheet: raised pills for the poles,
+   a 1px beam, raised cells for the traits hung on 1px rails. Lines are
+   grey-2; a pointed-at trait fades its rail, arrow and pole edge to ink
+   (opacity only). The knob is the one accent mark. Product specimens
+   inside the cells keep the app's own colours and type. */
+
+.sheet.sheet { padding: 24px 20px 28px; }
+@media (min-width: 640px) {
+  .sheet.sheet { padding: 40px; }
+}
+.title { margin: 0; }
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .sheet { line-break: strict; }
+
+/* ── The scale: pole, beam with the knob, pole ── */
+.scale {
+  --pole: 112px;
+  display: grid;
+  grid-template-columns: var(--pole) minmax(0, 1fr) var(--pole);
+  align-items: center;
+  margin-top: 56px;
+}
+@media (min-width: 640px) {
+  .scale { --pole: 176px; margin-top: 64px; }
+}
+.pole {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  color: #f4f4f2;
+  white-space: nowrap;
+}
+.pole::after,
+.trait::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid #f4f4f2;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.sheet[data-pole="serious"] .pole[data-p="serious"]::after,
+.sheet[data-pole="fun"] .pole[data-p="fun"]::after {
+  opacity: 1;
+}
+
+.beam {
+  position: relative;
+  height: 40px;
+}
+.beam::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: #6b6b71;
+}
+.balance {
+  position: absolute;
+  left: 50%;
+  bottom: calc(50% + 22px);
+  color: #a0a0a5;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.run {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+/* The focus mark: a solid accent square in a 1px ink ring 4px off */
+.knob {
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  outline: 1px solid #f4f4f2;
+  outline-offset: 4px;
+}
+/* Once, on view: from the Seriousness end to the centre */
+@media (prefers-reduced-motion: no-preference) {
+  .sheet[data-in="false"] .run { transform: translateX(calc(-50% + 20px)); }
+  .sheet[data-in="true"] .run {
+    transition: transform var(--t-3) var(--ease-arrive) 160ms;
+  }
+}
+
+/* ── The traits, hung on rails ── */
+.groups {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+.group {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0 22px;
+  list-style: none;
+}
+@media (min-width: 1024px) {
+  .groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 48px;
+  }
+  .group[data-p="serious"] { padding: 0 0 0 22px; }
+  .group[data-p="fun"] { padding: 0 22px 0 0; }
+}
+
+.trait {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 18px 20px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (min-width: 640px) {
+  .trait {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 108px;
+    padding: 18px 24px;
+  }
+}
+.trait:focus { outline: none; }
+.trait:focus-visible {
+  outline: 1px solid #f4f4f2;
+  outline-offset: 3px;
+}
+.sheet[data-trait="dark"] .trait[data-t="dark"]::after,
+.sheet[data-trait="type"] .trait[data-t="type"]::after,
+.sheet[data-trait="color"] .trait[data-t="color"]::after,
+.sheet[data-trait="art"] .trait[data-t="art"]::after {
+  opacity: 0.4;
+}
+.name { color: #f4f4f2; }
+
+/* The rail: each cell draws the stretch from the cell (or pole) above
+   down to itself, the last only to its middle; then its arrow in */
+.seg,
+.seg::after,
+.group[data-p="serious"]::before,
+.group[data-p="serious"]::after {
+  position: absolute;
+  width: 1px;
+  background: #6b6b71;
+}
+.seg {
+  top: -13px;
+  bottom: -1px;
+}
+.trait:first-child .seg { top: -25px; }
+.trait:last-child .seg { bottom: 50%; }
+.seg::after {
+  content: "";
+  inset: 0;
+  width: auto;
+  background: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.group[data-p="serious"] .seg { left: -13px; }
+.group[data-p="fun"] .seg { right: -13px; }
+
+.stub {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 10px;
+  margin-top: -5px;
+}
+.stub svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.stub svg[data-k="g"] { color: #6b6b71; }
+.stub svg[data-k="k"] {
+  color: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.group[data-p="serious"] .stub { left: -13px; }
+.group[data-p="fun"] .stub {
+  right: -13px;
+  transform: scaleX(-1);
+}
+
+/* Phone and tablet: the Fun rail runs down the right edge, past the
+   Seriousness group, from the Fun pole */
+.group[data-p="serious"]::before,
+.group[data-p="serious"]::after {
+  content: "";
+  right: 10px;
+  top: -25px;
+  bottom: -25px;
+}
+.group[data-p="serious"]::after {
+  background: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+@media (min-width: 1024px) {
+  .group[data-p="serious"]::before,
+  .group[data-p="serious"]::after { content: none; }
+}
+
+/* A pointed-at trait: its pole's rail and its own arrow in ink */
+.sheet[data-pole="serious"] .group[data-p="serious"] .seg::after,
+.sheet[data-pole="fun"] .group[data-p="fun"] .seg::after,
+.sheet[data-pole="fun"] .group[data-p="serious"]::after,
+.sheet[data-trait="dark"] .trait[data-t="dark"] .stub svg[data-k="k"],
+.sheet[data-trait="type"] .trait[data-t="type"] .stub svg[data-k="k"],
+.sheet[data-trait="color"] .trait[data-t="color"] .stub svg[data-k="k"],
+.sheet[data-trait="art"] .trait[data-t="art"] .stub svg[data-k="k"] {
+  opacity: 1;
+}
+
+/* ── Specimens: the product's own tokens, type and art ── */
+.swatches {
+  display: flex;
+  gap: 16px;
+}
+.swatch {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+.swatch i {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+}
+.swatch i[data-round="true"] { border-radius: 50%; box-shadow: none; }
+.hex { color: #8a8a90; }
+
+.faces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+}
+.face {
+  display: grid;
+  gap: 6px;
+  color: #ffffff;
+}
+.aa {
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.faceName {
+  color: #a0a0a5;
+  font-size: 15px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* The acorn at 64px: well under half the cut-out's pixels */
+.acorn.acorn {
+  display: block;
+  width: auto;
+  height: 64px;
+  margin: -6px 0;
+}

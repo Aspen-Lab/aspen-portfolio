@@ -1,0 +1,584 @@
+/* The journey band, before (s-03) and after (s-11): one sheet on two back
+   sheets, five stage columns over a "Feelings & thought" band, a slab
+   for the reading under it. Hairline columns, flat fills, square marks,
+   no gradient. The curve is ink; the accent fills the one focus square
+   of each state (the lowest point; Rewards). */
+.root {
+  --lead: 40px;
+  --px: 12px;
+  --band: 150px;
+  --plot-top: 40px;
+  --plot-bottom: 14px;
+  margin: 0;
+}
+@media (min-width: 640px) {
+  .root {
+    --lead: 22px;
+    --px: 24px;
+    --band: 200px;
+    --plot-top: 48px;
+    --plot-bottom: 18px;
+  }
+}
+
+.sheet.sheet { padding: 0; }
+
+/* ── The grid: stage row + band, five columns inside the side padding ── */
+.grid {
+  position: relative;
+  padding: 0 var(--px);
+}
+.track {
+  position: absolute;
+  inset: 0 var(--px);
+  pointer-events: none;
+}
+.rule {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--k) * 20%);
+  width: 1px;
+  margin-left: -0.5px;
+  background: var(--color-line, #252528);
+}
+/* The column in view sits on the raised plane, stage cell and band */
+.hi {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 20%;
+  background: var(--raised, #1e1e21);
+  transition: transform var(--t-2, 360ms) var(--ease-arrive);
+}
+/* The grid's side padding sits outside the five columns: at the first and
+   last stage the raised plane runs on to the sheet's edge */
+.hi::before,
+.hi::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--px);
+  background: inherit;
+  opacity: 0;
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
+}
+.hi::before { right: 100%; }
+.hi::after { left: 100%; }
+.root[data-show="0"] .hi::before,
+.root[data-show="4"] .hi::after { opacity: 1; }
+.root[data-show="1"] .hi { transform: translateX(100%); }
+.root[data-show="2"] .hi { transform: translateX(200%); }
+.root[data-show="3"] .hi { transform: translateX(300%); }
+.root[data-show="4"] .hi { transform: translateX(400%); }
+
+/* ── Stage row ── */
+.stages {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* The rule under the row runs the sheet's full width */
+.stages::after {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--px));
+  right: calc(-1 * var(--px));
+  bottom: 0;
+  height: 1px;
+  background: var(--color-line, #252528);
+}
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  height: 44px;
+  padding: 0 8px;
+  color: #f4f4f2;
+  text-align: left;
+}
+@media (min-width: 768px) {
+  .stage {
+    justify-content: flex-start;
+    height: auto;
+    padding: 20px 16px 18px;
+  }
+}
+.stageNum { flex: none; }
+.stageName {
+  display: none;
+  max-width: 100%;
+  color: #f4f4f2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (min-width: 768px) {
+  .stageName { display: block; }
+}
+
+/* Interactive stages: the one in view reads full, the rest step back;
+   the committed one carries a 2px ink rule on the row's edge */
+.root[data-stage] .stageNum,
+.root[data-stage] .stageName {
+  opacity: var(--dim, 0.45);
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.root[data-show="0"] .stage[data-k="0"] :is(.stageNum, .stageName),
+.root[data-show="1"] .stage[data-k="1"] :is(.stageNum, .stageName),
+.root[data-show="2"] .stage[data-k="2"] :is(.stageNum, .stageName),
+.root[data-show="3"] .stage[data-k="3"] :is(.stageNum, .stageName),
+.root[data-show="4"] .stage[data-k="4"] :is(.stageNum, .stageName) { opacity: 1; }
+.stage[data-k]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 2px;
+  background: #f4f4f2;
+  transform: scaleX(0);
+  transition: transform var(--t-2, 360ms) var(--ease-arrive);
+}
+.stage[data-on="true"]::after { transform: none; }
+.stage[data-k]:active { transform: translateY(1px); }
+.grid[data-live] { cursor: pointer; }
+
+/* ── The band ── */
+.band {
+  position: relative;
+  height: var(--band);
+}
+.bandHead {
+  position: absolute;
+  top: 14px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+@media (min-width: 640px) {
+  .bandHead {
+    top: 18px;
+    left: 16px;
+    right: 16px;
+  }
+}
+.bandHead > :global(.t-label) { white-space: nowrap; }
+
+/* Under 768px the stage row is indices only: the name in view prints here */
+.phoneNames { display: grid; }
+@media (min-width: 768px) {
+  .phoneNames { display: none; }
+}
+.phoneName {
+  grid-area: 1 / 1;
+  justify-self: end;
+  color: #f4f4f2;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.root[data-show="0"] .phoneName[data-k="0"],
+.root[data-show="1"] .phoneName[data-k="1"],
+.root[data-show="2"] .phoneName[data-k="2"],
+.root[data-show="3"] .phoneName[data-k="3"],
+.root[data-show="4"] .phoneName[data-k="4"] { opacity: 1; }
+
+/* The plot: level 0 at its bottom edge, 1 at its top */
+.plot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--plot-top);
+  bottom: var(--plot-bottom);
+}
+.svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
+}
+.poly {
+  fill: none;
+  stroke: #f4f4f2;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.quiet .poly {
+  stroke: var(--grey-2, #6b6b71);
+  stroke-width: 1;
+}
+
+/* The reveal window: 8px of slack above and below keeps the stroke whole */
+.reveal {
+  position: absolute;
+  inset: -8px 0;
+  overflow: hidden;
+}
+.revealInner {
+  position: absolute;
+  inset: 8px 0;
+}
+
+/* ── The lowest point: the figure's focus ── */
+.focus {
+  position: absolute;
+  left: calc(var(--u) * 100%);
+  top: calc((1 - var(--l)) * 100%);
+  width: 0;
+  height: 0;
+}
+.focusSq {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  background: var(--accent, #f4f4f2);
+}
+/* On a phone the tag stands higher, clear of the fall into Commitment */
+.focusLeader {
+  position: absolute;
+  left: 0;
+  bottom: 9px;
+  width: 1px;
+  height: var(--lead);
+  background: rgb(244 244 242 / 55%);
+}
+.focusTag {
+  position: absolute;
+  left: 0;
+  bottom: calc(var(--lead) + 9px);
+  transform: translateX(-50%);
+}
+
+/* ── The reading, on the slab under the sheet: right edge on the front
+   sheet's, clear of the back sheets (the stack's own margin collapses
+   into this one) ── */
+.readout.readout {
+  display: grid;
+  margin: 22px 6px 0 0;
+  padding: 24px 20px;
+}
+@media (min-width: 640px) {
+  .readout.readout {
+    margin: 28px 9px 0 0;
+    padding: 36px 40px;
+  }
+}
+.read {
+  grid-area: 1 / 1;
+  display: grid;
+  align-content: start;
+  gap: 24px;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--t-1, 160ms) var(--ease-arrive),
+    visibility 0s linear var(--t-1, 160ms);
+}
+@media (min-width: 768px) {
+  .read {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: 56px;
+  }
+}
+.root[data-show="0"] .read[data-k="0"],
+.root[data-show="1"] .read[data-k="1"],
+.root[data-show="2"] .read[data-k="2"],
+.root[data-show="3"] .read[data-k="3"],
+.root[data-show="4"] .read[data-k="4"] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--t-2, 360ms) var(--ease-arrive) 40ms,
+    visibility 0s;
+}
+.readLabel { margin: 0 0 8px; }
+.painText {
+  margin: 0;
+  text-wrap: pretty;
+}
+.readMore {
+  display: grid;
+  align-content: start;
+  gap: 20px;
+  margin: 0;
+}
+.readMore dd { margin: 0; }
+.thought.thought {
+  max-width: none;
+  color: #f4f4f2;
+}
+.thought,
+.action,
+.goal,
+.afterLead,
+.afterNote { text-wrap: pretty; }
+.action { color: #d2d2d0; }
+.goal { color: #a0a0a5; }
+
+/* ────────────── After: board 036, two lines, one emphasised ────────────── */
+.after {
+  --band: 170px;
+  --plot-top: 40px;
+  --plot-bottom: 16px;
+}
+@media (min-width: 640px) {
+  .after {
+    --band: 220px;
+    --plot-top: 52px;
+    --plot-bottom: 20px;
+  }
+}
+
+/* The After | Before switch (the shared Seg) sits above the sheet */
+.segmented { margin-bottom: 16px; }
+
+/* The stage row is labels only here */
+.after .stage {
+  cursor: default;
+}
+.after .stageName { color: #d2d2d0; }
+
+/* A stage's two names, the revised map's and the first map's, in one
+   cell: the view on show prints its own (opacity only) */
+.twin.twin { display: none; }
+@media (min-width: 768px) {
+  .twin.twin { display: grid; }
+}
+.phoneKeyName.twin { display: grid; }
+.twin > span {
+  grid-area: 1 / 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
+}
+.after[data-view="after"] .twin > [data-v="before"],
+.after[data-view="before"] .twin > [data-v="after"] { opacity: 0; }
+
+/* The two lines' emphasis: After → the after line in ink, the before
+   line quiet; Before → the reverse. Opacity only. */
+.after[data-view="after"] :is(.quiet.la, .ink.lb),
+.after[data-view="before"] :is(.ink.la, .quiet.lb) { opacity: 0; }
+.beforeLine {
+  position: absolute;
+  inset: 0;
+}
+
+/* Mascot shows up: 8px squares, ink outline, the sheet inside */
+.node {
+  position: absolute;
+  left: calc(var(--u) * 100% - 4px);
+  top: calc((1 - var(--l)) * 100% - 4px);
+  width: 8px;
+  height: 8px;
+  border: 1px solid #f4f4f2;
+  background: var(--sheet, #17171a);
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
+}
+.after[data-view="before"] .node { opacity: var(--dim, 0.45); }
+
+/* Rewards: the After state's one focus. In Before it stays as a grey
+   outline, so nothing moves when the emphasis swaps. */
+.reward {
+  position: absolute;
+  left: calc(var(--u) * 100%);
+  top: calc((1 - var(--l)) * 100%);
+  width: 0;
+  height: 0;
+}
+.rewardSq,
+.rewardFocus {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+}
+.rewardSq {
+  border: 1px solid var(--grey-2, #6b6b71);
+  background: var(--sheet, #17171a);
+}
+.rewardFocus {
+  background: var(--accent, #f4f4f2);
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
+}
+.rewardLeader {
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 1px;
+  height: 20px;
+  background: rgb(244 244 242 / 55%);
+}
+.rewardTag {
+  position: absolute;
+  left: 0;
+  top: 29px;
+  transform: translateX(-50%);
+}
+.rewardLeader,
+.rewardTag { transition: opacity var(--t-2, 360ms) var(--ease-arrive); }
+.after[data-view="before"] :is(.rewardFocus, .rewardLeader, .rewardTag) { opacity: 0; }
+
+/* The legend, under the band */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 0;
+  padding: 16px 20px 18px;
+  border-top: 1px solid var(--color-line, #252528);
+  list-style: none;
+}
+@media (min-width: 640px) {
+  .legend { padding: 18px 40px 20px; }
+}
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #a0a0a5;
+}
+.swatch {
+  flex: none;
+  width: 12px;
+  height: 2px;
+  background: #f4f4f2;
+}
+.after[data-view="after"] .legendItem[data-line="before"] .swatch,
+.after[data-view="before"] .legendItem[data-line="after"] .swatch {
+  background: var(--grey-2, #6b6b71);
+}
+.after[data-view="after"] .legendItem[data-line="after"],
+.after[data-view="before"] .legendItem[data-line="before"] { color: #f4f4f2; }
+.legendNode { display: flex; }
+.nodeSwatch {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #f4f4f2;
+}
+
+/* A phone's key to the stage indices */
+.phoneKey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0;
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--color-line, #252528);
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .phoneKey { display: none; }
+}
+.phoneKeyItem {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.phoneKeyName { color: #d2d2d0; }
+
+/* The reading */
+.afterRead.afterRead {
+  margin: 22px 6px 0 0;
+  padding: 24px 20px;
+}
+@media (min-width: 640px) {
+  .afterRead.afterRead {
+    margin: 28px 9px 0 0;
+    padding: 36px 40px;
+  }
+}
+.afterLead {
+  max-width: 40em;
+  margin: 0;
+}
+.afterNote {
+  margin: 12px 0 0;
+  color: #a0a0a5;
+}
+
+/* Chinese is held word by word, so no line ends inside a word */
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+/* ── Entrance, once ──
+   Before: the stage labels, then the curve sweeps in left to right, then
+   the lowest point and its tag.
+   After: the before line fades in, the after line sweeps in, the nodes
+   land one by one, then the Rewards tag. */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] :is(.stage, .bandHead, .focus, .node, .reward, .beforeLine) {
+    opacity: 0;
+  }
+  .root[data-in="false"] .reveal { transform: translateX(-100%); }
+  .root[data-in="false"] .revealInner { transform: translateX(100%); }
+
+  .root[data-in="true"] :is(.stage, .bandHead) {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) backwards;
+  }
+  .root[data-in="true"] .reveal {
+    animation: winOpen var(--t-3, 720ms) var(--ease-arrive) 240ms backwards;
+  }
+  .root[data-in="true"] .revealInner {
+    animation: winHold var(--t-3, 720ms) var(--ease-arrive) 240ms backwards;
+  }
+  .root[data-in="true"] .focus {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) 900ms backwards;
+  }
+
+  .after[data-in="true"] .beforeLine {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) 120ms backwards;
+  }
+  .after[data-in="true"] .reveal,
+  .after[data-in="true"] .revealInner { animation-delay: 420ms; }
+  .after[data-in="true"] .node {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) calc(1000ms + var(--k, 0) * var(--step, 60ms)) backwards;
+  }
+  .after[data-in="true"] .reward {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) 1260ms backwards;
+  }
+}
+@keyframes fade {
+  from { opacity: 0; }
+}
+@keyframes winOpen {
+  from { transform: translateX(-100%); }
+}
+@keyframes winHold {
+  from { transform: translateX(100%); }
+}
+
+/* Reduced motion: the final frame; a swap is a fade, nothing slides */
+@media (prefers-reduced-motion: reduce) {
+  .hi,
+  .stage[data-k]::after { transition: none; }
+  .hi::before,
+  .hi::after,
+  .twin > span { transition-duration: var(--t-1, 160ms); }
+  .stage[data-k]:active { transform: none; }
+}

@@ -1,0 +1,254 @@
+/* Problem → direction on one chart sheet (global .paper-stack > .paper).
+   Three rows on #252528 hairlines; the accent fills only row 02's index
+   square. Flat fills, 1px lines, no gradient. Type from the ramp: S4
+   titles, S6 sentences, S7 labels. */
+.root {
+  margin: 0;
+}
+
+.sheet {
+  padding: 20px;
+}
+@media (min-width: 640px) {
+  .sheet { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .sheet { padding: 40px; }
+}
+
+/* The four columns a row uses from 1024px: index, problem, connector,
+   direction. The head row sits on the same tracks. */
+.head,
+.rowIn {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  column-gap: 16px;
+}
+@media (min-width: 1024px) {
+  .head,
+  .rowIn {
+    grid-template-columns: 28px minmax(0, 1fr) 120px minmax(0, 1fr);
+    column-gap: 24px;
+  }
+}
+
+/* ── Head: 'Problem' over the problem, 'Direction' over the direction.
+   A phone reads them as one line, "Problem → Direction". ── */
+.head {
+  display: flex;
+  gap: 10px;
+  padding: 0 0 16px 44px;
+}
+@media (min-width: 1024px) {
+  .head {
+    display: grid;
+    column-gap: 24px;
+    padding-left: 0;
+  }
+  .headProblem { grid-column: 2; }
+  .headArrow { display: none; }
+  .headDirection { grid-column: 4; }
+}
+
+/* ── Rows ── */
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid #252528;
+}
+.row {
+  position: relative;
+  padding: 24px 0;
+  border-top: 1px solid #252528;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+@media (min-width: 1024px) {
+  .row { padding: 32px 0; }
+}
+
+/* Another row pointed at, focused or tapped: this one steps back */
+.root[data-row] .row { opacity: var(--dim, 0.45); }
+.root[data-row="0"] .row[data-i="0"],
+.root[data-row="1"] .row[data-i="1"],
+.root[data-row="2"] .row[data-i="2"] { opacity: 1; }
+
+.rowIn {
+  align-items: start;
+  grid-template-areas: "idx problem" ". link" ". direction";
+}
+@media (min-width: 1024px) {
+  .rowIn { grid-template-areas: "idx problem link direction"; }
+}
+
+/* The index: a 28px square outlined in grey; row 02's is solid accent */
+.index {
+  grid-area: idx;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #6b6b71;
+  color: #a0a0a5;
+  letter-spacing: 0.04em;
+}
+.row[data-chosen] .index {
+  border-color: var(--accent, #f4f4f2);
+  background: var(--accent, #f4f4f2);
+  color: #0a0a0a;
+}
+
+.problem { grid-area: problem; min-width: 0; }
+.direction { grid-area: direction; min-width: 0; }
+
+/* S4: the title's first line shares the 28px band with the index square
+   and the connector, so all three read on one line */
+.problemTitle,
+.directionTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.problemTitle { color: #d2d2d0; }
+.directionTitle { color: #f4f4f2; }
+@media (max-width: 639px) {
+  .problemTitle,
+  .directionTitle { font-size: 20px; }
+}
+.problemText,
+.directionText {
+  margin: 8px 0 0;
+  max-width: 34rem;
+  text-wrap: pretty;
+}
+.problemText { color: #a0a0a5; }
+.directionText { color: #d2d2d0; }
+
+/* ── The connector: 1px grey with a 6px head, problem → direction. Row
+   02's is ink and carries the boxed tag. Across from 1024px, down on a
+   phone. ── */
+.link {
+  grid-area: link;
+  position: relative;
+  height: 48px;
+  margin: 8px 0;
+  --c: #6b6b71;
+}
+.row[data-chosen] .link { --c: #f4f4f2; }
+.line {
+  position: absolute;
+  top: 0;
+  bottom: 6px;
+  left: 3.5px;
+  width: 1px;
+  background: var(--c);
+  transform-origin: 50% 0;
+}
+.down,
+.right {
+  position: absolute;
+  fill: var(--c);
+}
+.down {
+  bottom: 0;
+  left: 0;
+  width: 8px;
+  height: 6px;
+}
+.right { display: none; }
+.tag {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  margin-top: -3px;
+}
+@media (min-width: 1024px) {
+  .link {
+    height: 28px;
+    margin: 0;
+  }
+  .line {
+    top: 13.5px;
+    bottom: auto;
+    left: 0;
+    right: 6px;
+    width: auto;
+    height: 1px;
+    transform-origin: 0 50%;
+  }
+  .down { display: none; }
+  .right {
+    display: block;
+    top: 10px;
+    right: 0;
+    width: 6px;
+    height: 8px;
+  }
+  .tag {
+    top: 14px;
+    left: 50%;
+    margin-top: 0;
+    transform: translate(calc(-50% - 3px), -50%);
+  }
+}
+
+/* The caption, under the last rule */
+.caption {
+  margin: 16px 0 0;
+  color: #8a8a90;
+  text-wrap: pretty;
+}
+
+/* Chinese is held word by word, so no line ends inside a word */
+.word { white-space: nowrap; }
+.root :lang(zh) { line-break: strict; }
+
+/* ── Entrance, once on view: rows rise 60ms apart; each connector draws
+   from the problem to the direction; its head lands; the tag last.
+   Transform and opacity only. ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root:not([data-lit="true"]) .rowIn {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+  .root:not([data-lit="true"]) .line { transform: scaleY(0); }
+  .root:not([data-lit="true"]) .down,
+  .root:not([data-lit="true"]) .right,
+  .root:not([data-lit="true"]) .tag { opacity: 0; }
+
+  .root[data-lit="true"] .rowIn {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) calc(var(--i) * var(--step, 60ms)) backwards;
+  }
+  .root[data-lit="true"] .line {
+    animation: drawY var(--t-2, 360ms) var(--ease-arrive) calc(260ms + var(--i) * var(--step, 60ms)) backwards;
+  }
+  .root[data-lit="true"] :is(.down, .right) {
+    animation: fade var(--t-1, 160ms) var(--ease-arrive) calc(540ms + var(--i) * var(--step, 60ms)) backwards;
+  }
+  .root[data-lit="true"] .tag {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) 720ms backwards;
+  }
+  @media (min-width: 1024px) {
+    .root:not([data-lit="true"]) .line { transform: scaleX(0); }
+    .root[data-lit="true"] .line { animation-name: drawX; }
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+}
+@keyframes drawX { from { transform: scaleX(0); } }
+@keyframes drawY { from { transform: scaleY(0); } }
+@keyframes fade { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .row { transition: none; }
+}

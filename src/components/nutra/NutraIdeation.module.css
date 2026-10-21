@@ -1,0 +1,731 @@
+/* Two numbered tabs (as EmailRender) over two stacked panes: the HMW
+   tiles with their ideas sheet, and the goal lifecycle on a chart sheet.
+   Planes from the one dark system (.tile, .paper-stack > .paper, .chip);
+   ink and grey marks, 1px lines, no gradient. The accent: tile 03's
+   square in pane 01, Solution's outline in pane 02. */
+.root { margin: 0; }
+
+/* ── The tabs: 01 How might we / 02 Goal lifecycle ── */
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+}
+@media (min-width: 640px) { .tabs { column-gap: 24px; } }
+.tab {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-line, #252528);
+  border-radius: 0;
+  background: none;
+  color: var(--color-ink, #f4f4f2);
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--t-1, 160ms) var(--ease-arrive);
+}
+.tab:active { transform: translateY(1px); }
+.tabNum,
+.tabLabel {
+  opacity: var(--dim, 0.45);
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+@media (hover: hover) {
+  .tab:hover .tabNum,
+  .tab:hover .tabLabel { opacity: 0.75; }
+}
+.tab:focus-visible .tabNum,
+.tab:focus-visible .tabLabel { opacity: 0.75; }
+.tab[data-on="true"] .tabNum,
+.tab[data-on="true"] .tabLabel { opacity: 1; }
+.tabNum { flex: none; }
+.tabLabel {
+  min-width: 0;
+  color: var(--color-ink, #f4f4f2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The 2px ink underline under the tab in view */
+.fill {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: #f4f4f2;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-2, 360ms) var(--ease-arrive);
+}
+.tab[data-on="true"] .fill { transform: none; }
+
+/* ── Panes: stacked in one cell; the tab in view fades in ── */
+.panes {
+  display: grid;
+  margin-top: 24px;
+}
+.pane {
+  grid-area: 1 / 1;
+  min-width: 0;
+  transition:
+    opacity var(--t-2, 360ms) var(--ease-arrive),
+    visibility 0s;
+}
+.root:not([data-tab="0"]) .pane[data-pane="0"],
+.root:not([data-tab="1"]) .pane[data-pane="1"] {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--t-1, 160ms) var(--ease-arrive),
+    visibility 0s linear var(--t-1, 160ms);
+}
+/* Below 1024px the two panes differ by hundreds of pixels (the lifecycle
+   stacks its columns): the pane in view alone sets the height */
+@media (max-width: 1023.98px) {
+  .root:not([data-tab="0"]) .pane[data-pane="0"],
+  .root:not([data-tab="1"]) .pane[data-pane="1"] {
+    height: 0;
+    overflow: hidden;
+  }
+}
+
+/* ══ 01 · How might we ══════════════════════════════════════════════════ */
+.hmw {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+@media (min-width: 640px) {
+  .hmw {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+@media (min-width: 1024px) {
+  .hmw { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* A question tile: the global .tile plane as a button. The selected one
+   is raised with an ink edge; both are overlays, so a choice only fades. */
+.tileBtn {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 16px 14px;
+  color: #f4f4f2;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--t-1, 160ms) var(--ease-arrive);
+}
+@media (min-width: 640px) {
+  .tileBtn { padding: 24px 24px 20px; }
+}
+.tileBtn:active { transform: translateY(1px); }
+.tileBtn::before,
+.tileBtn::after {
+  content: "";
+  position: absolute;
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.tileBtn::before {
+  z-index: -1;
+  inset: 0;
+  background: #1e1e21;
+}
+.tileBtn::after {
+  inset: -1px;
+  border: 1px solid #f4f4f2;
+}
+@media (hover: hover) {
+  .tileBtn:hover::after { opacity: 0.35; }
+}
+.hmw[data-sel="0"] .tileBtn[data-k="0"]::before,
+.hmw[data-sel="0"] .tileBtn[data-k="0"]::after,
+.hmw[data-sel="1"] .tileBtn[data-k="1"]::before,
+.hmw[data-sel="1"] .tileBtn[data-k="1"]::after,
+.hmw[data-sel="2"] .tileBtn[data-k="2"]::before,
+.hmw[data-sel="2"] .tileBtn[data-k="2"]::after,
+.hmw[data-sel="3"] .tileBtn[data-k="3"]::before,
+.hmw[data-sel="3"] .tileBtn[data-k="3"]::after,
+.hmw[data-sel="4"] .tileBtn[data-k="4"]::before,
+.hmw[data-sel="4"] .tileBtn[data-k="4"]::after,
+.hmw[data-sel="5"] .tileBtn[data-k="5"]::before,
+.hmw[data-sel="5"] .tileBtn[data-k="5"]::after { opacity: 1; }
+.tileBtn:focus-visible { outline-offset: 3px; }
+
+.tileTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* Tile 03, the question the case follows: the panel's one focus */
+.focusSq {
+  width: 8px;
+  height: 8px;
+  background: var(--accent, #f4f4f2);
+}
+/* S6, the question whole; the row's tiles share one height, and the last
+   line never holds a lone word */
+.q {
+  display: block;
+  color: #f4f4f2;
+  text-wrap: pretty;
+}
+.count { margin-top: auto; }
+
+/* The ideas sheet: under the grid from 640px; on a phone, straight under
+   the selected tile (its flex order follows the selection) */
+.ideasWrap {
+  order: var(--po);
+  min-width: 0;
+  margin: 4px 0 8px;
+}
+@media (min-width: 640px) {
+  .ideasWrap {
+    order: 99;
+    grid-column: 1 / -1;
+    margin: 12px 0 0;
+  }
+}
+.ideasSheet {
+  display: grid;
+  padding: 20px;
+}
+@media (min-width: 640px) {
+  .ideasSheet { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .ideasSheet { padding: 40px; }
+}
+.idea {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--t-1, 160ms) var(--ease-arrive),
+    visibility 0s linear var(--t-1, 160ms);
+}
+/* The selected question's ideas, or the one a pointer rests on */
+.hmw:not([data-preview])[data-sel="0"] .idea[data-k="0"],
+.hmw:not([data-preview])[data-sel="1"] .idea[data-k="1"],
+.hmw:not([data-preview])[data-sel="2"] .idea[data-k="2"],
+.hmw:not([data-preview])[data-sel="3"] .idea[data-k="3"],
+.hmw:not([data-preview])[data-sel="4"] .idea[data-k="4"],
+.hmw:not([data-preview])[data-sel="5"] .idea[data-k="5"],
+.hmw[data-preview="0"] .idea[data-k="0"],
+.hmw[data-preview="1"] .idea[data-k="1"],
+.hmw[data-preview="2"] .idea[data-k="2"],
+.hmw[data-preview="3"] .idea[data-k="3"],
+.hmw[data-preview="4"] .idea[data-k="4"],
+.hmw[data-preview="5"] .idea[data-k="5"] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--t-2, 360ms) var(--ease-arrive),
+    visibility 0s;
+}
+/* The question */
+.ideaHead {
+  display: flex;
+  align-items: flex-start;
+}
+/* A phone: the sheet opens under its own tile, so it holds only the
+   selected question's ideas (no hover there), at their own height, and
+   does not repeat the question */
+@media (max-width: 639px) {
+  .idea { display: none; }
+  .hmw[data-sel="0"] .idea[data-k="0"],
+  .hmw[data-sel="1"] .idea[data-k="1"],
+  .hmw[data-sel="2"] .idea[data-k="2"],
+  .hmw[data-sel="3"] .idea[data-k="3"],
+  .hmw[data-sel="4"] .idea[data-k="4"],
+  .hmw[data-sel="5"] .idea[data-k="5"] {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    animation: show var(--t-2, 360ms) var(--ease-arrive);
+  }
+  .idea .ideaHead { display: none; }
+  .idea .ideaBody { padding-top: 0; }
+}
+@keyframes show { from { opacity: 0; } }
+/* S4 */
+.ideaQ {
+  max-width: 44rem;
+  margin: 0;
+  color: #f4f4f2;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+@media (max-width: 639px) {
+  .ideaQ { font-size: 20px; }
+}
+/* The ideas sit on the sheet's foot: a shorter set leaves its air under
+   the question, not under the chips */
+/* The ideas follow their question; the sheet's spare height falls below */
+.ideaBody {
+  padding-top: 28px;
+}
+.cluster { margin: 0 0 12px; }
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* A long idea wraps inside its chip rather than leave the sheet */
+.ideaChip.ideaChip {
+  max-width: 100%;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+/* ══ 02 · Goal lifecycle ═══════════════════════════════════════════════
+   Three columns of trees. A node is a raised box; a child hangs off its
+   parent's trunk (x = 6px under the parent) by an elbow that turns into
+   it with a 6px head. --cy is a one-line node's centre line. */
+.lifeSheet { padding: 20px; }
+@media (min-width: 640px) {
+  .lifeSheet { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .lifeSheet { padding: 40px; }
+}
+
+.life {
+  --gap: 10px;
+  --cy: 19px;
+  --in: 24px;
+  --x: 6px;
+  --cg: 48px;
+}
+.cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+/* Progress nests deepest (a branch, then Solution's own children), so
+   it takes the widest track */
+@media (min-width: 1024px) {
+  .life { --cg: 40px; }
+  .cols {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--cg);
+  }
+}
+@media (min-width: 1280px) {
+  .life { --cg: 48px; }
+  .cols { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.3fr) minmax(0, 0.92fr); }
+}
+.col {
+  position: relative;
+  min-width: 0;
+}
+
+/* The column head: number and name over a rule */
+.colHead {
+  display: flex;
+  gap: 12px;
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #252528;
+}
+
+/* Between stacked columns (below 1024px): an arrow down into the next */
+.colLink {
+  position: relative;
+  display: block;
+  height: 40px;
+  margin: 12px 0 8px;
+  color: #6b6b71;
+}
+.colLinkLine {
+  position: absolute;
+  top: 0;
+  bottom: 5px;
+  left: var(--x);
+  width: 1px;
+  background: currentColor;
+}
+.colLink .headD {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--x) - 3.5px);
+}
+@media (min-width: 1024px) {
+  .colLink { display: none; }
+}
+
+.tree,
+.kids,
+.subs,
+.subItems {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rootItem { position: relative; }
+.kids {
+  margin-top: var(--gap);
+  padding-left: var(--in);
+}
+/* Each child sets its own lift (a caption over a branched node), so a
+   branched node's children never inherit it */
+.kid {
+  --lift: 0px;
+  position: relative;
+}
+.kid + .kid { margin-top: var(--gap); }
+.rail { margin-top: 0; }
+
+/* A node's row */
+.row {
+  display: flex;
+  align-items: center;
+  min-height: calc(var(--cy) * 2);
+}
+/* A labelled branch: the line and its label, then the node's column */
+.branched {
+  display: flex;
+  align-items: flex-start;
+}
+.branchBody {
+  flex: 1;
+  min-width: 0;
+}
+.node {
+  position: relative;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #333336;
+  border-radius: 2px;
+  background: #1e1e21;
+  color: #f4f4f2;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 20px;
+  outline-offset: 3px;
+}
+.node[data-parent] { cursor: pointer; }
+.node::before,
+.node[data-focus]::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+.node::before {
+  border: 1px solid #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+/* Solution: the pane's one focus */
+.node[data-focus]::after { border: 1.5px solid var(--accent, #f4f4f2); }
+
+/* ■ Emotional support: an ink square and its label, the last row under
+   its node */
+.es {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 24px;
+}
+.esSq {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: #f4f4f2;
+}
+.esLabel { min-width: 0; }
+
+/* Sub-items: S6 rows under their node, led by a small grey square */
+.subs {
+  position: relative;
+  margin-top: 6px;
+  padding-left: var(--in);
+}
+.sub {
+  position: relative;
+  padding: 1px 0 1px 14px;
+  color: #a0a0a5;
+}
+.sub::before {
+  content: "";
+  position: absolute;
+  top: calc(0.75em + 1px);
+  left: 0;
+  width: 4px;
+  height: 4px;
+  background: #6b6b71;
+}
+.subItems {
+  margin-top: 2px;
+}
+.subItems > li {
+  position: relative;
+  padding-left: 14px;
+}
+.subItems > li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: #6b6b71;
+}
+
+/* ── Connectors, drawn twice: grey under ink ── */
+.elbow {
+  position: absolute;
+  top: calc(-1 * var(--gap));
+  bottom: 0;
+  left: calc(var(--x) - var(--in));
+  width: calc(var(--in) - var(--x));
+  pointer-events: none;
+}
+.elbow[data-kind="end"] {
+  bottom: auto;
+  height: calc(var(--gap) + var(--cy) + var(--lift, 0px) + 1px);
+}
+.elbow[data-kind="pass"] {
+  top: -6px;
+  left: var(--x);
+  width: 1px;
+}
+.elbow[data-kind="rail"] { top: var(--cy); }
+.base,
+.lit {
+  position: absolute;
+  inset: 0;
+}
+.base { color: #6b6b71; }
+.lit {
+  color: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.v,
+.h {
+  position: absolute;
+  background: currentColor;
+}
+.v {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+}
+.h {
+  top: calc(var(--gap) + var(--cy) + var(--lift, 0px));
+  right: 0;
+  left: 0;
+  height: 1px;
+}
+.elbow[data-kind="rail"] .h { top: 0; }
+/* The last child: the trunk turns into it on a 6px corner */
+.elbow[data-kind="end"] .v { display: none; }
+.elbow[data-kind="end"] .h {
+  top: 0;
+  bottom: 0;
+  height: auto;
+  border-bottom: 1px solid currentColor;
+  border-left: 1px solid currentColor;
+  border-bottom-left-radius: 6px;
+  background: none;
+}
+.headR,
+.headD {
+  position: absolute;
+  display: block;
+  fill: currentColor;
+}
+.headR {
+  width: 6px;
+  height: 8px;
+}
+.headD {
+  width: 8px;
+  height: 6px;
+}
+.elbow .headR {
+  top: calc(var(--gap) + var(--cy) + var(--lift, 0px) - 3.5px);
+  right: 0;
+}
+/* A labelled branch draws its own head, before the node */
+.kid:has(> .branched) > .elbow .headR { display: none; }
+.elbow[data-kind="rail"] .headR { top: -3.5px; }
+
+/* Between columns on a wide sheet: Set goal feeds Reminder, Progress
+   feeds the End column's rail */
+.feed {
+  position: absolute;
+  top: var(--cy);
+  display: none;
+  height: 1px;
+  background: #6b6b71;
+  color: #6b6b71;
+}
+.feed[data-to="node"] {
+  right: 100%;
+  width: var(--cg);
+}
+.feed[data-to="node"] .headR {
+  top: -3.5px;
+  right: 0;
+}
+.feed[data-to="rail"] {
+  left: calc(-1 * (var(--cg) + var(--in)));
+  width: calc(var(--cg) + var(--x) + 1px);
+}
+@media (min-width: 1024px) {
+  .feed { display: block; }
+}
+/* Stacked, the End column's rail starts under its head */
+@media (max-width: 1023px) {
+  .elbow[data-kind="rail"] { top: calc(-1 * var(--gap)); }
+  .elbow[data-kind="rail"] .h { top: calc(var(--gap) + var(--cy)); }
+  .elbow[data-kind="rail"] .headR { top: calc(var(--gap) + var(--cy) - 3.5px); }
+  .rail { margin-top: var(--gap); }
+}
+
+/* A labelled branch on the line: ── On track ──▶ */
+.branch {
+  display: inline-grid;
+  flex: none;
+  align-items: center;
+  height: calc(var(--cy) * 2);
+}
+.bBase,
+.bLit {
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+}
+.bBase { color: #6b6b71; }
+.bLit {
+  color: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.bLine {
+  width: 8px;
+  height: 1px;
+  background: currentColor;
+}
+.bLine[data-end] { width: 10px; }
+.branch .headR { position: static; }
+.bLabel { padding: 0 8px; }
+.bLit .bLabel { color: #f4f4f2; }
+
+/* A phone, or three columns under 1280px, has no room for the label on
+   the line: it sits over the node as a caption, and the elbow (lifted by
+   the caption) turns into the node */
+@media (max-width: 639px), (min-width: 1024px) and (max-width: 1279px) {
+  .kid:has(> .branched) { --lift: 20px; }
+  .kid:has(> .branched) > .elbow .headR { display: block; }
+  .branched { display: block; }
+  .branch {
+    display: grid;
+    height: 16px;
+    margin-bottom: 4px;
+  }
+  .branch :is(.bLine, .headR) { display: none; }
+  .bLabel { padding: 0; }
+}
+
+/* The decision's focus path: Reminder's trunk down past On track, the
+   turn into Not on track, and its label, all ink */
+.kid[data-focus] > .elbow .base,
+.kid[data-focus] > .branched > .branch .bBase,
+.kid[data-focus] > .branched > .branch .bLabel { color: #f4f4f2; }
+.kid[data-trunk-ink] > .elbow .base .v,
+.subs[data-trunk-ink] > .elbow .base .v { background: #f4f4f2; }
+
+/* A parent pointed at or focused: its outgoing connectors ink */
+.life[data-node="create"] :is(.kid[data-from="create"] > .elbow, .kid[data-from="create"] > .branched > .branch, .subs[data-from="create"] > .elbow) :is(.lit, .bLit),
+.life[data-node="reminder"] :is(.kid[data-from="reminder"] > .elbow, .kid[data-from="reminder"] > .branched > .branch, .subs[data-from="reminder"] > .elbow) :is(.lit, .bLit),
+.life[data-node="solution"] :is(.kid[data-from="solution"] > .elbow, .kid[data-from="solution"] > .branched > .branch, .subs[data-from="solution"] > .elbow) :is(.lit, .bLit),
+.life[data-node="celebrate"] :is(.kid[data-from="celebrate"] > .elbow, .kid[data-from="celebrate"] > .branched > .branch, .subs[data-from="celebrate"] > .elbow) :is(.lit, .bLit),
+.life[data-node="recall"] :is(.kid[data-from="recall"] > .elbow, .kid[data-from="recall"] > .branched > .branch, .subs[data-from="recall"] > .elbow) :is(.lit, .bLit),
+.life[data-node="create"] .node[data-id="create"]::before,
+.life[data-node="reminder"] .node[data-id="reminder"]::before,
+.life[data-node="solution"] .node[data-id="solution"]::before,
+.life[data-node="celebrate"] .node[data-id="celebrate"]::before,
+.life[data-node="recall"] .node[data-id="recall"]::before { opacity: 1; }
+
+/* The legend counts the ink squares */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 32px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid #252528;
+}
+
+/* Chinese is held word by word, so no line ends inside a word */
+.hold { white-space: nowrap; }
+.root :lang(zh) { line-break: strict; }
+
+/* ── Entrance, once: the tiles step in on view; the lifecycle's columns
+   appear left to right the first time its tab opens. ── */
+@media (prefers-reduced-motion: no-preference) {
+  .hmw:not([data-lit="true"]) .tileBtn,
+  .hmw:not([data-lit="true"]) .ideasWrap {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+  .hmw[data-lit="true"] .tileBtn {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) calc(var(--k) * var(--step, 60ms)) backwards;
+  }
+  .hmw[data-lit="true"] .ideasWrap {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) 360ms backwards;
+  }
+  .root:not([data-seen="true"]) .col {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+  .root[data-seen="true"] .col {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) calc(var(--c) * 120ms) backwards;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .tileBtn,
+  .tileBtn::before,
+  .tileBtn::after,
+  .fill,
+  .node::before,
+  .lit,
+  .bLit { transition: none; }
+  .tab:active,
+  .tileBtn:active { transform: none; }
+  .hmw .idea { animation: none; }
+}

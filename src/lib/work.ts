@@ -101,6 +101,9 @@ export type Project = {
   coverPosition?: string;
   coverBg?: string;
   heroVideo?: string;
+  /** A code-drawn hero in place of the video or cover (banded pages):
+      the 16:9 frame holds this figure instead. */
+  heroVisual?: "nutra-hero";
   /** The project's own colour: on banded pages, drawn only as each chart's
       single focus mark. */
   accent?: string;
@@ -171,8 +174,25 @@ export type Project = {
       attribution?: string;
     };
     /** Code-drawn figures: the design-and-code surface ledger, the email
-        render check, the AI ownership strip, the SOP documents. */
-    visual?: "surfaces" | "email-render" | "ownership" | "sop";
+        render check, the AI ownership strip, the SOP documents, and the
+        Nutra case's eleven figures (src/components/nutra/*), one per
+        section, each carrying its own words in both locales. */
+    visual?:
+      | "surfaces"
+      | "email-render"
+      | "ownership"
+      | "sop"
+      | "nutra-audience"
+      | "nutra-research"
+      | "nutra-journey"
+      | "nutra-opportunity"
+      | "nutra-mascot"
+      | "nutra-ideation"
+      | "nutra-testing"
+      | "nutra-direction"
+      | "nutra-app"
+      | "nutra-system"
+      | "nutra-journey-after";
     /** Data for visual "ownership". */
     ownership?: Ownership;
     /** Data for visual "sop" (the documents also read `iconList.items`). */
@@ -264,6 +284,9 @@ export const projects: Project[] = [
   {
     slug: "nutra",
     title: "Nutra — fintech for everyone",
+    // The banded layout (Axel, TikTok): one dark system, every figure drawn
+    // in code by src/components/nutra/* (one `visual` per section)
+    bands: true,
     client: "Aspen Lab · self-initiated",
     role: "UI/UX & Product Design",
     period: "Aug 2024",
@@ -276,174 +299,105 @@ export const projects: Project[] = [
     cover: "/work/nutra.png",
     coverWidth: 1024,
     coverHeight: 768,
-    heroVideo: "/work/nutra/hero.mp4",
+    // The hero is the app itself, drawn in code on the dark tile (Home,
+    // Goal, Data, as board 049 composes them). public/work/nutra/hero.mp4
+    // plays the phones on a white ground, so it waits for a dark re-export.
+    heroVisual: "nutra-hero",
+    // Nutra's brand orange (board 043): on this page only each figure's
+    // single focus mark, never in headings, figures, labels or tints.
+    // Inside a redrawn piece of the app the app's own colours apply.
+    accent: "#FF901A",
     status: "live",
     metrics: [
+      // No section shows the evidence behind these two, so they link nowhere
       { label: "Self-reported motivation lift", value: "+85%" },
       { label: "Positive feedback on usability", value: "90%" },
-      { label: "Design system surfaces", value: "End-to-end" },
+      { label: "Design system surfaces", value: "End-to-end", href: "#s-10" },
     ],
+    /* Eleven sections in five chapters, each with one code-drawn figure
+       that explains it, in the order evidence → decision → artefact. The
+       bodies are the owner's copy; where two old sections became one,
+       their bodies are joined word for word. A no-break space holds each
+       dash to the word before it, and a no-break hyphen holds "lo-fi" and
+       "hi-fi", so a wrapped line never opens on "—" or "fi". */
     sections: [
       {
         chapter: "Discovery",
         heading: "Problem",
-        body: "Budgeting matters but it's hard, especially for new learners. Most apps are overwhelming because they're built for the highly disciplined. The people who most need help — the ones who want to save but can't stay consistent — are the ones who quietly drop out first.",
-        images: [
-          "/work/nutra/images/009_9NtIdXzvPDMQtfJa6o3TV2E3LVw.png",
-          "/work/nutra/images/010_p03fMvdXv9qlkuEGy2e1IsxVCY.png",
-          "/work/nutra/images/011_NBye5onWmCPLKvqzCwSnykmGtY.png",
-        ],
+        body: "Budgeting matters but it's hard, especially for new learners. Most apps are overwhelming because they're built for the highly disciplined. The people who most need help\u00a0— the ones who want to save but can't stay consistent\u00a0— are the ones who quietly drop out first. Mainstream budgeting apps over-index on the disciplined power user. Nutra targets the much larger unmotivated middle\u00a0— people who already want to save but can't sustain attention without a feedback loop.",
+        // Group A (the disciplined "Pro") beside Group B, the new learners (board 011)
+        visual: "nutra-audience",
       },
       {
         chapter: "Discovery",
         heading: "Research",
         body: "Surveys and in-depth interviews with self-identified low-motivation, low-discipline users surfaced three insights: simple intuitive interactions reduce overwhelm; gamification mechanics significantly boost engagement; and small, personalized nudges drive consistency. We were looking at a large, underserved group whose biggest enemy was friction.",
-        images: [
-          "/work/nutra/images/012_9yomB4v1D5EZIdYAWpTMgLBZbV0.png",
-          "/work/nutra/images/013_ZCyxgLvUHehqpd44CK8aWKk6kPI.png",
-          "/work/nutra/images/014_Vb7Gz3n9VxLlxy1PFYuaaHuSj0.png",
-          "/work/nutra/images/015_BdOp2AWzf5aVaLvyrrQYj3ONl2Q.png",
-        ],
+        // Reviews · Interviews · Persona (boards 012–015)
+        visual: "nutra-research",
       },
       {
         chapter: "Discovery",
         heading: "Mental model & journey",
-        body: "We mapped how target users think about money — separating the cognitive cost of saving from the emotional cost of being told they aren't saving enough. The journey map made the friction points visible.",
-        images: [
-          "/work/nutra/images/016_gSg4pXbkYOCUbkkrN7YHezfzUc.png",
-          "/work/nutra/images/017_4KcO8ZQt1kH5izQWlTG0zFskSE.png",
-        ],
-      },
-      {
-        chapter: "Discovery",
-        heading: "Market opportunity",
-        body: "Mainstream budgeting apps over-index on the disciplined power user. Nutra targets the much larger unmotivated middle — people who already want to save but can't sustain attention without a feedback loop.",
-        images: ["/work/nutra/images/018_e2pNzrOBQ8PFD86DXCmr0vvaN0A.png"],
+        body: "We mapped how target users think about money\u00a0— separating the cognitive cost of saving from the emotional cost of being told they aren't saving enough. The journey map made the friction points visible.",
+        // The first journey map's emotion curve, lowest at Commitment (board 016)
+        visual: "nutra-journey",
       },
       {
         chapter: "Strategy",
         heading: "Design objectives",
-        body: "Lower the entry barrier — minimize cognitive load, frictionless onboarding. Boost engagement through daily saving challenges, interactive rewards, playful rituals. Personalize tasks and suggestions based on individual spending patterns and goals.",
+        body: "Lower the entry barrier\u00a0— minimize cognitive load, frictionless onboarding. Boost engagement through daily saving challenges, interactive rewards, playful rituals. Personalize tasks and suggestions based on individual spending patterns and goals.",
+        // Three problems, three directions; gamification chosen (boards 017/018)
+        visual: "nutra-opportunity",
       },
       {
         chapter: "Strategy",
-        heading: "Why gamification",
-        body: "Budgeting fails when it feels like a chore. Gamification makes the loop short, visible, and rewarding — turning discipline into habit and improving long-term retention by orders of magnitude.",
-        images: ["/work/nutra/images/019_dDi2qK1thaNyf7zJYwyeaBPcjE.png"],
-      },
-      {
-        chapter: "Strategy",
-        heading: "Why \"Nut\"",
-        body: "We chose Nut as the virtual assistant because it symbolizes growth, saving, and potential — a small thing that becomes something bigger. The metaphor makes financial progress feel tangible, approachable, and friendly.",
-        images: ["/work/nutra/images/020_YXLh1dAU7VEtFw5m1ymMEBw8WRg.png"],
-        carouselAspect: "16/10",
+        heading: "Why gamification, why “Nut”",
+        body: "Budgeting fails when it feels like a chore. Gamification makes the loop short, visible, and rewarding\u00a0— turning discipline into habit and improving long-term retention by orders of magnitude. We chose Nut as the virtual assistant because it symbolizes growth, saving, and potential\u00a0— a small thing that becomes something bigger. The metaphor makes financial progress feel tangible, approachable, and friendly.",
+        // The save → reward loop, its precedents, and why a nut (boards 019/020)
+        visual: "nutra-mascot",
       },
       {
         chapter: "Process",
         heading: "Ideation",
         body: "Two parallel flows: dashboard discovery (where money is going right now) and goal setting (where it should be going). Sketched dozens of variations to find the smallest viable interaction loop.",
-        images: [
-          "/work/nutra/images/021_TgcWfVt04AqnX9GWQJU498XfxW0.png",
-          "/work/nutra/images/022_ZW4XL91heR9aEEAAqxlQzGxo8U.png",
-          "/work/nutra/images/023_0KX9JJDrKf4MOV5AJNJ7c3N5g1E.png",
-          "/work/nutra/images/024_ozU3om54jWs3CcbkYNsa7CS2k4Y.png",
-          "/work/nutra/images/025_JiZ8IL59qsd64kS5EG1QUcVpB0.png",
-          "/work/nutra/images/026_CBULa0micCCsY9eS8lcwJEoABE.png",
-          "/work/nutra/images/027_DDGCerpoBV6cOO8VOxDIyAQK2g.png",
-          "/work/nutra/images/028_zm6mTpY4u7XDyhmwA5knnxEiP7c.png",
-          "/work/nutra/images/029_AbUxZ2ZiXDoxvEElWVg7XflNU.png",
-        ],
+        // Six how-might-we questions and the goal lifecycle (boards 021/022)
+        visual: "nutra-ideation",
       },
       {
         chapter: "Process",
-        heading: "First user test",
-        body: "A low-fi clickable prototype, run with target users to validate the underlying UX bones before any visual investment.",
-        images: ["/work/nutra/images/030_Xuclgz5r0pjEVynKwvs8GtQxqU.png"],
-      },
-      {
-        chapter: "Process",
-        heading: "Refinement",
-        body: "First-test friction points: the goal flow asked for too much upfront, the dashboard buried the next action. We rewrote the onboarding sequence and gave the daily challenge top billing.",
-        images: [
-          "/work/nutra/images/031_TCBVvtth2bVy6tOdtviscAGYxwg.png",
-          "/work/nutra/images/032_KtFeT1n8GKPuFhG4n7yLT6XO5c.png",
-          "/work/nutra/images/033_jqQj1TvmimI7MCDeM23h52ZUHjA.png",
-          "/work/nutra/images/034_RhDJCQEcj1jiRTc5Ab773B3G060.png",
-        ],
-      },
-      {
-        chapter: "Process",
-        heading: "Lo-fi summary",
-        body: "Final lo-fi structure: dashboard, daily challenge, goal setter, Nut assistant, financial overview. Once this held, the brand layer could go on top.",
-        images: ["/work/nutra/images/035_JevRW6DPyVFAzcYOT94FnNVJKjk.png"],
-      },
-      {
-        chapter: "Process",
-        heading: "User journey, after",
-        body: "Post-test, the journey collapsed: fewer screens between intent and feedback, fewer dead ends, a clear path from open-app to saved-money.",
-        images: ["/work/nutra/images/036_LGa2Jxxa3wti4K35rPTIvjF8k.png"],
+        heading: "Testing & refinement",
+        body: "A low\u2011fi clickable prototype, run with target users to validate the underlying UX bones before any visual investment. First-test friction points: the goal flow asked for too much upfront, the dashboard buried the next action. We rewrote the onboarding sequence and gave the daily challenge top billing.",
+        // Imagine vs. in reality, then three before/after fixes (boards 031–033, 040, 045, 046)
+        visual: "nutra-testing",
       },
       {
         chapter: "Execution",
-        heading: "Mid-fi & branding",
-        body: "Layered the brand voice on once the structure held. Nut got a personality. Color and motion stayed restrained so the play felt warm, not loud.",
-        images: ["/work/nutra/images/037_iSj6b1ENv3TQ41cy3g9IGtahbvE.png"],
-      },
-      {
-        chapter: "Execution",
-        heading: "Mockup",
-        body: "Hero composition for the launch page — Nut, dashboard, daily challenge, all visible in a single read.",
-        images: [
-          "/work/nutra/images/038_U1IP9FWWdtoZ1YniN5wmod3Wk.png",
-          "/work/nutra/images/039_NWqD05VZVBpOgqCJ6nLqIta7c2o.png",
-          "/work/nutra/images/040_ZNNvF1x53nHJo2s5cdZmlZL1zA.png",
-        ],
-      },
-      {
-        chapter: "Execution",
-        heading: "Branding 2.0",
-        body: "Second pass on visual identity. Tightened the mascot proportions, locked the color system, and built out a small expressive set of emotional states for Nut.",
-        images: [
-          "/work/nutra/images/041_KKamaeoBojXtMJdnULz0XK99H0.png",
-          "/work/nutra/images/042_HccGSSckUFus5nCuC6IlhjgqM.png",
-          "/work/nutra/images/043_Ps4zyaEEnRGOxDBw7h2mG6hooU.png",
-        ],
-        carouselAspect: "16/10",
-      },
-      {
-        chapter: "Execution",
-        heading: "Hi-fi user flow",
-        body: "End-to-end flow for the hi-fi prototype, covering onboarding, goal setting, daily check-in, and the financial overview.",
-        images: ["/work/nutra/images/044_qBXtfF9RaHuFnN0Y9RqbNuG5WQk.png"],
+        heading: "Visual direction",
+        body: "Layered the brand voice on once the structure held. Nut got a personality. Color and motion stayed restrained so the play felt warm, not loud. Second pass on visual identity. Tightened the mascot proportions, locked the color system, and built out a small expressive set of emotional states for Nut.",
+        // The light first pass, the seriousness ↔ fun balance, the goal card's rim (boards 037–039, 045, 047)
+        visual: "nutra-direction",
       },
       {
         chapter: "Execution",
         heading: "What shipped",
-        body: "Goal Setting (personalized, manageable steps). Daily challenges based on the user's spending pattern. The Nut assistant for visual reward and emotional feedback. A clear financial overview as honest data viz of habits, budgets, and progress. A full design system to keep it coherent across surfaces.",
-        images: [
-          "/work/nutra/images/045_CUMADf13Hswh07v9fzADNWsAmJE.png",
-          "/work/nutra/images/046_x6YgdjgHlSnrM4Ub4omotROYM.png",
-          "/work/nutra/images/047_GgNve27me3IEChDkzin6eqykQU.png",
-        ],
+        body: "End-to-end flow for the hi\u2011fi prototype, covering onboarding, goal setting, daily check-in, and the financial overview. A full design system to keep it coherent across surfaces.",
+        // The hi-fi prototype as a working app, driven by the owner's first four
+        // shipped items; the fifth (the design system) closes the body
+        visual: "nutra-app",
       },
       {
         chapter: "Execution",
         heading: "Design system",
-        body: "Comprehensive guidelines to keep visual and interactive consistency across surfaces — color, type, components, motion tokens, and the rules for Nut as a system primitive.",
-        images: [
-          "/work/nutra/images/048_WmV727HxTIiMFthlQokx4f0bnFQ.png",
-          "/work/nutra/images/049_4wITjb4UkY4GW37W40aUKngM.png",
-        ],
+        body: "Comprehensive guidelines to keep visual and interactive consistency across surfaces\u00a0— color, type, components, motion tokens, and the rules for Nut as a system primitive.",
+        // Colour tokens, the type ladder, live components (boards 042/043/048)
+        visual: "nutra-system",
       },
       {
         chapter: "Outcome",
-        heading: "Validation",
-        body: "Multiple rounds of usability testing with target users refined the interactions. The result: stronger retention through play, observable improvements in saving behavior among users who'd previously bounced off discipline-heavy apps, and overwhelmingly positive feedback.",
-      },
-      {
-        chapter: "Outcome",
-        heading: "Reflection",
-        body: "Designing Nutra deepened my understanding of behavioral psychology and how gamification really works in motivation. It strengthened my UX research, iterative prototyping, and visual-system muscles — and showed how care plus play can ship something both effective and joyful.",
+        heading: "Validation & reflection",
+        body: "Multiple rounds of usability testing with target users refined the interactions. The result: stronger retention through play, observable improvements in saving behavior among users who'd previously bounced off discipline-heavy apps, and overwhelmingly positive feedback. Designing Nutra deepened my understanding of behavioral psychology and how gamification really works in motivation. It strengthened my UX research, iterative prototyping, and visual-system muscles\u00a0— and showed how care plus play can ship something both effective and joyful.",
+        // The journey after testing, over the first map's curve (boards 036, 016)
+        visual: "nutra-journey-after",
       },
     ],
   },

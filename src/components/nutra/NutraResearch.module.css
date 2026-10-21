@@ -1,0 +1,598 @@
+/* Three of Latent's numbered tabs over one panel area. Every plane is the
+   system's: split cards (sheet + slab) and a sheet on two back sheets,
+   1px edges, 2px corners, flat fills, square marks. Each panel has one
+   accent mark: the 1★ bar, the "But" square, the Motivation square. */
+.root {
+  --gap: 16px;
+  margin: 0;
+}
+@media (min-width: 640px) {
+  .root { --gap: 24px; }
+}
+
+/* ── Tabs ── */
+.tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: var(--gap);
+  margin-bottom: 24px;
+}
+@media (min-width: 640px) {
+  .tabs { margin-bottom: 32px; }
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  padding: 14px 0 12px;
+  border-bottom: 1px solid var(--color-line, #252528);
+  color: #f4f4f2;
+  text-align: left;
+  transition: transform var(--t-1, 160ms) var(--ease-arrive);
+}
+@media (min-width: 640px) {
+  .tab {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 12px;
+    padding: 16px 0;
+  }
+}
+.tab:active { transform: translateY(1px); }
+.tabNum,
+.tabLabel {
+  opacity: var(--dim, 0.45);
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.tabNum { flex: none; }
+.tabLabel {
+  min-width: 0;
+  max-width: 100%;
+  color: #f4f4f2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (hover: hover) {
+  .tab:hover .tabNum,
+  .tab:hover .tabLabel { opacity: 0.75; }
+}
+.tab:focus-visible .tabNum,
+.tab:focus-visible .tabLabel { opacity: 0.75; }
+.tab[data-on="true"] .tabNum,
+.tab[data-on="true"] .tabLabel { opacity: 1; }
+
+/* The one underline, 2px ink, sliding to the tab in view */
+.bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: calc((100% - 2 * var(--gap)) / 3);
+  height: 2px;
+  background: #f4f4f2;
+  transform: translateX(calc(var(--tab, 0) * (100% + var(--gap))));
+  transition: transform var(--t-2, 360ms) var(--ease-arrive);
+}
+
+/* ── Panels: all mounted; the one in view is in the flow and sets the
+   height, the others stand over it, faded out ── */
+.panels {
+  position: relative;
+  display: grid;
+}
+.panel {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+.panel[data-on="false"] {
+  position: absolute;
+  inset: 0 0 auto;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--t-1, 160ms) var(--ease-arrive),
+    visibility 0s linear var(--t-1, 160ms);
+}
+.panel[data-on="true"] {
+  transition:
+    opacity var(--t-2, 360ms) var(--ease-arrive) 60ms,
+    visibility 0s;
+}
+
+/* ── The split card (01, 03): one outline, a sheet and a slab ── */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+}
+@media (min-width: 1024px) {
+  .split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .personaSplit { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+}
+
+/* ── 01 Reviews: the chart on the sheet ── */
+.split > .chartCell {
+  min-width: 0;
+  padding: 28px 16px 18px;
+  border: 0;
+  border-radius: 0;
+  /* a fine dot grid, whole on every edge */
+  background-image: radial-gradient(circle at center, var(--grey-3, #3a3a3f) 0.75px, transparent 1.25px);
+  background-size: 12px 12px;
+  background-repeat: space;
+}
+@media (min-width: 640px) {
+  .split > .chartCell { padding: 48px 40px 28px; }
+}
+
+.chart {
+  --bw: 40px;
+  --bg: 20px;
+}
+@media (min-width: 640px) {
+  .chart {
+    --bw: 48px;
+    --bg: 32px;
+  }
+}
+.plot {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: var(--bg);
+  height: 220px;
+  border-bottom: 1px solid var(--axis, rgb(244 244 242 / 24%));
+}
+@media (min-width: 640px) {
+  .plot { height: 300px; }
+}
+.col {
+  position: relative;
+  flex: none;
+  width: var(--bw);
+  height: 100%;
+}
+/* Square-topped, from the axis; the 2★ bar keeps a 2px hairline */
+.barFill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: max(2px, calc(var(--h) * 100%));
+  background: var(--grey-2, #6b6b71);
+  transform-origin: 50% 100%;
+}
+.col[data-tone="g1"] .barFill { background: var(--grey-1, #a0a0a5); }
+.col[data-tone="focus"] .barFill { background: var(--accent, #f4f4f2); }
+
+/* The focus's tag on a 1px leader */
+.leader {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--h) * 100% + 6px);
+  width: 1px;
+  height: 26px;
+  background: rgb(244 244 242 / 55%);
+}
+.tag {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--h) * 100% + 32px);
+  transform: translateX(-50%);
+}
+
+.xlabels {
+  display: flex;
+  justify-content: center;
+  gap: var(--bg);
+  padding-top: 12px;
+}
+.xlabel {
+  flex: none;
+  width: var(--bw);
+  margin-right: -0.12em;
+  text-align: center;
+}
+.xlabel[data-focus="true"] { color: #f4f4f2; }
+/* The mono face has no star: the ★ is the sans's, at the label's size */
+.star {
+  margin-left: 1px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+/* ── 01 Reviews: the reading on the slab ── */
+.split > .reviewSlab {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 20px;
+  border: 0;
+  border-top: 1px solid var(--edge, #333336);
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .split > .reviewSlab { padding: 40px; }
+}
+@media (min-width: 1024px) {
+  .split > .reviewSlab {
+    border-top: 0;
+    border-left: 1px solid var(--edge, #333336);
+  }
+}
+.figure { margin: 0; }
+.figLabel {
+  margin: 14px 0 0;
+  color: #f4f4f2;
+}
+.sentence {
+  max-width: 34ch;
+  margin: 8px 0 0;
+  color: #a0a0a5;
+  text-wrap: pretty;
+}
+:global(html[lang="zh-CN"]) .sentence { max-width: 22em; }
+.named {
+  display: grid;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-line, #252528);
+}
+@media (min-width: 1024px) {
+  .named { margin-top: auto; }
+}
+.named > p { margin: 0; }
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.caption {
+  margin: 4px 0 0;
+  color: var(--color-soft, #8a8a90);
+  text-wrap: pretty;
+}
+
+/* ── 02 Interviews: one sheet ── */
+.sheet.sheet {
+  padding: 24px 20px;
+}
+@media (min-width: 640px) {
+  .sheet.sheet { padding: 40px; }
+}
+.header { margin: 0; }
+
+/* The age line, 15 to 60: a square per interviewee sat on the axis */
+.ages {
+  position: relative;
+  height: 52px;
+  margin: 28px 8px 24px 0;
+}
+@media (min-width: 640px) {
+  .ages { margin: 36px 8px 28px 0; }
+}
+.axis {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 24px;
+  height: 1px;
+  background: var(--axis, rgb(244 244 242 / 24%));
+}
+.tick {
+  position: absolute;
+  top: 25px;
+  left: calc(var(--x) * 100%);
+  width: 1px;
+  height: 5px;
+  background: var(--axis, rgb(244 244 242 / 24%));
+}
+.tickLabel {
+  position: absolute;
+  top: 9px;
+  left: 0;
+  margin-right: -0.12em;
+  transform: translateX(-50%);
+}
+.age {
+  position: absolute;
+  top: 16px;
+  left: calc(var(--x) * 100% - 4px);
+  width: 8px;
+  height: 8px;
+  background: #f4f4f2;
+  transform-origin: 50% 100%;
+  transition:
+    transform var(--t-1, 160ms) var(--ease-arrive),
+    opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+/* A year is under 8px on a phone: 22 and 27 sit a row up */
+@media (max-width: 767px) {
+  .age[data-upper="true"] { top: 6px; }
+}
+
+.people {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .people {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+.person.person {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 14px 14px 12px;
+}
+/* The lit edge: an ink outline over the tile's own, faded on (opacity
+   only, so a hover never repaints the tile) */
+.person::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid #f4f4f2;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+@media (min-width: 640px) {
+  .person.person { padding: 20px 20px 18px; }
+}
+.personAge { font-variant-numeric: tabular-nums; }
+.personStage { color: #a0a0a5; }
+
+/* Pointing at a tile (data-on, written by the component): its square on
+   the age line lifts, the others step back, its edge turns ink */
+.root[data-on] .age { opacity: var(--dim, 0.45); }
+.root[data-on="0"] .age[data-i="0"],
+.root[data-on="1"] .age[data-i="1"],
+.root[data-on="2"] .age[data-i="2"],
+.root[data-on="3"] .age[data-i="3"],
+.root[data-on="4"] .age[data-i="4"],
+.root[data-on="5"] .age[data-i="5"],
+.root[data-on="6"] .age[data-i="6"],
+.root[data-on="7"] .age[data-i="7"] {
+  opacity: 1;
+  transform: scale(1.5);
+}
+/* The lifted square's age, over it: ink, no box */
+.ageTag {
+  position: absolute;
+  top: -10px;
+  left: calc(var(--x) * 100%);
+  margin-right: -0.12em;
+  color: #f4f4f2;
+  opacity: 0;
+  transform: translate(-50%, 2px);
+  transition:
+    opacity var(--t-1, 160ms) var(--ease-arrive),
+    transform var(--t-1, 160ms) var(--ease-arrive);
+  pointer-events: none;
+}
+@media (max-width: 767px) {
+  .ageTag[data-upper="true"] { top: -20px; }
+}
+.root[data-on="0"] .ageTag[data-i="0"],
+.root[data-on="1"] .ageTag[data-i="1"],
+.root[data-on="2"] .ageTag[data-i="2"],
+.root[data-on="3"] .ageTag[data-i="3"],
+.root[data-on="4"] .ageTag[data-i="4"],
+.root[data-on="5"] .ageTag[data-i="5"],
+.root[data-on="6"] .ageTag[data-i="6"],
+.root[data-on="7"] .ageTag[data-i="7"] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.root[data-on="0"] .person[data-i="0"]::after,
+.root[data-on="1"] .person[data-i="1"]::after,
+.root[data-on="2"] .person[data-i="2"]::after,
+.root[data-on="3"] .person[data-i="3"]::after,
+.root[data-on="4"] .person[data-i="4"]::after,
+.root[data-on="5"] .person[data-i="5"]::after,
+.root[data-on="6"] .person[data-i="6"]::after,
+.root[data-on="7"] .person[data-i="7"]::after {
+  opacity: 1;
+}
+
+/* The shared mental model: Yes on a raised plane, But on the sheet */
+.model {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 24px;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+}
+@media (min-width: 640px) {
+  .model { margin-top: 32px; }
+}
+@media (min-width: 768px) {
+  .model { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.modelSide {
+  min-width: 0;
+  padding: 24px 20px;
+}
+@media (min-width: 640px) {
+  .modelSide { padding: 32px; }
+}
+.modelSide[data-side="yes"] { background: var(--raised, #1e1e21); }
+.modelSide[data-side="but"] { border-top: 1px solid var(--edge, #333336); }
+@media (min-width: 768px) {
+  .modelSide[data-side="but"] {
+    border-top: 0;
+    border-left: 1px solid var(--edge, #333336);
+  }
+}
+.modelLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+.modelSq {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--grey-2, #6b6b71);
+}
+[data-side="but"] .modelSq { background: var(--accent, #f4f4f2); }
+.points {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  color: #d2d2d0;
+  text-wrap: pretty;
+}
+.quote {
+  position: relative;
+  margin: 24px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-line, #252528);
+}
+/* The open quote hangs in the margin, so the words align */
+.hang {
+  position: absolute;
+  transform: translateX(-100%);
+}
+
+/* ── 03 Persona ── */
+.split > .personaSlab {
+  min-width: 0;
+  padding: 24px 20px;
+  border: 0;
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .split > .personaSlab { padding: 40px; }
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: var(--raised, #1e1e21);
+  color: var(--grey-1, #a0a0a5);
+}
+.personaSlab .chips { margin-top: 24px; }
+.lead {
+  margin: 24px 0 0;
+  text-wrap: pretty;
+}
+
+.split > .personaSheet {
+  min-width: 0;
+  padding: 4px 20px;
+  border: 0;
+  border-top: 1px solid var(--edge, #333336);
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .split > .personaSheet { padding: 12px 40px; }
+}
+@media (min-width: 1024px) {
+  .split > .personaSheet {
+    display: flex;
+    align-items: center;
+    border-top: 0;
+    border-left: 1px solid var(--edge, #333336);
+  }
+}
+.rows {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 0;
+  border-top: 1px solid var(--color-line, #252528);
+}
+@media (min-width: 640px) {
+  .row { padding: 28px 0; }
+}
+.row:first-child { border-top: 0; }
+.rowSq {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 4px;
+  background: var(--grey-2, #6b6b71);
+}
+.row[data-focus="true"] .rowSq { background: var(--accent, #f4f4f2); }
+.rowText {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.rowBody {
+  color: #f4f4f2;
+  text-wrap: pretty;
+}
+
+/* Chinese is held word by word, so no line ends inside a word */
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+/* ── Entrance, once: the labels, then the bars from the baseline 60ms
+   apart (the 1★ bar last), then its tag ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] :is(.xlabel, .reviewSlab > *, .leader, .tag) { opacity: 0; }
+  .root[data-in="false"] .barFill { transform: scaleY(0); }
+  .root[data-in="true"] .xlabel,
+  .root[data-in="true"] .reviewSlab > * {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) backwards;
+  }
+  .root[data-in="true"] .reviewSlab > :nth-child(n + 2) { animation-delay: var(--step, 60ms); }
+  .root[data-in="true"] .reviewSlab > :nth-child(n + 4) { animation-delay: calc(2 * var(--step, 60ms)); }
+  .root[data-in="true"] .barFill {
+    animation: grow var(--t-3, 720ms) var(--ease-arrive) calc(200ms + var(--i) * var(--step, 60ms)) backwards;
+  }
+  .root[data-in="true"] :is(.leader, .tag) {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) 880ms backwards;
+  }
+}
+@keyframes fade {
+  from { opacity: 0; }
+}
+@keyframes grow {
+  from { transform: scaleY(0); }
+}
+
+/* Reduced motion: the final frame; a swap is a fade, nothing slides */
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .tab,
+  .age { transition: none; }
+  .ageTag { transition: opacity var(--t-1, 160ms) var(--ease-arrive); }
+  .person::after { transition: none; }
+  .tab:active { transform: none; }
+}

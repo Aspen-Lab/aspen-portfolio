@@ -1,0 +1,11 @@
+/* Nutra · Testing & refinement: the two blocks (the loop sheet, the three
+   fixes), 56px apart. Their segmented switch is the shared Seg.
+   One dark system (globals.css [data-bands]); no accent here. */
+.root {
+  display: grid;
+  row-gap: 56px;
+  min-width: 0;
+}
+
+/* Chinese is held word by word (hold), so a line never ends inside a word */
+.word { white-space: nowrap; }

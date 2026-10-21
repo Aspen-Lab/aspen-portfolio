@@ -1,0 +1,745 @@
+/* The goal card's versions as product renders on the site's sheet. The
+   frame (sheet, strip, stage edge, pins, labels) is the one dark system;
+   inside a render the app's own type, colours and radii apply. The page
+   accent appears once: the outline round the chosen orange row. */
+
+/* The card's em as a length every descendant inherits, so text that sets
+   its own size still places itself in the card's units */
+@property --nr-u {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 16px;
+}
+
+/* The sheet is the container the colour rows ask where they belong */
+.sheet.sheet {
+  container: rimsheet / inline-size;
+  padding: 24px 20px;
+}
+@media (min-width: 640px) {
+  .sheet.sheet { padding: 40px; }
+}
+.title { margin: 0; }
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .sheet { line-break: strict; }
+
+/* ── The app's 3D art, placed in the card's em ── */
+.art.art {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Version strip ── six renders, ink marks the one on stage */
+.strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.thumb {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.thumbFrame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 88px;
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: #0a0e11;
+}
+/* The ink edge fades on over the plane's own */
+.thumbFrame::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid #f4f4f2;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.thumb[data-on="true"] .thumbFrame::after { opacity: 1; }
+@media (hover: hover) {
+  .thumb[data-on="false"]:hover .thumbFrame::after { opacity: 0.32; }
+}
+.thumbLabel { color: #8a8a90; }
+.thumb[data-on="true"] .thumbLabel { color: #f4f4f2; }
+
+.mini {
+  --s: 0.2857;
+  display: block;
+  width: calc(var(--w) * 16px * var(--s));
+  height: calc(14 * 16px * var(--s));
+}
+.miniCard {
+  --nr-u: 1em;
+  display: block;
+  width: max-content;
+  font-size: 16px;
+  transform: scale(var(--s));
+  transform-origin: 0 0;
+}
+/* Narrower than 1024px the strip goes: prev / next choose the version */
+@media (max-width: 1023px) {
+  .strip { display: none; }
+}
+
+/* ── Stage head: the version on stage, a count, prev / next ── */
+.stageHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 32px;
+}
+.stageLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0;
+}
+.stageLabel > :first-child { color: #f4f4f2; }
+.count { color: #6b6b71; }
+.nav {
+  display: flex;
+  gap: 8px;
+}
+.navBtn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  color: #f4f4f2;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.navBtn svg { width: 16px; height: 16px; }
+.navBtn::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid #f4f4f2;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+@media (hover: hover) {
+  .navBtn:hover::after { opacity: 0.5; }
+}
+.navBtn:active svg { transform: scale(0.9); }
+
+/* ── Stage: the app's screen, the version large; all mounted ── */
+.stage {
+  container-type: inline-size;
+  position: relative;
+  margin-top: 12px;
+  padding: 36px 10px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: #0a0e11;
+}
+@media (min-width: 640px) {
+  .stage { padding: 56px 24px; }
+}
+.slides {
+  --nr-u: 1em;
+  display: grid;
+  font-size: clamp(11px, calc(100cqw / 21.6), 18px);
+}
+.slide {
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--t-2) var(--ease-arrive),
+    visibility 0s linear var(--t-2);
+}
+.stage[data-sel="0"] .slide[data-i="0"],
+.stage[data-sel="1"] .slide[data-i="1"],
+.stage[data-sel="2"] .slide[data-i="2"],
+.stage[data-sel="3"] .slide[data-i="3"],
+.stage[data-sel="4"] .slide[data-i="4"],
+.stage[data-sel="5"] .slide[data-i="5"] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--t-2) var(--ease-arrive),
+    visibility 0s;
+}
+/* Reduced motion: the same swap as a plain 160ms fade */
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .stage[data-sel] .slide[data-i] {
+    transition-duration: var(--t-1), 0s;
+  }
+}
+
+/* The final card with its pins; beside it on a wide stage the legend and
+   the colour decision, under it on a narrow one the legend alone */
+.finalSlide {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.side { display: contents; }
+.pinned {
+  --nr-u: 1em;
+  position: relative;
+}
+.legend {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 12px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.legendItem > :last-child { white-space: nowrap; }
+@container (max-width: 279px) {
+  .legend { grid-template-columns: max-content; }
+}
+@container (min-width: 820px) {
+  .finalSlide {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 27rem);
+    align-items: center;
+    justify-content: center;
+    column-gap: 56px;
+  }
+  .side {
+    display: grid;
+    gap: 28px;
+    min-width: 0;
+  }
+  .legend { gap: 14px 32px; }
+}
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #d2d2d0;
+  border-radius: 2px;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+}
+.legendItem:focus { outline: none; }
+.legendItem:focus-visible {
+  outline: 1px solid #f4f4f2;
+  outline-offset: 3px;
+}
+
+/* A pin: a numbered square, grey; ink fades on over it when its label
+   (or the pin) is pointed at or focused */
+.pin,
+.legendNum {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #6b6b71;
+  border-radius: 2px;
+  background: #1e1e21;
+  color: #a0a0a5;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.legendNum { flex: none; }
+.pin {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+}
+@container (max-width: 479px) {
+  .pin {
+    width: 18px;
+    height: 18px;
+  }
+}
+.pin::after,
+.legendNum::after {
+  content: attr(data-n);
+  position: absolute;
+  inset: -1px;
+  display: grid;
+  place-items: center;
+  border-radius: 2px;
+  background: #f4f4f2;
+  color: #0a0a0a;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.stage[data-pin="1"] [data-n="1"]::after,
+.stage[data-pin="2"] [data-n="2"]::after,
+.stage[data-pin="3"] [data-n="3"]::after,
+.stage[data-pin="4"] [data-n="4"]::after {
+  opacity: 1;
+}
+
+/* ── Why orange: the rim in red and in orange, each row a tile with the
+   rim as a specimen and the board's verdicts; the chosen row outlined ── */
+.colours { min-width: 0; }
+/* In the Final slide from an 820px stage; under the stage below that */
+.colours[data-where="slide"] {
+  display: none;
+  padding-top: 24px;
+  border-top: 1px solid #252528;
+}
+@container (min-width: 820px) {
+  .colours[data-where="slide"] { display: block; }
+}
+.colours[data-where="sheet"] {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid #252528;
+}
+@container rimsheet (min-width: 870px) {
+  .colours[data-where="sheet"] { display: none; }
+}
+.coloursTitle { margin: 0; }
+.opts {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.opt {
+  position: relative;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 8px 16px 8px 8px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--tile);
+}
+.opt[data-chosen="true"] {
+  outline: 1.5px solid var(--accent);
+  outline-offset: -1px;
+}
+/* The rim on the app's card fill: a product render */
+.optRim {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 2px;
+  background: #17191d;
+}
+.miniRim {
+  --nr-u: 1em;
+  position: relative;
+  display: block;
+  width: 10.38em;
+  height: 10.38em;
+  font-size: 6.4px;
+}
+.miniRim > svg { position: absolute; }
+.verdicts {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.verdict {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: #a0a0a5;
+  text-wrap: pretty;
+}
+.verdict[data-ok="true"] { color: #d2d2d0; }
+.glyph {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  color: #a0a0a5;
+  transform: translateY(1px);
+}
+.glyph[data-ok="true"] { color: #f4f4f2; }
+
+/* ════ Product renders ════ every length in the card's em (--nr-u) */
+.card {
+  --nr-u: 1em;
+  position: relative;
+  flex: none;
+  height: 14em;
+  overflow: hidden;
+  border-radius: 1.25em;
+  color: #ffffff;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+.card > span,
+.card > svg {
+  position: absolute;
+  white-space: nowrap;
+}
+.ring { overflow: visible; }
+
+.menu {
+  display: flex;
+  gap: calc(0.13 * var(--nr-u));
+}
+.menu i {
+  width: calc(0.19 * var(--nr-u));
+  height: calc(0.19 * var(--nr-u));
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* Board 043: Red Hat Text for headings, Helvetica Neue for body copy */
+.lfNext,
+.lfNow,
+.lfGoal,
+.lfFrom,
+.lfTo,
+.v1Next,
+.v1Goal,
+.v1From,
+.v1To,
+.bigDue,
+.rcDue {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* Low-fi: the grey wireframe card */
+.lowfi {
+  background: #757576;
+  color: #111111;
+}
+.lfSave {
+  left: calc(0.58 * var(--nr-u));
+  top: calc(1.33 * var(--nr-u));
+  font-size: 0.7em;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.16em;
+}
+.lfMenu {
+  right: calc(0.62 * var(--nr-u));
+  top: calc(1.64 * var(--nr-u));
+  display: flex;
+  gap: calc(0.07 * var(--nr-u));
+}
+.lfMenu i {
+  width: calc(0.24 * var(--nr-u));
+  height: calc(0.24 * var(--nr-u));
+  border-radius: 50%;
+  background: #111111;
+}
+.lfAvatar {
+  left: 50%;
+  top: calc(2.95 * var(--nr-u));
+  width: calc(4.9 * var(--nr-u));
+  height: calc(4.9 * var(--nr-u));
+  border-radius: 50%;
+  background: #4f4f51;
+  transform: translateX(-50%);
+}
+.lfName,
+.lfNext {
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.lfName {
+  top: calc(8.62 * var(--nr-u));
+  font-size: 0.95em;
+  font-weight: 700;
+}
+.lfNext {
+  top: calc(9.9 * var(--nr-u));
+  font-size: 0.6em;
+}
+.lfNow,
+.lfGoal,
+.lfFrom,
+.lfTo { font-size: 0.58em; }
+.lfNow {
+  top: calc(11.08 * var(--nr-u));
+  transform: translateX(-50%);
+}
+.lfGoal {
+  right: calc(1.03 * var(--nr-u));
+  top: calc(11.08 * var(--nr-u));
+}
+.lfBar {
+  left: calc(1 * var(--nr-u));
+  right: calc(1.03 * var(--nr-u));
+  top: calc(11.88 * var(--nr-u));
+  height: calc(0.18 * var(--nr-u));
+  border-radius: 1em;
+  background: #575357;
+}
+.lfBar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #191311;
+}
+.lfFrom {
+  left: calc(1 * var(--nr-u));
+  top: calc(12.2 * var(--nr-u));
+}
+.lfTo {
+  right: calc(1.03 * var(--nr-u));
+  top: calc(12.2 * var(--nr-u));
+}
+
+/* Ver_1: the dark card, a bar, a solid Save Money chip */
+.v1 {
+  background: #3d3841;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 9%);
+}
+.v1Chip {
+  left: calc(0.6 * var(--nr-u));
+  top: calc(0.62 * var(--nr-u));
+  height: calc(1.3 * var(--nr-u));
+  padding: 0 calc(0.55 * var(--nr-u));
+  border-radius: 1em;
+  background: var(--nutra-orange, #ff901a);
+  font-size: 0.64em;
+  font-weight: 500;
+  line-height: calc(1.3 * var(--nr-u));
+}
+.v1Menu {
+  right: calc(0.95 * var(--nr-u));
+  top: calc(1.18 * var(--nr-u));
+}
+.v1Name,
+.v1Next {
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.v1Name {
+  top: calc(7.94 * var(--nr-u));
+  font-size: 0.86em;
+}
+.v1Next {
+  top: calc(9.22 * var(--nr-u));
+  font-size: 0.6em;
+  font-weight: 500;
+}
+.v1Now {
+  top: calc(10.72 * var(--nr-u));
+  font-size: 0.86em;
+  font-weight: 700;
+  transform: translateX(-50%);
+}
+.v1Goal,
+.v1From,
+.v1To {
+  color: rgb(255 255 255 / 50%);
+  font-size: 0.6em;
+}
+.v1Goal {
+  right: calc(1.15 * var(--nr-u));
+  top: calc(10.95 * var(--nr-u));
+}
+.v1Bar {
+  left: calc(1.03 * var(--nr-u));
+  right: calc(1.15 * var(--nr-u));
+  top: calc(11.98 * var(--nr-u));
+  height: calc(0.24 * var(--nr-u));
+  border-radius: 1em;
+  background: #575357;
+}
+.v1Bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #3cc65b;
+}
+.v1From {
+  left: calc(1.03 * var(--nr-u));
+  top: calc(12.6 * var(--nr-u));
+}
+.v1To {
+  right: calc(1.15 * var(--nr-u));
+  top: calc(12.6 * var(--nr-u));
+}
+
+/* Ver_2: a thick ring, the amounts as tags on it */
+.v2 { background: #575357; }
+.v2Chip {
+  left: calc(0.55 * var(--nr-u));
+  top: calc(0.82 * var(--nr-u));
+  height: calc(1.29 * var(--nr-u));
+  padding: 0 calc(0.7 * var(--nr-u));
+  border-radius: 1em;
+  background: rgb(255 255 255 / 16%);
+  font-size: 0.62em;
+  line-height: calc(1.29 * var(--nr-u));
+}
+.v2Name {
+  left: 0;
+  right: 0;
+  top: calc(0.98 * var(--nr-u));
+  font-size: 0.8em;
+  font-weight: 500;
+  text-align: center;
+}
+.v2Menu {
+  right: calc(1 * var(--nr-u));
+  top: calc(1.38 * var(--nr-u));
+}
+.v2Goal,
+.v2Now,
+.bigTag {
+  height: calc(0.92 * var(--nr-u));
+  padding: 0 calc(0.45 * var(--nr-u));
+  border-radius: 1em;
+  font-size: 0.6em;
+  line-height: calc(0.92 * var(--nr-u));
+}
+.v2Goal {
+  background: #191311;
+  transform: translateY(-50%);
+}
+.v2Now,
+.bigTag {
+  height: calc(1.04 * var(--nr-u));
+  padding: 0 calc(0.5 * var(--nr-u));
+  border: calc(0.07 * var(--nr-u)) solid #191311;
+  background: #3cc65b;
+  font-size: 0.64em;
+  font-weight: 500;
+  line-height: calc(0.9 * var(--nr-u));
+  transform: translate(-50%, -50%);
+}
+
+/* Ver_3 and Ver_4: the wide card, a thin rim, the character large */
+.big { background: #17191d; }
+.bigMenu {
+  right: calc(1.95 * var(--nr-u));
+  top: calc(1.75 * var(--nr-u));
+}
+.bigText {
+  right: calc(1 * var(--nr-u));
+  top: calc(4.2 * var(--nr-u));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.bigText:has(> :only-child) { top: calc(6.15 * var(--nr-u)); }
+.bigName {
+  font-size: 1.15em;
+  font-weight: 500;
+}
+.bigSum {
+  margin-top: calc(0.4 * var(--nr-u));
+  font-size: 1.2em;
+  font-weight: 500;
+}
+.bigDue {
+  margin-top: calc(0.32 * var(--nr-u));
+  color: #3cc65b;
+  font-size: 0.6em;
+  font-weight: 500;
+}
+.bigPlus {
+  left: calc(17.53 * var(--nr-u));
+  top: calc(10.49 * var(--nr-u));
+  display: grid;
+  place-items: center;
+  width: calc(2.33 * var(--nr-u));
+  height: calc(2.33 * var(--nr-u));
+  border-radius: 50%;
+  background: #3a3a3e;
+}
+.bigPlus[data-tone="orange"] { background: #ff901a; }
+.plusIcon {
+  width: calc(1.25 * var(--nr-u));
+  height: calc(1.25 * var(--nr-u));
+  color: #ffffff;
+}
+
+/* Final and the two rim colours: name on top, the rim, the amount */
+.rimCard {
+  background: #17191d;
+  box-shadow: inset 0 0 0 1px #2a2b2f;
+}
+.rcName {
+  left: calc(1.06 * var(--nr-u));
+  top: calc(1 * var(--nr-u));
+  font-size: 1.12em;
+  font-weight: 500;
+}
+.rcMenu {
+  right: calc(1.4 * var(--nr-u));
+  top: calc(1.56 * var(--nr-u));
+}
+.rcSum {
+  right: calc(1.29 * var(--nr-u));
+  top: calc(4.6 * var(--nr-u));
+  font-size: 1.12em;
+  font-weight: 500;
+}
+.rcMarks {
+  right: calc(1.3 * var(--nr-u));
+  top: calc(6.72 * var(--nr-u));
+  display: flex;
+  gap: calc(0.53 * var(--nr-u));
+}
+.rcMarks i {
+  width: calc(0.29 * var(--nr-u));
+  height: calc(0.29 * var(--nr-u));
+  border-radius: 50%;
+}
+.rcDue {
+  right: calc(1.3 * var(--nr-u));
+  top: calc(7.56 * var(--nr-u));
+  font-size: 0.65em;
+}
+.rcChip {
+  right: calc(1.27 * var(--nr-u));
+  bottom: calc(1.61 * var(--nr-u));
+  height: calc(1.82 * var(--nr-u));
+  padding: 0 calc(0.9 * var(--nr-u));
+  border-radius: 1em;
+  background: #312f36;
+  color: #ff901a;
+  font-size: 0.82em;
+  font-weight: 500;
+  line-height: calc(1.82 * var(--nr-u));
+}

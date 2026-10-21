@@ -29,6 +29,7 @@ import { OutcomeTiles } from "@/components/OutcomeTiles";
 import { LayerTabs } from "@/components/LayerSheet";
 import { OwnershipStrip } from "@/components/OwnershipStrip";
 import { SopStack } from "@/components/SopStack";
+import { NutraFigure, type NutraVisual } from "@/components/nutra/NutraFigure";
 import styles from "./case.module.css";
 
 type Params = { slug: string; locale: Locale };
@@ -878,6 +879,12 @@ type Block =
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+/** Nutra's code-drawn figures, one per section (Section.visual), and its
+    hero. Each reads the locale and carries its own words; NutraFigure
+    loads each one's code only when it renders, so the other cases never
+    fetch them. */
+const nutraVisual = (v: string | undefined): v is NutraVisual => !!v && v.startsWith("nutra-");
+
 /** The banded entrance: fade and rise 8px over 720ms on --ease-arrive */
 const ARRIVE = { y: 8, duration: 0.72, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] };
 
@@ -1000,6 +1007,8 @@ function BandedCase({
       );
     }
     if (s.visual === "email-render") fig("email", <EmailRender />);
+    // Nutra's figures: one per section, chosen by the section's visual
+    if (nutraVisual(s.visual)) fig(s.visual, <NutraFigure visual={s.visual} />);
     if (s.visual === "ownership" && s.ownership) fig("ownership", <OwnershipStrip {...s.ownership} />);
     if (s.visual === "sop" && s.sop && s.iconList) {
       fig("sop", <SopStack items={s.iconList.items} {...s.sop} />);
@@ -1317,10 +1326,13 @@ function BandedCase({
             </div>
           ) : (
             <div
-              className={`mt-14 aspect-[16/9] overflow-hidden relative ${frame}`}
+              className={`mt-14 ${project.heroVisual ? "aspect-[4/3] sm:aspect-[16/9]" : "aspect-[16/9]"} overflow-hidden relative ${frame}`}
               style={project.coverBg ? { backgroundColor: project.coverBg } : undefined}
             >
-              {project.heroVideo ? (
+              {/* A code-drawn hero (Nutra's app) comes first, then a video, then the cover */}
+              {nutraVisual(project.heroVisual) ? (
+                <NutraFigure visual={project.heroVisual} />
+              ) : project.heroVideo ? (
                 <video
                   src={project.heroVideo}
                   poster={project.cover}

@@ -1,0 +1,484 @@
+/* One split card (as OwnershipStrip): the loop on the sheet, why a nut on
+   the slab, one 1px outline round both and a 1px divider. Flat fills,
+   1px lines, no gradient. The accent is only node 3's 1.5px outline; the
+   Save Money chip is a product render in the app's own colours. */
+.root { margin: 0; }
+
+.box {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+}
+@media (min-width: 1024px) {
+  .box { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+}
+
+.sheet {
+  min-width: 0;
+  padding: 24px 20px;
+  background: var(--sheet, #17171a);
+}
+@media (min-width: 640px) {
+  .sheet { padding: 40px; }
+}
+
+.title { margin: 0; }
+
+/* ── The loop ──────────────────────────────────────────────────────────
+   A wide sheet: a 2×2 ring on a 3×3 grid. Nodes in the corner cells (01
+   top left, 02 top right, 03 bottom right, 04 bottom left), the arrows in
+   the four gap cells between them, clockwise. Each node is as wide as
+   half the sheet, so the app's strings keep their phrases whole. */
+.loopHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 24px;
+}
+/* The owner's three words, once, for the whole loop */
+.words {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  color: #a0a0a5;
+}
+.wordItem { white-space: nowrap; }
+.sep {
+  margin: 0 0.6em;
+  color: #6b6b71;
+}
+
+.loop {
+  --gx: 48px;
+  --gy: 40px;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--gx) minmax(0, 1fr);
+  grid-template-rows: auto var(--gy) auto;
+  margin-top: 24px;
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .loop { --gx: 36px; }
+}
+
+.node {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px 16px 16px;
+  border: 1px solid #333336;
+  border-radius: 2px;
+  background: #1e1e21;
+}
+/* Pointed at: the node's edge inks (an overlay, so it only fades) */
+.node::before,
+.node[data-focus]::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+.node::before {
+  border: 1px solid #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+/* The reward: the figure's one focus */
+.node[data-focus]::after { border: 1.5px solid var(--accent, #f4f4f2); }
+.root[data-node="0"] .node[data-n="0"]::before,
+.root[data-node="1"] .node[data-n="1"]::before,
+.root[data-node="2"] .node[data-n="2"]::before,
+.root[data-node="3"] .node[data-n="3"]::before { opacity: 1; }
+
+.node[data-n="0"] { grid-area: 1 / 1; }
+.node[data-n="1"] { grid-area: 1 / 3; }
+.node[data-n="2"] { grid-area: 3 / 3; }
+.node[data-n="3"] { grid-area: 3 / 1; }
+
+.index { color: #8a8a90; }
+
+/* S6, the product string as the app prints it; a short one never breaks */
+.string {
+  color: #f4f4f2;
+  text-wrap: balance;
+}
+.string[data-short] { white-space: nowrap; }
+/* On /cn: what the string says, under it */
+.gloss {
+  margin-top: -4px;
+  color: #a0a0a5;
+}
+
+/* Product render: the app's Save Money chip (boards 039, 042) */
+.saveChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #312f36;
+  color: #ff901a;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+/* ── Arrows ── each drawn twice: .base in grey, .lit in ink over it */
+.arc {
+  position: relative;
+  min-width: 0;
+  pointer-events: none;
+}
+.path,
+.base,
+.lit,
+.stroke {
+  position: absolute;
+}
+.base,
+.lit,
+.stroke { inset: 0; }
+.stroke {
+  border: 0 solid;
+}
+.base {
+  color: #6b6b71;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.lit {
+  color: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.base .stroke,
+.lit .stroke { border-color: currentColor; }
+.arrow {
+  position: absolute;
+  display: block;
+  fill: currentColor;
+}
+.arrow[data-dir="left"],
+.arrow[data-dir="right"] {
+  width: 6px;
+  height: 8px;
+}
+.arrow[data-dir="up"],
+.arrow[data-dir="down"] {
+  width: 8px;
+  height: 6px;
+}
+
+/* A node pointed at: its outgoing arrow inks, the rest step back */
+.root[data-node] .base { opacity: var(--dim, 0.45); }
+.root[data-node="0"] .arc[data-arc="0"] .lit,
+.root[data-node="1"] .arc[data-arc="1"] .lit,
+.root[data-node="2"] .arc[data-arc="2"] .lit,
+.root[data-node="3"] .arc[data-arc="3"] .lit { opacity: 1; }
+
+/* Ring geometry: a horizontal arrow runs across its gap at the row's
+   middle, a vertical one down or up its gap at the column's middle; the
+   head's tip lands on the next node's edge */
+.arc[data-kind="r"] { grid-area: 1 / 2; }
+.arc[data-kind="d"] { grid-area: 2 / 3; }
+.arc[data-kind="l"] { grid-area: 3 / 2; }
+.arc[data-kind="u"] { grid-area: 2 / 1; }
+.arc:is([data-kind="r"], [data-kind="l"]) .path {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 8px;
+  margin-top: -4px;
+}
+.arc:is([data-kind="d"], [data-kind="u"]) .path {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 8px;
+  margin-left: -4px;
+}
+.arc:is([data-kind="r"], [data-kind="l"]) .stroke {
+  top: 3.5px;
+  bottom: auto;
+  height: 1px;
+  border-top-width: 1px;
+}
+.arc:is([data-kind="d"], [data-kind="u"]) .stroke {
+  left: 3.5px;
+  right: auto;
+  width: 1px;
+  border-left-width: 1px;
+}
+.arc[data-kind="r"] .stroke { right: 2px; }
+.arc[data-kind="l"] .stroke { left: 2px; }
+.arc[data-kind="d"] .stroke { bottom: 2px; }
+.arc[data-kind="u"] .stroke { top: 2px; }
+.arc[data-kind="r"] .arrow { top: 0; right: 0; }
+.arc[data-kind="l"] .arrow { top: 0; left: 0; }
+.arc[data-kind="d"] .arrow { bottom: 0; left: 0; }
+.arc[data-kind="u"] .arrow { top: 0; left: 0; }
+
+/* The phone's arcs, hidden on a wide sheet */
+.arc[data-kind="down"],
+.arc[data-kind="return"] { display: none; }
+
+/* ── A phone: the nodes stacked, joined by arrows down; the return runs
+   up a 32px gutter on the right and back into node 01. ── */
+@media (max-width: 639px) {
+  .loop {
+    grid-template-columns: minmax(0, 1fr) 32px;
+    grid-template-rows: none;
+  }
+  .node[data-n="0"] { grid-area: 1 / 1; }
+  .node[data-n="1"] { grid-area: 3 / 1; }
+  .node[data-n="2"] { grid-area: 5 / 1; }
+  .node[data-n="3"] { grid-area: 7 / 1; }
+  .arc:is([data-kind="r"], [data-kind="d"], [data-kind="l"], [data-kind="u"]) { display: none; }
+  .arc[data-kind="down"],
+  .arc[data-kind="return"] { display: block; }
+
+  .arc[data-kind="down"] { height: 32px; }
+  .arc[data-kind="down"][data-arc="0"] { grid-area: 2 / 1; }
+  .arc[data-kind="down"][data-arc="1"] { grid-area: 4 / 1; }
+  .arc[data-kind="down"][data-arc="2"] { grid-area: 6 / 1; }
+  .arc[data-kind="down"] .path {
+    top: 0;
+    bottom: 0;
+    left: 20px;
+    width: 8px;
+  }
+  .arc[data-kind="down"] .stroke {
+    left: 3.5px;
+    right: auto;
+    width: 1px;
+    border-left-width: 1px;
+  }
+  .arc[data-kind="down"] .arrow { bottom: 0; left: 0; }
+
+  .arc[data-kind="return"] { grid-area: 1 / 1 / 8 / 3; }
+  .arc[data-kind="return"] .path {
+    top: 22px;
+    right: 16px;
+    bottom: 22px;
+    left: calc(100% - 32px);
+  }
+  .arc[data-kind="return"] .stroke {
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+  .arc[data-kind="return"] .arrow { top: -3.5px; left: 0; }
+}
+
+/* ── Precedents: one table, label | entry, on hairlines ── */
+.refs {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #252528;
+}
+.precedents {
+  margin: 12px 0 0;
+}
+.precedent {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: baseline;
+  gap: 6px;
+  padding: 12px 0;
+  border-top: 1px solid #252528;
+}
+.precedent:last-child {
+  padding-bottom: 0;
+}
+@media (min-width: 640px) {
+  .precedent {
+    grid-template-columns: 152px minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+.app {
+  color: #f4f4f2;
+  white-space: nowrap;
+}
+.precedent dd { margin: 0; }
+.quote {
+  color: #a0a0a5;
+  text-wrap: pretty;
+}
+.refLabel { margin: 0; }
+.chipsCell { min-width: 0; }
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* The chip row sits on the label's line */
+@media (min-width: 640px) {
+  .precedent:has(.chipsCell) { align-items: center; }
+}
+.market { color: #f4f4f2; }
+
+/* ── The slab: why a nut ── */
+.why.why {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 20px;
+  border: 0;
+  border-top: 1px solid var(--edge, #333336);
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .why.why { padding: 40px; }
+}
+@media (min-width: 1024px) {
+  .why.why {
+    border-top: 0;
+    border-left: 1px solid var(--edge, #333336);
+  }
+}
+
+/* The acorn's stage: the slab's dot field (as Axel's preview pane), edge
+   to edge between two rules, just deep enough for the acorn's square */
+.stage {
+  display: grid;
+  place-items: center;
+  margin: 24px -20px 0;
+  padding: 32px 20px;
+  border-top: 1px solid #252528;
+  border-bottom: 1px solid #252528;
+  background-image: radial-gradient(circle at center, var(--grey-3, #3a3a3f) 0.75px, transparent 1.25px);
+  background-size: 12px 12px;
+  background-repeat: space;
+}
+@media (min-width: 640px) {
+  .stage {
+    margin: 24px -40px 0;
+    padding: 40px;
+  }
+}
+.acornSquare {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 160px;
+  height: 160px;
+  border: 1px solid #333336;
+  border-radius: 2px;
+  background: #1e1e21;
+}
+/* 120px tall, at the cutout's own proportions */
+.acorn {
+  display: block;
+  width: auto;
+  height: 120px;
+}
+
+.keys {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.key {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 16px 0 20px;
+  border-top: 1px solid #252528;
+}
+/* The first row sits on the stage's rule */
+.key:nth-child(-n + 2) { border-top: 0; }
+.key:nth-last-child(-n + 2) { padding-bottom: 0; }
+.keyWord {
+  min-width: 0;
+  white-space: nowrap;
+}
+/* Wide: the four keywords are four rows that share the slab's remaining
+   height, index beside word, so the slab stands as tall as the sheet */
+@media (min-width: 1024px) {
+  .keys {
+    flex: 1;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: minmax(0, 1fr);
+  }
+  .key,
+  .key:nth-last-child(-n + 2) {
+    grid-template-columns: 40px minmax(0, 1fr);
+    align-items: center;
+    align-content: center;
+    gap: 0 16px;
+    padding: 20px 0;
+  }
+  .key:nth-child(2) { border-top: 1px solid #252528; }
+}
+
+/* Chinese is held word by word, so no line ends inside a word */
+.hold { white-space: nowrap; }
+.root :lang(zh) { line-break: strict; }
+
+/* ── Entrance, once on view: nodes rise 60ms apart, each arc draws in from
+   the node it leaves, the acorn rises last. Transform and opacity only. */
+.arc[data-kind="r"] .path { transform-origin: 0 50%; }
+.arc[data-kind="d"] .path { transform-origin: 50% 0; }
+.arc[data-kind="l"] .path { transform-origin: 100% 50%; }
+.arc[data-kind="u"] .path { transform-origin: 50% 100%; }
+.arc[data-kind="down"] .path { transform-origin: 50% 0; }
+.arc[data-kind="return"] .path { transform-origin: 0 100%; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .root:not([data-lit="true"]) .node {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+  .root:not([data-lit="true"]) .path {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  .root:not([data-lit="true"]) .acornSquare {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+  .root[data-lit="true"] .node {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) calc(var(--k) * var(--step, 60ms)) backwards;
+  }
+  .root[data-lit="true"] .path {
+    animation: draw var(--t-2, 360ms) var(--ease-arrive) calc(300ms + var(--k) * var(--step, 60ms)) backwards;
+  }
+  .root[data-lit="true"] .acornSquare {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) 520ms backwards;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+}
+@keyframes draw {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node::before,
+  .base,
+  .lit { transition: none; }
+}

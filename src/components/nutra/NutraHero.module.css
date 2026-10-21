@@ -1,0 +1,55 @@
+/* The hero's stage: it fills the page's hero frame (the tile, its 1px
+   edge and corner marks belong to the frame) with a faint dot grid, the
+   drafting ground the prototype's sheet uses too. Three phones in a row,
+   centred, scaled together by --s (written by a ResizeObserver; these
+   fallbacks hold the first paint). Inside each phone the app's own
+   language applies (app/phone.module.css). */
+.root {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 6%) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+}
+
+.stage {
+  --s: 0.27;
+  position: absolute;
+  inset: 16px;
+  display: grid;
+  place-items: center;
+}
+@media (min-width: 640px) {
+  .stage {
+    --s: 0.45;
+    inset: 32px;
+  }
+}
+@media (min-width: 1024px) {
+  .stage {
+    --s: 0.62;
+    inset: 44px;
+  }
+}
+@media (min-width: 1280px) {
+  .stage { --s: 0.76; }
+}
+
+.row {
+  display: flex;
+  gap: calc(56px * var(--s));
+}
+
+/* Each phone's box at its drawn size times the scale */
+.fit {
+  position: relative;
+  flex: none;
+  width: calc(360px * var(--s));
+  height: calc(760px * var(--s));
+}
+
+/* A still screen never scrolls */
+.panel.panel {
+  overflow: hidden;
+  transition: none;
+}

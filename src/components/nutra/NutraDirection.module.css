@@ -1,0 +1,117 @@
+/* Three blocks, 56px apart. Block A is Latent's split card: the render on
+   a tile (with the corner marks of a print), the note on a slab, one 1px
+   outline round both. No accent in A. */
+.direction {
+  display: grid;
+  gap: 56px;
+  margin: 0;
+}
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .direction { line-break: strict; }
+
+.first {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+}
+@media (min-width: 1024px) {
+  .first { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+}
+
+/* The render fills its tile edge to edge: its own soft floor (a white
+   shadow drawn for a light page) then meets the tile's edges, never a
+   box inside it */
+.media {
+  position: relative;
+  overflow: hidden;
+  background: var(--tile);
+}
+/* At least the render's own proportion (3000 × 1939); taller when the
+   note beside it is, and then the render covers, floor down */
+.media::before {
+  content: "";
+  display: block;
+  padding-top: 64.63%;
+}
+.mediaImg.mediaImg {
+  object-fit: cover;
+  object-position: 50% 100%;
+}
+
+/* The note: the slab draws only the divider; the outline is the card's */
+.note.note {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px 28px;
+  border: 0;
+  border-top: 1px solid var(--edge);
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .note.note { padding: 40px; }
+}
+@media (min-width: 1024px) {
+  .note.note {
+    border-top: 0;
+    border-left: 1px solid var(--edge);
+  }
+}
+.label { margin: 0; }
+
+.swatches {
+  display: grid;
+  gap: 20px;
+  margin: 32px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.swatch {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+/* The product's own two colours, as the board's swatch discs */
+.swatch i {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.swatchText {
+  display: grid;
+  gap: 4px;
+  color: #f4f4f2;
+}
+.swatchText > :last-child { color: #8a8a90; }
+
+/* The two typefaces, each set in itself */
+.typeLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 12px;
+  margin: 32px 0 0;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
+.dot { color: #6b6b71; }
+@media (max-width: 639px) {
+  .typeLine { flex-direction: column; }
+  .dot { display: none; }
+}
+
+.caption {
+  margin: 32px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid #252528;
+  color: #a0a0a5;
+}
+@media (min-width: 1024px) {
+  .caption { margin-top: auto; }
+  .typeLine { margin-bottom: 32px; }
+}
