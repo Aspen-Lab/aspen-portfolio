@@ -199,8 +199,9 @@ export function HeroBio() {
       {t.rich("bio", {
         lead: (chunks: ReactNode) => <span className="text-ink/90">{chunks}</span>,
         react: (chunks: ReactNode) => (
-          <span className="inline-flex items-baseline gap-1 text-ink/80">
-            <svg viewBox="0 0 24 24" aria-hidden className="w-[11px] h-[11px] translate-y-[1px] shrink-0" fill="currentColor">
+          <span className="text-ink/80 whitespace-nowrap">
+            {/* inline, not inline-flex, so the no-break space after it holds "React PRs" */}
+            <svg viewBox="0 0 24 24" aria-hidden className="inline-block mr-1 w-[11px] h-[11px] -translate-y-[1px]" fill="currentColor">
               <path d={siReact.path} />
             </svg>
             {chunks}
