@@ -86,7 +86,7 @@ export function HeroBio() {
   const t = useTranslations("Hero");
   return (
     <p
-      className="hero-fade-up mt-6 max-w-[380px] text-center text-[13px] leading-[1.85] text-mute [word-break:keep-all] [line-break:strict]"
+      className="hero-fade-up max-w-[380px] text-[13px] leading-[1.85] text-mute [word-break:keep-all] [line-break:strict]"
       style={enterDelay(0.94)}
     >
       {t.rich("bio", {
@@ -117,8 +117,8 @@ export function HeroTools() {
   const tip = focusedTool ?? hoveredTool ?? selectedTool;
 
   return (
-    <div className="hero-fade-up mt-8 flex flex-col items-center" style={enterDelay(1.1)}>
-      <div className="flex items-center gap-5" role="group" aria-label={t("invLabel")}>
+    <div className="hero-fade-up mt-7 flex flex-col items-start" style={enterDelay(1.1)}>
+      <div className="flex items-center gap-5 pl-2" role="group" aria-label={t("invLabel")}>
         {TOOLS.map((name) => (
           <InventorySlot
             key={name}
@@ -137,7 +137,7 @@ export function HeroTools() {
         ))}
       </div>
       {/* Held at the height of two lines, so nothing below shifts */}
-      <p id={descriptionId} className="mt-3 min-h-[3.2rem] max-w-[400px] text-center text-[13px] leading-[1.7] text-mute">
+      <p id={descriptionId} className="mt-3 min-h-[3.2rem] max-w-[380px] text-[13px] leading-[1.7] text-mute">
         {tip && (
           <>
             <span className="text-ink">{tip}</span>
@@ -166,7 +166,7 @@ const COMPANIES = [
 export function HeroCredits() {
   return (
     <ul
-      className="hero-fade-up flex flex-wrap justify-center gap-x-7 gap-y-2 text-[12px] tracking-[0.06em] text-soft/80"
+      className="hero-fade-up grid grid-cols-2 gap-x-8 gap-y-2 text-[12px] tracking-[0.04em] text-soft/80 sm:grid-cols-3"
       style={enterDelay(1.26)}
     >
       {COMPANIES.map((name) => (
