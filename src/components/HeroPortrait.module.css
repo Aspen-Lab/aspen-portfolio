@@ -1,0 +1,40 @@
+/* The halftone portrait behind the hero: the size it always had (about
+   560px), on the right, dark, its edges dissolving into the ground, so it
+   is felt rather than looked at (Aspen: 「背景保持之前大小 暗色 不要抢戏」).
+   The fade is a mask, not a fill. On a phone it is smaller still and
+   gone before the words. */
+.portrait {
+  position: absolute;
+  z-index: 0;
+  top: 12px;
+  right: -22vw;
+  width: 78vw;
+  aspect-ratio: 1;
+  opacity: 0.16;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-mask-image: radial-gradient(50% 50% at 50% 46%, #000 38%, transparent 82%);
+  mask-image: radial-gradient(50% 50% at 50% 46%, #000 38%, transparent 82%);
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 640px) {
+  .portrait {
+    top: 50%;
+    right: 2vw;
+    width: min(560px, 62vh);
+    opacity: 0.24;
+    transform: translateY(-54%);
+  }
+}
+
+@media (min-width: 1440px) {
+  .portrait { right: 6vw; }
+}

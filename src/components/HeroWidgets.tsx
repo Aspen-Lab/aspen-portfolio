@@ -150,11 +150,9 @@ function CompanyItem({ name, node, echo }: { name: string; node: ReactNode; echo
   );
 }
 
-/* Tool marks share a readable explanation below. Hover previews it;
-   selecting a tool keeps its explanation available on touch screens.
-   The tiles are square cells of one 8-column grid, so the whole set
-   always fits the column: 44px at sm+, ~38px on a 390 phone. The
-   running number lives in the explanation line, not in the tile. */
+/* Tool marks, quiet: eight small marks with no tiles, in the soft grey;
+   the one pointed at, focused or selected turns ink, and its line below
+   says how I use it. Selecting keeps it on touch screens. */
 
 function InventorySlot({ name, active, selected, label, descriptionId, onEnter, onLeave, onFocus, onBlur, onPointerDown, onSelect }: {
   name: string; active: boolean;
@@ -166,8 +164,8 @@ function InventorySlot({ name, active, selected, label, descriptionId, onEnter, 
   return (
     <button
       type="button"
-      className={`grid place-items-center w-full aspect-square border cursor-pointer transition-colors duration-200 motion-reduce:transition-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-ink focus-visible:outline-offset-2 ${
-        active ? "border-ink/45 text-ink" : "border-line text-soft"
+      className={`grid place-items-center h-8 w-8 -mx-2 cursor-pointer transition-colors duration-200 motion-reduce:transition-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-ink focus-visible:outline-offset-1 ${
+        active ? "text-ink" : "text-soft/70 hover:text-ink"
       }`}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
@@ -179,7 +177,7 @@ function InventorySlot({ name, active, selected, label, descriptionId, onEnter, 
       aria-pressed={selected}
       aria-describedby={descriptionId}
     >
-      <span className="[&>svg]:w-[17px] [&>svg]:h-[17px] sm:[&>svg]:w-[18px] sm:[&>svg]:h-[18px]">{icons[name]}</span>
+      <span className="[&>svg]:w-[15px] [&>svg]:h-[15px]">{icons[name]}</span>
     </button>
   );
 }
@@ -189,8 +187,60 @@ function InventorySlot({ name, active, selected, label, descriptionId, onEnter, 
    instead of after hydration. Reduced motion is handled in the CSS. */
 const enterDelay = (s: number) => ({ "--d": `${s}s` }) as CSSProperties;
 
-/* ─── Widget ────────────────────────────────────────────────────────────── */
-export function HeroWidgets() {
+/* ─── Bio ─────────────────────────────────────────────────────────────────
+   The lead in ink, the Axel and React marks inline; one quiet line. */
+export function HeroBio() {
+  const t = useTranslations("Hero");
+  return (
+    <p
+      className="hero-fade-up mt-6 text-[14.5px] leading-[1.75] max-w-[420px] [word-break:keep-all] [line-break:strict]"
+      style={{ ...enterDelay(0.94), color: "rgba(160,160,165,0.78)" }}
+    >
+      {t.rich("bio", {
+        lead: (chunks: ReactNode) => <span className="text-ink/90">{chunks}</span>,
+        react: (chunks: ReactNode) => (
+          <span className="inline-flex items-baseline gap-1 text-ink/80">
+            <svg viewBox="0 0 24 24" aria-hidden className="w-[11px] h-[11px] translate-y-[1px] shrink-0" fill="currentColor">
+              <path d={siReact.path} />
+            </svg>
+            {chunks}
+          </span>
+        ),
+        /* "Axel (YC W19)" becomes the mark itself: the Axel lockup in ink
+           (public/logos/axel.svg, their own header artwork) and a hairline
+           YC W19 tag, the pair one link to helloaxel.com. The words stay
+           for screen readers. */
+        axel: (chunks: ReactNode) => (
+          <a
+            href="https://helloaxel.com"
+            target="_blank"
+            rel="noreferrer"
+            className="group/axel inline-flex items-baseline gap-2 align-baseline whitespace-nowrap"
+          >
+            <span className="sr-only">{chunks}</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logos/axel.svg"
+              alt=""
+              aria-hidden
+              className="inline-block h-[12px] w-auto translate-y-[2px] opacity-75 transition-opacity duration-300 group-hover/axel:opacity-100"
+              style={{ filter: "brightness(0) invert(0.96)" }}
+            />
+            <span
+              aria-hidden
+              className="plate-button inline-block translate-y-[-1px] px-[5px] py-[1px] font-mono text-[9px] uppercase tracking-[0.18em] text-soft transition-colors duration-300 group-hover/axel:text-ink"
+            >
+              YC W19
+            </span>
+          </a>
+        ),
+      })}
+    </p>
+  );
+}
+
+/* ─── Tools ─────────────────────────────────────────────────────────────── */
+export function HeroTools() {
   const t = useTranslations("Hero");
   const [hoveredTool, setHoveredTool] = useState<string | null>(null);
   const [focusedTool, setFocusedTool] = useState<string | null>(null);
@@ -199,124 +249,66 @@ export function HeroWidgets() {
   const tip = focusedTool ?? hoveredTool ?? selectedTool;
 
   return (
-    <div className="mt-8 sm:mt-10">
+    <div className="hero-fade-up mt-10" style={enterDelay(1.1)}>
+      <div className="flex items-center gap-5 pl-2" role="group" aria-label={t("invLabel")}>
+        {TOOLS.map((name) => (
+          <InventorySlot
+            key={name}
+            name={name}
+            active={tip === name}
+            selected={selectedTool === name}
+            label={`${name} — ${t(`inv.${name}.level`)}`}
+            descriptionId={tip === name ? descriptionId : undefined}
+            onEnter={() => setHoveredTool(name)}
+            onLeave={() => setHoveredTool(null)}
+            onFocus={(event) => setFocusedTool(event.currentTarget.matches(":focus-visible") ? name : null)}
+            onBlur={() => setFocusedTool(null)}
+            onPointerDown={() => setFocusedTool(null)}
+            onSelect={() => setSelectedTool(selectedTool === name ? null : name)}
+          />
+        ))}
+      </div>
+      {/* One line, held at the height of the longest, so nothing shifts */}
+      <div id={descriptionId} className="mt-3 min-h-[3.4rem] max-w-[460px]">
+        {tip ? (
+          <>
+            <p className="font-mono text-[12px] uppercase tracking-[0.12em]">
+              <span className="text-ink">{tip}</span>
+              <span className="text-soft"> · {t(`inv.${tip}.level`)}</span>
+            </p>
+            <p className="mt-1 text-[13px] leading-[1.6] text-mute">{t(`inv.${tip}.description`)}</p>
+          </>
+        ) : (
+          <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-soft/70">{t("invLabel")}</p>
+        )}
+      </div>
+    </div>
+  );
+}
 
-      {/* Bio — the lead in ink, the React and Axel marks inline. (A word-by-
-          word rise was tried here and cut; the line fades up as one.) */}
-      <p
-        className="hero-fade-up text-[14.5px] sm:text-[16px] leading-[1.72] max-w-[480px]"
-        style={{ ...enterDelay(0.94), color: "rgba(160,160,165,0.72)" }}
+/* ─── Companies ─────────────────────────────────────────────────────────────
+   A quiet, slow line at the hero's foot, under one hairline. */
+export function HeroLogos() {
+  return (
+    <div className="hero-fade-up border-t border-line pt-6" style={enterDelay(1.26)}>
+      <div
+        className="logo-ticker-wrap overflow-hidden opacity-70 -mx-4 sm:mx-0"
+        style={{
+          maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+        }}
       >
-        {t.rich("bio", {
-          lead: (chunks: ReactNode) => <span className="font-medium text-ink/90">{chunks}</span>,
-          react: (chunks: ReactNode) => (
-            <span className="inline-flex items-baseline gap-1 text-ink/80">
-              <svg viewBox="0 0 24 24" aria-hidden className="w-[12px] h-[12px] translate-y-[1px] shrink-0" fill="currentColor">
-                <path d={siReact.path} />
-              </svg>
-              {chunks}
-            </span>
-          ),
-          /* "Axel (YC W19)" becomes the mark itself: the Axel lockup in
-             ink (public/logos/axel.svg, their own header artwork) and a
-             hairline YC W19 tag, the pair one link to helloaxel.com. The
-             words stay for screen readers. */
-          axel: (chunks: ReactNode) => (
-            <a
-              href="https://helloaxel.com"
-              target="_blank"
-              rel="noreferrer"
-              className="group/axel inline-flex items-baseline gap-2 align-baseline whitespace-nowrap"
-            >
-              <span className="sr-only">{chunks}</span>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/logos/axel.svg"
-                alt=""
-                aria-hidden
-                className="inline-block h-[13px] sm:h-[14px] w-auto translate-y-[2px] opacity-80 transition-opacity duration-300 group-hover/axel:opacity-100"
-                style={{ filter: "brightness(0) invert(0.96)" }}
-              />
-              <span
-                aria-hidden
-                className="plate-button inline-block translate-y-[-1px] px-[6px] py-[1px] font-mono text-[9px] uppercase tracking-[0.18em] text-soft transition-colors duration-300 group-hover/axel:text-ink"
-              >
-                YC W19
-              </span>
-            </a>
-          ),
-        })}
-      </p>
-
-      {/* Toolbox — usage depth and a concrete scope for each tool. */}
-      <div className="hero-fade-up mt-8 sm:mt-9" style={enterDelay(1.1)}>
-        <div
-          className="grid grid-cols-8 gap-1.5 sm:gap-2 max-w-[408px]"
-          role="group"
-          aria-label={t("invLabel")}
-        >
-          {TOOLS.map((name) => (
-            <InventorySlot
-              key={name}
-              name={name}
-              active={tip === name}
-              selected={selectedTool === name}
-              label={`${name} — ${t(`inv.${name}.level`)}`}
-              descriptionId={tip === name ? descriptionId : undefined}
-              onEnter={() => setHoveredTool(name)}
-              onLeave={() => setHoveredTool(null)}
-              onFocus={(event) => setFocusedTool(event.currentTarget.matches(":focus-visible") ? name : null)}
-              onBlur={() => setFocusedTool(null)}
-              onPointerDown={() => setFocusedTool(null)}
-              onSelect={() => setSelectedTool(selectedTool === name ? null : name)}
+        <div className="logo-ticker flex items-center gap-10 w-max py-1" style={{ animationDuration: "64s" }}>
+          {[...COMPANIES, ...COMPANIES].map((c, i) => (
+            <CompanyItem
+              key={`${c.name}-${i}`}
+              name={c.name}
+              node={c.node}
+              echo={i >= COMPANIES.length}
             />
           ))}
         </div>
-        <div id={descriptionId} className="mt-3 min-h-[5rem] sm:min-h-[3.75rem] max-w-[560px]">
-          {tip ? (
-            <>
-              <p className="flex items-baseline gap-3 font-mono text-[10px] uppercase tracking-[0.12em]">
-                <span className="text-ink">
-                  <span aria-hidden className="mr-2 tabular-nums text-soft">
-                    {String((TOOLS as readonly string[]).indexOf(tip) + 1).padStart(2, "0")}
-                  </span>
-                  {tip}
-                </span>
-                <span className="border-l border-line pl-3 text-mute">{t(`inv.${tip}.level`)}</span>
-              </p>
-              <p className="mt-1.5 text-[12px] leading-[1.6] text-mute">{t(`inv.${tip}.description`)}</p>
-            </>
-          ) : (
-            <>
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft">{t("invLabel")} · {String(TOOLS.length).padStart(2, "0")}</p>
-              <p className="mt-1.5 text-[12px] leading-[1.6] text-mute">{t("invHint")}</p>
-            </>
-          )}
-        </div>
       </div>
-
-      {/* Companies — infinite scrolling ticker */}
-      <div className="hero-fade-up mt-9 sm:mt-10 -mx-4 sm:mx-0" style={enterDelay(1.26)}>
-        <div
-          className="logo-ticker-wrap overflow-hidden"
-          style={{
-            maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-          }}
-        >
-          <div className="logo-ticker flex items-center gap-7 w-max py-1">
-            {[...COMPANIES, ...COMPANIES].map((c, i) => (
-              <CompanyItem
-                key={`${c.name}-${i}`}
-                name={c.name}
-                node={c.node}
-                echo={i >= COMPANIES.length}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
     </div>
   );
 }

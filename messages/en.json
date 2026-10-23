@@ -8,6 +8,8 @@
   },
   "Hero": {
     "eyebrow": "Founding Design Engineer at Axel (YC W19) · Bellevue, WA",
+    "name": "Aspen W.",
+    "location": "Bellevue, WA",
     "headlineLine2": "Design ❤️ Engineering",
     "headlineLine3a": "one ",
     "headlineLine3Italic": "leverage",
@@ -15,7 +17,7 @@
     "ctaWork": "See selected work",
     "ctaStack": "Stack",
     "ctaEmail": "xiaoyangw.design@gmail.com",
-    "bio": "<lead>Founding Design Engineer</lead> at <axel>Axel (YC W19)</axel>, shipping product design and production <react>React</react> PRs.",
+    "bio": "<lead>Founding Design Engineer</lead> at <axel>Axel (YC W19)</axel>, shipping product design and production <react>React</react> PRs.",
     "stackLabel": "Stack",
     "invLabel": "Toolbox",
     "inv": {

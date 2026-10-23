@@ -8,6 +8,8 @@
   },
   "Hero": {
     "eyebrow": "Axel (YC W19) 创始设计工程师 · 西雅图 Bellevue",
+    "name": "Aspen W.",
+    "location": "西雅图 Bellevue",
     "headlineLine2": "设计 ❤️ 工程",
     "headlineLine3a": "一股 ",
     "headlineLine3Italic": "杠杆",
@@ -15,7 +17,7 @@
     "ctaWork": "看精选作品",
     "ctaStack": "技术栈",
     "ctaEmail": "xiaoyangw.design@gmail.com",
-    "bio": "<lead>创始设计工程师</lead> —— 在 <axel>Axel (YC W19)</axel> 负责产品设计与前端实现，直接交付生产级 <react>React</react> PR。",
+    "bio": "<lead>创始设计工程师</lead> —— 在 <axel>Axel (YC W19)</axel> 负责产品设计与前端实现，直接交付生产级 <react>React</react> PR。",
     "stackLabel": "工具栈",
     "invLabel": "工具箱",
     "inv": {
