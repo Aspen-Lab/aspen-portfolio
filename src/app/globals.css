@@ -307,7 +307,7 @@ button {
   .hero-fade-up { animation: hero-fade 0.4s ease-out var(--d, 0s) both; }
 }
 
-/* "leverage" — set apart by the italic alone; no gradient fill */
+/* "leverage": set apart by full ink alone (no italic, no gradient fill) */
 .leverage {
   color: var(--color-ink);
 }

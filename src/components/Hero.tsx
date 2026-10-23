@@ -3,17 +3,18 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { HeroPortrait } from "./HeroPortrait";
 import { HeroHeadline } from "./HeroHeadline";
-import { HeroBio, HeroLogos, HeroTools } from "./HeroWidgets";
+import { HeroBio, HeroCredits, HeroTools } from "./HeroWidgets";
 import { HeroEntrance } from "./HeroEntrance";
 
 /* The horizon (Aspen, 2026-10-23: 「极简 字小一些 来个我的小头像 + 大头像作
-   为背景」, 「背景保持之前大小 暗色 不要抢戏」, 「不够聚拢」, then 「hero 来点
-   原研哉的风格」). After Kenya Hara's MUJI horizon: an almost empty field,
-   one hairline across its full width, and everything gathered on a single
-   centred axis. The face, a dark halftone, rests on the line like a sun at
-   the horizon and fades into it; under the line, small and quiet, the name
-   beside a small photo, the statement, the bio and the tool marks. The
-   companies sit far below, at the foot of the field. */
+   为背景」, 「背景保持之前大小 暗色 不要抢戏」, 「不够聚拢」, 「hero 来点原研哉
+   的风格」, then 「字体很乱」). After Kenya Hara's MUJI horizon: an almost
+   empty field, one hairline across its full width, and everything on one
+   centred axis. The face, a dark halftone, rests on the line and fades
+   into it; under it, the name beside a small photo, the statement, the bio
+   and the tool marks; the companies, by name, at the foot of the field.
+   Two faces only: the serif for the statement, the text face at 13px for
+   everything else, ink for what matters and mute for the rest. */
 export function Hero() {
   const t = useTranslations("Hero");
 
@@ -40,11 +41,12 @@ export function Hero() {
                 width={28}
                 height={28}
                 priority
-                className="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-line"
+                className="h-7 w-7 shrink-0 rounded-full object-cover"
               />
-              <p className="flex items-baseline gap-3 leading-none">
-                <span className="text-[13px] text-ink">{t("name")}</span>
-                <span className="font-mono text-[12px] uppercase tracking-[0.12em] text-soft">{t("location")}</span>
+              <p className="text-[13px] leading-none text-mute">
+                <span className="text-ink">{t("name")}</span>
+                <span aria-hidden className="mx-2 text-soft">·</span>
+                {t("location")}
               </p>
             </div>
 
@@ -62,7 +64,7 @@ export function Hero() {
         </div>
 
         <div className="mt-16 w-full max-w-[960px]">
-          <HeroLogos />
+          <HeroCredits />
         </div>
       </div>
     </section>
