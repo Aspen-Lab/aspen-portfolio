@@ -193,7 +193,7 @@ export function HeroBio() {
   const t = useTranslations("Hero");
   return (
     <p
-      className="hero-fade-up mt-6 text-[14.5px] leading-[1.75] max-w-[420px] [word-break:keep-all] [line-break:strict]"
+      className="hero-fade-up mt-6 text-[14px] leading-[1.75] max-w-[400px] text-center [word-break:keep-all] [line-break:strict]"
       style={{ ...enterDelay(0.94), color: "rgba(160,160,165,0.78)" }}
     >
       {t.rich("bio", {
@@ -250,8 +250,8 @@ export function HeroTools() {
   const tip = focusedTool ?? hoveredTool ?? selectedTool;
 
   return (
-    <div className="hero-fade-up mt-10" style={enterDelay(1.1)}>
-      <div className="flex items-center gap-5 pl-2" role="group" aria-label={t("invLabel")}>
+    <div className="hero-fade-up mt-9 flex flex-col items-center" style={enterDelay(1.1)}>
+      <div className="flex items-center gap-5" role="group" aria-label={t("invLabel")}>
         {TOOLS.map((name) => (
           <InventorySlot
             key={name}
@@ -270,7 +270,7 @@ export function HeroTools() {
         ))}
       </div>
       {/* One line, held at the height of the longest, so nothing shifts */}
-      <div id={descriptionId} className="mt-3 min-h-[3.4rem] max-w-[460px]">
+      <div id={descriptionId} className="mt-3 min-h-[3.4rem] max-w-[440px] text-center">
         {tip ? (
           <>
             <p className="font-mono text-[12px] uppercase tracking-[0.12em]">
@@ -291,9 +291,9 @@ export function HeroTools() {
    A quiet, slow line at the hero's foot, under one hairline. */
 export function HeroLogos() {
   return (
-    <div className="hero-fade-up border-t border-line pt-6" style={enterDelay(1.26)}>
+    <div className="hero-fade-up" style={enterDelay(1.26)}>
       <div
-        className="logo-ticker-wrap overflow-hidden opacity-70 -mx-4 sm:mx-0"
+        className="logo-ticker-wrap overflow-hidden opacity-60 -mx-4 sm:mx-0"
         style={{
           maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
           WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",

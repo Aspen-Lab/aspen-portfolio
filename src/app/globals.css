@@ -287,6 +287,18 @@ button {
 .hero-rise {
   animation: hero-rise 1.16s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
 }
+/* The hero's horizon: one hairline drawn out from the centre, once */
+@keyframes hero-horizon {
+  from { transform: scaleX(0); }
+  to { transform: none; }
+}
+.hero-horizon {
+  transform-origin: center;
+  animation: hero-horizon 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-horizon { animation: none; }
+}
 .hero-fade-up {
   animation: hero-fade-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
 }
