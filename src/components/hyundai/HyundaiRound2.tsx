@@ -27,15 +27,16 @@ import styles from "./HyundaiRound2.module.css";
    the screen ("Illustration of finding 3"): the Speedometer takes the
    large slot and the Vehicle Illustration shrinks; the other blocks keep
    their slots. The Vehicle Illustration carries the figure's one accent
-   mark, a 1.5px outline, in both modes. The slab lists the three
-   findings verbatim; pointing at, focusing or tapping one rings (ink)
-   the tokens and blocks it names: 3 the Speedometer and the Vehicle
-   Illustration, 2 every one, 1 none.
+   mark, an 8px square in its corner, in both modes. The slab lists the
+   three findings verbatim; pointing at, focusing or tapping one lifts
+   its row onto a plane and lifts the tokens and blocks it names a tone:
+   3 the Speedometer and the Vehicle Illustration, 2 every one, 1 none.
 
    Motion: every block is an absolutely placed plane moved by transform
-   alone; the Speedometer fades out of the Level-2 screen. The fill translates and scales; its outline is four edges, each
-   scaled only along its length, so the line keeps its weight; the label
-   translates and never scales. The ring is a DOM write (data-f) and CSS. */
+   alone; the Speedometer fades out of the Level-2 screen. The fill (and
+   its lighter lit copy) translates and scales; the square and the label
+   translate and never scale. The lit state is a DOM write (data-f) and
+   CSS. */
 
 type Mode = "manual" | "l2";
 type BlockKey = "speed" | "icons" | "cruise" | "vi" | "alerts";
@@ -195,16 +196,6 @@ function place(b: (typeof BLOCKS)[number], i: number) {
   } as CSSProperties;
 }
 
-/** Four edges of a box that follows the block: top, right, bottom, left */
-const Edges = () => (
-  <>
-    <span className={styles.edge} data-s="t" />
-    <span className={styles.edge} data-s="r" />
-    <span className={styles.edge} data-s="b" />
-    <span className={styles.edge} data-s="l" />
-  </>
-);
-
 export function HyundaiRound2() {
   const cn = useLocale() === "cn";
   const t = COPY[cn ? "cn" : "en"];
@@ -304,7 +295,7 @@ export function HyundaiRound2() {
             <ol className={styles.tokens} aria-label={t.cotitle}>
               {BLOCKS.map((b, i) => (
                 <li key={b.k} className={styles.token} data-k={b.k}>
-                  <span aria-hidden className={styles.tokRing} />
+                  <span aria-hidden className={styles.tokLit} />
                   <span className={`t-label ${styles.tokNum}`} data-code="" aria-hidden>
                     {String(i + 1).padStart(2, "0")}
                   </span>
@@ -313,20 +304,14 @@ export function HyundaiRound2() {
               ))}
             </ol>
             <div className={styles.screenWrap}>
-              <span className={`boxed-tag ${styles.tag}`}>{say(t.tags[mode])}</span>
+              <span className="boxed-tag">{say(t.tags[mode])}</span>
               <div className={styles.screen} aria-hidden>
                 <div className={styles.blocks}>
                   {BLOCKS.map((b, i) => (
                     <div key={b.k} className={styles.blk} data-k={b.k} data-l2={b.l2 ? undefined : "out"} style={place(b, i)}>
                       <span className={styles.fill} />
-                      {b.k === "vi" && (
-                        <span className={styles.focus}>
-                          <Edges />
-                        </span>
-                      )}
-                      <span className={styles.ring}>
-                        <Edges />
-                      </span>
+                      <span className={`${styles.fill} ${styles.lit}`} />
+                      {b.k === "vi" && <span className={styles.focus} />}
                       <span className={`t-small ${styles.name}`}>{say(t.tokens[b.k])}</span>
                       <span className={`t-label ${styles.num}`} data-code="">
                         {String(i + 1).padStart(2, "0")}

@@ -16,11 +16,12 @@ import styles from "./HyundaiHandoff.module.css";
    and icons. Beside it, board 14's list of the four ways HDA disabled
    itself, each with its own cue.
 
-   A split card in the site's system: the cluster on a sheet (dot grid,
-   corner marks), the switch and the list on a slab. In ON and Turned grey
-   a 1.5px accent outline frames the HDA strip: the handoff cue, the
-   figure's one focus mark. A 1px ink outline frames the lane lines. Each
-   carries a boxed 'Changes' tag; HDA off shows neither.
+   A split card in the site's system: the cluster on a plane, the switch
+   and the list on a slab, no edge anywhere. In ON and Turned grey a
+   raised 'Changes' tag with a square pin marks each change, beside it
+   rather than drawn over the render: the HDA strip's pin is the accent
+   (the handoff cue, the figure's one focus mark), the lane lines' ink.
+   HDA off shows neither.
 
    The switch is a radio group (arrow keys). 'Pressing Brake — Turn grey'
    is the one row that is a control: it toggles Turned grey, because board
@@ -28,7 +29,7 @@ import styles from "./HyundaiHandoff.module.css";
    React (a click); the render crossfades its layers in CSS.
 
    Entrance, once on view: the screen rises 8px and fades in, the rows
-   step in 60ms apart, the outlines land last. Reduced motion: the final
+   step in 60ms apart, the notes land last. Reduced motion: the final
    frame, 160ms fades. On a phone the stage is a window on the cluster's
    middle (design x 374–1374: the speed, the strip, the road and the
    car). */
@@ -85,10 +86,6 @@ export function HyundaiHandoff() {
     <figure ref={root} className={`paper-stack ${styles.root}`} data-in={seen} data-hda={hda} aria-label={t.aria}>
       <div className={styles.card}>
         <div className={styles.stage}>
-          <span aria-hidden className="reg-mark tl" />
-          <span aria-hidden className="reg-mark tr" />
-          <span aria-hidden className="reg-mark br" />
-          <span aria-hidden className="reg-mark bl" />
           <div className={styles.screen}>
             <ClusterStage designW={ORIGINAL.w} designH={ORIGINAL.h} mobileWindow={1000} cx={874}>
               <OriginalCluster hda={hda} />
@@ -96,12 +93,16 @@ export function HyundaiHandoff() {
             {/* The marks, in CSS px over the scaled render */}
             <div className={styles.marks} aria-hidden>
               <span className={`${styles.mark} ${styles.lanes}`} style={place(ORIGINAL_BOX.lanes)}>
-                <span className={styles.box} />
-                <span className={`boxed-tag ${styles.tag}`}>{t.changes}</span>
+                <span className={styles.note}>
+                  <span className={styles.pin} />
+                  <span className="boxed-tag">{t.changes}</span>
+                </span>
               </span>
               <span className={`${styles.mark} ${styles.strip}`} style={place(ORIGINAL_BOX.strip)}>
-                <span className={styles.box} />
-                <span className={`boxed-tag ${styles.tag}`}>{t.changes}</span>
+                <span className={styles.note}>
+                  <span className={styles.pin} />
+                  <span className="boxed-tag">{t.changes}</span>
+                </span>
               </span>
             </div>
           </div>

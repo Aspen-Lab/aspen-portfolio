@@ -1,7 +1,8 @@
-/* Board 02 on one chart sheet (global .paper-stack > .paper): four tile
-   quadrants, two 1px axes in the gutters between them, ten raised chips.
-   Flat fills, square marks, no gradient; the accent fills one chip. Type
-   from the ramp: S6 chips (.chip), S7 axis words. */
+/* Board 02 on one chart sheet (global .paper-stack > .paper): the sheet
+   itself is the field, quartered only by its two 1px axes (data); ten
+   raised chips stand on it. No tiles, no grid, no edge: planes and the
+   two axes. The accent fills one chip. Type from the ramp: S6 chips
+   (.chip), S7 axis words. */
 .root {
   margin: 0;
 }
@@ -28,28 +29,10 @@
   }
 }
 
-/* Four quadrant tiles, each with a fine dot grid (whole on every edge);
-   the 24px gutters carry the axes; --end is the band above and below the
-   tiles where the vertical axis ends and its two words stand */
+/* --end is the band above and below the field where the vertical axis
+   ends and its two words stand */
 .plot {
-  --gut: 24px;
   --end: 34px;
-}
-.quads {
-  position: absolute;
-  inset: var(--end) 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: var(--gut);
-}
-.quad {
-  border: 1px solid var(--edge, #333336);
-  border-radius: 2px;
-  background-color: var(--tile, #141416);
-  background-image: radial-gradient(circle at center, var(--grey-3, #3a3a3f) 0.75px, transparent 1.25px);
-  background-size: 16px 16px;
-  background-repeat: space;
 }
 
 .axisX,
@@ -57,14 +40,14 @@
   position: absolute;
   background: var(--axis, rgb(244 244 242 / 24%));
 }
-/* The vertical axis runs past the tiles into the end bands */
+/* The vertical axis runs past the field into the end bands */
 .axisY {
   top: calc(var(--end) - 10px);
   bottom: calc(var(--end) - 10px);
   left: calc(50% - 0.5px);
   width: 1px;
 }
-/* The horizontal axis: a row in the gutter between the tile rows, its
+/* The horizontal axis: a row across the field's middle, its
    two words at the ends and the line between them */
 .axisRow {
   position: absolute;
@@ -94,7 +77,7 @@
 .cap[data-at="l"] { left: 0; top: -2px; }
 .cap[data-at="r"] { right: 0; top: -2px; }
 
-/* The four axis words, at the axis ends and outside the tiles: High and
+/* The four axis words, at the axis ends and outside the field: High and
    Low influence over and under the vertical axis, Low and High
    importance at the horizontal axis's two ends */
 .axisWord {
@@ -112,7 +95,7 @@
 .axisWord[data-at="loInf"] { bottom: 0; }
 .axisWord[data-at="hiImp"] { margin-right: -0.12em; }
 
-/* A chip, centred on its board position in the tiles' field */
+/* A chip, centred on its board position in the field */
 .spot {
   position: absolute;
   left: calc(var(--x) * 100%);
@@ -122,31 +105,24 @@
 
 /* The chip's one variant: the focus, filled with the accent */
 .chip[data-focus="true"] {
-  border-color: var(--accent, #f4f4f2);
   background: var(--accent, #f4f4f2);
   color: #0a0a0a;
 }
 
-/* ══ Five places (below 1024px) ══ */
+/* ══ Five places (below 1024px) ══ each a head and its chips straight
+   on the sheet, told apart by the space between them */
 .groups {
   display: grid;
-  gap: 8px;
+  gap: 28px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 @media (min-width: 640px) {
-  .groups { gap: 12px; }
+  .groups { gap: 32px; }
 }
 .group {
   min-width: 0;
-  padding: 16px 16px 18px;
-  border: 1px solid var(--edge, #333336);
-  border-radius: 2px;
-  background: var(--tile, #141416);
-}
-@media (min-width: 640px) {
-  .group { padding: 20px 24px 24px; }
 }
 .groupHead {
   display: flex;
@@ -233,10 +209,10 @@
 .word { white-space: nowrap; }
 :global(html[lang="zh-CN"]) .root { line-break: strict; }
 
-/* ── Once, on view: axes draw from the centre, the quadrants fade, the
-   chips step in, the accent chip lands last ── */
+/* ── Once, on view: axes draw from the centre, the chips step in, the
+   accent chip lands last ── */
 @media (prefers-reduced-motion: no-preference) {
-  .root[data-in="false"] :is(.quad, .axisWord, .chip, .group) { opacity: 0; }
+  .root[data-in="false"] :is(.axisWord, .chip, .group) { opacity: 0; }
   .root[data-in="false"] .axisX { transform: scaleX(0); }
   .root[data-in="false"] .axisY { transform: scaleY(0); }
 
@@ -245,9 +221,6 @@
   }
   .root[data-in="true"] .axisY {
     animation: drawY var(--t-3, 720ms) var(--ease-arrive) 60ms backwards;
-  }
-  .root[data-in="true"] .quad {
-    animation: fade var(--t-3, 720ms) var(--ease-arrive) calc(120ms + var(--i) * var(--step, 60ms)) backwards;
   }
   .root[data-in="true"] .axisWord {
     animation: fade var(--t-2, 360ms) var(--ease-arrive) 360ms backwards;
@@ -258,7 +231,7 @@
   .root[data-in="true"] .spot .chip[data-focus="true"] {
     animation: land var(--t-2, 360ms) var(--ease-arrive) calc(420ms + var(--i) * var(--step, 60ms) + 120ms) backwards;
   }
-  /* Stacked: the tiles rise in turn; the accent chip lands after them */
+  /* Stacked: the places rise in turn; the accent chip lands after them */
   .root[data-in="true"] .group {
     animation: rise var(--t-3, 720ms) var(--ease-arrive) calc(var(--i) * var(--step, 60ms)) backwards;
   }

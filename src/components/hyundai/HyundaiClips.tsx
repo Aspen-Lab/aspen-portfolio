@@ -9,8 +9,8 @@ import styles from "./HyundaiClips.module.css";
 
 /* The three prototype sequences (videos 38, 39, 40): the evidence behind
    the live rebuild above, in one compact player instead of three stacked
-   videos. A split card in the one dark system: the player on a tile
-   (#141416, 1px edge) on the left, the three clips on a slab on the
+   videos. A split card in the one dark system: the player on a plane
+   (no edge) on the left, the three clips on a slab on the
    right, each a poster thumbnail and its title. The chosen clip's 8px
    square is the figure's one accent mark.
 

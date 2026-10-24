@@ -1,8 +1,8 @@
 /* Two environment tiles side by side (stacked on a phone), a slab for
    the rig under the simulator, then the printed scope as three number
-   tiles. Flat planes, 1px edges, 2px
-   corners; the photos fill their boxes edge to edge, undimmed. The accent
-   is one 8px square. Type from the ramp: S2 numbers, S6 text, S7 labels. */
+   tiles. Flat planes, no edge, G2 corners; the photos keep their own
+   (smaller) G2 corners and are never dimmed. The accent is one 8px
+   square. Type from the ramp: S2 numbers, S6 text, S7 labels. */
 .root {
   display: grid;
   gap: 12px;
@@ -26,19 +26,20 @@
 
 /* ── One environment: a tile holding its header and photos ── */
 .env {
+  --pad: 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-width: 0;
-  padding: 14px 14px 14px;
-  border: 1px solid var(--edge, #333336);
-  border-radius: 2px;
-  background: var(--tile, #141416);
+  padding: var(--pad);
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
+  background: var(--tile, #1d1d20);
 }
 @media (min-width: 640px) {
   .env {
+    --pad: 18px;
     gap: 10px;
-    padding: 18px 18px 18px;
   }
 }
 .envHead {
@@ -70,8 +71,10 @@
   overflow: hidden;
   aspect-ratio: var(--ar);
   container-type: size;
-  border-radius: 1px;
-  background: var(--raised, #1e1e21);
+  /* the photos sit in the tile's corners: concentric with it */
+  border-radius: max(var(--r-tag, 10px), calc(var(--r-plane, 32px) - var(--pad, 18px)));
+  corner-shape: squircle;
+  background: var(--raised, #26262a);
 }
 .pair {
   display: flex;
@@ -164,9 +167,9 @@
   gap: 14px;
   min-width: 0;
   padding: 16px 8px 14px;
-  border: 1px solid var(--edge, #333336);
-  border-radius: 2px;
-  background: var(--tile, #141416);
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
+  background: var(--tile, #1d1d20);
 }
 @media (min-width: 640px) {
   .stat {

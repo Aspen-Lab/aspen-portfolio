@@ -13,12 +13,12 @@ import styles from "./HyundaiDirections.module.css";
 /* Test three directions (owner §10): the three round-2 interface
    directions on one frame, each with what sets it apart.
 
-   A split card in the one dark system. The sheet (#17171a, dot grid,
-   corner marks) holds one cluster screen with the three renders stacked
+   A split card in the one dark system. The plane (no grid, no corner
+   marks, no edge) holds one cluster screen with the three renders stacked
    in it, the chosen one shown (an opacity crossfade); under it, what
    differs in that direction, read off its board. The slab below is a
    contact sheet: the three directions as radio buttons, each a small
-   render on black and its name (the section's paragraph already gives
+   render on black and its name, the chosen one on a plane (the section's paragraph already gives
    each direction's intent, so the slab does not repeat it). The chosen
    one's 8px square is the figure's one accent mark.
 
@@ -156,10 +156,6 @@ export function HyundaiDirections() {
     <figure ref={root} className={`paper-stack ${styles.root}`} data-in={entered} aria-label={t.label}>
       <div className={styles.card}>
         <div className={styles.stage}>
-          <span aria-hidden className="reg-mark tl" />
-          <span aria-hidden className="reg-mark tr" />
-          <span aria-hidden className="reg-mark br" />
-          <span aria-hidden className="reg-mark bl" />
           <div className={styles.screenWrap}>
             <Screen sel={sel} label={`${t.dirs[sel].name} · ${t.render}`} />
           </div>

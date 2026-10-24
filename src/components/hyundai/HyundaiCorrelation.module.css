@@ -1,8 +1,9 @@
 /* Board 08 on one chart sheet (global .paper-stack > .paper), read left
    to right: five measure chips, 1px connectors meeting in a raised
-   averaging node, then a 0–1 number line with three square marks. The
-   accent fills one: the overall R. Flat planes, square marks, no band, no
-   gradient. Type from the ramp; in the maths the variables are the site's
+   averaging node, then a 0–1 number line with three filled square marks.
+   The accent fills one: the overall R. Planes, not frames: no rule under
+   the title, no edge on the node, no outlined mark; G2 corners on the
+   chips and the node. No band, no gradient. Type from the ramp; in the maths the variables are the site's
    serif italic at 15px, their subscripts the sans at 12px. */
 .root {
   margin: 0;
@@ -24,8 +25,6 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #252528;
 }
 @media (min-width: 640px) {
   .title {
@@ -51,13 +50,13 @@
   --h: 248px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  margin-top: 24px;
+  margin-top: 32px;
 }
 @media (min-width: 1240px) {
   .flow {
     grid-template-columns: max-content minmax(40px, 56px) max-content minmax(0, 1fr);
     grid-template-rows: var(--h);
-    margin-top: 40px;
+    margin-top: 48px;
   }
 }
 
@@ -168,9 +167,9 @@
 }
 .node {
   padding: 14px 16px;
-  border: 1px solid var(--edge, #333336);
-  border-radius: 2px;
-  background: var(--raised, #1e1e21);
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
+  background: var(--raised, #26262a);
 }
 @media (min-width: 640px) {
   .node { padding: 18px 22px; }
@@ -271,16 +270,15 @@
   .tick[data-q="true"] .tickLabel { display: none; }
 }
 
-/* The participant squares: 8px, ink outline, the sheet's own fill so the
-   axis stops at their edges */
+/* The participant squares: 8px, filled grey-1 (the overall R's accent
+   square sits over them, between) */
 .pMark {
   position: absolute;
   top: calc(var(--ay) - 4px);
   left: calc(var(--x) * 100% - 4px);
   width: 8px;
   height: 8px;
-  border: 1px solid #f4f4f2;
-  background: var(--sheet, #17171a);
+  background: var(--grey-1, #a0a0a5);
 }
 /* Their elbows: down from the square, then out to the label */
 .elbow {

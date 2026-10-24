@@ -204,7 +204,7 @@ export function HyundaiWorkload() {
       onBlur={blur}
     >
       <span className={`t-small ${styles.nameText}`}>{hold(copy.names[d.k], w)}</span>
-      <span className={`t-label ${styles.rank}`} data-code="">
+      <span className={`t-label ${styles.rank}`} data-code="" data-n={side === "w" ? d.w : d.r}>
         {side === "w" ? d.w : d.r}
       </span>
     </button>

@@ -18,15 +18,16 @@ import styles from "./HyundaiConfidence.module.css";
    The slab: where each term comes from, board 31's pipeline top-down in
    bands (inputs, scripts, the derived terms, confidence.py, the metric).
    Implemented nodes are raised chips; the planned branches (camera/FER
-   and Tobii, per the owner's copy) are ghosts on a dashed edge under a
-   'Planned' label. LS has no connector into confidence.py, as on the
+   and Tobii, per the owner's copy) are quieter planes on dashed wires
+   under a 'Planned' label. LS has no connector into confidence.py, as on the
    board. The end node, the confidence metric, is the figure's one accent
    mark.
 
    Pointing at, focusing or tapping a term writes data-term on the root
-   (no re-render): CSS rings that term's path in ink, from its input
-   file through its script to its node, inks its chip, and steps the
-   other terms of the formula back. A phone reads the pipeline as a
+   (no re-render): CSS draws that term's path in ink, from its input
+   file through its script to its node, fills those nodes and its code
+   ink, lifts its row onto a raised plane, and steps the other terms of
+   the formula back. A phone reads the pipeline as a
    grouped list with the same nodes. */
 
 type TermKey = "hrv" | "hrdiff" | "ecgvar" | "t";

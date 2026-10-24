@@ -26,9 +26,9 @@
   }
 }
 
-/* The cluster's screen */
+/* The cluster's screen: a black plane with the display's own corners
+   (34 design px), no edge round it */
 .stage[data-display] {
-  border: 1px solid #333336;
   border-radius: calc(34 / var(--dw) * 100%) / calc(34 / var(--dh) * 100%);
   background: #010101;
 }
@@ -56,8 +56,11 @@
   .stage[data-window] {
     aspect-ratio: var(--win) / var(--dh);
   }
+  /* a phone's window crops the display: the crop is the site's, so it
+     takes the raised corner */
   .stage[data-window][data-display] {
-    border-radius: 2px;
+    border-radius: var(--r-raised, 16px);
+    corner-shape: squircle;
   }
   .stage[data-window] .pan {
     transform: translateX(calc(var(--pan) * 1px));

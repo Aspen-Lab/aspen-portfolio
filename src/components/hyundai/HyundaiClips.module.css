@@ -1,8 +1,10 @@
 /* The prototype videos: a split card on the sheet stack. The player is a
-   16:9 tile (#141416) holding the video edge to edge; the clips sit on a
-   slab beside it (under it on a phone), each a poster thumbnail in a 1px
-   frame and its title. The accent fills only the chosen clip's 8px
-   square. The recordings are shown as they are: never dimmed. */
+   16:9 plane holding the video edge to edge; the clips sit on a slab
+   beside it (under it on a phone), each a poster thumbnail and its
+   title, the chosen one lifted onto a plane. No edge, no frame round a
+   thumbnail; G2 corners (the card clips the player to its own). The
+   accent fills only the chosen clip's 8px square. The recordings are
+   shown as they are: never dimmed. */
 .root { display: block; }
 .word { white-space: nowrap; }
 :global(html[lang="zh-CN"]) .root { line-break: strict; }
@@ -11,8 +13,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
   background: var(--slab);
 }
 
@@ -32,7 +34,8 @@
   object-fit: cover;
   background: #000;
 }
-/* The site's play / pause: a raised square, an ink glyph */
+/* The site's play / pause: a raised plane, an ink glyph; a pointer
+   lifts it a tone */
 .toggle {
   position: absolute;
   left: 12px;
@@ -41,13 +44,15 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
-  background: var(--raised);
+  border: 0;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
+  background-color: var(--raised);
   color: var(--color-ink);
+  transition: background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .toggle:hover { border-color: rgb(244 244 242 / 55%); }
+  .toggle:hover { background-color: #2e2e32; }
 }
 .toggle:active svg { transform: translateY(1px); }
 
@@ -55,10 +60,11 @@
 .side {
   display: grid;
   align-content: start;
+  --pad: 8px;
   gap: 16px;
-  padding: 18px 12px 20px;
-  border-top: 1px solid var(--edge);
+  padding: 18px var(--pad) 12px;
 }
+.kicker { padding-inline: 4px; }
 .kicker {
   display: flex;
   align-items: center;
@@ -74,35 +80,41 @@
 .list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 4px;
 }
+/* A clip: the chosen one stands on a plane, a pointer lifts another a
+   little */
 .clip {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: 10px;
   min-width: 0;
-  padding: 0;
+  padding: 6px 6px 10px;
   border: 0;
-  background: none;
+  /* in the card's corner region: concentric with it */
+  border-radius: max(var(--r-tag, 10px), calc(var(--r-plane, 32px) - var(--pad)));
+  corner-shape: squircle;
+  background-color: transparent;
   color: var(--color-ink);
   text-align: left;
+  transition: background-color var(--t-1) var(--ease-arrive);
 }
+@media (hover: hover) {
+  .clip:hover { background-color: #161618; }
+}
+.clip[data-on="true"] { background-color: var(--tile, #1d1d20); }
 .thumb {
   position: relative;
   display: block;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-tag, 10px);
+  corner-shape: squircle;
   background: #000;
   transition: transform var(--t-1) var(--ease-arrive);
 }
 .thumbImg.thumbImg { object-fit: cover; }
-.clip[data-on="true"] .thumb { border-color: rgb(244 244 242 / 55%); }
-@media (hover: hover) {
-  .clip:hover:not([data-on="true"]) .thumb { border-color: rgb(244 244 242 / 24%); }
-}
 .clip:active .thumb { transform: translateY(1px); }
 
 /* A phone: the square marks the clip over its title; wide sheets give
@@ -148,7 +160,13 @@
     gap: 10px;
   }
   .sq { transform: translateY(-1px); }
-  .side { padding: 24px 28px 28px; }
+  .side {
+    --pad: 20px;
+    padding: 24px var(--pad) 20px;
+  }
+  .kicker { padding-inline: 8px; }
+  .list { gap: 8px; }
+  .clip { padding: 8px 8px 12px; }
   .toggle { left: 16px; bottom: 16px; }
 }
 @media (min-width: 1280px) {
@@ -159,18 +177,17 @@
   .side {
     align-content: space-between;
     gap: 24px;
-    padding: 28px 28px 28px;
-    border-top: 0;
-    border-left: 1px solid var(--edge);
+    padding: 28px var(--pad) 20px;
   }
   .list {
     grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
+    gap: 6px;
   }
   .clip {
     grid-template-columns: 160px minmax(0, 1fr);
     align-items: center;
     gap: 16px;
+    padding: 8px;
   }
   .clip:focus-visible { outline-offset: 3px; }
 }

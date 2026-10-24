@@ -1,12 +1,13 @@
-/* The two cabin renders on one 16:9 tile (#141416, a 1px edge), the
-   switch and the caption on a slab strip under it; one outline round
-   both. Opacity only; a render is never dimmed or overlaid. */
+/* The two cabin renders on one 16:9 plane, the switch and the caption on
+   a slab strip under it; no edge round either or between them, G2
+   corners on the outside (the figure clips the renders to them).
+   Opacity only; a render is never dimmed or overlaid. */
 .root {
   display: block;
   margin: 0;
   overflow: hidden;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
 }
 .word { white-space: nowrap; }
 :global(html[lang="zh-CN"]) .root { line-break: strict; }
@@ -37,8 +38,6 @@
   display: grid;
   gap: 14px;
   padding: 16px;
-  border: 0;
-  border-top: 1px solid var(--edge);
   border-radius: 0;
 }
 @media (min-width: 640px) {

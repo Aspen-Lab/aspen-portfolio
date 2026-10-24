@@ -1,17 +1,20 @@
 /* The Green UI as a live prototype: a split card on the sheet stack, in
-   three rows. The screen on a sheet (#17171a, a faint 16px dot grid, the
-   four corner marks); the controls on a slab; the parts and the legend
-   on a slab, cells split by 1px rules. Type is the ramp. The accent fills
-   only the current step's 8px square. Inside the render the HMI's own
-   colours apply (cluster/Cluster). */
+   three rows. The screen on a plain plane (no grid, no corner marks); the
+   controls on a slab; the parts and the legend on the slab, told apart by
+   space, a lit part lifting onto a plane. No edge round the card or
+   between its rows, no rule between cells; G2 corners. A part pointed at
+   lifts onto a faint plane over the screen, never an outline or corner
+   ticks. Type is the ramp. The accent fills only the current step's 8px
+   square. Inside the render the HMI's own colours apply
+   (cluster/Cluster). */
 .root { display: block; }
 .word { white-space: nowrap; }
 :global(html[lang="zh-CN"]) .root { line-break: strict; }
 
 .card {
   overflow: hidden;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
   background: var(--slab);
 }
 
@@ -19,23 +22,26 @@
 .stage {
   position: relative;
   padding: 20px 12px;
-  border-bottom: 1px solid var(--edge);
-  background-color: var(--sheet);
-  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 7%) 1px, transparent 1.5px);
-  background-size: 16px 16px;
-  background-position: 8px 8px;
+  background: var(--sheet);
 }
-.stage :global(.reg-mark) { opacity: 0.32; }
 .screenWrap { position: relative; }
 
-/* ── Part outlines: drawn by the site over the render, in % of the
-   design canvas; on a phone the layer is the canvas's width (2× the
-   window) and pans with it. Each is also the part's pointer target. ── */
+/* ── The parts over the render, in % of the design canvas; on a phone
+   the layer is the canvas's width (2× the window) and pans with it.
+   Each is the part's pointer target; lit, a faint plane (ink at 7%)
+   lifts the part and its raised tag shows. Clipped to the screen's own
+   corners. ── */
 .overlay {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: calc(34 / 1920 * 100%) / calc(34 / 720 * 100%);
+}
+@media (max-width: 639px) {
+  .overlay {
+    border-radius: var(--r-raised, 16px);
+    corner-shape: squircle;
+  }
 }
 .ovPan {
   position: absolute;
@@ -59,25 +65,16 @@
 .olBox {
   position: absolute;
   inset: 0;
-  border: 1px solid rgb(244 244 242 / 50%);
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
+  background: rgb(244 244 242 / 7%);
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
-/* 6px corner ticks in full ink, over the box's corners */
-.tick {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border: 0 solid #f4f4f2;
-}
-.tick[data-c="tl"] { left: -1px; top: -1px; border-left-width: 1.5px; border-top-width: 1.5px; }
-.tick[data-c="tr"] { right: -1px; top: -1px; border-right-width: 1.5px; border-top-width: 1.5px; }
-.tick[data-c="br"] { right: -1px; bottom: -1px; border-right-width: 1.5px; border-bottom-width: 1.5px; }
-.tick[data-c="bl"] { left: -1px; bottom: -1px; border-left-width: 1.5px; border-bottom-width: 1.5px; }
 
 .tag {
   position: absolute;
-  left: -1px;
+  left: 0;
   opacity: 0;
   pointer-events: none;
   transform: translateY(3px);
@@ -93,11 +90,11 @@
   .ol[data-tag="inside"] .tag {
     top: auto;
     bottom: calc(100% + 6px);
-    left: -1px;
+    left: 0;
   }
   .ol[data-k="ring"] .tag {
     left: auto;
-    right: -1px;
+    right: 0;
   }
 }
 
@@ -117,7 +114,6 @@
   display: grid;
   gap: 18px;
   padding: 20px 16px 22px;
-  border-bottom: 1px solid var(--edge);
 }
 .top {
   display: flex;
@@ -155,8 +151,8 @@
 .replay:active .replayIcon { transform: rotate(-30deg); }
 
 /* The feature switch spans the slab on a phone: each option as wide as
-   its words (the longest wrap to two lines), the chosen one raised in
-   place of the sliding thumb */
+   its words (the longest wrap to two lines), the chosen one on a raised
+   plane in place of the sliding thumb */
 .seg {
   display: grid;
   grid-template-columns: minmax(0, 13fr) minmax(0, 11fr) minmax(0, 6fr);
@@ -165,12 +161,10 @@
 .seg > span:first-child { display: none; }
 .seg button {
   padding-inline: 10px;
-  border: 1px solid transparent;
   white-space: normal;
   text-wrap: balance;
 }
 .seg button[aria-checked="true"] {
-  border-color: rgb(244 244 242 / 55%);
   background: var(--raised);
 }
 
@@ -198,15 +192,18 @@
   width: 100%;
   height: 100%;
   padding: 12px 12px 14px;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
-  background: var(--tile);
+  border: 0;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
+  background-color: var(--tile);
   color: var(--color-ink);
   text-align: left;
-  transition: transform var(--t-1) var(--ease-arrive);
+  transition:
+    transform var(--t-1) var(--ease-arrive),
+    background-color var(--t-1) var(--ease-arrive);
 }
 .stepBtn:active { transform: translateY(1px); }
-.step[data-current="true"] .stepBtn { border-color: rgb(244 244 242 / 55%); }
+.step[data-current="true"] .stepBtn { background-color: var(--raised); }
 
 .node {
   position: relative;
@@ -273,43 +270,50 @@
   display: grid;
   place-items: center;
   height: 40px;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
-  background: var(--tile);
+  border: 0;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
+  background-color: var(--tile);
   color: var(--color-mute, #a0a0a5);
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.06em;
-  transition: opacity var(--t-2) var(--ease-arrive);
+  transition:
+    opacity var(--t-2) var(--ease-arrive),
+    background-color var(--t-1) var(--ease-arrive);
 }
 .gapBtn[aria-disabled="true"] {
   opacity: 0.4;
   cursor: default;
 }
 @media (hover: hover) {
-  .gapBtn:not([aria-disabled="true"]):hover { color: var(--color-ink); border-color: rgb(244 244 242 / 24%); }
+  .gapBtn:not([aria-disabled="true"]):hover { color: var(--color-ink); background-color: #232326; }
 }
-.gapBtn[data-on="true"] {
-  border-color: rgb(244 244 242 / 55%);
-  background: var(--raised);
+.gapBtn[data-on="true"],
+.gapBtn[data-on="true"]:hover {
+  background-color: var(--raised);
   color: var(--color-ink);
 }
 .gapBtn:not([aria-disabled="true"]):active .gapNum { transform: translateY(1px); }
 .gapNum { display: block; }
 
-/* ══ Row 3: the parts and the legend ══ */
+/* ══ Row 3: the parts and the legend ══ on the slab, no rules: a part
+   pointed at, focused or pinned lifts onto a plane */
 .parts {
+  --pad: 4px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  padding: 0 var(--pad) var(--pad);
 }
 .partList {
   display: grid;
+  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .partItem { min-width: 0; }
-.partItem + .partItem { border-top: 1px solid var(--edge); }
 .partBtn {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -317,14 +321,21 @@
   gap: 6px;
   width: 100%;
   height: 100%;
-  padding: 16px 16px 18px;
+  padding: 16px 12px 18px;
   border: 0;
-  border-radius: 0;
-  background: none;
+  /* the outer parts sit in the card's lower corners: concentric with it */
+  border-radius: max(var(--r-tag, 10px), calc(var(--r-plane, 32px) - var(--pad)));
+  corner-shape: squircle;
+  background-color: transparent;
   color: var(--color-ink);
   text-align: left;
+  transition: background-color var(--t-1) var(--ease-arrive);
 }
-.partBtn:focus-visible { outline-offset: -1px; }
+.partBtn:focus-visible { outline-offset: -2px; }
+.root[data-part="panel"] .partBtn[data-k="panel"],
+.root[data-part="scene"] .partBtn[data-k="scene"],
+.root[data-part="ring"] .partBtn[data-k="ring"],
+.partBtn[aria-pressed="true"] { background-color: var(--tile, #1d1d20); }
 .partIdx {
   display: flex;
   align-items: center;
@@ -360,8 +371,7 @@
   display: grid;
   align-content: start;
   gap: 14px;
-  padding: 16px 16px 20px;
-  border-top: 1px solid var(--edge);
+  padding: 16px 12px 20px;
 }
 .legendLabel { margin: 0; }
 .legendList {
@@ -417,7 +427,6 @@
   .seg button,
   .seg button[aria-checked="true"] {
     padding-inline: 16px;
-    border-color: transparent;
     background: none;
     white-space: nowrap;
   }
@@ -435,18 +444,20 @@
     gap: 0;
   }
   .step { flex: 1 1 0; }
-  .stepBtn {
+  .stepBtn,
+  .step[data-current="true"] .stepBtn {
     gap: 12px;
     width: auto;
     padding: 6px 16px 6px 0;
-    border: 0;
-    background: none;
+    border-radius: var(--r-tag, 10px);
+    corner-shape: squircle;
+    background-color: transparent;
   }
-  .step[data-current="true"] .stepBtn { border-color: transparent; }
   .stepBtn:focus-visible { outline-offset: 3px; }
   .node { gap: 12px; }
   .stepLabel { padding-right: 8px; }
 
+  /* the progress track: data, so a line, grey at rest */
   .seg1 {
     position: absolute;
     top: 14px;
@@ -455,7 +466,7 @@
     display: block;
     height: 1px;
     overflow: hidden;
-    background: var(--edge);
+    background: var(--grey-3, #3a3a3f);
     pointer-events: none;
   }
   /* the rule starts after the index */
@@ -482,25 +493,22 @@
   .gapRow { grid-template-columns: repeat(4, 36px); gap: 6px; }
   .gapBtn { height: 36px; }
 
-  .parts { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1fr); }
+  .parts {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1fr);
+    --pad: 8px;
+    gap: 8px;
+  }
   .partList {
     grid-column: span 3;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
   }
-  .partItem + .partItem {
-    border-top: 0;
-    border-left: 1px solid var(--edge);
-  }
-  .partBtn { padding: 24px 28px 28px; }
+  .partBtn { padding: 20px 20px 24px; }
   .partTitle {
     font-size: 22px;
     line-height: 1.25;
   }
-  .legend {
-    padding: 24px 28px 28px;
-    border-top: 0;
-    border-left: 1px solid var(--edge);
-  }
+  .legend { padding: 20px 20px 24px; }
 }
 
 @keyframes fill {
@@ -512,10 +520,6 @@
 @media (min-width: 640px) and (max-width: 1023px) {
   .parts { grid-template-columns: minmax(0, 1fr); }
   .partList { grid-column: auto; }
-  .legend {
-    border-left: 0;
-    border-top: 1px solid var(--edge);
-  }
 }
 
 /* ══ Entrance, once on view: the screen rises, the controls and the

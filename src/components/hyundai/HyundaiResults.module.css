@@ -1,8 +1,11 @@
 /* Confidence metric results (boards 32, 30): one split card on the
    global sheet stack. The chart on the sheet, the selected participant's
-   arithmetic on the slab, one 1px outline round both. Value-true bars on
-   one 0–70 axis, square ends, flat fills: White UI grey-2, Blue UI
-   grey-1, Green UI ink. The one accent per state: the selected
+   arithmetic on the slab; no edge round the card or between its halves,
+   no rule between the slab's blocks; G2 corners on the card's outside.
+   Value-true bars on one 0–70 axis (the gridlines are data), square ends,
+   flat fills: White UI grey-2, Blue UI grey-1, Green UI ink. A pointer
+   lifts a row onto a faint plane; the selected participant's label sits
+   on a raised plane. The one accent per state: the selected
    participant's Green bar (Total) or Green UI's mean rule (By task). */
 .root { container-type: inline-size; }
 .word { white-space: nowrap; }
@@ -12,8 +15,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
   background: var(--slab);
 }
 @container (min-width: 1000px) {
@@ -29,17 +32,10 @@
   flex-direction: column;
   min-width: 0;
   padding: 24px 20px 28px;
-  border-top: 1px solid var(--edge);
 }
 @media (min-width: 640px) {
   .sheet { padding: 40px 40px 32px; }
   .slab { padding: 40px; }
-}
-@container (min-width: 1000px) {
-  .slab {
-    border-top: 0;
-    border-left: 1px solid var(--edge);
-  }
 }
 
 /* ── Head: title and legend; the view switch ── */
@@ -143,7 +139,8 @@
   width: 100%;
   padding: 20px 0;
   border: 0;
-  border-radius: 2px;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
   background: none;
   color: inherit;
   font: inherit;
@@ -152,13 +149,15 @@
   -webkit-tap-highlight-color: transparent;
 }
 .row[data-static] { cursor: default; }
-/* Hover: an outline only */
+/* Hover: the row lifts onto a faint plane (ink at 3%, so the gridlines
+   still show through it), faded on */
 .row:not([data-static])::after {
   content: "";
   position: absolute;
   inset: 2px -10px;
-  border: 1px solid rgb(244 244 242 / 28%);
-  border-radius: 2px;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
+  background: rgb(244 244 242 / 3.5%);
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
   pointer-events: none;
@@ -169,9 +168,10 @@
 .row:focus-visible { outline-offset: -1px; }
 .row:active { transform: none; }
 
-/* The participant label; the selected one boxed in ink */
+/* The participant label; the selected one on a raised plane */
 .rowLabel {
   position: relative;
+  z-index: 0;
   justify-self: start;
   padding: 3px 6px;
   margin-left: -6px;
@@ -180,8 +180,10 @@
   content: "";
   position: absolute;
   inset: 0;
-  border: 1px solid #f4f4f2;
-  border-radius: 2px;
+  z-index: -1;
+  border-radius: var(--r-tag, 10px);
+  corner-shape: squircle;
+  background: var(--raised, #26262a);
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -252,7 +254,14 @@
 .val {
   left: 4px;
   padding: 0 4px;
-  background: var(--sheet);
+  background-color: var(--sheet);
+  transition: background-color var(--t-1) var(--ease-arrive);
+}
+/* under a row's hover plane the value's knock-out takes the plane's tone */
+@media (hover: hover) {
+  .row:not([data-static]):hover .val {
+    background-color: color-mix(in srgb, var(--sheet, #1d1d20) 96.5%, #f4f4f2);
+  }
 }
 .track[data-ui="green"] .val { color: #f4f4f2; }
 .none {
@@ -327,13 +336,10 @@
 .pid { margin: 0; }
 .blocks {
   display: grid;
-  gap: 18px;
-  margin-top: 20px;
+  gap: 28px;
+  margin-top: 28px;
 }
-.block {
-  padding-top: 16px;
-  border-top: 1px solid var(--slab-rule);
-}
+.block { min-width: 0; }
 .blockHead {
   display: flex;
   align-items: center;
@@ -375,9 +381,7 @@
   text-wrap: pretty;
 }
 .shown {
-  margin: 16px 0 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--slab-rule);
+  margin: 20px 0 0;
   color: #8a8a90;
 }
 @container (min-width: 1000px) {

@@ -16,11 +16,13 @@ import styles from "./HyundaiGaps.module.css";
      the pain point   board 11–13's card: index, title, its effect, the
                       board's strategic insight (slab)
      a driver's voice one quote from the affinity map (board 09), as
-                      boards 14–16 set it beside each need (tile)
+                      boards 14–16 set it beside each need (on
+                      the sheet)
      the requirement  board 14–16's user need and its sub-items, and the
-                      original UI as the board's evidence (sheet); the
-                      section's paragraph names each requirement in this
-                      order, so the column does not repeat it
+                      original UI as the board's evidence (on the
+                      sheet); the section's paragraph names each
+                      requirement in this order, so the column does not
+                      repeat it
 
    The evidence is Hyundai's original cluster, redrawn flat (b2's
    OriginalCluster): the HDA strip on and turned grey (board 15); the

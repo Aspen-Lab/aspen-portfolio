@@ -1,7 +1,8 @@
-/* Test three directions: a split card on the sheet stack. The sheet holds
-   the cluster screen (#17171a, a faint 16px dot grid, the four corner
-   marks) and what differs; the slab below holds the three directions as
-   a contact sheet, cells split by 1px rules. Type is the ramp; the accent
+/* Test three directions: a split card on the sheet stack. The plane holds
+   the cluster screen (no grid, no corner marks) and what differs; the
+   slab below holds the three directions as a contact sheet, no rules:
+   the chosen cell lifts onto a plane, a pointer lifts the others a
+   little. No edge anywhere; G2 corners. Type is the ramp; the accent
    fills only the chosen direction's 8px square. Inside a render the
    product's own colours apply (WhiteUi, Cluster). */
 .root { display: block; }
@@ -10,22 +11,17 @@
 
 .card {
   overflow: hidden;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
   background: var(--slab);
 }
 
-/* ── The sheet ── */
+/* ── The plane ── */
 .stage {
   position: relative;
   padding: 20px 12px 30px;
-  border-bottom: 1px solid var(--edge);
-  background-color: var(--sheet);
-  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 7%) 1px, transparent 1.5px);
-  background-size: 16px 16px;
-  background-position: 8px 8px;
+  background: var(--sheet);
 }
-.stage :global(.reg-mark) { opacity: 0.32; }
 
 .screenWrap { position: relative; }
 
@@ -62,10 +58,14 @@
   transition-duration: var(--t-2);
 }
 
-/* ── The contact sheet ── three cells on the slab, 1px rules between */
+/* ── The contact sheet ── three cells on the slab, no rules: the chosen
+   one stands on a plane, a pointer lifts another a little */
 .thumbs {
+  --pad: 6px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: var(--pad);
 }
 .thumb {
   position: relative;
@@ -74,14 +74,20 @@
   align-content: start;
   gap: 10px;
   min-width: 0;
-  padding: 14px 10px 14px;
+  padding: 10px 8px 12px;
   border: 0;
-  border-radius: 0;
-  background: none;
+  /* the outer cells sit in the card's lower corners: concentric with it */
+  border-radius: max(var(--r-tag, 10px), calc(var(--r-plane, 32px) - var(--pad)));
+  corner-shape: squircle;
+  background-color: transparent;
   color: var(--color-ink);
   text-align: left;
+  transition: background-color var(--t-1) var(--ease-arrive);
 }
-.thumb + .thumb { border-left: 1px solid var(--edge); }
+@media (hover: hover) {
+  .thumb:hover { background-color: #161618; }
+}
+.thumb[data-on="true"] { background-color: var(--tile, #1d1d20); }
 .thumb:active .mini { transform: translateY(1px); }
 
 .idx {
@@ -113,19 +119,15 @@
 }
 .thumb[data-on="true"] .sq::after { opacity: 1; }
 
-/* The small render on black, in a 1px frame that inks when chosen */
+/* The small render: a black plane, no edge */
 .mini {
   position: relative;
   display: block;
   overflow: hidden;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-tag, 10px);
+  corner-shape: squircle;
   background: #000;
   transition: transform var(--t-1) var(--ease-arrive);
-}
-.thumb[data-on="true"] .mini { border-color: rgb(244 244 242 / 55%); }
-@media (hover: hover) {
-  .thumb:hover:not([data-on="true"]) .mini { border-color: rgb(244 244 242 / 24%); }
 }
 
 .words {
@@ -148,9 +150,13 @@
     gap: 20px;
     margin: 22px 0 0;
   }
+  .thumbs {
+    --pad: 12px;
+    gap: 8px;
+  }
   .thumb {
     gap: 14px;
-    padding: 22px 24px 26px;
+    padding: 14px 14px 18px;
   }
   .words { gap: 4px; }
   .name {

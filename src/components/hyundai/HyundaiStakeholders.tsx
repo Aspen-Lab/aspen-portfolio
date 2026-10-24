@@ -7,25 +7,25 @@ import { hold } from "@/lib/hold";
 import styles from "./HyundaiStakeholders.module.css";
 
 /* Who the interface answers to, on board 02's influence × importance map.
-   Importance runs left to right, influence top to bottom. Four tile
-   quadrants on one sheet, split by the two axes, which carry their four
-   words at their ends, outside the tiles, each end capped with a small
-   square: High/Low influence over and under the vertical axis, Low/High
-   importance at the two ends of the horizontal one (in the gutter
-   between the tile rows). Ten raised chips set at
+   Importance runs left to right, influence top to bottom. One sheet,
+   quartered by the two axes alone (no tiles, no grid), which carry their
+   four words at their ends, outside the field, each end capped with a
+   small square: High/Low influence over and under the vertical axis,
+   Low/High importance at the two ends of the horizontal one (across the
+   field's middle). Ten raised chips set at
    the board's normalised centres (x = importance, y from the top =
    influence), nudged only where two would touch. The board's two
    unlabelled ellipses are left out. Two board typos fixed ('HMI  Lab',
    'People with DIsabilities'). The accent fills one chip: Hyundai
    Drivers, the person looking at the cluster.
 
-   Below 1024px the plot becomes five stacked tiles, one per position on
+   Below 1024px the plot becomes five stacked places, one per position on
    the map, each headed by its two axis words; that list is also what a
    screen reader hears on a wide screen (the plot itself is drawn for the
    eye only).
 
    A statement, so nothing answers a pointer. Once, on view: the axes draw
-   from the centre, the quadrants fade, the chips step in 60ms apart and
+   from the centre, the chips step in 60ms apart and
    the accent chip lands last. Reduced motion shows the final frame. */
 
 type Key = "reg" | "wayne" | "labs" | "hmi" | "pressure" | "drivers" | "elderly" | "disab" | "others" | "comp";
@@ -47,7 +47,7 @@ const SPOTS: { k: Key; x: number; y: number }[] = [
   { k: "drivers", x: 0.65, y: 0.62 },
 ];
 
-/* The five places on the map, for the stacked tiles. q = which cell of a
+/* The five places on the map, for the stacked list. q = which cell of a
    2×2 glyph is marked ("tm" = top row, between the two). */
 const GROUPS: { q: "tl" | "tm" | "tr" | "bl" | "br"; keys: Key[] }[] = [
   { q: "tl", keys: ["reg"] },
@@ -126,11 +126,6 @@ export function HyundaiStakeholders() {
         <div className={`paper ${styles.sheet}`}>
           {/* ── The map, for the eye (1024px and up) ── */}
           <div aria-hidden className={styles.plot}>
-            <div className={styles.quads}>
-              {[0, 1, 2, 3].map((i) => (
-                <span key={i} className={styles.quad} style={{ "--i": i } as CSSProperties} />
-              ))}
-            </div>
             <span className={styles.axisY}>
               <i className={styles.cap} data-at="t" />
               <i className={styles.cap} data-at="b" />

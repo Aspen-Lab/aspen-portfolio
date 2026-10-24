@@ -1,10 +1,11 @@
 /* Three gaps on one sheet (the global sheet stack's look, drawn here so a
    phone can give each column its own card). Each column stacks three
    planes joined by 1px connectors with square joints: the pain point on
-   a slab, the driver's voice on a tile, the requirement on a sheet with
-   the original UI as its evidence. Flat fills, 1px edges, 2px corners,
-   no gradient. The accent fills only the focused column's requirement
-   square. */
+   a slab, the driver's voice and the requirement straight on the sheet,
+   with the original UI as its evidence. Planes, not frames: no edge on
+   any plane, no rule inside a block, no hairline between the columns
+   (the gap divides them). G2 corners; no gradient. The accent fills only
+   the focused column's requirement square. */
 .root {
   margin: 0;
 }
@@ -23,29 +24,28 @@
   min-width: 0;
   margin: 0 6px 11px 0;
   padding: 16px;
-  border: 1px solid var(--paper-edge, #333336);
-  border-radius: 2px;
-  background: var(--paper, #17171a);
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
+  background: var(--paper, #1d1d20);
 }
 /* a phone's card rests on two back sheets, as .paper-stack's */
 .col::before,
 .col::after {
   content: "";
   position: absolute;
-  inset: -1px;
-  border-radius: 2px;
+  inset: 0;
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
   pointer-events: none;
 }
 .col::before {
   z-index: -1;
-  border: 1px solid var(--paper-back-1-edge, #2c2c30);
-  background: var(--paper-back-1, #121214);
+  background: var(--paper-back-1, #161618);
   transform: translate(3px, 5px);
 }
 .col::after {
   z-index: -2;
-  border: 1px solid var(--paper-back-2-edge, #252528);
-  background: var(--paper-back-2, #0d0d0e);
+  background: var(--paper-back-2, #0c0c0d);
   transform: translate(6px, 11px);
 }
 
@@ -61,16 +61,14 @@
   min-width: 0;
   margin: 0;
   padding: 20px;
-  border: 1px solid var(--edge, #333336);
-  border-radius: 2px;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
 }
 .pain { background: var(--slab, #0a0a0a); }
 .voice {
   display: flex;
   flex-direction: column;
-  background: var(--tile, #141416);
 }
-.need { background: var(--sheet, #17171a); }
 
 /* ── The pain point ── */
 .idx { margin: 0; }
@@ -80,9 +78,7 @@
   color: #f4f4f2;
 }
 .insight {
-  margin: 16px 0 0;
-  padding-top: 16px;
-  border-top: 1px solid #252528;
+  margin: 20px 0 0;
   color: #a0a0a5;
   text-wrap: pretty;
 }
@@ -145,9 +141,7 @@
 }
 /* ── Evidence: the original UI, a product render on #000 ── */
 .evidence {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #252528;
+  margin-top: 28px;
 }
 .shot { margin: 0; }
 .strips {
@@ -158,8 +152,8 @@
   position: relative;
   overflow: hidden;
   padding: 10px;
-  border: 1px solid var(--edge, #333336);
-  border-radius: 2px;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
   background: #000;
 }
 .screen.flush { padding: 0; }
@@ -244,7 +238,8 @@
 }
 
 /* ── From 1280px (content 1184): one sheet, three columns on a subgrid so
-   the slabs, tiles and sheets line up across; hairlines between ── */
+   the slabs and the blocks line up across; the gap between them, no
+   hairline ── */
 @media (min-width: 1280px) {
   .stack {
     position: relative;
@@ -256,19 +251,18 @@
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 2px;
+    border-radius: var(--r-plane, 32px);
+    corner-shape: squircle;
     pointer-events: none;
   }
   .stack::before {
     z-index: -1;
-    border: 1px solid var(--paper-back-1-edge, #2c2c30);
-    background: var(--paper-back-1, #121214);
+    background: var(--paper-back-1, #161618);
     transform: translate(4px, 8px);
   }
   .stack::after {
     z-index: -2;
-    border: 1px solid var(--paper-back-2-edge, #252528);
-    background: var(--paper-back-2, #0d0d0e);
+    background: var(--paper-back-2, #0c0c0d);
     transform: translate(9px, 16px);
   }
   .sheet {
@@ -276,32 +270,20 @@
     grid-template-rows: auto 28px auto 28px auto auto auto;
     gap: 0 49px;
     padding: 32px;
-    border: 1px solid var(--paper-edge, #333336);
-    border-radius: 2px;
-    background: var(--paper, #17171a);
+    border-radius: var(--r-plane, 32px);
+    corner-shape: squircle;
+    background: var(--paper, #1d1d20);
   }
   .col {
     grid-row: 1 / span 7;
     grid-template-rows: subgrid;
     margin: 0;
     padding: 0;
-    border: 0;
     border-radius: 0;
     background: none;
   }
+  .col::before,
   .col::after { content: none; }
-  /* the hairline between columns, centred in the gap */
-  .col::before { content: none; }
-  .col + .col::before {
-    content: "";
-    inset: 0 auto 0 -25px;
-    z-index: auto;
-    width: 1px;
-    border: 0;
-    border-radius: 0;
-    background: #252528;
-    transform: none;
-  }
   .block { padding: 20px; }
   /* the requirement spans the last three rows on its own subgrid, so its
      evidence starts level across the three columns */

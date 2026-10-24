@@ -1,23 +1,20 @@
-/* The hero fills the page's hero frame (the tile, its 1px edge and the
-   corner marks are the frame's) with a faint 16px dot grid, the drafting
-   ground the Nutra hero uses too. The cluster's screen sits centred on
-   it at 88% of the frame's width. */
+/* The hero fills the page's hero plane and leaves it empty (no dot grid:
+   the screen stands on a plain plane, as Nutra's phones do). The
+   cluster's screen, a black plane with the display's own corners, sits
+   centred on it at 88% of the plane's width. */
 .root {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 6%) 1px, transparent 1.5px);
-  background-size: 16px 16px;
-  background-position: 8px 8px;
 }
 
 .root > .stage {
   width: 88%;
 }
 
-/* A phone: the screen fills the frame (4:3) and the frame's own edge is
-   the screen's; the stage shows a window on the cluster's middle */
+/* A phone: the screen fills the plane (4:3), which clips it to its own
+   corners; the stage shows a window on the cluster's middle */
 @media (max-width: 639px) {
   .root > .stage[data-display][data-window] {
     position: absolute;
@@ -25,7 +22,6 @@
     width: auto;
     height: auto;
     aspect-ratio: auto;
-    border: 0;
     border-radius: 0;
   }
 }

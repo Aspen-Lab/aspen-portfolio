@@ -22,8 +22,9 @@ import s from "./stage.module.css";
      and the canvas is translated so design x `cx` is centred (clamped
      inside the canvas). Changing cx pans with a transform over --t-3 (a
      jump under reduced motion).
-   - display: the stage is the cluster's screen: #010101, a 1px #333336
-     edge, corners of 34 design px (2px on a phone window, which crops it).
+   - display: the stage is the cluster's screen: a #010101 plane, no
+     edge, corners of 34 design px (the raised G2 corner on a phone
+     window, which crops it).
    - label: the stage is a picture (role="img", aria-label); give it only
      for a static render. Children are inert; the cluster is aria-hidden. */
 export function ClusterStage({

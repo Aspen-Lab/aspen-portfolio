@@ -13,7 +13,9 @@
   padding: 3px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--tile, #18181a);
+  /* a well a step below whatever it sits on (ground or sheet): the
+     raised thumb reads on both */
+  background: rgb(0 0 0 / 28%);
 }
 .thumb {
   position: absolute;

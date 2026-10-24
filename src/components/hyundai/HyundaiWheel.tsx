@@ -14,12 +14,14 @@ import styles from "./HyundaiWheel.module.css";
    with the fixed-screen concept (board 44) the rim turns round a screen
    and airbag that stay level. Board 42's pros and cons stand beside it.
 
-   The wheel is a diagram in the site's planes (raised #1e1e21, a 1px
-   edge); the screen is a product render (black, Montserrat, board 44's
-   "72 mph", the car between dashed lane lines, "392 mi range"), the
-   airbag's four dots the boards' green. The one accent mark is a 1.5px
-   outline round the screen in Fixed screen mode; with the wheel-mounted
-   screen the outline is ink and turns with it.
+   The wheel is a diagram in the site's planes, no edge on any of them:
+   the rim, pods and spoke raised (#26262a) on the sheet, the airbag a
+   tone lighter on top; the screen is a product render (black,
+   Montserrat, board 44's "72 mph", the car between dashed lane lines,
+   "392 mi range"), the airbag's four dots the boards' green. In Fixed
+   screen mode a callout names what stays still, its leaders ending in
+   square pins: the one on the screen is the figure's one accent mark.
+   Nothing frames the screen.
 
    The slider writes --wheel-rot on the rim and the hub (no render; a
    registered, non-inherited property, so only those two restyle); the rim
@@ -118,12 +120,12 @@ const AIRBAG = { x: 156, y: 188, w: 168, h: 92 };
 function Rim() {
   return (
     <svg className={styles.layer} viewBox="0 0 480 400" aria-hidden focusable="false">
-      <g fill="#1e1e21" stroke="#3a3a3f" strokeWidth={1} vectorEffect="non-scaling-stroke">
+      <g fill="#26262a">
         {/* the lower spoke, the two switch pods */}
-        <rect x={211} y={270} width={58} height={56} vectorEffect="non-scaling-stroke" />
-        <rect x={98} y={202} width={46} height={66} rx={10} vectorEffect="non-scaling-stroke" />
-        <rect x={336} y={202} width={46} height={66} rx={10} vectorEffect="non-scaling-stroke" />
-        <path d={RIM} fillRule="evenodd" vectorEffect="non-scaling-stroke" />
+        <rect x={211} y={270} width={58} height={56} />
+        <rect x={98} y={202} width={46} height={66} rx={10} />
+        <rect x={336} y={202} width={46} height={66} rx={10} />
+        <path d={RIM} fillRule="evenodd" />
       </g>
       <g fill="#3a3a3f">
         <rect x={112} y={220} width={18} height={4} rx={1} />
@@ -143,7 +145,7 @@ function Airbag() {
     <svg className={styles.layer} viewBox="0 0 480 400" aria-hidden focusable="false">
       {/* the neck the screen stands on */}
       <path d="M206 178H274L280 192H200Z" fill="#111113" />
-      <rect x={x} y={y} width={w} height={h} rx={44} fill="#2a2a2c" stroke="#3a3a3f" strokeWidth={1} vectorEffect="non-scaling-stroke" />
+      <rect x={x} y={y} width={w} height={h} rx={44} fill="#2e2e32" />
       {[198, 226, 254, 282].map((cx) => (
         <rect key={cx} x={cx - 2.5} y={226} width={5} height={5} fill="#25CB55" />
       ))}
@@ -192,42 +194,9 @@ function Screen() {
   );
 }
 
-/* The focus frame round the screen: the accent (fixed) or ink (turning) */
-function Frame() {
-  const { x, y, w, h } = SCREEN;
-  const o = 5;
-  return (
-    <svg className={styles.layer} viewBox="0 0 480 400" aria-hidden focusable="false">
-      <rect
-        className={styles.frameInk}
-        x={x - o}
-        y={y - o}
-        width={w + 2 * o}
-        height={h + 2 * o}
-        rx={1.5}
-        fill="none"
-        stroke="#f4f4f2"
-        strokeWidth={1}
-        vectorEffect="non-scaling-stroke"
-      />
-      <rect
-        className={styles.frameAccent}
-        x={x - o}
-        y={y - o}
-        width={w + 2 * o}
-        height={h + 2 * o}
-        rx={1.5}
-        fill="none"
-        stroke="var(--accent)"
-        strokeWidth={1.5}
-        vectorEffect="non-scaling-stroke"
-      />
-    </svg>
-  );
-}
-
 /* Fixed screen's callout: a rule under the label, two leaders down to the
-   screen and the airbag, square ends */
+   screen and the airbag, each ending in a square pin: the screen's is the
+   accent */
 function Leaders() {
   return (
     <svg className={`${styles.layer} ${styles.leaders}`} viewBox="0 0 480 400" aria-hidden focusable="false">
@@ -236,8 +205,8 @@ function Leaders() {
         <path d="M176 50V117" vectorEffect="non-scaling-stroke" />
         <path d="M344 50V234H327" vectorEffect="non-scaling-stroke" />
       </g>
-      <rect x={174.5} y={115.5} width={3} height={3} fill="#f4f4f2" />
-      <rect x={325.5} y={232.5} width={3} height={3} fill="#f4f4f2" />
+      <rect x={173} y={114} width={6} height={6} fill="var(--accent)" />
+      <rect x={324.5} y={231.5} width={5} height={5} fill="#f4f4f2" />
     </svg>
   );
 }
@@ -302,10 +271,6 @@ export function HyundaiWheel() {
       <div className={styles.card}>
         <div className={styles.left}>
           <div ref={stage} className={styles.stage} data-mode={mode}>
-            <span aria-hidden className="reg-mark tl" />
-            <span aria-hidden className="reg-mark tr" />
-            <span aria-hidden className="reg-mark br" />
-            <span aria-hidden className="reg-mark bl" />
             <div className={styles.canvas}>
               <div ref={rim} className={styles.rim}>
                 <Rim />
@@ -313,7 +278,6 @@ export function HyundaiWheel() {
               <div ref={hub} className={styles.hub}>
                 <Airbag />
                 <Screen />
-                <Frame />
               </div>
               <div className={styles.callout}>
                 <Leaders />

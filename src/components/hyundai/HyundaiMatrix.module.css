@@ -1,6 +1,7 @@
 /* Board 21 on the chart sheet: the composition tree beside a 5 × 3
-   matrix of mini renders (#000, one 1px edge, radius 2). Lines grey-2;
-   a path lit in ink; the focused feature's square the one accent mark.
+   matrix of mini renders (#000 planes, no edge, G2 corners). The tree's
+   joins are grey-2, a path lit in ink; the focused feature's square is
+   the one accent mark, and its row lifts onto a raised plane (no ring).
    Inside a render the board's own colours (product.ts BOARD21). */
 .root {
   display: block;
@@ -100,18 +101,20 @@
   .cell[data-c="2"] { grid-column: 4; }
 }
 
-/* ── A feature ── (a phone) a chip: the square, the name */
+/* ── A feature ── (a phone) the square and the name; the chosen one
+   stands on a raised plane, a pointer lifts the others a tone */
 .item {
   position: relative;
   display: flex;
   flex-direction: column;
   min-height: 40px;
   padding: 9px 14px 9px 32px;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
-  background: var(--raised);
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
+  background-color: transparent;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--t-1) var(--ease-arrive);
 }
 .item:focus { outline: none; }
 .item:focus-visible {
@@ -129,11 +132,11 @@
   top: 16px;
   width: 8px;
   height: 8px;
-  border: 1px solid #6b6b71;
+  background: var(--grey-3, #3a3a3f);
 }
 .sq i {
   position: absolute;
-  inset: -1px;
+  inset: 0;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -150,25 +153,22 @@
 .join { display: none; }
 
 @media (max-width: 1023px) {
-  .item::after {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    border: 1px solid rgb(244 244 242 / 55%);
-    border-radius: 2px;
-    opacity: 0;
-    transition: opacity var(--t-1) var(--ease-arrive);
+  @media (hover: hover) {
+    .item:hover { background-color: #232326; }
   }
-  .item[aria-selected="true"]::after { opacity: 1; }
+  .item[aria-selected="true"],
+  .item[aria-selected="true"]:hover { background-color: var(--raised, #26262a); }
 }
 
 /* (wide) a row of the tree: no chip, the square in the gutter the joins
    run down */
 @media (min-width: 1024px) {
-  .item {
+  .item,
+  .item:hover,
+  .item[aria-selected="true"] {
     min-height: 0;
     padding: 0 0 0 46px;
-    border: 0;
+    border-radius: 0;
     background: none;
   }
   .sq { left: 28px; top: 7px; }
@@ -195,9 +195,35 @@
     top: -6px;
     height: 34px;
     border: 1px solid #f4f4f2;
-    border-radius: 2px;
+    border-radius: var(--r-tag, 10px);
+    corner-shape: squircle;
     pointer-events: none;
   }
+}
+
+/* (wide) the focused feature's row: a raised plane behind its name and
+   its three cells, faded on (opacity); the 18px row gap keeps the next
+   row's plane clear of it */
+.band { display: none; }
+@media (min-width: 1024px) {
+  .band {
+    display: block;
+    grid-column: 1 / -1;
+    align-self: stretch;
+    margin: -10px -16px;
+    /* 24px inside the sheet's edges (40 less 16): concentric with it */
+    border-radius: max(var(--r-tag, 10px), calc(var(--r-plane, 32px) - 24px));
+    corner-shape: squircle;
+    background: var(--raised, #26262a);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-1) var(--ease-arrive);
+  }
+  .band[data-r="0"] { grid-row: 2; }
+  .band[data-r="1"] { grid-row: 3; }
+  .band[data-r="2"] { grid-row: 4; }
+  .band[data-r="3"] { grid-row: 5; }
+  .band[data-r="4"] { grid-row: 6; }
 }
 
 /* ── The joins ── from a condition (its first line, y 38 or 76 in its
@@ -250,8 +276,8 @@
 
 /* ── The focus, from data-feature on the root ── the feature's square
    in the accent and its name in full; its conditions' squares in ink,
-   their names in full, the joins between in ink; its row of cells
-   ringed in ink */
+   their names in full, the joins between in ink; its row on the raised
+   plane */
 .root[data-feature="lk"] .item[data-f="lk"] :is(.sq i[data-k="accent"], .name),
 .root[data-feature="lf"] .item[data-f="lf"] :is(.sq i[data-k="accent"], .name),
 .root[data-feature="fd"] .item[data-f="fd"] :is(.sq i[data-k="accent"], .name),
@@ -261,45 +287,32 @@
 .root[data-feature="hda"] .item[data-dep~="hda"] :is(.sq i[data-k="ink"], .name),
 .root[data-feature="scc"] .join[data-path~="scc"] i[data-k="ink"],
 .root[data-feature="hda"] .join[data-path~="hda"] i[data-k="ink"],
-.root[data-feature="lk"] .cell[data-f="lk"] .ring,
-.root[data-feature="lf"] .cell[data-f="lf"] .ring,
-.root[data-feature="fd"] .cell[data-f="fd"] .ring,
-.root[data-feature="scc"] .cell[data-f="scc"] .ring,
-.root[data-feature="hda"] .cell[data-f="hda"] .ring {
+.root[data-feature="lk"] .band[data-f="lk"],
+.root[data-feature="lf"] .band[data-f="lf"],
+.root[data-feature="fd"] .band[data-f="fd"],
+.root[data-feature="scc"] .band[data-f="scc"],
+.root[data-feature="hda"] .band[data-f="hda"] {
   opacity: 1;
 }
 @media (hover: hover) {
   .item:hover .name { opacity: 1; }
 }
-@media (max-width: 1023px) {
-  /* a phone shows one row: no ring needed */
-  .ring { display: none; }
-}
 
-/* ── A cell ── the render (#000, 1px edge) and its foot */
+/* ── A cell ── the render (a #000 plane, no edge) and its foot; a state
+   the board does not draw is an empty place with a dash */
+.cell { position: relative; }
 .render {
   position: relative;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  overflow: hidden;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
   background: #000;
 }
-.stage { border-radius: 1px; }
-.ring {
-  position: absolute;
-  inset: -1px;
-  border: 1px solid rgb(244 244 242 / 55%);
-  border-radius: 2px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--t-1) var(--ease-arrive);
-}
+.stage { border-radius: inherit; }
 .empty {
   display: grid;
   place-items: center;
   aspect-ratio: 280 / 164;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
-  background: var(--tile);
 }
 .empty > span { color: #6b6b71; }
 @media (max-width: 639px) {
@@ -361,19 +374,20 @@
   position: relative;
   width: 8px;
   height: 8px;
-  border: 1px solid #6b6b71;
+  background: var(--grey-3, #3a3a3f);
+  transition: background-color var(--t-1) var(--ease-arrive);
 }
 .pageSq::after {
   content: "";
   position: absolute;
-  inset: -1px;
+  inset: 0;
   background: #f4f4f2;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
 .page[aria-checked="true"] .pageSq::after { opacity: 1; }
 @media (hover: hover) {
-  .page:hover .pageSq { border-color: #a0a0a5; }
+  .page:hover .pageSq { background-color: var(--grey-2, #6b6b71); }
 }
 
 /* ── Inside a render (design px on the 280 × 176 canvas) ── */

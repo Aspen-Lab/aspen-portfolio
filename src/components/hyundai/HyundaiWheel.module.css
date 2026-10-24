@@ -1,7 +1,8 @@
-/* A split card on the sheet stack: the wheel on a sheet (dot grid, corner
-   marks) with its controls on a slab strip under it (7/12), board 42's
-   pros and cons on a slab (5/12). One 1px edge round all. The accent is
-   only the frame round the fixed screen. */
+/* A split card on the sheet stack: the wheel on a plain plane with its
+   controls on a slab strip under it (7/12), board 42's pros and cons on a
+   slab (5/12). No edge round it or between its parts, no rule between
+   the lists; G2 corners on its outside. The accent is only the pin the
+   callout sets on the fixed screen. */
 .root {
   display: block;
   margin-top: 0;
@@ -14,8 +15,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-plane, 32px);
+  corner-shape: squircle;
   background: var(--slab);
 }
 @media (min-width: 1024px) {
@@ -59,7 +60,6 @@
     justify-items: start;
     gap: 16px;
     padding: 18px 24px 16px;
-    border-top: 1px solid var(--edge);
     background: var(--slab);
   }
   .seg {
@@ -84,16 +84,11 @@
   position: relative;
   aspect-ratio: 480 / 400;
   overflow: hidden;
-  background-color: var(--sheet);
-  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 6%) 1px, transparent 1.5px);
-  background-size: 16px 16px;
-  background-position: 8px 8px;
+  background: var(--sheet);
 }
 .stage[data-mode="wheel"] { --follow: 1; }
-.stage :global(.reg-mark) { opacity: 0.32; }
 @media (max-width: 639px) {
-  .stage { margin-top: 12px; border-block: 1px solid var(--edge); }
-  .stage :global(.reg-mark) { display: none; }
+  .stage { margin-top: 12px; }
 }
 /* The canvas keeps the wheel's 480 × 400 whatever the stage's shape, so
    the callout's label stays on its leaders */
@@ -142,14 +137,6 @@
   transform: rotate(calc(var(--wheel-rot) * var(--follow)));
   transition: transform var(--t-2) var(--ease-arrive);
 }
-
-/* The screen's frame: the accent while it stays fixed, ink while it turns */
-.frameInk,
-.frameAccent {
-  transition: opacity var(--t-2) var(--ease-arrive);
-}
-.stage[data-mode="fixed"] .frameInk { opacity: 0; }
-.stage[data-mode="wheel"] .frameAccent { opacity: 0; }
 
 /* Fixed screen's callout */
 .callout {
@@ -201,15 +188,20 @@
   width: 36px;
   height: 36px;
   padding: 0;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
-  background: var(--raised);
+  border: 0;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
+  background-color: var(--raised);
   color: #f4f4f2;
   font-family: var(--font-sans);
   font-size: 17px;
   line-height: 1;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--t-1) var(--ease-arrive);
+}
+@media (hover: hover) {
+  .step:hover { background-color: #2e2e32; }
 }
 .step:active { transform: translateY(1px); }
 .track {
@@ -269,18 +261,10 @@
   flex-direction: column;
   min-width: 0;
   padding: 24px 20px 28px;
-  border: 0;
-  border-top: 1px solid var(--edge);
   border-radius: 0;
 }
 @media (min-width: 640px) {
   .right.right { padding: 36px 40px 40px; }
-}
-@media (min-width: 1024px) {
-  .right.right {
-    border-top: 0;
-    border-left: 1px solid var(--edge);
-  }
 }
 .kicker {
   display: flex;
@@ -295,10 +279,7 @@
   background: #f4f4f2;
 }
 .group { margin-top: 28px; }
-.group + .group {
-  padding-top: 24px;
-  border-top: 1px solid #252528;
-}
+.group + .group { margin-top: 44px; }
 .groupHead {
   margin: 0;
   color: #a0a0a5;
@@ -337,9 +318,6 @@
   .root[data-in="true"] .callout {
     animation: fade var(--t-2) var(--ease-arrive) 700ms backwards;
   }
-  .root[data-in="true"] .frameAccent {
-    animation: fade var(--t-2) var(--ease-arrive) 900ms backwards;
-  }
   .root[data-in="true"] :is(.kicker, .groupHead) {
     animation: rise var(--t-2) var(--ease-arrive) 160ms backwards;
   }
@@ -364,8 +342,6 @@
 @media (prefers-reduced-motion: reduce) {
   .rim,
   .hub { transition: none; }
-  .frameInk,
-  .frameAccent,
   .callout { transition: opacity 160ms linear; }
   .step:active { transform: none; }
 }

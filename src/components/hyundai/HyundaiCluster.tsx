@@ -45,12 +45,13 @@ import styles from "./HyundaiCluster.module.css";
    that opens the panel folds it after 900ms. In Following Distance the
    four settings (board 21, Distance 1–4) set the gap while it is on.
 
-   A split card in the one dark system: the screen on a sheet (#17171a,
-   dot grid, corner marks), the controls and the three parts on slabs.
-   The current step's 8px square is the figure's one accent mark; inside
-   the render the HMI's own colours apply (the shared Cluster). Pointing at
-   a part, on the screen or in its cell, draws that part's outline over
-   the screen (a data attribute and CSS; nothing re-renders). On a phone
+   A split card in the one dark system: the screen on a plain plane (no
+   grid, no corner marks, no edge), the controls and the three parts on
+   the slab. The current step's 8px square is the figure's one accent
+   mark; inside the render the HMI's own colours apply (the shared
+   Cluster). Pointing at a part, on the screen or in its cell, lifts that
+   part onto a faint plane over the screen, with its tag, and lifts its
+   cell onto a plane (a data attribute and CSS; nothing re-renders). On a phone
    the screen is a 960-design-px window that pans to the part that just
    changed, or to a part the reader taps.
 
@@ -344,7 +345,7 @@ function view(preset: PresetKey, gap: Gap): ClusterState {
   return preset === "fd-activated" ? withGap(PRESETS["fd-activated"], gap) : PRESETS[preset];
 }
 
-/* ── The part outlines over the screen, in design px. The status panel's
+/* ── The part planes over the screen, in design px. The status panel's
    box is PART_BOX's widened to hold the widest pill (Lane Following
    Assist, opened, with the lane pill beside it: x 569–1351); the scene's
    stops short of the screen's foot so its lower edge shows. ── */
@@ -438,11 +439,11 @@ export function HyundaiCluster() {
 
   const state = useMemo(() => view(s.preset, s.gap), [s.preset, s.gap]);
   const cx = CX[s.part];
-  // The phone window's pan, as the stage computes it, for the outlines
+  // The phone window's pan, as the stage computes it, for the part planes
   const half = WIN / 2;
   const pan = half - Math.min(DESIGN.w - half, Math.max(half, cx));
 
-  // Pointing at a part, on the screen or in its cell, lights its outline:
+  // Pointing at a part, on the screen or in its cell, lifts it onto a plane:
   // written to the DOM, so nothing re-renders
   const light = (p: Part | null) => {
     const el = root.current;
@@ -500,10 +501,6 @@ export function HyundaiCluster() {
       <div className={styles.card}>
         {/* ── Row 1: the screen ── */}
         <div className={styles.stage}>
-          <span aria-hidden className="reg-mark tl" />
-          <span aria-hidden className="reg-mark tr" />
-          <span aria-hidden className="reg-mark br" />
-          <span aria-hidden className="reg-mark bl" />
           <div className={styles.screenWrap}>
             <Screen state={state} cx={cx} />
             <div className={styles.overlay} aria-hidden style={{ "--pan": pan } as CSSProperties}>
@@ -526,12 +523,7 @@ export function HyundaiCluster() {
                       onPointerLeave={onPartLeave}
                       onClick={() => dispatch({ type: "pin", part: p })}
                     >
-                      <span className={styles.olBox}>
-                        <i className={styles.tick} data-c="tl" />
-                        <i className={styles.tick} data-c="tr" />
-                        <i className={styles.tick} data-c="br" />
-                        <i className={styles.tick} data-c="bl" />
-                      </span>
+                      <span className={styles.olBox} />
                       <span className={`boxed-tag ${styles.tag}`}>{t.parts[p].title}</span>
                     </span>
                   );

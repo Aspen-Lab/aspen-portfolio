@@ -10,14 +10,14 @@ import styles from "./HyundaiHero.module.css";
    UI cluster with Highway Driving Assist active, drawn in code as a
    product render (video 40 at 0–3 s, its frame at 1.5 s; board 22,
    screen 1). Inside the screen the HMI's own colours, type and sizes;
-   around it the hero frame's tile, edge and corner marks (the page's), on
-   a faint dot grid. No site accent here: the render's greens are the
+   around it the page's hero plane, left empty: no edge, no corner marks,
+   no dot grid. No site accent here: the render's greens are the
    product's own.
 
    It is a picture, not a control: the stage is one img with a name,
    everything inside inert, nothing moving (`still`); the page's hero
    entrance carries it. From 640px the screen sits centred at 88% of the
-   frame; on a phone it fills the frame's height and shows the middle of
+   plane; on a phone it fills the plane's height and shows the middle of
    the cluster (design x 465–1455: the status panel, the scene and the
    neighbouring cars), the speed and the ring falling outside. */
 

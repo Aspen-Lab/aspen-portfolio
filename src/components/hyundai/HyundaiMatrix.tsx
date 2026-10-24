@@ -19,7 +19,8 @@ import styles from "./HyundaiMatrix.module.css";
 
    Wide, a composition tree runs down the left (each feature an 8px
    square and its name; 1px joins tie each condition to the feature it
-   names) beside the matrix, three columns of mini product renders. Every
+   names) beside the matrix, three columns of mini product renders; the
+   focused feature's row lifts onto a raised plane. Every
    cell is board 21 redrawn: the shared SceneView in box mode, palette
    "board21" (lanes green, the drift side amber, every chip mark blue),
    with its chip (a dark pill: the speed-limit sign and the feature's blue
@@ -363,7 +364,12 @@ export function HyundaiMatrix() {
     <figure ref={root} className={`paper-stack ${styles.root}`} aria-label={t.label} data-feature={sel} data-in={inView}>
       <div className={`paper ${styles.sheet}`}>
         <div className={styles.matrix}>
-          {/* ── the composition tree (wide) / the feature chips (a phone) ── */}
+          {/* ── the focused row's plane (wide), under everything in its row ── */}
+          {FEATURES.map((f, ri) => (
+            <span key={f} aria-hidden className={styles.band} data-f={f} data-r={ri} />
+          ))}
+
+          {/* ── the composition tree (wide) / the features (a phone) ── */}
           <ul
             className={styles.tree}
             role="listbox"
@@ -469,7 +475,6 @@ export function HyundaiMatrix() {
                   ) : (
                     <div className={styles.render}>
                       <CellRender cell={cell} v={v} label={label} />
-                      <span aria-hidden className={styles.ring} />
                     </div>
                   )}
                   <div className={styles.foot}>

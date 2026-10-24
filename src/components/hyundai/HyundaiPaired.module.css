@@ -1,7 +1,8 @@
 /* The paired design (board 33) on one sheet of the global stack: two
-   environment tiles, a ladder of five measures between their rails, the
-   five steps on a slab rail, the outcome line. Ink squares, 1px rules,
-   no gradient. The one accent: the outcome's 8px square. */
+   raised environment planes, a ladder of five measures between their
+   rails (the rails and rungs are the pairing, kept as lines), the five
+   steps on a slab, the outcome line. Planes, no edge, no rule; G2
+   corners. The one accent: the outcome's 8px square. */
 .root { display: block; }
 .word { white-space: nowrap; }
 :global(html[lang="zh-CN"]) .root { line-break: strict; }
@@ -32,8 +33,8 @@
   justify-content: center;
   max-width: calc(50% - 6px);
   padding: 8px 12px;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
   background: var(--raised);
   text-align: center;
 }
@@ -140,11 +141,14 @@
 /* ══ The steps, on a slab ══ one chain of the five step titles, each a
    numbered square, joined by small arrows; the board's lines for each
    step in a collapsed row under it */
-.process {
+/* a slab set on the sheet: the raised corner */
+.process.process {
   margin-top: 24px;
   padding: 18px 20px;
+  border-radius: var(--r-raised, 16px);
+  corner-shape: squircle;
 }
-@media (min-width: 640px) { .process { padding: 20px 28px; } }
+@media (min-width: 640px) { .process.process { padding: 20px 28px; } }
 .chain {
   display: flex;
   flex-wrap: wrap;
@@ -176,8 +180,8 @@
   place-items: center;
   width: 24px;
   height: 24px;
-  border: 1px solid var(--edge);
-  border-radius: 2px;
+  border-radius: var(--r-tag, 10px);
+  corner-shape: squircle;
   background: var(--raised);
   color: #f4f4f2;
 }
@@ -209,11 +213,7 @@
 }
 
 /* What each step does: a native disclosure, collapsed */
-.more {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--slab-rule, #252528);
-}
+.more { margin-top: 24px; }
 .moreSum {
   display: inline-flex;
   align-items: center;

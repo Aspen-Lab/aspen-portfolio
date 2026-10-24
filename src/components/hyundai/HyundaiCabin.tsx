@@ -9,7 +9,7 @@ import { Seg } from "@/components/nutra/Seg";
 import styles from "./HyundaiCabin.module.css";
 
 /* §11, the North Star cabin: the two renders (46, 47), kept as media
-   because the render is the evidence. One tile holds both, stacked
+   because the render is the evidence. One plane holds both, stacked
    (16:9 on a phone; wide, a 2.4:1 crop on the dash and wheel screen);
    the switch under it crossfades them (opacity only), and the visible
    one is always at full strength: nothing laid over a render, nothing
