@@ -1,0 +1,50 @@
+/* The original IONIQ 6 cluster's canvas: board 01's 1904 × 720 design
+   px, every layer an SVG laid over the same box. A ClusterStage scales
+   it. The type is the site's sans: Hyundai's own face is not shipped,
+   and the render is a flat redraw, not a photo. */
+.root {
+  position: absolute;
+  inset: 0;
+  width: 1904px;
+  height: 720px;
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum";
+}
+
+/* OriginalStrip: a picture of the row at its own ratio (667 : 99) */
+.strip {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 667 / 99;
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum";
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ── States: each keyed layer shows for the states it belongs to and
+   crossfades (opacity only) when the state changes. The green marks lie
+   over the grey strip, so ON → Turned grey only fades the green out. ── */
+.layer[data-k] {
+  opacity: 0;
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
+}
+[data-hda="off"] > .layer[data-k="off"],
+[data-hda="on"] > .layer[data-k="strip"],
+[data-hda="on"] > .layer[data-k="green"],
+[data-hda="on"] > .layer[data-k="lanes"],
+[data-hda="grey"] > .layer[data-k="strip"],
+[data-hda="grey"] > .layer[data-k="lanes"] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer[data-k] { transition-duration: var(--t-1, 160ms); }
+}

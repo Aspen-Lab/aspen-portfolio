@@ -1,0 +1,430 @@
+/* The confidence metric (boards 30, 31): one split card on the global
+   sheet stack. The formula and its terms on the sheet, the pipeline on
+   the slab, one 1px outline round both and one between them. Flat fills,
+   1px rules, square joints, no gradient. The one accent: the confidence
+   metric node. */
+.root { container-type: inline-size; }
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+.kicker { margin: 0; }
+.slabKicker {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+/* A slab's kicker carries the system's 6px ink square (as Chart's split
+   slab and the other Hyundai slabs do) */
+.kSq {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-top: calc((1.35em - 6px) / 2);
+  background: #f4f4f2;
+}
+
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--slab);
+}
+@container (min-width: 1000px) {
+  .card { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+}
+
+.sheet {
+  min-width: 0;
+  padding: 24px 20px 28px;
+  background: var(--sheet);
+}
+.slab {
+  --o: 7;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 20px 28px;
+  border-top: 1px solid var(--edge);
+  background: var(--slab);
+  container-type: inline-size;
+}
+@media (min-width: 640px) {
+  .sheet,
+  .slab { padding: 40px; }
+}
+@container (min-width: 1000px) {
+  .slab {
+    border-top: 0;
+    border-left: 1px solid var(--edge);
+  }
+}
+
+/* ══ The formula, as board 30 prints it ══ the lead holds the first line;
+   the sum wraps after a '+', its lines hung under the first term */
+.formulaWrap { margin-top: 28px; }
+.formula {
+  display: flex;
+  align-items: center;
+  color: #f4f4f2;
+  font-weight: 300;
+  letter-spacing: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.lead,
+.fterm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.26em;
+}
+.lead {
+  flex: none;
+  align-self: flex-start;
+  min-height: 66px;
+  margin-right: 0.26em;
+}
+.sum {
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  row-gap: 10px;
+}
+.fterm {
+  min-height: 66px;
+  margin-right: 0.22em;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.op { color: #a0a0a5; }
+.paren { color: #a0a0a5; }
+.plus {
+  margin-left: 0.04em;
+  color: #a0a0a5;
+}
+.dot { color: #6b6b71; }
+.coefSym { color: #a0a0a5; }
+.frac {
+  display: inline-grid;
+  justify-items: center;
+  line-height: 1.12;
+}
+.fracN { padding: 0 0.14em 0.12em; }
+.fracD {
+  justify-self: stretch;
+  padding: 0.14em 0.14em 0;
+  border-top: 1px solid currentColor;
+  text-align: center;
+}
+.single { padding: 0 0.06em; }
+.sub {
+  position: relative;
+  bottom: -0.32em;
+  margin-left: 0.04em;
+  font-size: 15px;
+  line-height: 0;
+  vertical-align: baseline;
+  color: #d2d2d0;
+}
+
+/* A term lit: the others step back */
+.root[data-term] .fterm { opacity: var(--dim); }
+.root[data-term="hrv"] .fterm[data-t="hrv"],
+.root[data-term="hrdiff"] .fterm[data-t="hrdiff"],
+.root[data-term="ecgvar"] .fterm[data-t="ecgvar"],
+.root[data-term="t"] .fterm[data-t="t"] { opacity: 1; }
+
+/* ══ The four terms ══ */
+.rows {
+  margin-top: 32px;
+  border-bottom: 1px solid var(--slab-rule);
+}
+.row {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  width: 100%;
+  padding: 16px 0;
+  border: 0;
+  border-top: 1px solid var(--slab-rule);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+}
+.code {
+  position: relative;
+  justify-self: start;
+}
+.codeBase,
+.codeLit {
+  display: block;
+  padding: 4px 8px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  color: #f4f4f2;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.codeLit {
+  position: absolute;
+  inset: 0;
+  border-color: #f4f4f2;
+  background: #f4f4f2;
+  color: #0a0a0a;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.root[data-term="hrv"] .row[data-k="hrv"] .codeLit,
+.root[data-term="hrdiff"] .row[data-k="hrdiff"] .codeLit,
+.root[data-term="ecgvar"] .row[data-k="ecgvar"] .codeLit,
+.root[data-term="t"] .row[data-k="t"] .codeLit { opacity: 1; }
+.desc {
+  padding-top: 1px;
+  color: #d2d2d0;
+  text-wrap: pretty;
+}
+.coefLine {
+  margin: 20px 0 0;
+  color: #d2d2d0;
+}
+.coefLine .coefSym { font-size: 15px; }
+.coefEq { color: #a0a0a5; }
+
+/* ══ The pipeline ══ */
+.tree { display: none; margin: auto 0; padding-top: 28px; }
+.list { display: block; margin-top: 24px; }
+@container (min-width: 500px) {
+  .tree { display: block; }
+  .list { display: none; }
+}
+
+/* Seven equal leaf columns, no gap, so a column centre is (i + .5) / 7
+   of the width and the wires land on the nodes */
+.groups,
+.band {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.groups { margin-bottom: 18px; }
+.group {
+  margin: 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--edge);
+}
+.group[data-p] {
+  border-bottom-style: dashed;
+  border-bottom-color: var(--grey-2);
+}
+.cell,
+.pass { grid-row: 1; }
+.cell {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 4px;
+}
+
+/* A node: a raised chip in mono, ink; a planned node a ghost on a dashed
+   grey edge; the metric the accent, with #0a0a0a words */
+.node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  max-width: 100%;
+  min-height: 34px;
+  padding: 7px 8px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  color: #f4f4f2;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.node[data-p] {
+  border-style: dashed;
+  border-color: var(--grey-2);
+  background: transparent;
+  color: #8a8a90;
+}
+.node[data-accent] {
+  padding: 8px 14px;
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #0a0a0a;
+}
+.node::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid #f4f4f2;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+  pointer-events: none;
+}
+.root[data-term="hrv"] .node[data-t~="hrv"]::after,
+.root[data-term="hrdiff"] .node[data-t~="hrdiff"]::after,
+.root[data-term="ecgvar"] .node[data-t~="ecgvar"]::after,
+.root[data-term="t"] .node[data-t~="t"]::after { opacity: 1; }
+
+/* A derived term as the ratio it is */
+.nfrac {
+  display: inline-grid;
+  justify-items: stretch;
+}
+.nfrac > :last-child {
+  margin-top: 2px;
+  padding-top: 2px;
+  border-top: 1px solid currentColor;
+}
+
+/* Google Form runs straight through the scripts band */
+.pass { position: relative; }
+.pass::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--grey-2);
+  translate: -0.5px 0;
+}
+
+.wires { position: relative; }
+.seg {
+  position: absolute;
+  border: 0 solid var(--grey-2);
+}
+.seg[data-o="v"] {
+  left: calc(var(--x) / 7 * 100%);
+  top: calc(var(--a) * 100%);
+  height: calc((var(--b) - var(--a)) * 100%);
+  border-left-width: 1px;
+  translate: -0.5px 0;
+}
+.seg[data-o="h"] {
+  top: calc(var(--y) * 100%);
+  left: calc(var(--a) / 7 * 100%);
+  width: calc((var(--b) - var(--a)) / 7 * 100% + 1px);
+  border-top-width: 1px;
+  translate: -0.5px -0.5px;
+}
+.seg[data-p] { border-style: dashed; }
+.seg[data-ink] {
+  border-color: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.root[data-term="hrv"] .seg[data-t~="hrv"],
+.root[data-term="hrdiff"] .seg[data-t~="hrdiff"],
+.root[data-term="ecgvar"] .seg[data-t~="ecgvar"],
+.root[data-term="t"] .seg[data-t~="t"] { opacity: 1; }
+
+.head {
+  position: absolute;
+  left: calc(var(--x) / 7 * 100%);
+  bottom: 0;
+  width: 7px;
+  height: 5px;
+  translate: -50% 0;
+  background: var(--grey-2);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.head::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.root[data-term="hrv"] .head[data-t~="hrv"]::after,
+.root[data-term="hrdiff"] .head[data-t~="hrdiff"]::after,
+.root[data-term="ecgvar"] .head[data-t~="ecgvar"]::after,
+.root[data-term="t"] .head[data-t~="t"]::after { opacity: 1; }
+
+/* ── Phone: the same nodes as a grouped list ── */
+.lgroup { margin: 0 0 12px; }
+.lgroup[data-p] { margin-top: 24px; }
+.lrows {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 6px;
+}
+.litem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.arrow {
+  flex: none;
+  width: 16px;
+  height: 8px;
+  fill: none;
+  stroke: var(--grey-2);
+  stroke-width: 1;
+}
+.arrow[data-p] path:first-child { stroke-dasharray: 2 2; }
+.arrowHead {
+  fill: var(--grey-2);
+  stroke: none;
+}
+.ldot { color: #6b6b71; }
+.lend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 6px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--slab-rule);
+}
+
+/* ══ Entrance, once on view ══ the formula fades, the terms step in, the
+   pipeline's bands step in top to bottom, the metric lands last */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] .e {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+  .root[data-in="true"] .e {
+    transition:
+      opacity var(--t-3) var(--ease-arrive) calc(var(--i, 0) * var(--step)),
+      transform var(--t-3) var(--ease-arrive) calc(var(--i, 0) * var(--step));
+  }
+  .root[data-in="true"] .slab .e {
+    transition-delay: calc((var(--i, 0) + var(--o)) * var(--step));
+  }
+  .root[data-in="false"] .metric {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  .root[data-in="true"] .metric {
+    transition:
+      opacity var(--t-2) var(--ease-arrive) calc((10 + var(--o, 7)) * var(--step)),
+      transform var(--t-2) var(--ease-arrive) calc((10 + var(--o, 7)) * var(--step));
+  }
+}

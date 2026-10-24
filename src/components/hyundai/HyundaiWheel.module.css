@@ -1,0 +1,371 @@
+/* A split card on the sheet stack: the wheel on a sheet (dot grid, corner
+   marks) with its controls on a slab strip under it (7/12), board 42's
+   pros and cons on a slab (5/12). One 1px edge round all. The accent is
+   only the frame round the fixed screen. */
+.root {
+  display: block;
+  margin-top: 0;
+  margin-inline-start: 0;
+}
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--slab);
+}
+@media (min-width: 1024px) {
+  .card { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+}
+
+/* ── Left: a phone stacks the switch, the wheel, the slider; wide, the
+   switch and the slider share a strip under the wheel ── */
+.left {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "seg" "stage" "turn";
+  min-width: 0;
+  background: var(--sheet);
+}
+.controls { display: contents; }
+.seg {
+  grid-area: seg;
+  padding: 16px 16px 0;
+}
+.segInner { width: 100%; }
+/* a phone: the two options may take two lines rather than overflow */
+@media (max-width: 639px) {
+  .segInner > button {
+    padding: 6px 10px;
+    white-space: normal;
+  }
+}
+.turn {
+  grid-area: turn;
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px 20px;
+}
+@media (min-width: 640px) {
+  .left { grid-template-areas: "stage" "controls"; }
+  /* the switch, then the slider under it at full width */
+  .controls {
+    grid-area: controls;
+    display: grid;
+    justify-items: start;
+    gap: 16px;
+    padding: 18px 24px 16px;
+    border-top: 1px solid var(--edge);
+    background: var(--slab);
+  }
+  .seg {
+    grid-area: auto;
+    padding: 0;
+  }
+  .segInner { width: auto; }
+  .turn {
+    grid-area: auto;
+    justify-self: stretch;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 20px;
+    padding: 0;
+  }
+}
+
+/* ── The stage: the wheel's 480 × 400 canvas ── */
+.stage {
+  --follow: 0;
+  grid-area: stage;
+  position: relative;
+  aspect-ratio: 480 / 400;
+  overflow: hidden;
+  background-color: var(--sheet);
+  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 6%) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+}
+.stage[data-mode="wheel"] { --follow: 1; }
+.stage :global(.reg-mark) { opacity: 0.32; }
+@media (max-width: 639px) {
+  .stage { margin-top: 12px; border-block: 1px solid var(--edge); }
+  .stage :global(.reg-mark) { display: none; }
+}
+/* The canvas keeps the wheel's 480 × 400 whatever the stage's shape, so
+   the callout's label stays on its leaders */
+.canvas {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  aspect-ratio: 480 / 400;
+  transform: translateX(-50%);
+}
+/* A tablet, one column: a wider, lower stage */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .stage { aspect-ratio: 16 / 9; }
+}
+.rim,
+.hub,
+.callout {
+  position: absolute;
+  inset: 0;
+  /* the wheel's centre, (240, 205) of 480 × 400 */
+  transform-origin: 50% 51.25%;
+}
+.layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+/* The rim always turns; the screen and airbag only when mounted on it.
+   The turn is written on the rim and the hub themselves, as a registered
+   property that does not inherit, so a drag restyles two elements and not
+   the drawings inside them. */
+@property --wheel-rot {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.rim {
+  transform: rotate(var(--wheel-rot));
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+.hub {
+  transform: rotate(calc(var(--wheel-rot) * var(--follow)));
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+
+/* The screen's frame: the accent while it stays fixed, ink while it turns */
+.frameInk,
+.frameAccent {
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.stage[data-mode="fixed"] .frameInk { opacity: 0; }
+.stage[data-mode="wheel"] .frameAccent { opacity: 0; }
+
+/* Fixed screen's callout */
+.callout {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.stage[data-mode="fixed"] .callout { opacity: 1; }
+.note {
+  position: absolute;
+  left: calc(260 / 480 * 100%);
+  top: calc(42 / 400 * 100%);
+  color: #f4f4f2;
+  white-space: nowrap;
+  transform: translate(-50%, -100%);
+}
+
+/* ── The slider: a 1px track, a 12px square ink thumb, a tick at 0, the
+   step buttons at its ends ── */
+.turnLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  white-space: nowrap;
+}
+.readout {
+  min-width: 4ch;
+  color: #f4f4f2;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 640px) {
+  .turnLabel { justify-content: flex-start; }
+}
+.slider {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 12px;
+}
+.step {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  color: #f4f4f2;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.step:active { transform: translateY(1px); }
+.track {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+.range {
+  display: block;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: #6b6b71;
+}
+.range::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+  margin-top: -5.5px;
+  border: 0;
+  border-radius: 0;
+  background: #f4f4f2;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.range::-moz-range-track {
+  height: 1px;
+  background: #6b6b71;
+}
+.range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 0;
+  background: #f4f4f2;
+}
+.range:focus-visible { outline-offset: 3px; }
+.zero {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 4px);
+  width: 1px;
+  height: 6px;
+  background: #6b6b71;
+  pointer-events: none;
+}
+
+/* ── Right: the pros and cons ── */
+.right.right {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 20px 28px;
+  border: 0;
+  border-top: 1px solid var(--edge);
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .right.right { padding: 36px 40px 40px; }
+}
+@media (min-width: 1024px) {
+  .right.right {
+    border-top: 0;
+    border-left: 1px solid var(--edge);
+  }
+}
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+.kickerMark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: #f4f4f2;
+}
+.group { margin-top: 28px; }
+.group + .group {
+  padding-top: 24px;
+  border-top: 1px solid #252528;
+}
+.groupHead {
+  margin: 0;
+  color: #a0a0a5;
+}
+.list {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: baseline;
+}
+.num { color: #6b6b71; }
+.text { color: #a0a0a5; }
+.text strong {
+  color: #f4f4f2;
+  font-weight: 500;
+}
+
+/* ── Entrance, once on view ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] :is(.canvas, .li, .groupHead, .kicker) { opacity: 0; }
+  .root[data-in="true"] .canvas {
+    animation: fade var(--t-3) var(--ease-arrive) backwards;
+  }
+  .root[data-in="true"] .rim {
+    animation: turnIn calc(var(--t-3) * 1.5) var(--ease-arrive) 120ms backwards;
+  }
+  .root[data-in="true"] .stage[data-mode="wheel"] .hub {
+    animation: turnIn calc(var(--t-3) * 1.5) var(--ease-arrive) 120ms backwards;
+  }
+  .root[data-in="true"] .callout {
+    animation: fade var(--t-2) var(--ease-arrive) 700ms backwards;
+  }
+  .root[data-in="true"] .frameAccent {
+    animation: fade var(--t-2) var(--ease-arrive) 900ms backwards;
+  }
+  .root[data-in="true"] :is(.kicker, .groupHead) {
+    animation: rise var(--t-2) var(--ease-arrive) 160ms backwards;
+  }
+  .root[data-in="true"] .li {
+    animation: rise var(--t-2) var(--ease-arrive) calc(220ms + var(--i, 0) * var(--step)) backwards;
+  }
+}
+@keyframes turnIn {
+  from { transform: rotate(-20deg); }
+}
+@keyframes fade {
+  from { opacity: 0; }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+}
+
+/* Reduced motion: the wheel follows the input directly; swaps are fades */
+@media (prefers-reduced-motion: reduce) {
+  .rim,
+  .hub { transition: none; }
+  .frameInk,
+  .frameAccent,
+  .callout { transition: opacity 160ms linear; }
+  .step:active { transform: none; }
+}

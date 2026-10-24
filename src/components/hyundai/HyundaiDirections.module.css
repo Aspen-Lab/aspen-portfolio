@@ -1,0 +1,198 @@
+/* Test three directions: a split card on the sheet stack. The sheet holds
+   the cluster screen (#17171a, a faint 16px dot grid, the four corner
+   marks) and what differs; the slab below holds the three directions as
+   a contact sheet, cells split by 1px rules. Type is the ramp; the accent
+   fills only the chosen direction's 8px square. Inside a render the
+   product's own colours apply (WhiteUi, Cluster). */
+.root { display: block; }
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+.card {
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--slab);
+}
+
+/* ── The sheet ── */
+.stage {
+  position: relative;
+  padding: 20px 12px 30px;
+  border-bottom: 1px solid var(--edge);
+  background-color: var(--sheet);
+  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 7%) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+}
+.stage :global(.reg-mark) { opacity: 0.32; }
+
+.screenWrap { position: relative; }
+
+/* The three renders, stacked; the chosen one shows */
+.layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.layer[data-on="true"] { opacity: 1; }
+@media (max-width: 639px) {
+  .whiteShift { transform: translateX(70px); }
+}
+
+/* What differs: the S7 label, then the chosen direction's line (all
+   three in one cell, so the block keeps the longest line's height) */
+.differs {
+  display: grid;
+  gap: 8px;
+  margin: 18px 4px 0;
+}
+.differsLabel { display: block; }
+.stack { display: grid; }
+.diff {
+  grid-area: 1 / 1;
+  color: var(--color-body, #d2d2d0);
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+  text-wrap: pretty;
+}
+.diff[data-on="true"] {
+  opacity: 1;
+  transition-duration: var(--t-2);
+}
+
+/* ── The contact sheet ── three cells on the slab, 1px rules between */
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.thumb {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px 10px 14px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--color-ink);
+  text-align: left;
+}
+.thumb + .thumb { border-left: 1px solid var(--edge); }
+.thumb:active .mini { transform: translateY(1px); }
+
+.idx {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-soft, #8a8a90);
+}
+@media (hover: hover) {
+  .thumb:hover .idx { color: var(--color-ink); }
+}
+.thumb[data-on="true"] .idx { color: var(--color-ink); }
+
+/* The square: grey at rest; the accent copy fades in on the chosen one */
+.sq {
+  position: relative;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--grey-2, #6b6b71);
+}
+.sq::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.thumb[data-on="true"] .sq::after { opacity: 1; }
+
+/* The small render on black, in a 1px frame that inks when chosen */
+.mini {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: #000;
+  transition: transform var(--t-1) var(--ease-arrive);
+}
+.thumb[data-on="true"] .mini { border-color: rgb(244 244 242 / 55%); }
+@media (hover: hover) {
+  .thumb:hover:not([data-on="true"]) .mini { border-color: rgb(244 244 242 / 24%); }
+}
+
+.words {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+/* A phone: the name in S6 */
+.name {
+  font-size: 15px;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+@media (min-width: 640px) {
+  .stage { padding: 32px 28px 26px; }
+  .differs {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    gap: 20px;
+    margin: 22px 0 0;
+  }
+  .thumb {
+    gap: 14px;
+    padding: 22px 24px 26px;
+  }
+  .words { gap: 4px; }
+  .name {
+    font-size: 22px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ── Entrance, once on view: the screen rises, the cells step in, the
+   accent square lands last ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] .screenWrap,
+  .root[data-in="false"] .differs,
+  .root[data-in="false"] .thumb {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+  .root[data-in="false"] .sq::after { opacity: 0; }
+  .root[data-in="true"] .screenWrap,
+  .root[data-in="true"] .differs {
+    transition:
+      opacity var(--t-3) var(--ease-arrive),
+      transform var(--t-3) var(--ease-arrive);
+  }
+  .root[data-in="true"] .differs { transition-delay: calc(2 * var(--step)); }
+  .root[data-in="true"] .thumb {
+    transition:
+      opacity var(--t-3) var(--ease-arrive) calc((var(--i) + 3) * var(--step)),
+      transform var(--t-3) var(--ease-arrive) calc((var(--i) + 3) * var(--step));
+  }
+  /* only while it enters: a later choice lands at once */
+  .root[data-in="true"]:not([data-settled]) .thumb[data-on="true"] .sq::after {
+    transition-delay: calc(var(--t-3) + 3 * var(--step));
+  }
+}
+
+/* Reduced motion: no entrance; a choice is a 160ms fade */
+@media (prefers-reduced-motion: reduce) {
+  .layer,
+  .diff,
+  .sq::after { transition: opacity var(--t-1) linear; }
+  .mini { transition: none; }
+  .thumb:active .mini { transform: none; }
+}

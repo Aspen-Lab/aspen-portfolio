@@ -1,0 +1,357 @@
+/* The paired design (board 33) on one sheet of the global stack: two
+   environment tiles, a ladder of five measures between their rails, the
+   five steps on a slab rail, the outcome line. Ink squares, 1px rules,
+   no gradient. The one accent: the outcome's 8px square. */
+.root { display: block; }
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+.sheet { padding: 24px 20px 28px; }
+@media (min-width: 640px) { .sheet { padding: 32px; } }
+@media (min-width: 1024px) { .sheet { padding: 40px; } }
+
+.title { margin: 0 0 28px; }
+/* The statistic's t stays lower case in the caps label */
+.tee { text-transform: none; }
+
+/* ══ The ladder ══ --col is an environment's column: its tile on top,
+   its rail down the column's centre, a square where each rung meets it */
+.ladder { --col: 20px; }
+@media (min-width: 768px) { .ladder { --col: 232px; } }
+@media (min-width: 1024px) { .ladder { --col: 264px; } }
+
+.envs {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.env {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: calc(50% - 6px);
+  padding: 8px 12px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  text-align: center;
+}
+.envName {
+  color: #f4f4f2;
+  font-size: 15px;
+  line-height: 1.3;
+}
+@media (min-width: 768px) {
+  .envs { margin-bottom: 0; }
+  .env {
+    width: var(--col);
+    max-width: none;
+    min-height: 72px;
+    padding: 16px 20px;
+  }
+  .envName { font-size: 22px; }
+}
+
+.rungs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rung {
+  --pc: 49px;
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--col) minmax(0, 1fr) var(--col);
+  grid-template-rows: auto 10px auto;
+  row-gap: 6px;
+  padding: 16px 0 18px;
+}
+/* The two rails, a segment per rung; the last stops at its squares */
+.rung::before,
+.rung::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--grey-3);
+}
+.rung::before { left: calc(var(--col) / 2 - 0.5px); }
+.rung::after { right: calc(var(--col) / 2 - 0.5px); }
+.rung:last-child::before,
+.rung:last-child::after {
+  bottom: auto;
+  height: var(--pc);
+}
+
+.measure {
+  grid-column: 2;
+  grid-row: 1;
+  color: #f4f4f2;
+  line-height: 22px;
+  text-align: center;
+  white-space: nowrap;
+}
+.pair {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / 4;
+  grid-row: 2;
+}
+.sq {
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  background: #f4f4f2;
+}
+.sq[data-side="sim"] { left: calc(var(--col) / 2 - 5px); }
+.sq[data-side="real"] { right: calc(var(--col) / 2 - 5px); }
+.bar {
+  position: absolute;
+  top: 4.5px;
+  left: calc(var(--col) / 2 + 5px);
+  right: calc(var(--col) / 2 + 5px);
+  height: 1px;
+  background: var(--grey-2);
+}
+.meta {
+  grid-column: 2;
+  grid-row: 3;
+  max-width: 56ch;
+  justify-self: center;
+  color: #a0a0a5;
+  text-align: center;
+  text-wrap: balance;
+}
+.sep { color: #6b6b71; }
+@media (max-width: 767px) {
+  .sep { display: none; }
+  .metaSrc { display: block; color: #d2d2d0; }
+  .rung {
+    --pc: 47px;
+    padding: 14px 0 16px;
+  }
+  .measure,
+  .meta { padding: 0 8px; }
+}
+
+/* ══ The steps, on a slab ══ one chain of the five step titles, each a
+   numbered square, joined by small arrows; the board's lines for each
+   step in a collapsed row under it */
+.process {
+  margin-top: 24px;
+  padding: 18px 20px;
+}
+@media (min-width: 640px) { .process { padding: 20px 28px; } }
+.chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+/* a phone stacks the chain, one step a line: the numbers carry the order */
+@media (max-width: 639px) {
+  .chain {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .arrow { display: none; }
+}
+.stepNum {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  color: #f4f4f2;
+}
+.stepTitle { color: #f4f4f2; }
+.arrow {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 18px;
+  height: 7px;
+  margin-left: 2px;
+}
+.arrowLine {
+  position: absolute;
+  left: 0;
+  right: 4px;
+  top: 3px;
+  height: 1px;
+  background: var(--grey-2);
+}
+.arrowHead {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 5px;
+  height: 7px;
+  background: var(--grey-2);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+/* What each step does: a native disclosure, collapsed */
+.more {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--slab-rule, #252528);
+}
+.moreSum {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  list-style: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.moreSum::-webkit-details-marker { display: none; }
+@media (hover: hover) {
+  .moreSum:hover { color: #f4f4f2; }
+}
+/* the sign: a plus that turns to a cross when open */
+.plus {
+  position: relative;
+  flex: none;
+  width: 9px;
+  height: 9px;
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+.plus i {
+  position: absolute;
+  background: currentColor;
+}
+.plus i:first-child { left: 0; right: 0; top: 4px; height: 1px; }
+.plus i:last-child { top: 0; bottom: 0; left: 4px; width: 1px; }
+.more[open] .plus { transform: rotate(45deg); }
+.moreList {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 900px) {
+  .moreList {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+.moreItem {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+}
+@media (min-width: 900px) {
+  .moreItem { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}
+.moreNum { color: #8a8a90; }
+.stepLine {
+  max-width: 28ch;
+  color: #a0a0a5;
+  text-wrap: pretty;
+}
+
+/* ══ The outcome ══ a down-arrow from the slab, the line, its square */
+.outcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.down {
+  position: relative;
+  display: block;
+  width: 7px;
+  height: 28px;
+}
+.downLine {
+  position: absolute;
+  left: 3px;
+  top: 0;
+  bottom: 4px;
+  width: 1px;
+  background: var(--grey-2);
+}
+.downHead {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 7px;
+  height: 5px;
+  background: var(--grey-2);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.outcomeText {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 10px 0 0;
+  color: #f4f4f2;
+  text-align: center;
+}
+.mark {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ══ Entrance, once on view ══ tiles fade; each rung draws out from its
+   centre, row by row; the steps step in and their rule draws; the
+   outcome square lands last */
+@media (prefers-reduced-motion: reduce) {
+  .plus { transition: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sheet[data-in="false"] .e {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+  .sheet[data-in="true"] .e {
+    transition:
+      opacity var(--t-3) var(--ease-arrive) calc(var(--i, 0) * var(--step)),
+      transform var(--t-3) var(--ease-arrive) calc(var(--i, 0) * var(--step));
+  }
+
+  .sheet[data-in="false"] .bar { transform: scaleX(0); }
+  .sheet[data-in="false"] .sq,
+  .sheet[data-in="false"] .measure,
+  .sheet[data-in="false"] .meta { opacity: 0; }
+  .sheet[data-in="true"] .bar {
+    transition: transform var(--t-3) var(--ease-arrive) calc((2 + var(--i, 0)) * var(--step) + 120ms);
+  }
+  .sheet[data-in="true"] .sq,
+  .sheet[data-in="true"] .measure,
+  .sheet[data-in="true"] .meta {
+    transition: opacity var(--t-2) var(--ease-arrive) calc((2 + var(--i, 0)) * var(--step));
+  }
+
+
+  .sheet[data-in="false"] .down,
+  .sheet[data-in="false"] .outcomeText { opacity: 0; }
+  .sheet[data-in="false"] .mark { transform: translateY(-1px) scale(0); }
+  .sheet[data-in="true"] .down,
+  .sheet[data-in="true"] .outcomeText { transition: opacity var(--t-2) var(--ease-arrive) calc(12 * var(--step)); }
+  .sheet[data-in="true"] .mark {
+    transition: transform var(--t-2) var(--ease-arrive) calc(14 * var(--step) + 120ms);
+  }
+}

@@ -30,6 +30,7 @@ import { LayerTabs } from "@/components/LayerSheet";
 import { OwnershipStrip } from "@/components/OwnershipStrip";
 import { SopStack } from "@/components/SopStack";
 import { NutraFigure, type NutraVisual } from "@/components/nutra/NutraFigure";
+import { HyundaiFigure, type HyundaiVisual } from "@/components/hyundai/HyundaiFigure";
 import styles from "./case.module.css";
 
 type Params = { slug: string; locale: Locale };
@@ -337,7 +338,6 @@ export default async function CaseStudy({
   return (
     <article
       className={`container-fluid pt-12 pb-24 ${styles.case}`}
-      data-project-theme={project.theme}
       data-layout={project.layout}
       style={project.accent ? ({ "--accent": project.accent } as React.CSSProperties) : undefined}
     >
@@ -884,6 +884,9 @@ const pad = (n: number) => String(n).padStart(2, "0");
     loads each one's code only when it renders, so the other cases never
     fetch them. */
 const nutraVisual = (v: string | undefined): v is NutraVisual => !!v && v.startsWith("nutra-");
+/** Hyundai's code-drawn figures, one or two per section (Section.visuals),
+    and its hero, loaded the same way through HyundaiFigure. */
+const hyundaiVisual = (v: string | undefined): v is HyundaiVisual => !!v && v.startsWith("hyundai-");
 
 /** The banded entrance: fade and rise 8px over 720ms on --ease-arrive */
 const ARRIVE = { y: 8, duration: 0.72, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] };
@@ -1009,6 +1012,8 @@ function BandedCase({
     if (s.visual === "email-render") fig("email", <EmailRender />);
     // Nutra's figures: one per section, chosen by the section's visual
     if (nutraVisual(s.visual)) fig(s.visual, <NutraFigure visual={s.visual} />);
+    // Hyundai's figures: one or two per section, in order
+    s.visuals?.forEach((v) => fig(v, <HyundaiFigure visual={v} />));
     if (s.visual === "ownership" && s.ownership) fig("ownership", <OwnershipStrip {...s.ownership} />);
     if (s.visual === "sop" && s.sop && s.iconList) {
       fig("sop", <SopStack items={s.iconList.items} {...s.sop} />);
@@ -1254,7 +1259,6 @@ function BandedCase({
     <article
       className={styles.case}
       data-bands=""
-      data-project-theme={project.theme}
       data-layout={project.layout}
       style={{ "--accent": project.accent } as React.CSSProperties}
     >
@@ -1329,9 +1333,11 @@ function BandedCase({
               className={`mt-14 ${project.heroVisual ? "aspect-[4/3] sm:aspect-[16/9]" : "aspect-[16/9]"} overflow-hidden relative ${frame}`}
               style={project.coverBg ? { backgroundColor: project.coverBg } : undefined}
             >
-              {/* A code-drawn hero (Nutra's app) comes first, then a video, then the cover */}
+              {/* A code-drawn hero (Nutra's app, Hyundai's cluster) comes first, then a video, then the cover */}
               {nutraVisual(project.heroVisual) ? (
                 <NutraFigure visual={project.heroVisual} />
+              ) : hyundaiVisual(project.heroVisual) ? (
+                <HyundaiFigure visual={project.heroVisual} />
               ) : project.heroVideo ? (
                 <video
                   src={project.heroVideo}

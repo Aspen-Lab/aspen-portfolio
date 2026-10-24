@@ -1,0 +1,444 @@
+/* Board 21 on the chart sheet: the composition tree beside a 5 × 3
+   matrix of mini renders (#000, one 1px edge, radius 2). Lines grey-2;
+   a path lit in ink; the focused feature's square the one accent mark.
+   Inside a render the board's own colours (product.ts BOARD21). */
+.root {
+  display: block;
+  margin-top: 0;
+  margin-inline-start: 0;
+}
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+.sheet.sheet { padding: 20px 16px 22px; }
+@media (min-width: 640px) {
+  .sheet.sheet { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .sheet.sheet { padding: 40px 40px 36px; }
+}
+
+/* ── Layout ── a phone first: the feature chips, the chosen feature's
+   conditions, then its three cells */
+.matrix {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 8px;
+  row-gap: 0;
+  align-items: start;
+}
+.tree {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.phoneConds {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  /* as tall as the longest set, Smart Cruise Control's two conditions
+     (four label lines on a phone), so a pick never moves the cells */
+  min-height: calc(4lh + 12px);
+  margin: 14px 0 22px;
+  color: #a0a0a5;
+}
+@media (min-width: 640px) {
+  .phoneConds { min-height: calc(2lh + 4px); }
+}
+.head {
+  grid-row: 3;
+  margin-bottom: 10px;
+  color: #a0a0a5;
+}
+.head[data-c="0"] { grid-column: 1; }
+.head[data-c="1"] { grid-column: 2; }
+.head[data-c="2"] { grid-column: 3; }
+
+.cell { display: none; min-width: 0; }
+.cell[data-on] { display: block; grid-row: 4; }
+.cell[data-c="0"] { grid-column: 1; }
+.cell[data-c="1"] { grid-column: 2; }
+.cell[data-c="2"] { grid-column: 3; }
+
+/* ── Wide (from 1024px): the tree runs down the left, every row in
+   view ── */
+@media (min-width: 1024px) {
+  .matrix {
+    grid-template-columns: 236px repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto repeat(5, auto);
+    column-gap: 16px;
+    row-gap: 18px;
+  }
+  .tree {
+    grid-column: 1;
+    grid-row: 2 / 7;
+    display: grid;
+    grid-template-rows: subgrid;
+    gap: 18px 0;
+  }
+  .phoneConds { display: none; }
+  .head { grid-row: 1; margin-bottom: -6px; }
+  .head[data-c="0"] { grid-column: 2; }
+  .head[data-c="1"] { grid-column: 3; }
+  .head[data-c="2"] { grid-column: 4; }
+  .cell,
+  .cell[data-on] { display: block; }
+  .cell[data-r="0"] { grid-row: 2; }
+  .cell[data-r="1"] { grid-row: 3; }
+  .cell[data-r="2"] { grid-row: 4; }
+  .cell[data-r="3"] { grid-row: 5; }
+  .cell[data-r="4"] { grid-row: 6; }
+  .cell[data-c="0"] { grid-column: 2; }
+  .cell[data-c="1"] { grid-column: 3; }
+  .cell[data-c="2"] { grid-column: 4; }
+}
+
+/* ── A feature ── (a phone) a chip: the square, the name */
+.item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 40px;
+  padding: 9px 14px 9px 32px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.item:focus { outline: none; }
+.item:focus-visible {
+  outline: 1px solid #f4f4f2;
+  outline-offset: 3px;
+}
+.itemHead {
+  display: flex;
+  align-items: center;
+  height: 22px;
+}
+.sq {
+  position: absolute;
+  left: 13px;
+  top: 16px;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #6b6b71;
+}
+.sq i {
+  position: absolute;
+  inset: -1px;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.sq i[data-k="ink"] { background: #f4f4f2; }
+.sq i[data-k="accent"] { background: var(--accent); }
+.name {
+  color: #f4f4f2;
+  white-space: nowrap;
+  opacity: 0.62;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.own,
+.cond,
+.join { display: none; }
+
+@media (max-width: 1023px) {
+  .item::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 1px solid rgb(244 244 242 / 55%);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity var(--t-1) var(--ease-arrive);
+  }
+  .item[aria-selected="true"]::after { opacity: 1; }
+}
+
+/* (wide) a row of the tree: no chip, the square in the gutter the joins
+   run down */
+@media (min-width: 1024px) {
+  .item {
+    min-height: 0;
+    padding: 0 0 0 46px;
+    border: 0;
+    background: none;
+  }
+  .sq { left: 28px; top: 7px; }
+  .own,
+  .cond {
+    display: block;
+    color: #a0a0a5;
+  }
+  .own { margin-top: 8px; }
+  /* each condition holds two 16px lines (one in Chinese), so the joins
+     know where its first line sits */
+  .own,
+  .cond { line-height: 16px; }
+  .cond { min-height: 32px; margin-top: 6px; }
+  .cond[data-k="0"] { margin-top: 8px; }
+  .join { display: block; }
+  /* the row stretches to the matrix row: ring only its name line */
+  .item:focus-visible { outline: none; }
+  .item:focus-visible::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: -6px;
+    top: -6px;
+    height: 34px;
+    border: 1px solid #f4f4f2;
+    border-radius: 2px;
+    pointer-events: none;
+  }
+}
+
+/* ── The joins ── from a condition (its first line, y 38 or 76 in its
+   row) up to the square of the feature it names (y 11 in that row), N
+   rows up; a row step is the row's height plus the 18px gap. Each is
+   drawn grey-2 and again in ink, which fades on when it is on the
+   focused feature's path. */
+.join {
+  position: absolute;
+  left: var(--x);
+  width: calc(28px - var(--x));
+  pointer-events: none;
+}
+.join[data-j="scc-lf"] {
+  --x: 4px;
+  top: calc(11px - 2 * (100% + 18px));
+  height: calc(2 * (100% + 18px) + 27px);
+}
+.join[data-j="scc-fd"] {
+  --x: 12px;
+  top: calc(11px - (100% + 18px));
+  height: calc(100% + 18px + 65px);
+}
+.join[data-j="hda-scc"] {
+  --x: 20px;
+  top: calc(11px - (100% + 18px));
+  height: calc(100% + 18px + 27px);
+}
+.join i {
+  position: absolute;
+  inset: 0;
+  border-top: 1px solid currentColor;
+  border-left: 1px solid currentColor;
+}
+.join i::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  bottom: 0;
+  width: calc(42px - var(--x));
+  height: 1px;
+  background: currentColor;
+}
+.join i[data-k="grey"] { color: #6b6b71; }
+.join i[data-k="ink"] {
+  color: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+
+/* ── The focus, from data-feature on the root ── the feature's square
+   in the accent and its name in full; its conditions' squares in ink,
+   their names in full, the joins between in ink; its row of cells
+   ringed in ink */
+.root[data-feature="lk"] .item[data-f="lk"] :is(.sq i[data-k="accent"], .name),
+.root[data-feature="lf"] .item[data-f="lf"] :is(.sq i[data-k="accent"], .name),
+.root[data-feature="fd"] .item[data-f="fd"] :is(.sq i[data-k="accent"], .name),
+.root[data-feature="scc"] .item[data-f="scc"] :is(.sq i[data-k="accent"], .name),
+.root[data-feature="hda"] .item[data-f="hda"] :is(.sq i[data-k="accent"], .name),
+.root[data-feature="scc"] .item[data-dep~="scc"] :is(.sq i[data-k="ink"], .name),
+.root[data-feature="hda"] .item[data-dep~="hda"] :is(.sq i[data-k="ink"], .name),
+.root[data-feature="scc"] .join[data-path~="scc"] i[data-k="ink"],
+.root[data-feature="hda"] .join[data-path~="hda"] i[data-k="ink"],
+.root[data-feature="lk"] .cell[data-f="lk"] .ring,
+.root[data-feature="lf"] .cell[data-f="lf"] .ring,
+.root[data-feature="fd"] .cell[data-f="fd"] .ring,
+.root[data-feature="scc"] .cell[data-f="scc"] .ring,
+.root[data-feature="hda"] .cell[data-f="hda"] .ring {
+  opacity: 1;
+}
+@media (hover: hover) {
+  .item:hover .name { opacity: 1; }
+}
+@media (max-width: 1023px) {
+  /* a phone shows one row: no ring needed */
+  .ring { display: none; }
+}
+
+/* ── A cell ── the render (#000, 1px edge) and its foot */
+.render {
+  position: relative;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: #000;
+}
+.stage { border-radius: 1px; }
+.ring {
+  position: absolute;
+  inset: -1px;
+  border: 1px solid rgb(244 244 242 / 55%);
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.empty {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 280 / 164;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--tile);
+}
+.empty > span { color: #6b6b71; }
+@media (max-width: 639px) {
+  .empty { aspect-ratio: 170 / 164; }
+}
+
+.foot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  /* below 1024px the tallest foot (a caption over a pager), so a pick
+     never changes the cells' height */
+  min-height: 44px;
+  margin-top: 8px;
+}
+/* the narrowest phones set "(No Glowing Effect)" on three lines */
+@media (max-width: 389px) {
+  .foot { min-height: 50px; }
+}
+@media (min-width: 1024px) {
+  .foot {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+    margin-top: 6px;
+  }
+}
+.caption {
+  min-width: 0;
+  color: #a0a0a5;
+}
+@media (min-width: 1024px) {
+  .caption { white-space: nowrap; }
+}
+
+/* A pager: square marks on 22 × 24 targets */
+.pager {
+  display: inline-flex;
+  margin-left: -7px;
+}
+@media (min-width: 1024px) {
+  .pager { margin: 0 -7px 0 auto; }
+}
+.page {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.pageSq {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #6b6b71;
+}
+.pageSq::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.page[aria-checked="true"] .pageSq::after { opacity: 1; }
+@media (hover: hover) {
+  .page:hover .pageSq { border-color: #a0a0a5; }
+}
+
+/* ── Inside a render (design px on the 280 × 176 canvas) ── */
+.canvas {
+  position: absolute;
+  inset: 0;
+  color: #fcfbfb;
+  font-feature-settings: normal;
+  font-variant-numeric: normal;
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+}
+.abs { position: absolute; display: block; }
+.chipMark {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  box-sizing: border-box;
+  border-radius: 13px;
+}
+.chipHda {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.haloBox {
+  position: relative;
+  overflow: hidden;
+}
+.haloCanvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 720px;
+  transform-origin: 0 0;
+}
+.haloSvg { display: block; }
+
+/* ── Entrance, once on view ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] :is(.item, .head, .cell) { opacity: 0; }
+  .root[data-in="false"] .sq i[data-k="accent"] { opacity: 0; }
+  .root[data-in="true"] .item {
+    animation: rise var(--t-2) var(--ease-arrive) calc(var(--i, 0) * var(--step)) backwards;
+  }
+  .root[data-in="true"] .head {
+    animation: fade var(--t-2) var(--ease-arrive) 120ms backwards;
+  }
+  .root[data-in="true"] .cell {
+    animation: fade var(--t-3) var(--ease-arrive) calc(160ms + var(--i, 0) * var(--step)) backwards;
+  }
+  .root[data-in="true"] .sq i[data-k="accent"] {
+    animation: fade var(--t-2) var(--ease-arrive) 560ms backwards;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+}
+@keyframes fade {
+  from { opacity: 0; }
+}

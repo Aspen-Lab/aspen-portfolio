@@ -1,0 +1,564 @@
+/* The Green UI as a live prototype: a split card on the sheet stack, in
+   three rows. The screen on a sheet (#17171a, a faint 16px dot grid, the
+   four corner marks); the controls on a slab; the parts and the legend
+   on a slab, cells split by 1px rules. Type is the ramp. The accent fills
+   only the current step's 8px square. Inside the render the HMI's own
+   colours apply (cluster/Cluster). */
+.root { display: block; }
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+.card {
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--slab);
+}
+
+/* ══ Row 1: the screen ══ */
+.stage {
+  position: relative;
+  padding: 20px 12px;
+  border-bottom: 1px solid var(--edge);
+  background-color: var(--sheet);
+  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 7%) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+}
+.stage :global(.reg-mark) { opacity: 0.32; }
+.screenWrap { position: relative; }
+
+/* ── Part outlines: drawn by the site over the render, in % of the
+   design canvas; on a phone the layer is the canvas's width (2× the
+   window) and pans with it. Each is also the part's pointer target. ── */
+.overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.ovPan {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+@media (max-width: 639px) {
+  .ovPan {
+    width: calc(100% * 1920 / 960);
+    transform: translateX(calc(var(--pan) / 1920 * 100%));
+    transition: transform var(--t-3) var(--ease-arrive);
+  }
+}
+
+.ol {
+  position: absolute;
+  cursor: default;
+}
+.olBox {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(244 244 242 / 50%);
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+/* 6px corner ticks in full ink, over the box's corners */
+.tick {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border: 0 solid #f4f4f2;
+}
+.tick[data-c="tl"] { left: -1px; top: -1px; border-left-width: 1.5px; border-top-width: 1.5px; }
+.tick[data-c="tr"] { right: -1px; top: -1px; border-right-width: 1.5px; border-top-width: 1.5px; }
+.tick[data-c="br"] { right: -1px; bottom: -1px; border-right-width: 1.5px; border-bottom-width: 1.5px; }
+.tick[data-c="bl"] { left: -1px; bottom: -1px; border-left-width: 1.5px; border-bottom-width: 1.5px; }
+
+.tag {
+  position: absolute;
+  left: -1px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(3px);
+  transition:
+    opacity var(--t-1) var(--ease-arrive),
+    transform var(--t-2) var(--ease-arrive);
+}
+.ol[data-tag="inside"] .tag { top: 8px; left: 8px; }
+.ol[data-tag="below"] .tag { top: calc(100% + 8px); }
+/* A phone's window is narrow: the tags hang over their boxes, the ring's
+   from its right edge, so none runs off the screen */
+@media (max-width: 639px) {
+  .ol[data-tag="inside"] .tag {
+    top: auto;
+    bottom: calc(100% + 6px);
+    left: -1px;
+  }
+  .ol[data-k="ring"] .tag {
+    left: auto;
+    right: -1px;
+  }
+}
+
+/* Lit: pointed at, focused (data-part, written to the DOM) or pinned */
+.root[data-part="panel"] .ol[data-k="panel"] :is(.olBox, .tag),
+.root[data-part="scene"] .ol[data-k="scene"] :is(.olBox, .tag),
+.root[data-part="ring"] .ol[data-k="ring"] :is(.olBox, .tag),
+.root[data-pin="panel"] .ol[data-k="panel"] :is(.olBox, .tag),
+.root[data-pin="scene"] .ol[data-k="scene"] :is(.olBox, .tag),
+.root[data-pin="ring"] .ol[data-k="ring"] :is(.olBox, .tag) {
+  opacity: 1;
+  transform: none;
+}
+
+/* ══ Row 2: the controls ══ */
+.controls {
+  display: grid;
+  gap: 18px;
+  padding: 20px 16px 22px;
+  border-bottom: 1px solid var(--edge);
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  text-wrap: balance;
+}
+.kickerMark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--color-ink);
+}
+.replay {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--color-mute, #a0a0a5);
+}
+.replayIcon { flex: none; }
+@media (hover: hover) {
+  .replay:hover { color: var(--color-ink); }
+}
+.replay:active .replayIcon { transform: rotate(-30deg); }
+
+/* The feature switch spans the slab on a phone: each option as wide as
+   its words (the longest wrap to two lines), the chosen one raised in
+   place of the sliding thumb */
+.seg {
+  display: grid;
+  grid-template-columns: minmax(0, 13fr) minmax(0, 11fr) minmax(0, 6fr);
+  width: 100%;
+}
+.seg > span:first-child { display: none; }
+.seg button {
+  padding-inline: 10px;
+  border: 1px solid transparent;
+  white-space: normal;
+  text-wrap: balance;
+}
+.seg button[aria-checked="true"] {
+  border-color: rgb(244 244 242 / 55%);
+  background: var(--raised);
+}
+
+/* ── The rail: a phone's 2 × 2 grid of step tiles ── */
+.railRow {
+  display: grid;
+  gap: 16px;
+}
+.rail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.step {
+  position: relative;
+  min-width: 0;
+}
+.stepBtn {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 12px 12px 14px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--tile);
+  color: var(--color-ink);
+  text-align: left;
+  transition: transform var(--t-1) var(--ease-arrive);
+}
+.stepBtn:active { transform: translateY(1px); }
+.step[data-current="true"] .stepBtn { border-color: rgb(244 244 242 / 55%); }
+
+.node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.stepIdx { color: var(--color-soft, #8a8a90); }
+.step[data-current="true"] .stepIdx { color: var(--color-ink); }
+@media (hover: hover) {
+  .stepBtn:hover .stepIdx { color: var(--color-ink); }
+}
+
+/* The square: grey at rest; the accent copy on the current step */
+.sq {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--grey-2, #6b6b71);
+}
+.sq::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.step[data-current="true"] .sq::after { opacity: 1; }
+
+.stepLabel {
+  color: var(--color-mute, #a0a0a5);
+  line-height: 1.35;
+}
+/* a phone's step tiles keep two lines for every label, so the 2 × 2
+   grid is as tall in every feature */
+@media (max-width: 639px) {
+  .stepLabel { min-height: 2lh; }
+}
+.step[data-current="true"] .stepLabel { color: var(--color-ink); }
+@media (hover: hover) {
+  .stepBtn:hover .stepLabel { color: var(--color-ink); }
+}
+
+/* The rule from this step's square to the next (wide sheets only) */
+.seg1 { display: none; }
+
+/* ── Distance 1–4 ── kept in place (hidden) on a phone outside
+   Following Distance; wide, it is simply not there */
+.gaps {
+  display: grid;
+  gap: 10px;
+}
+.gaps[data-hide] { visibility: hidden; }
+.gapsLabel { display: block; }
+.gapRow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.gapBtn {
+  display: grid;
+  place-items: center;
+  height: 40px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--tile);
+  color: var(--color-mute, #a0a0a5);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.gapBtn[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: default;
+}
+@media (hover: hover) {
+  .gapBtn:not([aria-disabled="true"]):hover { color: var(--color-ink); border-color: rgb(244 244 242 / 24%); }
+}
+.gapBtn[data-on="true"] {
+  border-color: rgb(244 244 242 / 55%);
+  background: var(--raised);
+  color: var(--color-ink);
+}
+.gapBtn:not([aria-disabled="true"]):active .gapNum { transform: translateY(1px); }
+.gapNum { display: block; }
+
+/* ══ Row 3: the parts and the legend ══ */
+.parts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.partList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.partItem { min-width: 0; }
+.partItem + .partItem { border-top: 1px solid var(--edge); }
+.partBtn {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 16px 16px 18px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--color-ink);
+  text-align: left;
+}
+.partBtn:focus-visible { outline-offset: -1px; }
+.partIdx {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+  color: var(--color-soft, #8a8a90);
+}
+.partSq {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--grey-2, #6b6b71);
+}
+.partTitle {
+  font-size: 18px;
+  line-height: 1.3;
+}
+.partLine {
+  color: var(--color-mute, #a0a0a5);
+  text-wrap: pretty;
+}
+/* A lit part inks its index and square (never the accent) */
+.root[data-part="panel"] .partBtn[data-k="panel"] .partIdx,
+.root[data-part="scene"] .partBtn[data-k="scene"] .partIdx,
+.root[data-part="ring"] .partBtn[data-k="ring"] .partIdx,
+.partBtn[aria-pressed="true"] .partIdx { color: var(--color-ink); }
+.root[data-part="panel"] .partBtn[data-k="panel"] .partSq,
+.root[data-part="scene"] .partBtn[data-k="scene"] .partSq,
+.root[data-part="ring"] .partBtn[data-k="ring"] .partSq,
+.partBtn[aria-pressed="true"] .partSq { background: var(--color-ink); }
+
+.legend {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 16px 16px 20px;
+  border-top: 1px solid var(--edge);
+}
+.legendLabel { margin: 0; }
+.legendList {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.legendItem {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 10px;
+  color: var(--color-body, #d2d2d0);
+}
+/* The HMI's own colours (board 22's palette), drawn as the system's
+   square marks: the legend sits outside the render */
+.dots {
+  display: inline-flex;
+  gap: 4px;
+  transform: translateY(1px);
+}
+.dots i {
+  width: 12px;
+  height: 12px;
+}
+
+/* ══ Wide sheets ══ */
+@media (min-width: 640px) {
+  .stage { padding: 32px 28px; }
+  /* the kicker over the switch; Replay at the switch's right; the rail */
+  .controls {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "kick kick" "seg replay" "rail rail";
+    align-items: center;
+    gap: 24px 32px;
+    padding: 28px 32px 30px;
+  }
+  .top { display: contents; }
+  .kicker { grid-area: kick; }
+  .replay { grid-area: replay; }
+  .railRow { grid-area: rail; }
+  .seg {
+    grid-area: seg;
+    display: inline-grid;
+    grid-template-columns: none;
+    grid-auto-columns: minmax(0, 1fr);
+    width: auto;
+    justify-self: start;
+  }
+  .seg > span:first-child { display: block; }
+  .seg button,
+  .seg button[aria-checked="true"] {
+    padding-inline: 16px;
+    border-color: transparent;
+    background: none;
+    white-space: nowrap;
+  }
+
+  /* The rail: steps in a row on one rule; the current square is the
+     accent; while a sequence plays, the rule fills toward the next step
+     over the step's time in the video */
+  .railRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 32px;
+  }
+  .rail {
+    display: flex;
+    gap: 0;
+  }
+  .step { flex: 1 1 0; }
+  .stepBtn {
+    gap: 12px;
+    width: auto;
+    padding: 6px 16px 6px 0;
+    border: 0;
+    background: none;
+  }
+  .step[data-current="true"] .stepBtn { border-color: transparent; }
+  .stepBtn:focus-visible { outline-offset: 3px; }
+  .node { gap: 12px; }
+  .stepLabel { padding-right: 8px; }
+
+  .seg1 {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    right: 6px;
+    display: block;
+    height: 1px;
+    overflow: hidden;
+    background: var(--edge);
+    pointer-events: none;
+  }
+  /* the rule starts after the index */
+  .seg1 { left: 46px; }
+  .fill {
+    position: absolute;
+    inset: 0;
+    background: rgb(244 244 242 / 55%);
+    transform: scaleX(0);
+    transform-origin: 0 0;
+  }
+  .rail[data-run] .step[data-past] .fill { transform: scaleX(1); }
+  .rail[data-run] .step[data-current="true"] .fill {
+    animation: fill var(--dwell) linear both;
+  }
+
+  .gaps {
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 14px;
+    padding-top: 1px;
+  }
+  .gaps[data-hide] { display: none; }
+  .gapRow { grid-template-columns: repeat(4, 36px); gap: 6px; }
+  .gapBtn { height: 36px; }
+
+  .parts { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1fr); }
+  .partList {
+    grid-column: span 3;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .partItem + .partItem {
+    border-top: 0;
+    border-left: 1px solid var(--edge);
+  }
+  .partBtn { padding: 24px 28px 28px; }
+  .partTitle {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+  .legend {
+    padding: 24px 28px 28px;
+    border-top: 0;
+    border-left: 1px solid var(--edge);
+  }
+}
+
+@keyframes fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Below 1024px the parts row wraps: three parts, then the legend */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .parts { grid-template-columns: minmax(0, 1fr); }
+  .partList { grid-column: auto; }
+  .legend {
+    border-left: 0;
+    border-top: 1px solid var(--edge);
+  }
+}
+
+/* ══ Entrance, once on view: the screen rises, the controls and the
+   parts step in, the accent square lands last ══ */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] .screenWrap,
+  .root[data-in="false"] .kicker,
+  .root[data-in="false"] .replay,
+  .root[data-in="false"] .seg,
+  .root[data-in="false"] .step,
+  .root[data-in="false"] .gaps,
+  .root[data-in="false"] .partItem,
+  .root[data-in="false"] .legend {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+  .root[data-in="false"] .sq::after { opacity: 0; }
+  .root[data-in="true"]:not([data-settled]) :is(.screenWrap, .kicker, .replay, .seg, .step, .gaps, .partItem, .legend) {
+    transition:
+      opacity var(--t-3) var(--ease-arrive) var(--d, 0ms),
+      transform var(--t-3) var(--ease-arrive) var(--d, 0ms);
+  }
+  .root[data-in="true"] .kicker { --d: calc(2 * var(--step)); }
+  .root[data-in="true"] .replay { --d: calc(3 * var(--step)); }
+  .root[data-in="true"] .seg { --d: calc(3 * var(--step)); }
+  .root[data-in="true"] .step { --d: calc((var(--i) + 4) * var(--step)); }
+  .root[data-in="true"] .gaps { --d: calc(8 * var(--step)); }
+  .root[data-in="true"] .partItem { --d: calc((var(--i) + 6) * var(--step)); }
+  .root[data-in="true"] .legend { --d: calc(9 * var(--step)); }
+  .root[data-in="true"]:not([data-settled]) .step[data-current="true"] .sq::after {
+    transition-delay: calc(var(--t-3) + 4 * var(--step));
+  }
+}
+
+/* Reduced motion: no entrance, no pan, no fill; changes are 160ms fades */
+@media (prefers-reduced-motion: reduce) {
+  .ovPan { transition: none; }
+  .olBox,
+  .tag { transition: opacity var(--t-1) linear; transform: none; }
+  .sq::after { transition: opacity var(--t-1) linear; }
+  .rail[data-run] .step[data-current="true"] .fill { animation: none; }
+  .stepBtn,
+  .stepBtn:active,
+  .replay:active .replayIcon,
+  .gapBtn:not([aria-disabled="true"]):active .gapNum { transform: none; }
+}

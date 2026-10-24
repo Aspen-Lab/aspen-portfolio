@@ -18,9 +18,11 @@ const HAN = /^\p{Script=Han}+$/u;
 
 /* Words the engines' Chinese dictionary cuts wrongly in this site's copy:
    方形像素 comes out 方 | 形像 | 素, so a line could end inside 方形;
-   一句话说 comes out 一句 | 话说. Each is taken whole before the rest is
-   segmented. Plain string matching, so every engine agrees on it. */
-const GLOSSARY = ["一句话", "方形", "像素"];
+   一句话说 comes out 一句 | 话说; 心率, 静息, 基线 and 时长 come out as
+   lone hanzi, which then join into one unbreakable run (当前心率与静息基线
+   心率之差的). Each is taken whole before the rest is segmented. Plain
+   string matching, so every engine agrees on it. */
+const GLOSSARY = ["一句话", "方形", "像素", "归一化", "心率", "静息", "基线", "时长"];
 const GLOSSED = new RegExp(`(${GLOSSARY.join("|")})`, "u");
 
 function segments(text: string, words: Intl.Segmenter): string[] {

@@ -1,0 +1,287 @@
+/* The original cluster on a sheet, the switch and the four exits on a
+   slab: one split card on the global sheet stack (.paper-stack). Flat
+   planes, 1px edges, 2px corners. The accent draws only the strip's
+   outline (1.5px); the lane lines' outline and the tags are ink. Inside
+   the screen the product's own colours (original/OriginalCluster). */
+.root {
+  display: block;
+  margin-inline: 0;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "kick" "seg" "stage" "list";
+  overflow: hidden;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: var(--slab, #0a0a0a);
+}
+/* Below the split the slab's parts take their own rows round the stage */
+.slab { display: contents; }
+
+/* ── The sheet the screen sits on: a faint dot grid, the corner marks ── */
+.stage {
+  position: relative;
+  grid-area: stage;
+  display: grid;
+  align-content: center;
+  margin-top: 20px;
+  padding: 28px 16px;
+  border-block: 1px solid var(--edge, #333336);
+  background-color: var(--sheet, #17171a);
+  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 7%) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+}
+.stage :global(.reg-mark) { opacity: 0.32; }
+
+/* The screen and its marks share one box: the marks are placed in % of
+   the design canvas, or of the phone window (x 374–1374) below 640px */
+.screen {
+  --x0: 0;
+  --w: 1904;
+  position: relative;
+}
+@media (max-width: 639px) {
+  .screen {
+    --x0: 374;
+    --w: 1000;
+  }
+}
+
+.marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.mark {
+  position: absolute;
+  left: calc((var(--bx) - var(--x0)) / var(--w) * 100%);
+  top: calc(var(--by) / 720 * 100%);
+  width: calc(var(--bw) / var(--w) * 100%);
+  height: calc(var(--bh) / 720 * 100%);
+}
+.box {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+}
+.strip .box { border: 1.5px solid var(--accent, #f4f4f2); }
+.lanes .box { border: 1px solid #f4f4f2; }
+
+/* The tags: the strip's hangs under its lower-left corner; the lanes'
+   sits beside the outline halfway down (left of it in a phone's window,
+   right of it on a wider screen) */
+.tag { position: absolute; }
+.strip .tag {
+  top: calc(100% + 6px);
+  left: 0;
+}
+.lanes .tag {
+  top: 50%;
+  right: calc(100% + 8px);
+  translate: 0 -50%;
+}
+/* from 640px the screen has room to the outline's right, clear of the car */
+@media (min-width: 640px) {
+  .lanes .tag {
+    right: auto;
+    left: calc(100% + 8px);
+  }
+}
+
+/* HDA off: no outlines; on and Turned grey: both (opacity only) */
+.box,
+.tag {
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.root[data-hda="off"] :is(.box, .tag) { opacity: 0; }
+
+/* ── The slab: kicker, switch, the four exits ── */
+.kicker {
+  grid-area: kick;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 24px 16px 0;
+}
+.kickerMark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: #f4f4f2;
+}
+
+.root .seg {
+  grid-area: seg;
+  display: grid;
+  width: calc(100% - 32px);
+  margin: 16px 16px 0;
+}
+/* three options in a narrow slab: a little less air either side */
+.root .seg button { padding-inline: 8px; }
+
+.list {
+  grid-area: list;
+  padding: 24px 16px 20px;
+}
+.head { margin: 0 0 12px; }
+/* One grid for the four rows (each row a subgrid of it), so the cues
+   line up after the longest cause */
+.rows {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) 12px;
+  column-gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid #252528;
+}
+.item {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  border-top: 1px solid #252528;
+}
+
+.row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+  width: 100%;
+  padding: 12px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+}
+.cause { color: #f4f4f2; }
+.cue {
+  color: #a0a0a5;
+  text-wrap: balance;
+}
+
+/* The one row that is a control: a square that fills ink while HDA is
+   turned grey; a pointer on the row shows it half-filled */
+.toggle { cursor: pointer; }
+.check {
+  position: relative;
+  align-self: center;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #a0a0a5;
+  border-radius: 1px;
+}
+.check::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+@media (hover: hover) {
+  .toggle:hover .check::after { opacity: var(--dim, 0.45); }
+}
+.toggle:focus-visible .check::after { opacity: var(--dim, 0.45); }
+.toggle[aria-pressed="true"] .check::after { opacity: 1; }
+.toggle:active { transform: translateY(1px); }
+
+.word { white-space: nowrap; }
+.root :lang(zh) { line-break: strict; }
+
+@media (min-width: 640px) {
+  .kicker { padding: 32px 32px 0; }
+  .root .seg {
+    width: auto;
+    justify-self: start;
+    margin: 20px 32px 0;
+  }
+  .root .seg button { padding-inline: 16px; }
+  .stage {
+    margin-top: 24px;
+    padding: 40px 32px;
+  }
+  .list { padding: 28px 32px 32px; }
+  .rows {
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) 12px;
+    column-gap: 16px;
+  }
+}
+
+/* ── The split, from 1280px (content 1184): the stage 8/12, the slab
+   4/12; the kicker and switch head the slab, the list sits at its foot ── */
+@media (min-width: 1280px) {
+  .card {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    grid-template-areas: none;
+  }
+  .stage {
+    grid-area: auto;
+    margin: 0;
+    padding: 40px 32px;
+    border-block: 0;
+  }
+  .slab {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 32px;
+    border-left: 1px solid var(--edge, #333336);
+  }
+  .kicker { padding: 0; }
+  .root .seg {
+    justify-self: stretch;
+    width: 100%;
+    margin: 20px 0 0;
+  }
+  .root .seg button { padding-inline: 8px; }
+  .list {
+    margin-top: auto;
+    padding: 32px 0 0;
+  }
+  .rows { grid-template-columns: max-content minmax(0, 1fr) 12px; }
+}
+
+/* ── Entrance, once on view: the screen rises and fades in, the rows step
+   in, the outlines land last ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] .screen {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+  .root[data-in="false"] :is(.item, .marks) { opacity: 0; }
+  .root[data-in="false"] .item { transform: translateY(var(--rise, 8px)); }
+
+  .root[data-in="true"] .screen {
+    transition:
+      opacity var(--t-3) var(--ease-arrive),
+      transform var(--t-3) var(--ease-arrive);
+  }
+  .root[data-in="true"] .item {
+    animation: rise var(--t-3) var(--ease-arrive) calc(240ms + var(--i) * var(--step, 60ms)) backwards;
+  }
+  .root[data-in="true"] .marks {
+    animation: fade var(--t-2) var(--ease-arrive) 640ms backwards;
+  }
+  .root[data-in="true"] .strip {
+    animation: fade var(--t-2) var(--ease-arrive) 820ms backwards;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+}
+@keyframes fade { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .box,
+  .tag,
+  .check::after { transition-duration: var(--t-1, 160ms); }
+  .toggle:active { transform: none; }
+}

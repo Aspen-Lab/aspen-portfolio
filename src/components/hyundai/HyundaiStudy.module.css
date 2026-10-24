@@ -1,0 +1,247 @@
+/* Two environment tiles side by side (stacked on a phone), a slab for
+   the rig under the simulator, then the printed scope as three number
+   tiles. Flat planes, 1px edges, 2px
+   corners; the photos fill their boxes edge to edge, undimmed. The accent
+   is one 8px square. Type from the ramp: S2 numbers, S6 text, S7 labels. */
+.root {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+@media (min-width: 640px) {
+  .root { gap: 16px; }
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+@media (min-width: 640px) {
+  .columns { gap: 16px; }
+}
+@media (min-width: 1024px) {
+  .columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── One environment: a tile holding its header and photos ── */
+.env {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 14px 14px 14px;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: var(--tile, #141416);
+}
+@media (min-width: 640px) {
+  .env {
+    gap: 10px;
+    padding: 18px 18px 18px;
+  }
+}
+.envHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+}
+
+.simCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+@media (min-width: 640px) {
+  .simCol { gap: 16px; }
+}
+/* Side by side, the two columns end level: the shorter one's large photo
+   takes the extra height (and covers it, centred) */
+@media (min-width: 1024px) {
+  .simCol > .env { flex: 1 0 auto; }
+  .crop[data-role="large"] { flex: 1 0 auto; }
+}
+
+/* ── A photo cut from a board ── */
+.crop {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: var(--ar);
+  container-type: size;
+  border-radius: 1px;
+  background: var(--raised, #1e1e21);
+}
+.pair {
+  display: flex;
+  gap: 8px;
+}
+@media (min-width: 640px) {
+  .pair { gap: 10px; }
+}
+/* Widths in proportion to the crops, so the two end level */
+.pair > .crop {
+  flex: var(--ar) 1 0%;
+  min-width: 0;
+}
+/* The whole board, scaled so the crop covers the box, shifted so only the
+   crop shows (1 board px = --k) */
+.board {
+  --k: max(calc(100cqw / var(--cw)), calc(100cqh / var(--ch)));
+  position: absolute;
+  left: calc((100cqw - var(--k) * var(--cw)) * var(--fx) - var(--k) * var(--cx));
+  top: calc((100cqh - var(--k) * var(--ch)) * var(--fy) - var(--k) * var(--cy));
+  width: calc(var(--k) * var(--W));
+  height: calc(var(--k) * var(--H));
+}
+.img.img {
+  max-width: none;
+}
+
+/* ── The rig slab ── */
+.slabHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+}
+/* A slab's kicker carries the system's 6px ink square (as Chart's split
+   slab and the other Hyundai slabs do) */
+.kSq {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-top: calc((1.35em - 6px) / 2);
+  background: #f4f4f2;
+}
+
+.rig.rig {
+  padding: 18px 16px 20px;
+}
+@media (min-width: 640px) {
+  .rig.rig { padding: 22px 24px 24px; }
+}
+.rigList {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.rigItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #d2d2d0;
+  text-wrap: pretty;
+}
+/* A 6px square, centred on the first line */
+.sq {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-top: calc((1lh - 6px) / 2);
+  background: var(--grey-2, #6b6b71);
+}
+
+/* ── The printed scope: three number tiles ── */
+.scope {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 640px) {
+  .scope { gap: 16px; }
+}
+.stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  padding: 16px 8px 14px;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: var(--tile, #141416);
+}
+@media (min-width: 640px) {
+  .stat {
+    gap: 20px;
+    padding: 28px 28px 24px;
+  }
+}
+.statN { display: block; }
+.statLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #d2d2d0;
+}
+/* On a phone a tile is ~94px inside: the square moves to the tile's top
+   right corner so 'Environments' keeps the full width (its soft hyphen
+   breaks it only below 390px) */
+@media (max-width: 639px) {
+  .statLabel {
+    display: block;
+    hyphens: manual;
+  }
+  .statSq {
+    position: absolute;
+    top: 14px;
+    right: 12px;
+    margin: 0;
+  }
+}
+.statSq {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: calc((1lh - 8px) / 2);
+  background: var(--grey-2, #6b6b71);
+}
+.statSq[data-focus="true"] { background: var(--accent, #f4f4f2); }
+
+/* Chinese is held word by word, so no line ends inside a word */
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+/* ── Once, on view: the columns rise, the photos fade in, the numbers fade up 60ms apart, the accent square lands last ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] :is(.envReal, .simCol, .board, .stat, .statN, .statSq[data-focus="true"]) {
+    opacity: 0;
+  }
+  .root[data-in="true"] :is(.envReal, .simCol) {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) calc(var(--i) * 120ms) backwards;
+  }
+  .root[data-in="true"] .board {
+    animation: fade var(--t-3, 720ms) var(--ease-arrive) 240ms backwards;
+  }
+  .root[data-in="true"] .stat {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) calc(360ms + var(--i) * var(--step, 60ms)) backwards;
+  }
+  .root[data-in="true"] .statN {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) calc(480ms + var(--i) * var(--step, 60ms)) backwards;
+  }
+  .root[data-in="true"] .statSq[data-focus="true"] {
+    animation: land var(--t-2, 360ms) var(--ease-arrive) 900ms backwards;
+  }
+}
+@keyframes fade {
+  from { opacity: 0; }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+}
+@keyframes land {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}

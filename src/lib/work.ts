@@ -52,6 +52,27 @@ export type Metric = {
   viz?: "matrix" | "codes";
 };
 
+/** Hyundai's code-drawn figures (src/components/hyundai/*), each carrying
+    its own words in both locales and loaded only through HyundaiFigure. */
+export type HyundaiVisualKey =
+  | "hyundai-handoff"
+  | "hyundai-stakeholders"
+  | "hyundai-study"
+  | "hyundai-workload"
+  | "hyundai-correlation"
+  | "hyundai-gaps"
+  | "hyundai-lofi"
+  | "hyundai-matrix"
+  | "hyundai-directions"
+  | "hyundai-round2"
+  | "hyundai-confidence"
+  | "hyundai-paired"
+  | "hyundai-results"
+  | "hyundai-cluster"
+  | "hyundai-clips"
+  | "hyundai-wheel"
+  | "hyundai-cabin";
+
 /** What the tools do and what stays the owner's, drawn as two blocks. */
 export type Ownership = {
   tools: { title: string; items: string[] };
@@ -77,7 +98,6 @@ export type Project = {
   year: string;
   date: string;
   category: string;
-  theme?: "light";
   /** "editorial": the calm case-study layout (no chapters or Themes row,
       wide photo stages). Every template change it brings is gated on it. */
   layout?: "editorial";
@@ -103,7 +123,7 @@ export type Project = {
   heroVideo?: string;
   /** A code-drawn hero in place of the video or cover (banded pages):
       the 16:9 frame holds this figure instead. */
-  heroVisual?: "nutra-hero";
+  heroVisual?: "nutra-hero" | "hyundai-hero";
   /** The project's own colour: on banded pages, drawn only as each chart's
       single focus mark. */
   accent?: string;
@@ -193,6 +213,9 @@ export type Project = {
       | "nutra-app"
       | "nutra-system"
       | "nutra-journey-after";
+    /** Hyundai's code-drawn figures, one or two per section, rendered in
+        order through HyundaiFigure. */
+    visuals?: HyundaiVisualKey[];
     /** Data for visual "ownership". */
     ownership?: Ownership;
     /** Data for visual "sop" (the documents also read `iconList.items`). */

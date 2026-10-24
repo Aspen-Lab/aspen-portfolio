@@ -1,0 +1,133 @@
+/* The cluster on its 1920 × 720 design canvas (ClusterStage scales it).
+   Every mark is absolutely placed in design px; what moves, moves by
+   transform and opacity, on --t-2 and --ease-arrive. */
+
+.root {
+  position: relative;
+  width: 1920px;
+  height: 720px;
+  overflow: hidden;
+  color: #fcfbfb;
+  pointer-events: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  /* the HMI's own figures: the site's body sets "ss01" and tabular
+     figures, which Montserrat would draw wider and with alternates */
+  font-feature-settings: normal;
+  font-variant-numeric: normal;
+  letter-spacing: normal;
+  font-kerning: normal;
+}
+
+/* A part (panel, speed, scene, ring) fills the canvas it is set on */
+.part {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-feature-settings: normal;
+  font-variant-numeric: normal;
+  letter-spacing: normal;
+}
+
+.abs {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* A layer stacked exactly on its siblings (tone crossfades) */
+.stack {
+  position: absolute;
+  inset: 0;
+}
+
+.svg {
+  display: block;
+  overflow: visible;
+}
+
+/* What moves */
+.fx {
+  transition:
+    transform var(--t-2) var(--ease-arrive),
+    opacity var(--t-2) var(--ease-arrive);
+}
+
+/* Words and numbers that change: the old copy fades out where it was,
+   the new copy fades in (only copy born after the first paint) */
+.fade[data-live="false"] {
+  opacity: 0;
+  /* gone before a folding pill can pass it */
+  transition-duration: calc(var(--t-1) * 0.75);
+  transition-timing-function: linear;
+}
+@starting-style {
+  .fade[data-born] {
+    opacity: 0;
+  }
+}
+
+/* Status-pill pieces: caps and the middle plate, in the pill's band */
+.piece {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  transform-origin: 0 0;
+}
+
+/* Distance bars, rounded ends */
+.bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 3px;
+}
+
+/* Reconnecting's arc turns on the ring */
+.arc {
+  transform-origin: 50% 50%;
+}
+.arc[data-spin] {
+  animation: spin 1.6s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* SceneView alone in a box (the state matrix's cells) */
+.box {
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+}
+.canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 720px;
+  transform-origin: 0 0;
+}
+
+/* `still`: a picture, nothing moves */
+[data-still] .fx,
+[data-still].fx {
+  transition: none;
+}
+[data-still] .arc {
+  animation: none;
+}
+
+/* Reduced motion: only opacity moves, briefly; transforms jump; the arc
+   stands still */
+@media (prefers-reduced-motion: reduce) {
+  .fx {
+    transition: opacity 160ms linear;
+  }
+  .arc[data-spin] {
+    animation: none;
+  }
+}

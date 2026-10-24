@@ -1,0 +1,361 @@
+/* Three gaps on one sheet (the global sheet stack's look, drawn here so a
+   phone can give each column its own card). Each column stacks three
+   planes joined by 1px connectors with square joints: the pain point on
+   a slab, the driver's voice on a tile, the requirement on a sheet with
+   the original UI as its evidence. Flat fills, 1px edges, 2px corners,
+   no gradient. The accent fills only the focused column's requirement
+   square. */
+.root {
+  margin: 0;
+}
+
+/* ── Planes ── */
+.sheet {
+  display: grid;
+  gap: 32px;
+}
+.col {
+  --on: 0;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: auto 28px auto 28px auto;
+  min-width: 0;
+  margin: 0 6px 11px 0;
+  padding: 16px;
+  border: 1px solid var(--paper-edge, #333336);
+  border-radius: 2px;
+  background: var(--paper, #17171a);
+}
+/* a phone's card rests on two back sheets, as .paper-stack's */
+.col::before,
+.col::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+.col::before {
+  z-index: -1;
+  border: 1px solid var(--paper-back-1-edge, #2c2c30);
+  background: var(--paper-back-1, #121214);
+  transform: translate(3px, 5px);
+}
+.col::after {
+  z-index: -2;
+  border: 1px solid var(--paper-back-2-edge, #252528);
+  background: var(--paper-back-2, #0d0d0e);
+  transform: translate(6px, 11px);
+}
+
+/* The focused column (the first at rest) */
+.root:not([data-gap]) .col[data-i="0"],
+.root[data-gap="0"] .col[data-i="0"],
+.root[data-gap="1"] .col[data-i="1"],
+.root[data-gap="2"] .col[data-i="2"] {
+  --on: 1;
+}
+
+.block {
+  min-width: 0;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+}
+.pain { background: var(--slab, #0a0a0a); }
+.voice {
+  display: flex;
+  flex-direction: column;
+  background: var(--tile, #141416);
+}
+.need { background: var(--sheet, #17171a); }
+
+/* ── The pain point ── */
+.idx { margin: 0; }
+.title { margin: 12px 0 0; }
+.effect {
+  margin: 8px 0 0;
+  color: #f4f4f2;
+}
+.insight {
+  margin: 16px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid #252528;
+  color: #a0a0a5;
+  text-wrap: pretty;
+}
+
+/* ── The voice: the open quote hangs in the tile's margin ── */
+.quote {
+  position: relative;
+  margin: 0;
+  color: #f4f4f2;
+  text-wrap: pretty;
+}
+.hang {
+  position: absolute;
+  transform: translateX(-100%);
+}
+/* the attribution sits at the tile's foot, level across the columns */
+.from { margin: auto 0 0; padding-top: 12px; }
+
+/* ── The requirement ── */
+.needTitle {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: start;
+  margin: 0;
+}
+/* the square: ink; the accent copy over it shows on the column in focus */
+.sq {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  margin-top: calc((1.25em - 8px) / 2);
+  background: #f4f4f2;
+}
+.sq::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent, #f4f4f2);
+  opacity: var(--on);
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.subs {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+/* a chip here may wrap: some sub-items are a sentence long; balanced,
+   so a wrapped one never leaves a single word on its last line */
+.root .sub {
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+/* ── Evidence: the original UI, a product render on #000 ── */
+.evidence {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #252528;
+}
+.shot { margin: 0; }
+.strips {
+  display: grid;
+  gap: 12px;
+}
+.screen {
+  position: relative;
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: #000;
+}
+.screen.flush { padding: 0; }
+.shotLabel { margin: 8px 0 0; }
+
+.root .seg {
+  display: grid;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.root .seg button { padding-inline: 8px; }
+
+/* Column 3: two crops of the centre zone, crossfading (opacity) */
+.view {
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+[data-view="table"] .view[data-k="lanes"],
+[data-view="lanes"] .view[data-k="table"] {
+  opacity: 0;
+}
+.crop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1904px;
+  height: 720px;
+  transform: translate(var(--cx), var(--cy));
+}
+
+/* ── Connectors: a 1px line with a square joint at each end, grey at
+   rest; the column in focus inks them (an overlay's opacity) ── */
+.link {
+  position: relative;
+  display: block;
+}
+.line,
+.joint {
+  position: absolute;
+  background: #3a3a3f;
+}
+.line {
+  top: 0;
+  bottom: 0;
+  left: 22px;
+  width: 1px;
+  transform-origin: 50% 0;
+}
+.joint {
+  left: 20px;
+  width: 5px;
+  height: 5px;
+}
+.joint:nth-child(2) { top: -3px; }
+.joint:nth-child(3) { bottom: -3px; }
+.line::after,
+.joint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #f4f4f2;
+  opacity: var(--on);
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+
+.word { white-space: nowrap; }
+.root :lang(zh) { line-break: strict; }
+
+@media (min-width: 640px) {
+  .sheet { gap: 40px; }
+  .col {
+    margin: 0 9px 16px 0;
+    padding: 24px;
+  }
+  .col::before { transform: translate(4px, 8px); }
+  .col::after { transform: translate(9px, 16px); }
+  .block { padding: 24px; }
+  .line { left: 26px; }
+  .joint { left: 24px; }
+  .evidence { max-width: 560px; }
+}
+
+/* ── From 1280px (content 1184): one sheet, three columns on a subgrid so
+   the slabs, tiles and sheets line up across; hairlines between ── */
+@media (min-width: 1280px) {
+  .stack {
+    position: relative;
+    isolation: isolate;
+    margin: 0 9px 16px 0;
+  }
+  .stack::before,
+  .stack::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .stack::before {
+    z-index: -1;
+    border: 1px solid var(--paper-back-1-edge, #2c2c30);
+    background: var(--paper-back-1, #121214);
+    transform: translate(4px, 8px);
+  }
+  .stack::after {
+    z-index: -2;
+    border: 1px solid var(--paper-back-2-edge, #252528);
+    background: var(--paper-back-2, #0d0d0e);
+    transform: translate(9px, 16px);
+  }
+  .sheet {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto 28px auto 28px auto auto auto;
+    gap: 0 49px;
+    padding: 32px;
+    border: 1px solid var(--paper-edge, #333336);
+    border-radius: 2px;
+    background: var(--paper, #17171a);
+  }
+  .col {
+    grid-row: 1 / span 7;
+    grid-template-rows: subgrid;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+  .col::after { content: none; }
+  /* the hairline between columns, centred in the gap */
+  .col::before { content: none; }
+  .col + .col::before {
+    content: "";
+    inset: 0 auto 0 -25px;
+    z-index: auto;
+    width: 1px;
+    border: 0;
+    border-radius: 0;
+    background: #252528;
+    transform: none;
+  }
+  .block { padding: 20px; }
+  /* the requirement spans the last three rows on its own subgrid, so its
+     evidence starts level across the three columns */
+  .need {
+    grid-row: span 3;
+    display: grid;
+    grid-template-rows: subgrid;
+  }
+  .line { left: 22px; }
+  .joint { left: 20px; }
+  /* the evidence sits at the column's foot, level across the three
+     sheets; a shorter one leaves its room above, under the chips */
+  .evidence {
+    align-self: end;
+    max-width: none;
+  }
+}
+
+/* ── Entrance, once on view: the columns rise in turn, the connectors
+   draw down, the accent square lands last ── */
+@media (prefers-reduced-motion: no-preference) {
+  .col[data-in="false"] {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+  .col[data-in="false"] .line { transform: scaleY(0); }
+  .col[data-in="false"] .joint,
+  .col[data-in="false"] .sq::after { opacity: 0; }
+
+  .col[data-in="true"] {
+    animation: rise var(--t-3) var(--ease-arrive) calc(var(--i) * 2 * var(--step, 60ms)) backwards;
+  }
+  .col[data-in="true"] .line {
+    animation: drawY var(--t-2) var(--ease-arrive) calc(380ms + var(--i) * 2 * var(--step, 60ms)) backwards;
+  }
+  .col[data-in="true"] .joint {
+    animation: fade var(--t-1) var(--ease-arrive) calc(380ms + var(--i) * 2 * var(--step, 60ms)) backwards;
+  }
+  .col[data-in="true"] .sq::after {
+    animation: fade var(--t-2) var(--ease-arrive) 900ms backwards;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+}
+@keyframes drawY { from { transform: scaleY(0); } }
+@keyframes fade { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .view,
+  .sq::after,
+  .line::after,
+  .joint::after { transition-duration: var(--t-1, 160ms); }
+}

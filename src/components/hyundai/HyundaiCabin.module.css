@@ -1,0 +1,94 @@
+/* The two cabin renders on one 16:9 tile (#141416, a 1px edge), the
+   switch and the caption on a slab strip under it; one outline round
+   both. Opacity only; a render is never dimmed or overlaid. */
+.root {
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+}
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+.tile {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--tile);
+}
+.img.img {
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--t-3) var(--ease-arrive);
+}
+/* Wide: the tile crops to the dash, where the evidence is (the wheel
+   screen and the displays), not the roof and windscreen above it. The
+   render is cropped, never dimmed. */
+@media (min-width: 640px) {
+  .tile { aspect-ratio: 2.4 / 1; }
+  .img.img { object-position: 50% 60%; }
+}
+.img[data-on] { opacity: 1; }
+/* 46's own 1px transparent frame falls outside the tile */
+.img[data-r="wheel"] { transform: scale(1.006); }
+
+.bar.bar {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 0;
+  border-top: 1px solid var(--edge);
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .bar.bar {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 32px;
+    padding: 14px 24px;
+  }
+}
+.seg { width: 100%; }
+@media (max-width: 639px) {
+  .seg > button {
+    padding: 6px 10px;
+    white-space: normal;
+  }
+}
+@media (min-width: 640px) {
+  .seg { width: auto; }
+}
+.captions {
+  display: grid;
+  min-width: 0;
+}
+.caption {
+  grid-area: 1 / 1;
+  color: #a0a0a5;
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.caption[data-on] { opacity: 1; }
+@media (min-width: 640px) {
+  .caption { text-align: right; }
+}
+
+/* Entrance, once on view: the tile rises and fades in */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] { opacity: 0; }
+  .root[data-in="true"] {
+    animation: rise var(--t-3) var(--ease-arrive) backwards;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .img.img { transition: opacity 160ms linear; }
+  .caption { transition: opacity 160ms linear; }
+}

@@ -1,0 +1,294 @@
+/* The lo-fi cluster as a split card on the sheet stack: the render on a
+   sheet (#17171a, the 16px dot grid, the four corner marks), the state
+   switch on a slab below it, one 1px edge round both and one between.
+   The accent is only the driving-zone outline. */
+.root {
+  display: block;
+  margin-inline: 0;
+  margin-top: 0;
+}
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+.card {
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--slab);
+}
+
+/* ── Stage ── */
+.stage {
+  position: relative;
+  padding: 18px 14px 22px;
+  background-color: var(--sheet);
+  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 6%) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+}
+.stage :global(.reg-mark) { display: none; }
+@media (min-width: 640px) {
+  .stage { padding: 40px 48px 56px; }
+  .stage :global(.reg-mark) { display: block; opacity: 0.32; }
+}
+@media (min-width: 1024px) {
+  .stage { padding: 44px 72px 64px; }
+}
+
+.frame {
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+/* The render, and the outlines drawn round its zones. The divider sits
+   at 880 / 1280 = 68.75% of the render; each outline stops 5px short of
+   it, so the two read as a gutter on the divider. */
+.render {
+  position: relative;
+}
+.zone,
+.panel {
+  position: absolute;
+  top: -7px;
+  bottom: -7px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+.zone {
+  left: -7px;
+  right: calc(31.25% + 5px);
+  border: 1.5px solid var(--accent);
+}
+.panel {
+  left: calc(68.75% + 6px);
+  right: -7px;
+  border: 1px solid #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.panel[data-on] { opacity: 1; }
+/* A change of the panel's content: the outline (remounted by its key)
+   fades in once on the token fade; it fades out on the next switch */
+@media (prefers-reduced-motion: no-preference) {
+  .panel[data-on] { animation: panelIn var(--t-2) var(--ease-arrive) both; }
+}
+@keyframes panelIn {
+  from { opacity: 0; }
+}
+@media (max-width: 639px) {
+  .zone,
+  .panel { top: -5px; bottom: -5px; }
+  .zone { left: -5px; right: calc(31.25% + 3px); }
+  .panel { left: calc(68.75% + 4px); right: -5px; }
+}
+
+/* ── The zones named: brackets (wide) ── a t-label over a 1px ink line
+   whose ends turn down toward the render */
+.brackets {
+  display: none;
+}
+@media (min-width: 640px) {
+  .brackets {
+    display: grid;
+    grid-template-columns: 68.75% 31.25%;
+    margin: 0 -7px 18px;
+  }
+}
+.bracket {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.bracket[data-z="drive"] { padding-right: 12px; }
+.bracket[data-z="info"] { padding-left: 13px; }
+.bracketText {
+  color: #a0a0a5;
+  white-space: nowrap;
+}
+.bracketLine {
+  width: 100%;
+  height: 7px;
+  border: 1px solid #f4f4f2;
+  border-bottom: 0;
+  transform-origin: 50% 50%;
+}
+
+/* ── The zones named: chips (a phone) ── */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+@media (min-width: 640px) {
+  .chips { display: none; }
+}
+.zoneChip {
+  gap: 8px;
+}
+.zoneMark {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #f4f4f2;
+}
+
+/* ── The switch, on the slab ── */
+.bar {
+  display: grid;
+  gap: 14px;
+  padding: 18px 16px 20px;
+  border-top: 1px solid var(--edge);
+}
+@media (min-width: 640px) {
+  .bar { padding: 20px 24px; }
+}
+@media (min-width: 1024px) {
+  .bar {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 32px;
+    padding: 14px 24px 14px 28px;
+  }
+}
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  white-space: nowrap;
+}
+.kickerMark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: #f4f4f2;
+}
+
+.opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+@media (min-width: 1024px) {
+  .opts {
+    justify-content: flex-end;
+    gap: 4px;
+  }
+}
+
+/* An option: an 8px square and its name. Chosen, the square fills ink and
+   a raised box stands behind it. On a phone every option is a chip, and
+   the chosen one takes an ink edge. Opacity only. */
+.opt {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 8px 14px 8px 12px;
+  border: 0;
+  border-radius: 2px;
+  background: none;
+  color: #f4f4f2;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.optBox {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.optBox::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid rgb(244 244 242 / 55%);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.opt[aria-checked="true"] .optBox { opacity: 1; }
+@media (max-width: 1023px) {
+  .optBox { opacity: 1; }
+  .opt[aria-checked="true"] .optBox::after { opacity: 1; }
+}
+
+.optSq {
+  position: relative;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #6b6b71;
+}
+.optSq::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.opt[aria-checked="true"] .optSq::after { opacity: 1; }
+
+.optText {
+  position: relative;
+  white-space: nowrap;
+  opacity: 0.62;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+@media (hover: hover) {
+  .opt:hover .optText { opacity: 0.85; }
+}
+.opt:focus-visible .optText { opacity: 0.85; }
+.opt[aria-checked="true"] .optText { opacity: 1; }
+.opt:active { transform: translateY(1px); }
+
+/* ── Entrance, once on view ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] :is(.render, .opt, .kicker, .bracketText, .chips) { opacity: 0; }
+  .root[data-in="false"] .bracketLine { transform: scaleX(0); }
+  .root[data-in="false"] .zone { opacity: 0; }
+
+  .root[data-in="true"] .render {
+    animation: rise var(--t-3) var(--ease-arrive) backwards;
+  }
+  .root[data-in="true"] :is(.chips, .bracketText) {
+    animation: fade var(--t-2) var(--ease-arrive) 240ms backwards;
+  }
+  .root[data-in="true"] .bracketLine {
+    animation: draw var(--t-3) var(--ease-arrive) 180ms backwards;
+  }
+  .root[data-in="true"] .kicker {
+    animation: rise var(--t-2) var(--ease-arrive) 200ms backwards;
+  }
+  .root[data-in="true"] .opt {
+    animation: rise var(--t-2) var(--ease-arrive) calc(260ms + var(--i, 0) * var(--step)) backwards;
+  }
+  .root[data-in="true"] .zone {
+    animation: fade var(--t-2) var(--ease-arrive) 760ms backwards;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+}
+@keyframes fade {
+  from { opacity: 0; }
+}
+@keyframes draw {
+  from { transform: scaleX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel { transition: opacity 160ms linear; }
+  .opt:active { transform: none; }
+}

@@ -1,0 +1,418 @@
+/* Confidence metric results (boards 32, 30): one split card on the
+   global sheet stack. The chart on the sheet, the selected participant's
+   arithmetic on the slab, one 1px outline round both. Value-true bars on
+   one 0–70 axis, square ends, flat fills: White UI grey-2, Blue UI
+   grey-1, Green UI ink. The one accent per state: the selected
+   participant's Green bar (Total) or Green UI's mean rule (By task). */
+.root { container-type: inline-size; }
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--slab);
+}
+@container (min-width: 1000px) {
+  .card { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); }
+}
+.sheet {
+  min-width: 0;
+  padding: 24px 20px 20px;
+  background: var(--sheet);
+}
+.slab {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 20px 28px;
+  border-top: 1px solid var(--edge);
+}
+@media (min-width: 640px) {
+  .sheet { padding: 40px 40px 32px; }
+  .slab { padding: 40px; }
+}
+@container (min-width: 1000px) {
+  .slab {
+    border-top: 0;
+    border-left: 1px solid var(--edge);
+  }
+}
+
+/* ── Head: title and legend; the view switch ── */
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px 24px;
+}
+.title { margin: 0; }
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #d2d2d0;
+}
+.key {
+  flex: none;
+  width: 10px;
+  height: 10px;
+}
+.key[data-ui="white"] { background: var(--grey-2); }
+.key[data-ui="blue"] { background: var(--grey-1); }
+.key[data-ui="green"] { background: #f4f4f2; }
+@media (max-width: 639px) {
+  .seg {
+    display: grid;
+    width: 100%;
+  }
+}
+
+/* ══ The chart ══ --lab: the row labels' column; --gut: room right of
+   the axis for a value at 70 */
+.chart {
+  --lab: 64px;
+  --gut: 60px;
+  position: relative;
+  margin-top: 28px;
+}
+@media (max-width: 639px) {
+  .chart {
+    --lab: 48px;
+    --gut: 52px;
+  }
+}
+.grid {
+  position: absolute;
+  left: var(--lab);
+  right: var(--gut);
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+.gridLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--g) / 7 * 100%);
+  width: 1px;
+  background: var(--grid);
+}
+.gridLine:first-child { background: var(--axis); }
+
+/* Two views in one cell, crossfaded */
+.views { display: grid; }
+.view {
+  grid-area: 1 / 1;
+  min-width: 0;
+  transition:
+    opacity var(--t-2) var(--ease-arrive),
+    visibility 0s;
+}
+.root[data-view="total"] .view[data-v="task"],
+.root[data-view="task"] .view[data-v="total"] {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--t-1) var(--ease-arrive),
+    visibility 0s linear var(--t-1);
+}
+
+.rows,
+.taskRows {
+  position: relative;
+  display: grid;
+}
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--lab) minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  padding: 20px 0;
+  border: 0;
+  border-radius: 2px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.row[data-static] { cursor: default; }
+/* Hover: an outline only */
+.row:not([data-static])::after {
+  content: "";
+  position: absolute;
+  inset: 2px -10px;
+  border: 1px solid rgb(244 244 242 / 28%);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .row:not([data-static]):hover::after { opacity: 1; }
+}
+.row:focus-visible { outline-offset: -1px; }
+.row:active { transform: none; }
+
+/* The participant label; the selected one boxed in ink */
+.rowLabel {
+  position: relative;
+  justify-self: start;
+  padding: 3px 6px;
+  margin-left: -6px;
+}
+.rowLabel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid #f4f4f2;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.row[aria-checked="true"] .rowLabel { color: #f4f4f2; }
+.row[aria-checked="true"] .rowLabel::before { opacity: 1; }
+.row[data-static] .rowLabel { color: #a0a0a5; }
+
+.bars {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  margin-right: var(--gut);
+}
+.track {
+  position: relative;
+  height: 12px;
+}
+.track[data-ui="white"] { --c: var(--grey-2); }
+.track[data-ui="blue"] { --c: var(--grey-1); }
+.track[data-ui="green"] { --c: #f4f4f2; }
+.stub {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--c);
+}
+.bar {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--c);
+  transform-origin: 0 50%;
+  transform: scaleX(calc(var(--v) / 70));
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+/* The accent: a plane over the selected participant's Green bar */
+.track[data-ui="green"] .bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--t-1) var(--ease-arrive);
+}
+.row[aria-checked="true"] .track[data-ui="green"] .bar::after { opacity: 1; }
+
+/* The value rides a full-width carrier moved by the bar's fraction */
+.valAt {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  transform: translateX(calc(var(--v) / 70 * 100%));
+  transition: transform var(--t-2) var(--ease-arrive);
+  pointer-events: none;
+}
+.val,
+.none {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  color: #d2d2d0;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.val {
+  left: 4px;
+  padding: 0 4px;
+  background: var(--sheet);
+}
+.track[data-ui="green"] .val { color: #f4f4f2; }
+.none {
+  left: 8px;
+  color: #6b6b71;
+}
+
+/* By task: Green UI's mean, ruled across the three tasks */
+.taskRows {
+  position: relative;
+  padding-top: 40px;
+}
+.pseg { margin: 0 0 4px var(--lab); }
+@media (max-width: 639px) {
+  .pseg {
+    display: grid;
+    margin-left: 0;
+  }
+}
+.meanLayer {
+  position: absolute;
+  left: var(--lab);
+  right: var(--gut);
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.meanRule,
+.meanTagWrap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  transform: translateX(calc(var(--v) / 70 * 100%));
+  transition: transform var(--t-2) var(--ease-arrive);
+}
+.meanRule {
+  top: 32px;
+  bottom: 8px;
+}
+.meanRule::before {
+  content: "";
+  position: absolute;
+  left: -0.75px;
+  top: 0;
+  bottom: 0;
+  width: 1.5px;
+  background: var(--accent);
+}
+.meanTagWrap { top: 6px; }
+.meanTag {
+  position: absolute;
+  left: 0;
+  translate: -50% 0;
+}
+
+/* The axis ticks, shared by both views */
+.ticks {
+  position: relative;
+  height: 30px;
+  margin: 0 var(--gut) 0 var(--lab);
+}
+.tick {
+  position: absolute;
+  top: 10px;
+  left: calc(var(--g) / 7 * 100%);
+  translate: -50% 0;
+}
+.tick:first-child { translate: -2px 0; }
+
+/* ══ The slab: one participant opened ══ */
+.pid { margin: 0; }
+.blocks {
+  display: grid;
+  gap: 18px;
+  margin-top: 20px;
+}
+.block {
+  padding-top: 16px;
+  border-top: 1px solid var(--slab-rule);
+}
+.blockHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #f4f4f2;
+}
+.tasks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 10px 0 0;
+}
+.taskCell {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.taskVal {
+  margin: 0;
+  color: #d2d2d0;
+  font-variant-numeric: tabular-nums;
+}
+.taskVal[data-none] { color: #6b6b71; }
+.eq {
+  margin: 8px 0 0;
+  color: #a0a0a5;
+  font-variant-numeric: tabular-nums;
+}
+.eqSum { white-space: nowrap; }
+.eqRes {
+  color: #f4f4f2;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.note {
+  margin: 24px 0 0;
+  color: #a0a0a5;
+  text-wrap: pretty;
+}
+.shown {
+  margin: 16px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--slab-rule);
+  color: #8a8a90;
+}
+@container (min-width: 1000px) {
+  .note { margin-top: auto; padding-top: 24px; }
+}
+
+/* ══ Entrance, once on view ══ the bars grow from the axis row by row,
+   the values fade in, the accent bar lands last */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] .bar { transform: scaleX(0); }
+  .root[data-in="false"] .valAt { transform: none; }
+  .root[data-in="false"] .val,
+  .root[data-in="false"] .stub { opacity: 0; }
+  .root[data-in="true"] .view[data-v="total"] .bar,
+  .root[data-in="true"] .view[data-v="total"] .valAt {
+    transition: transform var(--t-3) var(--ease-arrive) calc(var(--k, 0) * var(--step));
+  }
+  .root[data-in="true"] .view[data-v="total"] .row[aria-checked="true"] .track[data-ui="green"] .bar,
+  .root[data-in="true"] .view[data-v="total"] .row[aria-checked="true"] .track[data-ui="green"] .valAt {
+    transition-delay: calc(13 * var(--step));
+  }
+  .root[data-in="true"] .val,
+  .root[data-in="true"] .stub {
+    transition: opacity var(--t-2) var(--ease-arrive) calc(var(--k, 0) * var(--step) + 240ms);
+  }
+  .blocks { animation: blocksIn var(--t-2) var(--ease-arrive); }
+}
+@keyframes blocksIn {
+  from { opacity: 0; }
+}
+
+/* Reduced motion: the final frame; changes swap with a short fade */
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .valAt,
+  .meanRule,
+  .meanTagWrap { transition: none; }
+}

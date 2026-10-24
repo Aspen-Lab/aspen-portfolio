@@ -1,0 +1,422 @@
+/* Board 08 on one chart sheet (global .paper-stack > .paper), read left
+   to right: five measure chips, 1px connectors meeting in a raised
+   averaging node, then a 0–1 number line with three square marks. The
+   accent fills one: the overall R. Flat planes, square marks, no band, no
+   gradient. Type from the ramp; in the maths the variables are the site's
+   serif italic at 15px, their subscripts the sans at 12px. */
+.root {
+  margin: 0;
+}
+
+.sheet.sheet {
+  padding: 20px 16px 24px;
+}
+@media (min-width: 640px) {
+  .sheet.sheet { padding: 32px; }
+}
+@media (min-width: 1024px) {
+  .sheet.sheet { padding: 36px 40px 40px; }
+}
+
+/* ── Title row ── */
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #252528;
+}
+@media (min-width: 640px) {
+  .title {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 16px;
+  }
+}
+.titleText { min-width: 0; }
+.titleLabel {
+  margin: 0;
+}
+.titleSub {
+  margin: 6px 0 0;
+  color: #f4f4f2;
+  text-wrap: pretty;
+}
+.titleChip { flex: none; }
+
+/* ── The flow: left to right from 1240px (below, the number line would
+   be too short to read), stacked top to bottom under it ── */
+.flow {
+  --h: 248px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 24px;
+}
+@media (min-width: 1240px) {
+  .flow {
+    grid-template-columns: max-content minmax(40px, 56px) max-content minmax(0, 1fr);
+    grid-template-rows: var(--h);
+    margin-top: 40px;
+  }
+}
+
+/* 1. Five measures */
+.measures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.measure:last-child { grid-column: 1 / -1; }
+@media (min-width: 640px) {
+  .measures { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .measure:last-child { grid-column: auto; }
+}
+@media (min-width: 1240px) {
+  .measures {
+    grid-template-columns: max-content;
+    grid-auto-rows: 40px;
+    gap: 12px;
+  }
+}
+.measure.measure {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px 10px 8px;
+  white-space: normal;
+}
+@media (min-width: 1240px) {
+  .measure.measure {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    height: 40px;
+    padding: 0 12px;
+    white-space: nowrap;
+  }
+}
+.measureName {
+  min-width: 0;
+  text-wrap: pretty;
+}
+.measure .r { color: #a0a0a5; }
+
+/* r with its subscript: the variable in the serif italic at 15px, its
+   measure in the sans at 12px, dropped a little below the baseline */
+.r {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.v {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 400;
+}
+.sub {
+  position: relative;
+  top: 0.22em;
+  margin-left: 1px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+/* 2. The connectors and the averaging node */
+.links {
+  display: none;
+}
+@media (min-width: 1240px) {
+  .links {
+    display: block;
+    width: 100%;
+    height: var(--h);
+    overflow: visible;
+  }
+}
+.links path {
+  fill: none;
+  stroke: var(--grey-2, #6b6b71);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.nodeCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+@media (min-width: 1240px) {
+  .nodeCol { justify-content: center; }
+}
+/* On a stacked layout the flow runs down: a 1px stub in and out */
+.stub {
+  width: 1px;
+  height: 20px;
+  background: var(--grey-2, #6b6b71);
+}
+@media (min-width: 1240px) {
+  .stub { display: none; }
+}
+.node {
+  padding: 14px 16px;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: var(--raised, #1e1e21);
+}
+@media (min-width: 640px) {
+  .node { padding: 18px 22px; }
+}
+.formula {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #f4f4f2;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1;
+}
+.eq { color: #a0a0a5; }
+.frac {
+  display: inline-grid;
+  justify-items: center;
+}
+.num {
+  display: flex;
+  align-items: baseline;
+  padding: 0 2px 9px;
+  border-bottom: 1px solid rgb(244 244 242 / 55%);
+}
+.term {
+  display: inline-flex;
+  align-items: baseline;
+}
+.plus {
+  margin: 0 0.3em;
+  color: #a0a0a5;
+}
+.den { padding-top: 8px; }
+@media (max-width: 389px) {
+  .plus { margin: 0 0.18em; }
+  .formula { gap: 8px; }
+}
+
+/* 3. The 0–1 line */
+.result {
+  min-width: 0;
+  margin-top: 4px;
+}
+@media (min-width: 1240px) {
+  .result {
+    grid-column: 4;
+    margin: 0 0 0 44px;
+  }
+}
+.scale {
+  --ay: 120px;
+  position: relative;
+  height: 200px;
+  margin: 0 14px;
+}
+@media (min-width: 1240px) {
+  .scale {
+    --ay: 50%;
+    height: var(--h);
+  }
+}
+.axis {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--ay);
+  height: 1px;
+  background: var(--axis, rgb(244 244 242 / 24%));
+  transform-origin: 0 50%;
+}
+.tick {
+  position: absolute;
+  top: var(--ay);
+  left: calc(var(--x) * 100%);
+  width: 1px;
+  height: 6px;
+  background: var(--axis, rgb(244 244 242 / 24%));
+}
+.minor {
+  position: absolute;
+  top: calc(var(--ay) + 1px);
+  left: calc(var(--x) * 100%);
+  width: 1px;
+  height: 3px;
+  background: var(--grey-3, #3a3a3f);
+}
+.tickLabel {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  margin-right: -0.12em;
+  transform: translateX(-50%);
+  letter-spacing: 0.04em;
+}
+/* A phone keeps 0, 0.5 and 1: the quarters would crowd the elbows */
+@media (max-width: 639px) {
+  .tick[data-q="true"] .tickLabel { display: none; }
+}
+
+/* The participant squares: 8px, ink outline, the sheet's own fill so the
+   axis stops at their edges */
+.pMark {
+  position: absolute;
+  top: calc(var(--ay) - 4px);
+  left: calc(var(--x) * 100% - 4px);
+  width: 8px;
+  height: 8px;
+  border: 1px solid #f4f4f2;
+  background: var(--sheet, #17171a);
+}
+/* Their elbows: down from the square, then out to the label */
+.elbow {
+  position: absolute;
+  top: calc(var(--ay) + 6px);
+  width: 12px;
+  height: 40px;
+  border-bottom: 1px solid var(--grey-2, #6b6b71);
+}
+.elbow[data-p="2"] {
+  right: calc(100% - var(--x) * 100%);
+  border-right: 1px solid var(--grey-2, #6b6b71);
+}
+.elbow[data-p="3"] {
+  left: calc(var(--x) * 100%);
+  border-left: 1px solid var(--grey-2, #6b6b71);
+}
+.pLabel {
+  position: absolute;
+  top: calc(var(--ay) + 46px - 8px);
+  display: grid;
+  gap: 2px;
+}
+.pLabel[data-p="2"] {
+  right: calc(100% - var(--x) * 100% + 20px);
+  justify-items: end;
+  text-align: right;
+}
+.pLabel[data-p="3"] {
+  left: calc(var(--x) * 100% + 20px);
+}
+.pValue {
+  color: #f4f4f2;
+  letter-spacing: 0.04em;
+}
+.pName {
+  white-space: nowrap;
+}
+
+/* The overall R: a 12px accent square, its value and the board's words
+   above it on a 1px leader */
+.focus {
+  position: absolute;
+  top: var(--ay);
+  left: calc(var(--x) * 100%);
+  width: 0;
+  height: 0;
+}
+.mark {
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  background: var(--accent, #f4f4f2);
+}
+.leader {
+  position: absolute;
+  left: -0.5px;
+  bottom: 12px;
+  width: 1px;
+  height: 22px;
+  background: rgb(244 244 242 / 55%);
+}
+.focusLabel {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+.value {
+  margin-right: -0.01em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.tag { flex: none; }
+
+/* Chinese is held word by word, so no line ends inside a word */
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+/* ── Once, on view ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] :is(.measure, .links, .node, .stub, .axis, .tick, .minor, .pMark, .elbow, .pLabel, .mark, .leader, .focusLabel) {
+    opacity: 0;
+  }
+  .root[data-in="true"] .measure {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) calc(var(--i) * var(--step, 60ms)) backwards;
+  }
+  .root[data-in="true"] :is(.links, .stub) {
+    animation: fade var(--t-3, 720ms) var(--ease-arrive) 300ms backwards;
+  }
+  .root[data-in="true"] .node {
+    animation: rise var(--t-3, 720ms) var(--ease-arrive) 420ms backwards;
+  }
+  .root[data-in="true"] .axis {
+    animation: draw var(--t-3, 720ms) var(--ease-arrive) 480ms backwards;
+  }
+  .root[data-in="true"] :is(.tick, .minor) {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) 600ms backwards;
+  }
+  .root[data-in="true"] .pMark[data-p="2"] {
+    animation: land var(--t-2, 360ms) var(--ease-arrive) 760ms backwards;
+  }
+  .root[data-in="true"] .pMark[data-p="3"] {
+    animation: land var(--t-2, 360ms) var(--ease-arrive) 820ms backwards;
+  }
+  .root[data-in="true"] :is(.elbow, .pLabel) {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) 880ms backwards;
+  }
+  .root[data-in="true"] .mark {
+    animation: land var(--t-2, 360ms) var(--ease-arrive) 1000ms backwards;
+  }
+  .root[data-in="true"] :is(.leader, .focusLabel) {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) 1100ms backwards;
+  }
+}
+@keyframes fade {
+  from { opacity: 0; }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 8px));
+  }
+}
+@keyframes draw {
+  from { transform: scaleX(0); }
+}
+@keyframes land {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}

@@ -1,0 +1,207 @@
+/* The prototype videos: a split card on the sheet stack. The player is a
+   16:9 tile (#141416) holding the video edge to edge; the clips sit on a
+   slab beside it (under it on a phone), each a poster thumbnail in a 1px
+   frame and its title. The accent fills only the chosen clip's 8px
+   square. The recordings are shown as they are: never dimmed. */
+.root { display: block; }
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--slab);
+}
+
+/* ── The player ── */
+.player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--tile);
+}
+.video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+/* The site's play / pause: a raised square, an ink glyph */
+.toggle {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: var(--raised);
+  color: var(--color-ink);
+}
+@media (hover: hover) {
+  .toggle:hover { border-color: rgb(244 244 242 / 55%); }
+}
+.toggle:active svg { transform: translateY(1px); }
+
+/* ── The clips ── */
+.side {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  padding: 18px 12px 20px;
+  border-top: 1px solid var(--edge);
+}
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+.kickerMark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--color-ink);
+}
+.list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.clip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+  text-align: left;
+}
+.thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: #000;
+  transition: transform var(--t-1) var(--ease-arrive);
+}
+.thumbImg.thumbImg { object-fit: cover; }
+.clip[data-on="true"] .thumb { border-color: rgb(244 244 242 / 55%); }
+@media (hover: hover) {
+  .clip:hover:not([data-on="true"]) .thumb { border-color: rgb(244 244 242 / 24%); }
+}
+.clip:active .thumb { transform: translateY(1px); }
+
+/* A phone: the square marks the clip over its title; wide sheets give
+   the square its own column beside the title */
+.words {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+/* The square: grey at rest; the accent copy on the chosen clip */
+.sq {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  background: var(--grey-2, #6b6b71);
+}
+.sq::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
+}
+.clip[data-on="true"] .sq::after { opacity: 1; }
+.title {
+  color: var(--color-mute, #a0a0a5);
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+.clip[data-on="true"] .title { color: var(--color-ink); }
+@media (hover: hover) {
+  .clip:hover .title { color: var(--color-ink); }
+}
+
+/* ── Wide sheets: the clips in a row under the player; from 1280px the
+   split, the player 8/12, the clips 4/12 ── */
+@media (min-width: 640px) {
+  .list { gap: 14px; }
+  .words {
+    grid-template-columns: 8px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 10px;
+  }
+  .sq { transform: translateY(-1px); }
+  .side { padding: 24px 28px 28px; }
+  .toggle { left: 16px; bottom: 16px; }
+}
+@media (min-width: 1280px) {
+  .card { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); }
+  /* the player fills its row: 16:9 at least, taller if the slab is */
+  .player { align-self: stretch; }
+  /* the kicker heads the slab, the clips sit at its foot */
+  .side {
+    align-content: space-between;
+    gap: 24px;
+    padding: 28px 28px 28px;
+    border-top: 0;
+    border-left: 1px solid var(--edge);
+  }
+  .list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .clip {
+    grid-template-columns: 160px minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+  }
+  .clip:focus-visible { outline-offset: 3px; }
+}
+
+/* ── Entrance, once on view: the player rises, the clips step in, the
+   accent square lands last ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] .player,
+  .root[data-in="false"] .kicker,
+  .root[data-in="false"] .clip {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+  .root[data-in="false"] .sq::after { opacity: 0; }
+  .root[data-in="true"] .player,
+  .root[data-in="true"] .kicker,
+  .root[data-in="true"] .clip {
+    transition:
+      opacity var(--t-3) var(--ease-arrive) var(--d, 0ms),
+      transform var(--t-3) var(--ease-arrive) var(--d, 0ms);
+  }
+  .root[data-in="true"] .kicker { --d: calc(2 * var(--step)); }
+  .root[data-in="true"] .clip { --d: calc((var(--i) + 3) * var(--step)); }
+  .root[data-in="true"]:not([data-settled]) .clip[data-on="true"] .sq::after {
+    transition-delay: calc(var(--t-3) + 3 * var(--step));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sq::after { transition: opacity var(--t-1) linear; }
+  .thumb { transition: none; }
+  .clip:active .thumb,
+  .toggle:active svg { transform: none; }
+}

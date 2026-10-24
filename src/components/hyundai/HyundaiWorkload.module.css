@@ -1,0 +1,464 @@
+/* One split card on two back sheets: the rank swap on the sheet (7/12),
+   how DALI makes a weight on the slab (5/12). Flat planes, 1px lines,
+   square marks. The accent is one line at a time: Situational Stress at
+   rest, the lit dimension when one is pointed at. Colour changes are
+   stacked layers crossfading (opacity only). Type from the ramp. */
+.root {
+  margin: 0;
+}
+
+/* Side by side from 1180px; below, the chart needs the full width for its
+   lines, so the slab follows under it */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+}
+@media (min-width: 1180px) {
+  .split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+}
+
+/* ══ The rank swap ══ */
+.split > .chartCell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 16px 22px;
+  border: 0;
+  border-radius: 0;
+  /* a fine dot grid, whole on every edge */
+  background-image: radial-gradient(circle at center, var(--grey-3, #3a3a3f) 0.75px, transparent 1.25px);
+  background-size: 14px 14px;
+  background-repeat: space;
+}
+@media (min-width: 640px) {
+  .split > .chartCell { padding: 36px 32px 28px; }
+}
+@media (min-width: 1024px) {
+  .split > .chartCell { padding: 40px 40px 32px; }
+}
+
+.heads {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #252528;
+}
+.head {
+  max-width: 50%;
+}
+.headR {
+  margin-right: -0.12em;
+  text-align: right;
+}
+
+.chart {
+  --row: 56px;
+  --sq: 24px;
+  display: grid;
+  grid-template-columns: auto minmax(48px, 1fr) auto;
+  grid-template-rows: repeat(6, var(--row));
+  margin-top: 12px;
+}
+
+/* A name and its rank square: one button. Left side: name, square;
+   right side: square, name. */
+.name {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+  height: var(--row);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #f4f4f2;
+  text-align: right;
+}
+.name[data-side="w"] { grid-column: 1; }
+.name[data-side="r"] {
+  grid-column: 3;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  text-align: left;
+}
+.nameText {
+  opacity: 0.62;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+/* The rank: a square tick with its number */
+.rank {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--sq);
+  height: var(--sq);
+  border: 1px solid var(--edge, #333336);
+  border-radius: 2px;
+  background: var(--raised, #1e1e21);
+  color: #f4f4f2;
+  letter-spacing: 0;
+}
+/* Its lit edge, faded on over the plain one */
+.rank::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid #f4f4f2;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+
+/* The six lines, between the two columns of squares */
+.lines {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  width: 100%;
+  height: calc(6 * var(--row));
+  overflow: visible;
+}
+.line {
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
+}
+.line line {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
+}
+.lineGrey {
+  stroke: var(--grey-2, #6b6b71);
+  stroke-width: 1px;
+}
+.lineInk {
+  stroke: #f4f4f2;
+  stroke-width: 1.5px;
+}
+.lineAcc {
+  stroke: var(--accent, #f4f4f2);
+  stroke-width: 2px;
+  stroke-linecap: square;
+}
+
+/* ── Rest: Situational Stress in the accent, Auditory Demand in ink ── */
+.root:not([data-dim]) .line:not([data-k="sit"], [data-k="aud"]) .lineGrey,
+.root:not([data-dim]) .line[data-k="aud"] .lineInk,
+.root:not([data-dim]) .line[data-k="sit"] .lineAcc {
+  opacity: 1;
+}
+.root:not([data-dim]) .name:is([data-k="sit"], [data-k="aud"]) .nameText { opacity: 1; }
+.root:not([data-dim]) .name:is([data-k="sit"], [data-k="aud"]) .rank::after { opacity: 1; }
+
+/* ── Lit: that line in the accent, the rest dimmed; Situational Stress
+   steps back to ink ── */
+.root[data-dim] .line { opacity: var(--dim, 0.45); }
+.root[data-dim] .line:not([data-k="sit"]) .lineGrey,
+.root[data-dim] .line[data-k="sit"] .lineInk {
+  opacity: 1;
+}
+.root[data-dim] .nameText { opacity: var(--dim, 0.45); }
+
+.root[data-dim="att"] .line[data-k="att"],
+.root[data-dim="vis"] .line[data-k="vis"],
+.root[data-dim="aud"] .line[data-k="aud"],
+.root[data-dim="tmp"] .line[data-k="tmp"],
+.root[data-dim="int"] .line[data-k="int"],
+.root[data-dim="sit"] .line[data-k="sit"] {
+  opacity: 1;
+}
+.root[data-dim="att"] .line[data-k="att"] :is(.lineGrey, .lineInk),
+.root[data-dim="vis"] .line[data-k="vis"] :is(.lineGrey, .lineInk),
+.root[data-dim="aud"] .line[data-k="aud"] :is(.lineGrey, .lineInk),
+.root[data-dim="tmp"] .line[data-k="tmp"] :is(.lineGrey, .lineInk),
+.root[data-dim="int"] .line[data-k="int"] :is(.lineGrey, .lineInk),
+.root[data-dim="sit"] .line[data-k="sit"] :is(.lineGrey, .lineInk) {
+  opacity: 0;
+}
+.root[data-dim="att"] .line[data-k="att"] .lineAcc,
+.root[data-dim="vis"] .line[data-k="vis"] .lineAcc,
+.root[data-dim="aud"] .line[data-k="aud"] .lineAcc,
+.root[data-dim="tmp"] .line[data-k="tmp"] .lineAcc,
+.root[data-dim="int"] .line[data-k="int"] .lineAcc,
+.root[data-dim="sit"] .line[data-k="sit"] .lineAcc {
+  opacity: 1;
+}
+.root[data-dim="att"] .name[data-k="att"] .nameText,
+.root[data-dim="vis"] .name[data-k="vis"] .nameText,
+.root[data-dim="aud"] .name[data-k="aud"] .nameText,
+.root[data-dim="tmp"] .name[data-k="tmp"] .nameText,
+.root[data-dim="int"] .name[data-k="int"] .nameText,
+.root[data-dim="sit"] .name[data-k="sit"] .nameText {
+  opacity: 1;
+}
+.root[data-dim="att"] .name[data-k="att"] .rank::after,
+.root[data-dim="vis"] .name[data-k="vis"] .rank::after,
+.root[data-dim="aud"] .name[data-k="aud"] .rank::after,
+.root[data-dim="tmp"] .name[data-k="tmp"] .rank::after,
+.root[data-dim="int"] .name[data-k="int"] .rank::after,
+.root[data-dim="sit"] .name[data-k="sit"] .rank::after {
+  opacity: 1;
+}
+
+.takeaway {
+  max-width: 46ch;
+  margin: 20px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid #252528;
+  color: #d2d2d0;
+  text-wrap: pretty;
+}
+:global(html[lang="zh-CN"]) .takeaway { max-width: 30em; }
+/* Beside a taller slab, the heads and chart sit centred in the free
+   height and the takeaway keeps to the foot */
+@media (min-width: 1180px) {
+  .plotGroup { margin-block: auto; padding-bottom: 28px; }
+  .takeaway { margin-top: 0; }
+}
+
+/* ══ How DALI works ══ */
+.split > .how {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px 20px 26px;
+  border: 0;
+  border-top: 1px solid var(--edge, #333336);
+  border-radius: 0;
+}
+@media (min-width: 640px) {
+  .split > .how { padding: 36px 32px; }
+}
+@media (min-width: 1180px) {
+  .split > .how {
+    padding: 40px 36px 32px;
+    border-top: 0;
+    border-left: 1px solid var(--edge, #333336);
+  }
+}
+.howLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+}
+/* A slab's kicker carries the system's 6px ink square (as Chart's split
+   slab and the other Hyundai slabs do) */
+.kSq {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-top: calc((1.35em - 6px) / 2);
+  background: #f4f4f2;
+}
+
+.survey { margin: 12px 0 0; }
+.nasa {
+  margin: 4px 0 0;
+  color: #a0a0a5;
+}
+
+.part {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #252528;
+}
+.partLabel { margin: 0; }
+
+/* Part 1: the six questions stacked in one cell; the lit one shows */
+.questions {
+  display: grid;
+  margin-top: 10px;
+}
+.question {
+  grid-area: 1 / 1;
+  display: block;
+  margin: 0;
+  color: #d2d2d0;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+  text-wrap: pretty;
+}
+.qName {
+  display: block;
+  color: #f4f4f2;
+}
+.qText { display: block; }
+.root:not([data-dim]) .question[data-k="sit"],
+.root[data-dim="att"] .question[data-k="att"],
+.root[data-dim="vis"] .question[data-k="vis"],
+.root[data-dim="aud"] .question[data-k="aud"],
+.root[data-dim="tmp"] .question[data-k="tmp"],
+.root[data-dim="int"] .question[data-k="int"],
+.root[data-dim="sit"] .question[data-k="sit"] {
+  opacity: 1;
+}
+
+/* The rating scale as board 06 draws it: 21 ticks on a baseline, the
+   ends and the centre tallest, every fifth taller */
+.scale {
+  margin-top: 16px;
+}
+.ticks {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 16px;
+  border-bottom: 1px solid var(--axis, rgb(244 244 242 / 24%));
+}
+.ticks i {
+  width: 1px;
+  height: 5px;
+  background: var(--axis, rgb(244 244 242 / 24%));
+}
+.ticks i[data-h="m"] { height: 9px; }
+.ticks i[data-h="l"] {
+  height: 15px;
+  background: var(--grey-1, #a0a0a5);
+}
+.ends {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.ends > :last-child { margin-right: -0.12em; }
+
+/* Part 2: the upper triangle of the 6 × 6 pairs, then its key */
+.pairs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px 28px;
+  margin-top: 14px;
+}
+.matrix {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(7, 20px);
+  grid-template-rows: repeat(7, 20px);
+  gap: 3px;
+}
+.axisNum {
+  display: grid;
+  place-items: center;
+  margin-right: -0.12em;
+  letter-spacing: 0;
+}
+.cell {
+  position: relative;
+  border: 1px solid var(--grey-3, #3a3a3f);
+  border-radius: 1px;
+}
+/* The cell's ink fill, faded on */
+.cell::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: #f4f4f2;
+  opacity: 0;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.root:not([data-dim]) .cell:is([data-a="sit"], [data-b="sit"])::after,
+.root[data-dim="att"] .cell:is([data-a="att"], [data-b="att"])::after,
+.root[data-dim="vis"] .cell:is([data-a="vis"], [data-b="vis"])::after,
+.root[data-dim="aud"] .cell:is([data-a="aud"], [data-b="aud"])::after,
+.root[data-dim="tmp"] .cell:is([data-a="tmp"], [data-b="tmp"])::after,
+.root[data-dim="int"] .cell:is([data-a="int"], [data-b="int"])::after,
+.root[data-dim="sit"] .cell:is([data-a="sit"], [data-b="sit"])::after {
+  opacity: 1;
+}
+
+.key {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.keyItem {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: #f4f4f2;
+  opacity: 0.55;
+  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+}
+.keyNum {
+  flex: none;
+  width: 1ch;
+  letter-spacing: 0;
+}
+.root:not([data-dim]) .keyItem[data-k="sit"],
+.root[data-dim="att"] .keyItem[data-k="att"],
+.root[data-dim="vis"] .keyItem[data-k="vis"],
+.root[data-dim="aud"] .keyItem[data-k="aud"],
+.root[data-dim="tmp"] .keyItem[data-k="tmp"],
+.root[data-dim="int"] .keyItem[data-k="int"],
+.root[data-dim="sit"] .keyItem[data-k="sit"] {
+  opacity: 1;
+}
+
+.instruction {
+  margin: 16px 0 0;
+  color: #a0a0a5;
+  text-wrap: pretty;
+}
+
+/* ══ Phone: names on the left only (the right squares keep their ranks),
+   at 110px ══ */
+@media (max-width: 639px) {
+  .chart {
+    --row: 52px;
+    --sq: 22px;
+    grid-template-columns: 136px minmax(40px, 1fr) auto;
+  }
+  .name[data-side="w"] { gap: 8px; }
+  .name[data-side="w"] .nameText {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 110px;
+    line-height: 1.25;
+  }
+  .name[data-side="r"] .nameText { display: none; }
+  .head { max-width: 46%; }
+}
+
+/* Chinese is held word by word, so no line ends inside a word */
+.word { white-space: nowrap; }
+:global(html[lang="zh-CN"]) .root { line-break: strict; }
+
+/* ── Once, on view: the lines fade in 60ms apart, the accent line last ── */
+@media (prefers-reduced-motion: no-preference) {
+  .root[data-in="false"] :is(.line, .name, .takeaway) { opacity: 0; }
+  .root[data-in="true"] .name {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) backwards;
+  }
+  .root[data-in="true"] .line {
+    animation: fade var(--t-3, 720ms) var(--ease-arrive) calc(200ms + var(--i) * var(--step, 60ms)) backwards;
+  }
+  .root[data-in="true"] .line[data-k="sit"] {
+    animation-delay: calc(200ms + 6 * var(--step, 60ms) + 120ms);
+  }
+  .root[data-in="true"] .takeaway {
+    animation: fade var(--t-2, 360ms) var(--ease-arrive) 760ms backwards;
+  }
+}
+@keyframes fade {
+  from { opacity: 0; }
+}
+
+/* Reduced motion: the final frame; a change is a 160ms fade */
+@media (prefers-reduced-motion: reduce) {
+  .line,
+  .line line {
+    transition-duration: var(--t-1, 160ms);
+  }
+}

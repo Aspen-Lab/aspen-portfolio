@@ -1,0 +1,69 @@
+/* The stage box: its width is given by its parent, its height by the
+   design's ratio (or the phone window's). It clips the canvas. */
+.stage {
+  --s: 0.18;
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--dw) / var(--dh);
+  overflow: hidden;
+  container-type: inline-size;
+}
+@media (min-width: 640px) {
+  .stage { --s: 0.36; }
+}
+@media (min-width: 1024px) {
+  .stage { --s: 0.5; }
+}
+@media (min-width: 1280px) {
+  .stage { --s: 0.6; }
+}
+/* The exact ratio, as a number, from the first paint: the custom property
+   is resolved where it is used (the canvas), so 100cqw is this box */
+@supports (width: calc(1px * tan(atan2(1px, 2px)))) {
+  .stage { --s: tan(atan2(100cqw, calc(var(--dw) * 1px))); }
+  @media (max-width: 639px) {
+    .stage[data-window] { --s: tan(atan2(100cqw, calc(var(--win) * 1px))); }
+  }
+}
+
+/* The cluster's screen */
+.stage[data-display] {
+  border: 1px solid #333336;
+  border-radius: calc(34 / var(--dw) * 100%) / calc(34 / var(--dh) * 100%);
+  background: #010101;
+}
+
+/* The canvas: design px, scaled from its top-left, centred vertically */
+.scale {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: calc(var(--dw) * 1px);
+  height: calc(var(--dh) * 1px);
+  transform-origin: 0 0;
+  transform: scale(var(--s)) translateY(-50%);
+}
+
+/* The phone window's pan, in design px before the scale */
+.pan {
+  position: absolute;
+  inset: 0;
+  transform: translateX(0);
+  transition: transform var(--t-3) var(--ease-arrive);
+}
+
+@media (max-width: 639px) {
+  .stage[data-window] {
+    aspect-ratio: var(--win) / var(--dh);
+  }
+  .stage[data-window][data-display] {
+    border-radius: 2px;
+  }
+  .stage[data-window] .pan {
+    transform: translateX(calc(var(--pan) * 1px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pan { transition: none; }
+}

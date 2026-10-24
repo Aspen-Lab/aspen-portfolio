@@ -1,8 +1,7 @@
 /* The case-study template in Latent Health's ledger manner: hairlines,
    big light figures, mono only where a label is structural (one kicker,
    a boxed tag, a header row), one accent. Flat fills only; no gradients.
-   Every colour is a token or ink mixed down from one, so Hyundai's light
-   case (html:has([data-project-theme="light"])) inherits all of it. */
+   Every colour is a token or ink mixed down from one. */
 .case {
   --hair: color-mix(in srgb, var(--color-ink) 22%, transparent);
   --hair-strong: color-mix(in srgb, var(--color-ink) 55%, transparent);
