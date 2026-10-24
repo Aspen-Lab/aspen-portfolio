@@ -20,7 +20,7 @@ import styles from "./NutraMascot.module.css";
    stay lines); the owner's three words describe the whole loop, so they
    caption it once (Short · Visible · Rewarding) rather than any one
    step. Node 1 is a product render (the app's own Save Money chip: Red
-   Hat Text, orange on #312F36); node 3, the reward, carries the figure's
+   Hat Text, orange on #323232); node 3, the reward, carries the figure's
    one accent: a filled square by its index. The strings stay in the
    app's English; on /cn each carries its Chinese gloss under it. Below,
    rows held apart by space, the precedents from board 019 (two

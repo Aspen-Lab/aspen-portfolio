@@ -3,7 +3,7 @@
    Planes, not frames: chips are raised planes (S6 ink) with no edge;
    each prototype is a plane a step below the sheet (the slab) with an S7
    head, its iterations raised on it. The only lines are the flow's, and
-   they are data: 1px #6b6b71 (solid: the flow) or dashed #8a8a90 (user
+   they are data: 1px #6d6d6d (solid: the flow) or dashed #8c8c8c (user
    tests, revisions). The one accent: the user-flow chip filled in the
    accent, In reality only (every revision returns there). */
 .sheet { padding: 20px; }
@@ -86,7 +86,7 @@
   border-radius: var(--r-raised);
   corner-shape: squircle;
   background: var(--raised);
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 400;

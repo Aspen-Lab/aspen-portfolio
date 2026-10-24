@@ -45,7 +45,7 @@ function AiScene({ cn }: SceneProps) {
         <rect className={styles.surface} x="472" y="97" width="122" height="66" rx="7" />
         <path className={styles.stroke} d="M488 117H550M488 130H530M488 143H545" />
         <circle className={styles.inkFill} cx="572" cy="141" r="9" />
-        <path d="m568 141 3 3 5-6" fill="none" stroke="#1b1b1d" strokeWidth="1.3" />
+        <path d="m568 141 3 3 5-6" fill="none" stroke="#1c1c1c" strokeWidth="1.3" />
       </g>
       <text className={styles.label} x="472" y="187">{cn ? "匹配能力，再输出" : "Route → respond"}</text>
       <circle className={styles.routerDot} cx="214" cy="130" r="3" />
@@ -67,14 +67,14 @@ function GameScene({ cn }: SceneProps) {
       <path className={`${styles.trace} ${styles.jumpTrace}`} pathLength="1" d="M84 170C117 31 213 37 228 116" />
       <g transform="translate(214 99)">
         <g className={styles.player}>
-          <path d="M3 27-2 42H29L24 27" fill="#8e8e89" />
+          <path d="M3 27-2 42H29L24 27" fill="#8c8c8c" />
           <rect x="0" y="5" width="26" height="25" rx="8" className={styles.inkFill} />
-          <path d="M4 10V0M22 10V0" stroke="#e8e7df" strokeWidth="4" strokeLinecap="round" />
-          <path d="M8 15V19M18 15V19" stroke="#1a1a1b" strokeWidth="2" strokeLinecap="round" />
-          <path d="M6 41V46M21 41V46" stroke="#cbc9bf" strokeWidth="3" />
+          <path d="M4 10V0M22 10V0" stroke="#e5e5e5" strokeWidth="4" strokeLinecap="round" />
+          <path d="M8 15V19M18 15V19" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" />
+          <path d="M6 41V46M21 41V46" stroke="#c6c6c6" strokeWidth="3" />
         </g>
       </g>
-      <ellipse className={styles.landing} cx="227" cy="146" rx="23" ry="3" fill="#eeeee4" fillOpacity=".23" />
+      <ellipse className={styles.landing} cx="227" cy="146" rx="23" ry="3" fill="#ebebeb" fillOpacity=".23" />
       <path className={styles.collider} d="M209 93H246V146H209Z" />
       <text className={styles.label} x="30" y="244">{cn ? "场景 / 碰撞 / 动作" : "Scene / collider / motion"}</text>
 
@@ -109,7 +109,7 @@ function DesignScene({ cn }: SceneProps) {
       <rect className={styles.anchor} x="35.5" y="183.5" width="9" height="9" />
       <rect className={styles.anchor} x="306.5" y="67.5" width="9" height="9" />
       <g className={styles.designCursor}>
-        <path d="m314 76 4 22 5-7 8-3Z" className={styles.inkFill} stroke="#171718" strokeWidth="2" />
+        <path d="m314 76 4 22 5-7 8-3Z" className={styles.inkFill} stroke="#171717" strokeWidth="2" />
         <rect x="326" y="103" width="52" height="21" rx="3" className={styles.surface} />
         <text x="334" y="117" className={styles.small}>Aspen</text>
       </g>

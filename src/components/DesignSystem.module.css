@@ -1,219 +1,85 @@
-/* Aspen Origin on the home page: a title and tagline, then one plane
-   (flat, no edge, no shadow: 「线框我们用面」) that holds the surface study
-   and the way into the docs. The plane, the selector and the links are
-   the site's own flat chrome: planes on a plane, lifting a tone when
-   chosen or pointed at, never an outline. Only the exploded slabs keep
-   Origin's material (bevels, the recess, compact shadows), because that
-   material is what the study shows; they float over a floor that is a
-   plane too, not a drawn grid.
-   Small print is cut to what carries structure: one kicker on the sheet's
-   header row, the selected slab's engraving, the entry numerals and the
-   token readout, none under 11px. The old eyebrow and version repeat the
-   section head above (03 / Design system / v0.3), and the stage folio,
-   caption, hint and LIVE tag said what the selector already shows, so
-   they are set aside here. */
-.intro { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: end; margin-bottom: 40px; }
-.eyebrow, .version { display: none; }
-.intro h2 { font-size: clamp(42px, 4.4vw, 62px); line-height: 1.05; }
-.introRight { max-width: 435px; }
-.introRight > p { font-size: 16px; line-height: 1.6; color: var(--color-mute); text-wrap: pretty; }
-
-/* ── The plane ── a tone over the grain of the ground */
-.workbench {
+/* Aspen Origin on the home page: one plane (flat, no edge, G2 corners),
+   the material on the left and the way in on the right. Only the
+   exploded slabs keep Origin's own material (bevels, the recess, compact
+   shadows), because that material is the point; everything around them
+   is the site's flat chrome. */
+.plane {
   --surface-base: #181818;
   --surface-inset: #202020;
   --surface-raised: #242424;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
   overflow: hidden;
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: #1d1d20;
+  background: #1e1e1e;
 }
-.benchHeader {
-  display: flex;
-  align-items: center;
-  min-height: 52px;
-  padding: 0 28px;
-  color: var(--color-soft);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.benchHeader > span { display: flex; align-items: center; gap: 12px; }
-.benchHeader .live { display: none; }
-.labGrid { display: grid; grid-template-columns: 1.18fr 1fr; }
 
-/* ── The study: Origin's three surfaces, exploded over a floor plane ── */
-.material { min-width: 0; padding: 0 30px 28px; }
-.stage { position: relative; height: 330px; perspective: 1100px; }
-.stageFolio, .stageLabel, .stageHint { display: none; }
-.ground { position: absolute; left: 50%; top: 48%; width: min(108%, 390px); transform: translate(-50%, -37%); color: #161618; }
-.ground svg { width: 100%; }
-.stack { position: absolute; width: 256px; height: 256px; top: 49%; left: 50%; transform-style: preserve-3d; transform: translate(-50%, -39%) rotateX(54deg) rotateZ(-34deg); }
-/* The chosen slab is told by its lift and its engraving, not by a lit
-   outline */
-.slab { position: absolute; inset: 0; border-radius: 18px; transform-style: preserve-3d; transition: transform 420ms var(--ease-arrive); }
-.canvasSlab { background: var(--surface-base); box-shadow: 0 1px 0 #111, 0 3px 0 #111, 0 10px 18px #0007, inset 0 1px 0 #ffffff08; }
-.canvasSlab[data-selected="true"] { transform: translateZ(9px); }
-.insetSlab { inset: 19px; background: var(--surface-inset); transform: translateZ(38px); box-shadow: 0 2px 0 #131313, 0 5px 0 #131313, 0 12px 15px #0005, inset 0 1px 0 #ffffff0a; }
-.insetSlab[data-selected="true"] { transform: translateZ(49px); }
-.recess { position: absolute; inset: 12px; border-radius: 11px; background: #202020; box-shadow: inset 0 2px 6px #0008, inset 0 -1px 1px #ffffff06; }
-.raisedSlab { inset: 39px; background: var(--surface-raised); transform: translateZ(75px); box-shadow: 0 2px 0 #161616, 0 5px 0 #161616, 0 16px 23px #0005, inset 0 1px 1px #ffffff08; }
-.raisedSlab[data-selected="true"] { transform: translateZ(92px); }
-
-/* The engraving lights only on the slab the selector names, so the
-   stack carries one label at a time and it always answers the button. */
-.engraving, .insetLabel, .raisedLabel {
+/* ── The material: Origin's three surfaces, stacked ── */
+.stage { position: relative; height: 380px; perspective: 1100px; }
+.stack {
   position: absolute;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1;
-  letter-spacing: 0.12em;
-  white-space: nowrap;
-  color: #9a9a9a;
-  opacity: 0;
-  transition: opacity 260ms ease;
+  width: 256px;
+  height: 256px;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+  transform: translate(-50%, -42%) rotateX(54deg) rotateZ(-34deg);
 }
-.engraving { bottom: 4px; left: 14px; }
-.insetLabel { left: 12px; bottom: 4px; }
-.raisedLabel { left: 14px; top: 14px; }
-.canvasSlab[data-selected="true"] .engraving,
-.insetSlab[data-selected="true"] .insetLabel,
-.raisedSlab[data-selected="true"] .raisedLabel { opacity: 1; }
-.cornerMark { position: absolute; right: 10px; bottom: 4px; font: 13px var(--font-mono); color: #797979; }
+.slab { position: absolute; inset: 0; border-radius: 18px; transform-style: preserve-3d; transition: transform 520ms var(--ease-arrive); }
+.canvasSlab { background: var(--surface-base); box-shadow: 0 1px 0 #111, 0 3px 0 #111, 0 10px 18px #0007, inset 0 1px 0 #ffffff08; }
+.insetSlab { inset: 19px; background: var(--surface-inset); transform: translateZ(38px); box-shadow: 0 2px 0 #131313, 0 5px 0 #131313, 0 12px 15px #0005, inset 0 1px 0 #ffffff0a; }
+.recess { position: absolute; inset: 12px; border-radius: 11px; background: #202020; box-shadow: inset 0 2px 6px #0008, inset 0 -1px 1px #ffffff06; }
+.raisedSlab { inset: 39px; background: var(--surface-raised); transform: translateZ(80px); box-shadow: 0 2px 0 #161616, 0 5px 0 #161616, 0 16px 23px #0005, inset 0 1px 1px #ffffff08; }
 .raisedSignature { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; font: 13px var(--font-sans); letter-spacing: -0.02em; color: #b4b4b4; }
 .sculptedMark { position: absolute; left: 50%; top: 47%; display: grid; grid-template-columns: repeat(2, 27px); gap: 8px; transform: translate(-50%, -50%) translateZ(8px); }
 .sculptedMark i { display: block; height: 27px; border-radius: 7px; background: #c3c3c3; box-shadow: 0 1px 0 #aaa, 0 3px 0 #777, 0 7px 7px #0005, inset 0 1px 0 #fff7; }
 .sculptedMark i:last-child { background: #737373; box-shadow: 0 1px 0 #666, 0 3px 0 #444, 0 7px 7px #0005, inset 0 1px 0 #fff2; }
 
-/* ── The selector: three raised planes on the plane; the chosen one lifts
-   a tone further. The swatch is the specimen, so it keeps the surface's
-   own inset or lift; the button around it is flat. */
-.surfaceChoices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.surfaceChoice {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  min-height: 48px;
-  padding: 0 14px;
-  border-radius: var(--r-raised);
-  corner-shape: squircle;
-  background: #232326;
-  color: var(--color-mute);
-  font-size: 14px;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
-}
-.surfaceChoice > span:nth-child(2) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.surfaceChoice[aria-pressed="true"] { background: #323236; color: var(--color-ink); }
-.surfaceChoice:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 3px; }
+/* Under a real pointer the stack opens a little: the levels part */
 @media (hover: hover) {
-  .surfaceChoice:hover { color: var(--color-ink); }
-  .surfaceChoice[aria-pressed="false"]:hover { background: #2a2a2e; }
+  .plane:hover .insetSlab { transform: translateZ(52px); }
+  .plane:hover .raisedSlab { transform: translateZ(108px); }
 }
-.swatch { width: 18px; height: 18px; flex: 0 0 18px; border-radius: 4px; background: var(--surface-color); }
-.swatch[data-kind="inset"] { box-shadow: inset 0 2px 4px #0009; }
-.swatch[data-kind="raised"] { box-shadow: 0 3px 5px #0008, inset 0 1px 0 #ffffff22; }
-.choiceNumber {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-soft);
-  transition: color 180ms var(--ease-arrive);
-}
-.surfaceChoice[aria-pressed="true"] .choiceNumber { color: var(--color-ink); }
 
-/* The readout: the token as written in tokens.css, its hex, one line. */
-.readout { margin-top: 20px; min-height: 76px; }
-.readout > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--color-ink); }
-.readout code { font: inherit; overflow-wrap: anywhere; }
-.readout > div > span { color: var(--color-soft); letter-spacing: 0.06em; }
-.readout p { margin-top: 8px; font-size: 14.5px; line-height: 1.55; color: var(--color-mute); text-wrap: pretty; }
-
-/* ── The way in: three rows kept apart by space, each lifting onto a
-   plane under the pointer, then one raised button ── */
-.systemGuide { display: flex; flex-direction: column; justify-content: center; align-items: start; min-width: 0; padding: 36px; }
-.systemGuide h3 { color: var(--color-ink); font: 300 32px/1.15 var(--font-newsreader), Georgia, serif; letter-spacing: -0.025em; }
-.guideIntro { max-width: 380px; margin-top: 12px; color: var(--color-mute); font-size: 15px; line-height: 1.6; text-wrap: pretty; }
-.guideLinks { display: flex; flex-direction: column; gap: 2px; width: calc(100% + 32px); max-width: 432px; margin: 20px -16px 24px; }
-.guideLinks a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px 15px; border-radius: var(--r-raised); corner-shape: squircle; transition: background-color 180ms var(--ease-arrive); }
-.guideLinks strong { display: block; color: var(--color-ink); font-size: 15px; font-weight: 400; }
-.guideLinks a > span > span { display: block; margin-top: 3px; color: var(--color-mute); font-size: 14px; line-height: 1.5; }
-.guideLinks svg { flex-shrink: 0; color: var(--color-soft); transition: color 180ms var(--ease-arrive), transform 180ms var(--ease-arrive); }
+/* ── The way in: the name, one line, one button ── */
+.copy { display: flex; flex-direction: column; align-items: start; min-width: 0; padding: 48px 56px 48px 24px; }
+.copy h2 { font-size: clamp(40px, 3.6vw, 56px); line-height: 1.05; color: var(--color-ink); }
+.copy p { max-width: 380px; margin-top: 16px; font-size: 16px; line-height: 1.6; color: var(--color-mute); text-wrap: pretty; }
 .enterLink {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 32px;
-  width: 100%;
-  max-width: 400px;
+  gap: 24px;
   min-height: 48px;
-  padding: 0 16px;
+  margin-top: 32px;
+  padding: 0 18px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #232326;
+  background: #2a2a2a;
   color: var(--color-ink);
   font-size: 14px;
-  transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
+  transition: background-color 180ms var(--ease-arrive);
 }
 .enterLink svg { flex-shrink: 0; transition: transform 180ms var(--ease-arrive); }
 @media (hover: hover) {
-  .guideLinks a:hover { background: #232326; }
-  .guideLinks a:hover svg { color: var(--color-ink); transform: translate(2px, -2px); }
-  .enterLink:hover { background: #2c2c30; }
+  .enterLink:hover { background: #333333; }
   .enterLink:hover svg { transform: translate(2px, -2px); }
 }
-.guideLinks a:focus-visible, .enterLink:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
-:global(html[lang="zh-CN"]) .systemGuide h3 { font-family: var(--font-sans); font-size: 26px; font-weight: 400; }
+.enterLink:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 
-@media (max-width: 1050px) {
-  .intro { gap: 36px; }
-  .material { padding: 0 22px 24px; }
-  .systemGuide { padding: 28px; }
-  .stack { width: 230px; height: 230px; }
-  .choiceNumber { display: none; }
-  .surfaceChoice { gap: 8px; padding: 0 12px; }
-}
 @media (max-width: 767px) {
-  .intro { grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px; }
-  .intro h2 { font-size: 44px; }
-  .introRight > p { font-size: 15px; }
-  .benchHeader { min-height: 48px; padding: 0 20px; }
-  .labGrid { grid-template-columns: 1fr; }
-  .material { padding: 0 20px 24px; }
-  .stage { height: 296px; }
+  .plane { grid-template-columns: 1fr; }
+  .stage { height: 290px; }
   .stack { width: 216px; height: 216px; }
   .insetSlab { inset: 16px; }
   .raisedSlab { inset: 33px; }
-  .raisedLabel { left: 12px; top: 10px; }
   .sculptedMark { top: 54%; grid-template-columns: repeat(2, 23px); gap: 7px; }
   .sculptedMark i { height: 23px; border-radius: 6px; }
-  .surfaceChoice { padding: 0 10px; }
-  .systemGuide { padding: 20px 20px 28px; }
-  .systemGuide h3 { font-size: 28px; }
-  .guideLinks, .enterLink { max-width: none; }
-}
-@media (max-width: 359px) {
-  .intro h2 { font-size: 39px; }
-  .benchHeader { padding: 0 14px; letter-spacing: 0.1em; }
-  .material { padding: 0 14px 22px; }
-  .stage { height: 276px; }
-  .stack { width: 192px; height: 192px; }
-  .raisedSlab { inset: 30px; }
-  .raisedSignature { bottom: 12px; font-size: 12px; }
-  .sculptedMark { grid-template-columns: repeat(2, 20px); }
-  .sculptedMark i { height: 20px; }
-  .surfaceChoices { gap: 6px; }
-  .surfaceChoice { gap: 6px; padding: 0 8px; font-size: 13px; }
-  .swatch { width: 15px; height: 15px; flex-basis: 15px; }
-  .systemGuide { padding: 24px 16px; }
-  .systemGuide h3 { font-size: 25px; }
+  .copy { padding: 8px 24px 32px; }
+  .copy h2 { font-size: 40px; }
+  .copy p { font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .slab, .engraving, .insetLabel, .raisedLabel, .surfaceChoice, .choiceNumber,
-  .guideLinks a, .guideLinks svg, .enterLink, .enterLink svg { transition: none; }
+  .slab, .enterLink, .enterLink svg { transition: none; }
 }

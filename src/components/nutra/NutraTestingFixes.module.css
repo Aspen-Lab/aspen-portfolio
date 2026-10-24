@@ -68,7 +68,7 @@
   z-index: -1;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #232326);
+  background: var(--raised, #242424);
   opacity: 0;
   transition: opacity var(--t-2) var(--ease-arrive);
 }
@@ -313,7 +313,7 @@ button.row { cursor: pointer; }
 }
 .quote {
   margin: 6px 0 0;
-  color: var(--color-body, #d2d2d0);
+  color: var(--color-body, #d1d1d1);
 }
 
 /* ── Highlight ── the part a problem is about rests on a flat plane a
@@ -335,7 +335,7 @@ button.row { cursor: pointer; }
   pointer-events: none;
 }
 .regionLit {
-  background: #2c2c30;
+  background: #2d2d2d;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }

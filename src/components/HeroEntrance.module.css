@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 40;
   overflow: hidden;
-  color: #f4f4f2;
+  color: #f3f3f3;
   pointer-events: none;
   user-select: none;
   animation: finish 1.8s linear both;
@@ -14,7 +14,7 @@
   left: 0;
   width: 100%;
   height: calc(50% + 1px);
-  background: rgba(15, 15, 16, 0.985);
+  background: rgba(15, 15, 15, 0.985);
   animation-duration: 1.06s;
   animation-delay: 0.68s;
   animation-timing-function: cubic-bezier(0.76, 0, 0.14, 1);
@@ -31,7 +31,7 @@
 
 .bottom {
   bottom: 0;
-  background: rgba(29, 29, 32, 0.985);
+  background: rgba(30, 30, 30, 0.985);
   animation-name: openBottom;
 }
 

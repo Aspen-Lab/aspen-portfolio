@@ -48,7 +48,7 @@
 .stack { display: grid; }
 .diff {
   grid-area: 1 / 1;
-  color: var(--color-body, #d2d2d0);
+  color: var(--color-body, #d1d1d1);
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
   text-wrap: pretty;
@@ -85,16 +85,16 @@
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .thumb:hover { background-color: #161618; }
+  .thumb:hover { background-color: #171717; }
 }
-.thumb[data-on="true"] { background-color: var(--tile, #1d1d20); }
+.thumb[data-on="true"] { background-color: var(--tile, #1e1e1e); }
 .thumb:active .mini { transform: translateY(1px); }
 
 .idx {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--color-soft, #8a8a90);
+  color: var(--color-soft, #8c8c8c);
 }
 @media (hover: hover) {
   .thumb:hover .idx { color: var(--color-ink); }
@@ -107,7 +107,7 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6b6b71);
+  background: var(--grey-2, #6d6d6d);
 }
 .sq::after {
   content: "";

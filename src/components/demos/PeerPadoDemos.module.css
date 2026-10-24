@@ -11,13 +11,13 @@
 .micro { font: 10px var(--font-mono); letter-spacing: .7px; }
 .small { font: 10px var(--font-mono); letter-spacing: .2px; }
 .body { font-size: 13px; }
-.peerLogo { font: 28px var(--font-newsreader), Georgia, serif; fill: #e9e9dd; }
-.peerTitle { font: 36px var(--font-newsreader), Georgia, serif; fill: #e9e9dd; letter-spacing: -.5px; }
+.peerLogo { font: 28px var(--font-newsreader), Georgia, serif; fill: #e5e5e5; }
+.peerTitle { font: 36px var(--font-newsreader), Georgia, serif; fill: #e5e5e5; letter-spacing: -.5px; }
 .topic { font: 10px var(--font-mono); letter-spacing: .4px; }
-.paperTitle { font: 28px var(--font-newsreader), Georgia, serif; fill: #deded2; letter-spacing: -.4px; }
+.paperTitle { font: 28px var(--font-newsreader), Georgia, serif; fill: #dadada; letter-spacing: -.4px; }
 .bar { transform-box: fill-box; transform-origin: center bottom; }
 .topicCheck { stroke-dasharray: 18; stroke-dashoffset: 0; }
-.padoLogo { font-size: 27px; font-weight: 650; letter-spacing: -.7px; fill: #f0eaf6; }
+.padoLogo { font-size: 27px; font-weight: 650; letter-spacing: -.7px; fill: #f0f0f0; }
 .catName { font-size: 26px; font-weight: 650; letter-spacing: -.8px; fill: #433451; }
 .padoHeading { font-size: 21px; font-weight: 580; letter-spacing: -.5px; fill: #4e3c60; }
 .logLabel { font-size: 14px; fill: #5d4c70; }
@@ -50,7 +50,7 @@
 .stage[data-playing="true"] .pawMessage { animation: paperArrive 850ms 2100ms cubic-bezier(.2,.8,.2,1) both; }
 .stage[data-playing="true"] .catEyes { animation: blink 3200ms ease both; }
 
-@keyframes topicSelect { 0%, 45% { fill: #32312b; } 100% { fill: #c56d41; } }
+@keyframes topicSelect { 0%, 45% { fill: #2f2f2f; } 100% { fill: #c56d41; } }
 @keyframes drawCheck { from { stroke-dashoffset: 18; } to { stroke-dashoffset: 0; } }
 @keyframes growBar { from { transform: scaleY(.12); opacity: .2; } to { transform: scaleY(1); opacity: 1; } }
 @keyframes paperArrive { from { transform: translateY(14px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }

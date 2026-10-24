@@ -20,7 +20,7 @@
 .sheet {
   min-width: 0;
   padding: 24px 20px;
-  background: var(--sheet, #18181a);
+  background: var(--sheet, #191919);
 }
 @media (min-width: 640px) {
   .sheet { padding: 40px; }
@@ -45,12 +45,12 @@
   display: flex;
   flex-wrap: wrap;
   margin: 0;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 .wordItem { white-space: nowrap; }
 .sep {
   margin: 0 0.6em;
-  color: #6b6b71;
+  color: #6d6d6d;
 }
 
 .loop {
@@ -77,14 +77,14 @@
   padding: 14px 16px 16px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #232326);
+  background: var(--raised, #242424);
   transition: background-color var(--t-1, 160ms) var(--ease-arrive);
 }
 /* Pointed at: the node's plane lifts a tone */
 .root[data-node="0"] .node[data-n="0"],
 .root[data-node="1"] .node[data-n="1"],
 .root[data-node="2"] .node[data-n="2"],
-.root[data-node="3"] .node[data-n="3"] { background: #2c2c30; }
+.root[data-node="3"] .node[data-n="3"] { background: #2d2d2d; }
 
 .node[data-n="0"] { grid-area: 1 / 1; }
 .node[data-n="1"] { grid-area: 1 / 3; }
@@ -95,7 +95,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #8a8a90;
+  color: #8c8c8c;
 }
 /* The reward: the figure's one focus, a filled square by its index */
 .node[data-focus] .index::after {
@@ -103,19 +103,19 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: var(--accent, #f4f4f2);
+  background: var(--accent, #f3f3f3);
 }
 
 /* S6, the product string as the app prints it; a short one never breaks */
 .string {
-  color: #f4f4f2;
+  color: #f3f3f3;
   text-wrap: balance;
 }
 .string[data-short] { white-space: nowrap; }
 /* On /cn: what the string says, under it */
 .gloss {
   margin-top: -4px;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 
 /* Product render: the app's Save Money chip (boards 039, 042) */
@@ -124,7 +124,7 @@
   align-items: center;
   padding: 6px 12px;
   border-radius: 8px;
-  background: #312f36;
+  background: #323232;
   color: #ff901a;
   font-size: 15px;
   font-weight: 500;
@@ -152,11 +152,11 @@
   border: 0 solid;
 }
 .base {
-  color: #6b6b71;
+  color: #6d6d6d;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
 .lit {
-  color: #f4f4f2;
+  color: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
@@ -306,12 +306,12 @@
   }
 }
 .app {
-  color: #f4f4f2;
+  color: #f3f3f3;
   white-space: nowrap;
 }
 .precedent dd { margin: 0; }
 .quote {
-  color: #a0a0a5;
+  color: #a2a2a2;
   text-wrap: pretty;
 }
 .refLabel { margin: 0; }
@@ -328,7 +328,7 @@
 @media (min-width: 640px) {
   .precedent:has(.chipsCell) { align-items: center; }
 }
-.market { color: #f4f4f2; }
+.market { color: #f3f3f3; }
 
 /* ── The slab: why a nut ── */
 .why.why {
@@ -359,7 +359,7 @@
   height: 160px;
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: var(--sheet, #18181a);
+  background: var(--sheet, #191919);
 }
 /* 120px tall, at the cutout's own proportions */
 .acorn {

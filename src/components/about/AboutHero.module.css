@@ -24,7 +24,7 @@
 .inspect:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 4px; }
 .switch { position: relative; width: 24px; height: 13px; border-radius: 999px; background: var(--raised); transition: background-color 200ms; }
 .switch > span { position: absolute; top: 3px; left: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--color-mute); transition: transform 220ms var(--ease-arrive), background-color 200ms; }
-.inspect:hover .switch { background: #2c2c30; }
+.inspect:hover .switch { background: #2d2d2d; }
 .inspect[aria-pressed="true"] .switch { background: var(--sel); }
 .inspect[aria-pressed="true"] .switch > span { transform: translateX(11px); background: #fff; }
 
@@ -130,12 +130,12 @@
 .stopTitle { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 23px; font-size: 14px; line-height: 1.45; color: var(--color-ink); }
 .stopMeta { margin-top: 3px; font-size: 12px; line-height: 1.6; color: var(--color-mute); }
 .badge { padding: 2px 6px; border-radius: var(--r-tag); corner-shape: squircle; background: var(--raised); font: 9px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--color-mute); }
-.badgeNow { background: #2c2c30; color: var(--color-ink); }
+.badgeNow { background: #2d2d2d; color: var(--color-ink); }
 
 /* The way on: a raised plane, no underline; it lifts a tone on hover. */
 .explore { display: inline-flex; align-items: center; gap: 16px; min-height: 44px; margin-top: 24px; padding-inline: 16px; border-radius: var(--r-raised); corner-shape: squircle; background: var(--raised); color: var(--color-ink); font-size: 12px; transition: background-color 180ms; }
 .explore svg { transition: transform 180ms; }
-.explore:hover { background: #2c2c30; }
+.explore:hover { background: #2d2d2d; }
 .explore:hover svg { transform: translateY(3px); }
 .explore:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 5px; }
 

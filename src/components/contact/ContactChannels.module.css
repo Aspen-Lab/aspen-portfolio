@@ -66,7 +66,7 @@
 }
 
 .card:focus-visible {
-  --channel-surface: #1d1d20;
+  --channel-surface: #1e1e1e;
   outline: 1px solid var(--color-ink);
   outline-offset: 5px;
 }
@@ -97,7 +97,7 @@
 }
 
 @media (hover: hover) {
-  .card:hover { --channel-surface: #1d1d20; }
+  .card:hover { --channel-surface: #1e1e1e; }
   .card:hover .arrow { color: var(--color-ink); transform: translate(2px, -2px) scale(1.12); }
 }
 

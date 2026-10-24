@@ -14,8 +14,8 @@
 .icon svg { width: 20px; height: 20px; }
 .nodeLabel { display: block; font: 11px/16px var(--font-sans); letter-spacing: -.01em; text-align: center; text-wrap: balance; transition: color 140ms linear; }
 .node[aria-selected="true"] { color: var(--color-ink); }
-.node:hover .icon { color: var(--color-ink); background: #1d1d20; }
-.node[aria-selected="true"] .icon { background: #232326; }
+.node:hover .icon { color: var(--color-ink); background: #1e1e1e; }
+.node[aria-selected="true"] .icon { background: #242424; }
 .node:focus-visible .icon { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 .center { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; text-align: center; pointer-events: none; white-space: nowrap; }
 .centerWords { display: flex; align-items: center; gap: 8px; }

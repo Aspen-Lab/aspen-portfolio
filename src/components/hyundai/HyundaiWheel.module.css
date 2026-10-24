@@ -149,7 +149,7 @@
   position: absolute;
   left: calc(260 / 480 * 100%);
   top: calc(42 / 400 * 100%);
-  color: #f4f4f2;
+  color: #f3f3f3;
   white-space: nowrap;
   transform: translate(-50%, -100%);
 }
@@ -166,7 +166,7 @@
 }
 .readout {
   min-width: 4ch;
-  color: #f4f4f2;
+  color: #f3f3f3;
   text-align: right;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -192,7 +192,7 @@
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
   background-color: var(--raised);
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-family: var(--font-sans);
   font-size: 17px;
   line-height: 1;
@@ -201,7 +201,7 @@
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .step:hover { background-color: #2e2e32; }
+  .step:hover { background-color: #2f2f2f; }
 }
 .step:active { transform: translateY(1px); }
 .track {
@@ -221,7 +221,7 @@
 }
 .range::-webkit-slider-runnable-track {
   height: 1px;
-  background: #6b6b71;
+  background: #6d6d6d;
 }
 .range::-webkit-slider-thumb {
   width: 12px;
@@ -229,20 +229,20 @@
   margin-top: -5.5px;
   border: 0;
   border-radius: 0;
-  background: #f4f4f2;
+  background: #f3f3f3;
   -webkit-appearance: none;
   appearance: none;
 }
 .range::-moz-range-track {
   height: 1px;
-  background: #6b6b71;
+  background: #6d6d6d;
 }
 .range::-moz-range-thumb {
   width: 12px;
   height: 12px;
   border: 0;
   border-radius: 0;
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 .range:focus-visible { outline-offset: 3px; }
 .zero {
@@ -251,7 +251,7 @@
   top: calc(50% + 4px);
   width: 1px;
   height: 6px;
-  background: #6b6b71;
+  background: #6d6d6d;
   pointer-events: none;
 }
 
@@ -276,13 +276,13 @@
   flex: none;
   width: 6px;
   height: 6px;
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 .group { margin-top: 28px; }
 .group + .group { margin-top: 44px; }
 .groupHead {
   margin: 0;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 .list {
   display: grid;
@@ -296,10 +296,10 @@
   grid-template-columns: 22px minmax(0, 1fr);
   align-items: baseline;
 }
-.num { color: #6b6b71; }
-.text { color: #a0a0a5; }
+.num { color: #6d6d6d; }
+.text { color: #a2a2a2; }
 .text strong {
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-weight: 500;
 }
 

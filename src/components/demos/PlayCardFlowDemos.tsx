@@ -26,8 +26,8 @@ const stackedBlocks = [
 function Board({ grid = 0.65 }: { grid?: number }) {
   return (
     <>
-      <rect x="-8" y="-8" width="236" height="280" rx="10" fill="#111311" stroke="#393d36" />
-      <path d="M22 0V264M44 0V264M66 0V264M88 0V264M110 0V264M132 0V264M154 0V264M176 0V264M198 0V264M0 22H220M0 44H220M0 66H220M0 88H220M0 110H220M0 132H220M0 154H220M0 176H220M0 198H220M0 220H220M0 242H220" fill="none" stroke="#222620" strokeWidth={grid} />
+      <rect x="-8" y="-8" width="236" height="280" rx="10" fill="#121212" stroke="#393939" />
+      <path d="M22 0V264M44 0V264M66 0V264M88 0V264M110 0V264M132 0V264M154 0V264M176 0V264M198 0V264M0 22H220M0 44H220M0 66H220M0 88H220M0 110H220M0 132H220M0 154H220M0 176H220M0 198H220M0 220H220M0 242H220" fill="none" stroke="#232323" strokeWidth={grid} />
       <g className={styles.stack}>
         {stackedBlocks.map(([x, y]) => <rect key={`${x}-${y}`} x={x * 22 + 1} y={y * 22 + 1} width="20" height="20" rx="3" fill={x < 2 ? "#777e6f" : "#555f50"} />)}
       </g>
@@ -64,16 +64,16 @@ export function PlayDemo({ playing, cn }: DemoProps) {
   return (
     <Stage playing={playing} cn={cn}>
       <svg className={`${styles.scene} ${styles.wide}`} viewBox="0 0 640 400" focusable="false">
-        <rect width="640" height="400" fill="#181918" />
-        <g fill="#e2e1db">
+        <rect width="640" height="400" fill="#181818" />
+        <g fill="#dfdfdf">
           <rect x="30" y="28" width="9" height="9" rx="2" />
           <rect x="42" y="28" width="9" height="9" rx="2" />
           <rect x="30" y="40" width="9" height="9" rx="2" />
           <rect x="42" y="40" width="9" height="9" rx="2" />
         </g>
-        <text x="63" y="46" className={styles.brand}>aspen<tspan fontWeight="300" fill="#989c96">play</tspan></text>
+        <text x="63" y="46" className={styles.brand}>aspen<tspan fontWeight="300" fill="#999999">play</tspan></text>
         <text x="608" y="43" textAnchor="end" className={styles.eyebrow}>{cn ? "19 款网页游戏" : "19 BROWSER GAMES"}</text>
-        <path d="M30 66H610" stroke="#30322f" />
+        <path d="M30 66H610" stroke="#303030" />
 
         <text x="30" y="128" className={styles.eyebrow} fill="#c4ac78">{cn ? "试玩一局 / BLOCKS" : "A QUICK ROUND / BLOCKS"}</text>
         <text x="29" y="182" className={styles.playHeadline}>
@@ -100,14 +100,14 @@ export function PlayDemo({ playing, cn }: DemoProps) {
 
       {/* Compact: the count, the line, and the well at full height. */}
       <svg className={`${styles.scene} ${styles.compact}`} viewBox="0 0 320 200" focusable="false">
-        <rect width="320" height="200" fill="#181918" />
-        <g fill="#e2e1db">
+        <rect width="320" height="200" fill="#181818" />
+        <g fill="#dfdfdf">
           <rect x="16" y="15" width="6" height="6" rx="1.4" />
           <rect x="23.5" y="15" width="6" height="6" rx="1.4" />
           <rect x="16" y="22.5" width="6" height="6" rx="1.4" />
           <rect x="23.5" y="22.5" width="6" height="6" rx="1.4" />
         </g>
-        <text x="37" y="27.5" className={styles.brand}>aspen<tspan fontWeight="300" fill="#989c96">play</tspan></text>
+        <text x="37" y="27.5" className={styles.brand}>aspen<tspan fontWeight="300" fill="#999999">play</tspan></text>
 
         <text x="16" y="62" className={styles.eyebrow} fill="#c4ac78">{cn ? "19 款网页游戏" : "19 BROWSER GAMES"}</text>
         <text x="15" y="95" className={styles.playHeadline}>
@@ -133,45 +133,45 @@ export function CardFlowDemo({ playing, cn }: DemoProps) {
   return (
     <Stage playing={playing} cn={cn}>
       <svg className={`${styles.scene} ${styles.wide}`} viewBox="0 0 640 400" focusable="false">
-        <rect width="640" height="400" fill="#0e0e10" />
+        <rect width="640" height="400" fill="#0f0f0f" />
         <rect x="28" y="26" width="25" height="25" rx="7" fill="#f18a5d" />
         <text x="40.5" y="44" textAnchor="middle" fill="#fff3e6" fontSize="18" fontWeight="600">C</text>
         <text x="64" y="45" className={styles.brand}>CardFlow</text>
         <text x="610" y="43" textAnchor="end" className={styles.eyebrow}>{cn ? "写成文档，排成卡片" : "WORDS INTO CARDS"}</text>
-        <path d="M28 66H612" stroke="#2c2b2d" />
+        <path d="M28 66H612" stroke="#2c2c2c" />
 
-        <rect x="28" y="89" width="248" height="241" rx="8" fill="#151517" stroke="#323034" />
-        <path d="M28 127H276" stroke="#323034" />
-        <rect x="39" y="98" width="28" height="21" rx="4" fill="#343135" />
-        <text x="46" y="113" className={styles.toolText} fill="#eee9e4">H1</text>
+        <rect x="28" y="89" width="248" height="241" rx="8" fill="#161616" stroke="#323232" />
+        <path d="M28 127H276" stroke="#323232" />
+        <rect x="39" y="98" width="28" height="21" rx="4" fill="#333333" />
+        <text x="46" y="113" className={styles.toolText} fill="#e9e9e9">H1</text>
         <text x="83" y="113" className={styles.toolText}>H2</text>
         <text x="122" y="113" className={styles.toolText} fontWeight="700">B</text>
-        <path d="M151 102V115M169 109H190" stroke="#6e686e" />
+        <path d="M151 102V115M169 109H190" stroke="#6c6c6c" />
         <text x="208" y="113" className={styles.toolText}>分页</text>
 
         <g>
           <text x="44" y="167" className={styles.documentTitle}>把灵感写下来</text>
           <text x="44" y="192" className={styles.documentBody}>好内容，从一个想法开始。</text>
-          <rect className={styles.writingMask} x="43" y="139" width="217" height="61" fill="#151517" />
+          <rect className={styles.writingMask} x="43" y="139" width="217" height="61" fill="#161616" />
         </g>
         <path className={styles.editorDivider} d="M44 212H260" stroke="#b07459" strokeWidth="1" />
         <g className={styles.editorBody}>
           <text x="44" y="241" className={styles.documentSection}>01 · 从标题到封面</text>
-          <path d="M44 262H235M44 276H250M44 290H186" stroke="#5b565b" strokeWidth="3" />
+          <path d="M44 262H235M44 276H250M44 290H186" stroke="#595959" strokeWidth="3" />
         </g>
 
         <path className={styles.transfer} d="M286 212H318m-6-6 6 6-6 6" fill="none" stroke="#d98962" strokeWidth="1.4" />
 
         <g className={styles.backCard}>
           <g transform="rotate(9 482 324)">
-            <rect x="408" y="131" width="156" height="210" rx="9" fill="#191619" stroke="#544139" />
+            <rect x="408" y="131" width="156" height="210" rx="9" fill="#181818" stroke="#544139" />
             <text x="429" y="166" className={styles.cardSmall}>03 / SHARE</text>
             <path d="M429 200H529M429 214H516M429 228H522" stroke="#6c5348" strokeWidth="3" />
           </g>
         </g>
         <g className={styles.middleCard}>
           <g transform="rotate(4 468 322)">
-            <rect x="383" y="115" width="164" height="222" rx="9" fill="#20191b" stroke="#78523e" />
+            <rect x="383" y="115" width="164" height="222" rx="9" fill="#1c1c1c" stroke="#78523e" />
             <text x="405" y="151" className={styles.cardSmall}>02 / STORY</text>
             <text x="405" y="186" className={styles.documentSection}>每个想法</text>
             <text x="405" y="211" className={styles.documentSection}>都有下一页</text>
@@ -179,7 +179,7 @@ export function CardFlowDemo({ playing, cn }: DemoProps) {
           </g>
         </g>
         <g className={styles.frontCard}>
-          <rect x="345" y="91" width="177" height="242" rx="10" fill="#1a171b" stroke="#ba7757" />
+          <rect x="345" y="91" width="177" height="242" rx="10" fill="#191919" stroke="#ba7757" />
           <path d="M357 92H510" stroke="#e3aa79" strokeWidth="2" />
           <text x="367" y="120" className={styles.cardSmall}>01 / COVER</text>
           <text x="367" y="177" className={styles.coverTitle}>把灵感</text>
@@ -198,7 +198,7 @@ export function CardFlowDemo({ playing, cn }: DemoProps) {
 
       {/* Compact: the editor on the left becomes the cover on the right. */}
       <svg className={`${styles.scene} ${styles.compact}`} viewBox="0 0 320 200" focusable="false">
-        <rect width="320" height="200" fill="#0e0e10" />
+        <rect width="320" height="200" fill="#0f0f0f" />
         <rect x="16" y="14" width="20" height="20" rx="5.5" fill="#f18a5d" />
         <text x="26" y="28.6" textAnchor="middle" fill="#fff3e6" fontSize="14" fontWeight="600">C</text>
         <text x="44" y="29" className={styles.brand}>CardFlow</text>
@@ -206,43 +206,43 @@ export function CardFlowDemo({ playing, cn }: DemoProps) {
         <g>
           {themes.map((fill, i) => <rect key={fill} x={248 + i * 12} y="20" width="8" height="8" rx="2" fill={fill} />)}
         </g>
-        <path d="M16 46H304" stroke="#2c2b2d" />
+        <path d="M16 46H304" stroke="#2c2c2c" />
 
-        <rect x="16.5" y="58.5" width="146" height="128" rx="6" fill="#151517" stroke="#323034" />
-        <path d="M17 80.5H162" stroke="#323034" />
-        <rect x="23" y="63.5" width="21" height="12.5" rx="3" fill="#343135" />
-        <text x="33.5" y="73.3" textAnchor="middle" className={styles.toolText} fill="#eee9e4">H1</text>
+        <rect x="16.5" y="58.5" width="146" height="128" rx="6" fill="#161616" stroke="#323232" />
+        <path d="M17 80.5H162" stroke="#323232" />
+        <rect x="23" y="63.5" width="21" height="12.5" rx="3" fill="#333333" />
+        <text x="33.5" y="73.3" textAnchor="middle" className={styles.toolText} fill="#e9e9e9">H1</text>
         <text x="52" y="73.3" className={styles.toolText}>H2</text>
         <text x="73" y="73.3" className={styles.toolText} fontWeight="700">B</text>
-        <path d="M89 65V75M97 70H111" stroke="#6e686e" />
+        <path d="M89 65V75M97 70H111" stroke="#6c6c6c" />
         <text x="154" y="73.3" textAnchor="end" className={styles.toolText}>分页</text>
 
         <g>
           <text x="26" y="107" className={styles.documentTitle}>把灵感写下来</text>
-          <rect className={styles.writingMask} x="25" y="89" width="128" height="24" fill="#151517" />
+          <rect className={styles.writingMask} x="25" y="89" width="128" height="24" fill="#161616" />
         </g>
         <path className={styles.editorDivider} d="M26 121.5H153" stroke="#b07459" strokeWidth="1" />
         <g className={styles.editorBody}>
           <text x="26" y="142" className={styles.documentSection}>01 · 从标题到封面</text>
-          <path d="M26 157H136M26 166H148M26 175H104" stroke="#5b565b" strokeWidth="3" />
+          <path d="M26 157H136M26 166H148M26 175H104" stroke="#595959" strokeWidth="3" />
         </g>
 
         <path className={styles.transfer} d="M168 121.5H180m-4.5-4.5 4.5 4.5-4.5 4.5" fill="none" stroke="#d98962" strokeWidth="1.3" />
 
         <g className={styles.backCard}>
           <g transform="rotate(9 250 126)">
-            <rect x="200" y="62" width="100" height="128" rx="7" fill="#191619" stroke="#544139" />
+            <rect x="200" y="62" width="100" height="128" rx="7" fill="#181818" stroke="#544139" />
             <path d="M212 150H272M212 159H264M212 168H268" stroke="#6c5348" strokeWidth="2.5" />
           </g>
         </g>
         <g className={styles.middleCard}>
           <g transform="rotate(4.5 247 123)">
-            <rect x="196" y="58" width="102" height="130" rx="7" fill="#20191b" stroke="#78523e" />
+            <rect x="196" y="58" width="102" height="130" rx="7" fill="#1c1c1c" stroke="#78523e" />
             <path d="M208 150H276M208 159H266M208 168H272" stroke="#785e52" strokeWidth="2.5" />
           </g>
         </g>
         <g className={styles.frontCard}>
-          <rect x="186.5" y="54.5" width="106" height="136" rx="8" fill="#1a171b" stroke="#ba7757" />
+          <rect x="186.5" y="54.5" width="106" height="136" rx="8" fill="#191919" stroke="#ba7757" />
           <path d="M194 55.5H285" stroke="#e3aa79" strokeWidth="2" />
           <text x="197" y="75" className={styles.cardSmall}>01 / COVER</text>
           <text x="197" y="112" className={styles.coverTitle}>把灵感</text>

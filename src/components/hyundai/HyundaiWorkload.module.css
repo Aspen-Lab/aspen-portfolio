@@ -75,7 +75,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: #f4f4f2;
+  color: #f3f3f3;
   text-align: right;
 }
 .name[data-side="w"] { grid-column: 1; }
@@ -99,8 +99,8 @@
   height: var(--sq);
   border-radius: var(--r-tag, 10px);
   corner-shape: squircle;
-  background: var(--raised, #26262a);
-  color: #f4f4f2;
+  background: var(--raised, #272727);
+  color: #f3f3f3;
   letter-spacing: 0;
 }
 /* Lit, an ink square with the number dark fades on over it: an opacity,
@@ -113,7 +113,7 @@
   place-items: center;
   border-radius: inherit;
   corner-shape: squircle;
-  background: #f4f4f2;
+  background: #f3f3f3;
   color: #0a0a0a;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
@@ -137,15 +137,15 @@
   transition: opacity var(--t-2, 360ms) var(--ease-arrive);
 }
 .lineGrey {
-  stroke: var(--grey-2, #6b6b71);
+  stroke: var(--grey-2, #6d6d6d);
   stroke-width: 1px;
 }
 .lineInk {
-  stroke: #f4f4f2;
+  stroke: #f3f3f3;
   stroke-width: 1.5px;
 }
 .lineAcc {
-  stroke: var(--accent, #f4f4f2);
+  stroke: var(--accent, #f3f3f3);
   stroke-width: 2px;
   stroke-linecap: square;
 }
@@ -212,7 +212,7 @@
 .takeaway {
   max-width: 46ch;
   margin: 32px 0 0;
-  color: #d2d2d0;
+  color: #d1d1d1;
   text-wrap: pretty;
 }
 :global(html[lang="zh-CN"]) .takeaway { max-width: 30em; }
@@ -250,13 +250,13 @@
   width: 6px;
   height: 6px;
   margin-top: calc((1.35em - 6px) / 2);
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 
 .survey { margin: 12px 0 0; }
 .nasa {
   margin: 4px 0 0;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 
 .part { margin-top: 40px; }
@@ -271,14 +271,14 @@
   grid-area: 1 / 1;
   display: block;
   margin: 0;
-  color: #d2d2d0;
+  color: #d1d1d1;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
   text-wrap: pretty;
 }
 .qName {
   display: block;
-  color: #f4f4f2;
+  color: #f3f3f3;
 }
 .qText { display: block; }
 .root:not([data-dim]) .question[data-k="sit"],
@@ -301,17 +301,17 @@
   align-items: flex-end;
   justify-content: space-between;
   height: 16px;
-  border-bottom: 1px solid var(--axis, rgb(244 244 242 / 24%));
+  border-bottom: 1px solid var(--axis, rgb(243 243 243 / 24%));
 }
 .ticks i {
   width: 1px;
   height: 5px;
-  background: var(--axis, rgb(244 244 242 / 24%));
+  background: var(--axis, rgb(243 243 243 / 24%));
 }
 .ticks i[data-h="m"] { height: 9px; }
 .ticks i[data-h="l"] {
   height: 15px;
-  background: var(--grey-1, #a0a0a5);
+  background: var(--grey-1, #a2a2a2);
 }
 .ends {
   display: flex;
@@ -344,13 +344,13 @@
 /* A pair: a raised square; lit, its ink fill fades on over it */
 .cell {
   position: relative;
-  background: var(--raised, #26262a);
+  background: var(--raised, #272727);
 }
 .cell::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: #f4f4f2;
+  background: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
@@ -376,7 +376,7 @@
   display: flex;
   align-items: baseline;
   gap: 12px;
-  color: #f4f4f2;
+  color: #f3f3f3;
   opacity: 0.55;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
@@ -397,7 +397,7 @@
 
 .instruction {
   margin: 16px 0 0;
-  color: #a0a0a5;
+  color: #a2a2a2;
   text-wrap: pretty;
 }
 

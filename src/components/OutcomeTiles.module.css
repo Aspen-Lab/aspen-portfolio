@@ -69,7 +69,7 @@
   height: 52px;
   border-radius: var(--r-tag);
   corner-shape: squircle;
-  background: #f4f4f2;
+  background: #f3f3f3;
   color: #0a0a0a;
   font-family: var(--font-mono);
   font-size: 16px;
@@ -153,7 +153,7 @@
   overflow: visible;
 }
 .matrix rect {
-  fill: #f4f4f2;
+  fill: #f3f3f3;
   opacity: 0;
 }
 .matrix[data-lit="true"] rect {
@@ -174,15 +174,15 @@
     background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .tile[data-link]:hover { background: #232326; }
+  .tile[data-link]:hover { background: #242424; }
   .tile[data-link]:hover .arrow {
-    background: #2e2e32;
+    background: #2f2f2f;
     transform: translateX(3px);
   }
 }
-.tile[data-link]:focus-visible { background: #232326; }
+.tile[data-link]:focus-visible { background: #242424; }
 .tile[data-link]:focus-visible .arrow {
-  background: #2e2e32;
+  background: #2f2f2f;
   transform: translateX(3px);
 }
 .tile[data-link]:active { transform: translateY(1px); }

@@ -69,8 +69,8 @@
   .thumb[data-on="false"]:hover .thumbFrame { background: #141618; }
 }
 .thumb[data-on="true"] .thumbFrame { background: var(--raised); }
-.thumbLabel { color: #8a8a90; }
-.thumb[data-on="true"] .thumbLabel { color: #f4f4f2; }
+.thumbLabel { color: #8c8c8c; }
+.thumb[data-on="true"] .thumbLabel { color: #f3f3f3; }
 
 .mini {
   --s: 0.2857;
@@ -105,8 +105,8 @@
   gap: 12px;
   margin: 0;
 }
-.stageLabel > :first-child { color: #f4f4f2; }
-.count { color: #6b6b71; }
+.stageLabel > :first-child { color: #f3f3f3; }
+.count { color: #6d6d6d; }
 .nav {
   display: flex;
   gap: 8px;
@@ -122,14 +122,14 @@
   border-radius: var(--r-raised);
   corner-shape: squircle;
   background: var(--raised);
-  color: #f4f4f2;
+  color: #f3f3f3;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 .navBtn svg { width: 16px; height: 16px; }
 @media (hover: hover) {
-  .navBtn:hover { background: #2c2c30; }
+  .navBtn:hover { background: #2d2d2d; }
 }
 .navBtn:active svg { transform: scale(0.9); }
 
@@ -229,14 +229,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #d2d2d0;
+  color: #d1d1d1;
   border-radius: 2px;
   cursor: default;
   -webkit-tap-highlight-color: transparent;
 }
 .legendItem:focus { outline: none; }
 .legendItem:focus-visible {
-  outline: 1px solid #f4f4f2;
+  outline: 1px solid #f3f3f3;
   outline-offset: 3px;
 }
 
@@ -250,8 +250,8 @@
   width: 20px;
   height: 20px;
   border-radius: 2px;
-  background: #2c2c30;
-  color: #a0a0a5;
+  background: #2d2d2d;
+  color: #a2a2a2;
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 400;
@@ -279,7 +279,7 @@
   display: grid;
   place-items: center;
   border-radius: 2px;
-  background: #f4f4f2;
+  background: #f3f3f3;
   color: #0a0a0a;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
@@ -370,18 +370,18 @@
   display: flex;
   align-items: baseline;
   gap: 10px;
-  color: #a0a0a5;
+  color: #a2a2a2;
   text-wrap: pretty;
 }
-.verdict[data-ok="true"] { color: #d2d2d0; }
+.verdict[data-ok="true"] { color: #d1d1d1; }
 .glyph {
   flex: none;
   width: 12px;
   height: 12px;
-  color: #a0a0a5;
+  color: #a2a2a2;
   transform: translateY(1px);
 }
-.glyph[data-ok="true"] { color: #f4f4f2; }
+.glyph[data-ok="true"] { color: #f3f3f3; }
 
 /* ════ Product renders ════ every length in the card's em (--nr-u) */
 .card {

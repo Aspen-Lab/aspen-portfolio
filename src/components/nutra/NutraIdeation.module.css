@@ -26,7 +26,7 @@
   border-radius: var(--r-raised);
   corner-shape: squircle;
   background: none;
-  color: var(--color-ink, #f4f4f2);
+  color: var(--color-ink, #f3f3f3);
   text-align: left;
   cursor: pointer;
   transition: transform var(--t-1, 160ms) var(--ease-arrive);
@@ -48,7 +48,7 @@
 .tabNum { flex: none; }
 .tabLabel {
   min-width: 0;
-  color: var(--color-ink, #f4f4f2);
+  color: var(--color-ink, #f3f3f3);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -64,7 +64,7 @@
   z-index: -1;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #232326);
+  background: var(--raised, #242424);
   opacity: 0;
   transition: opacity var(--t-2, 360ms) var(--ease-arrive);
 }
@@ -130,7 +130,7 @@
   gap: 12px;
   min-width: 0;
   padding: 16px 16px 14px;
-  color: #f4f4f2;
+  color: #f3f3f3;
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -143,7 +143,7 @@
 }
 .tileBtn:active { transform: translateY(1px); }
 @media (hover: hover) {
-  .tileBtn:hover { background-color: #1d1d20; }
+  .tileBtn:hover { background-color: #1e1e1e; }
 }
 .tileBtn::before {
   content: "";
@@ -152,7 +152,7 @@
   inset: 0;
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: var(--raised, #232326);
+  background: var(--raised, #242424);
   pointer-events: none;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
@@ -174,13 +174,13 @@
 .focusSq {
   width: 8px;
   height: 8px;
-  background: var(--accent, #f4f4f2);
+  background: var(--accent, #f3f3f3);
 }
 /* S6, the question whole; the row's tiles share one height, and the last
    line never holds a lone word */
 .q {
   display: block;
-  color: #f4f4f2;
+  color: #f3f3f3;
   text-wrap: pretty;
 }
 .count { margin-top: auto; }
@@ -268,7 +268,7 @@
 .ideaQ {
   max-width: 44rem;
   margin: 0;
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-size: 22px;
   font-weight: 400;
   line-height: 1.25;
@@ -354,7 +354,7 @@
   display: block;
   height: 40px;
   margin: 12px 0 8px;
-  color: #6b6b71;
+  color: #6d6d6d;
 }
 .colLinkLine {
   position: absolute;
@@ -416,8 +416,8 @@
   padding: 9px 13px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #232326);
-  color: #f4f4f2;
+  background: var(--raised, #242424);
+  color: #f3f3f3;
   font-size: 15px;
   font-weight: 400;
   line-height: 20px;
@@ -432,7 +432,7 @@
   width: 8px;
   height: 8px;
   margin-right: 10px;
-  background: var(--accent, #f4f4f2);
+  background: var(--accent, #f3f3f3);
   vertical-align: 1px;
 }
 
@@ -448,7 +448,7 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 .esLabel { min-width: 0; }
 
@@ -461,7 +461,7 @@
 .sub {
   position: relative;
   padding: 1px 0 1px 14px;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 .sub::before {
   content: "";
@@ -470,7 +470,7 @@
   left: 0;
   width: 4px;
   height: 4px;
-  background: #6b6b71;
+  background: #6d6d6d;
 }
 .subItems {
   margin-top: 2px;
@@ -483,7 +483,7 @@
   content: "–";
   position: absolute;
   left: 0;
-  color: #6b6b71;
+  color: #6d6d6d;
 }
 
 /* ── Connectors, drawn twice: grey under ink ── */
@@ -510,9 +510,9 @@
   position: absolute;
   inset: 0;
 }
-.base { color: #6b6b71; }
+.base { color: #6d6d6d; }
 .lit {
-  color: #f4f4f2;
+  color: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
@@ -574,8 +574,8 @@
   top: var(--cy);
   display: none;
   height: 1px;
-  background: #6b6b71;
-  color: #6b6b71;
+  background: #6d6d6d;
+  color: #6d6d6d;
 }
 .feed[data-to="node"] {
   right: 100%;
@@ -613,9 +613,9 @@
   display: flex;
   align-items: center;
 }
-.bBase { color: #6b6b71; }
+.bBase { color: #6d6d6d; }
 .bLit {
-  color: #f4f4f2;
+  color: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
@@ -627,7 +627,7 @@
 .bLine[data-end] { width: 10px; }
 .branch .headR { position: static; }
 .bLabel { padding: 0 8px; }
-.bLit .bLabel { color: #f4f4f2; }
+.bLit .bLabel { color: #f3f3f3; }
 
 /* A phone, or three columns under 1280px, has no room for the label on
    the line: it sits over the node as a caption, and the elbow (lifted by
@@ -649,9 +649,9 @@
    turn into Not on track, and its label, all ink */
 .kid[data-focus] > .elbow .base,
 .kid[data-focus] > .branched > .branch .bBase,
-.kid[data-focus] > .branched > .branch .bLabel { color: #f4f4f2; }
+.kid[data-focus] > .branched > .branch .bLabel { color: #f3f3f3; }
 .kid[data-trunk-ink] > .elbow .base .v,
-.subs[data-trunk-ink] > .elbow .base .v { background: #f4f4f2; }
+.subs[data-trunk-ink] > .elbow .base .v { background: #f3f3f3; }
 
 /* A parent pointed at or focused: its outgoing connectors ink */
 .life[data-node="create"] :is(.kid[data-from="create"] > .elbow, .kid[data-from="create"] > .branched > .branch, .subs[data-from="create"] > .elbow) :is(.lit, .bLit),
@@ -664,7 +664,7 @@
 .life[data-node="reminder"] .node[data-id="reminder"],
 .life[data-node="solution"] .node[data-id="solution"],
 .life[data-node="celebrate"] .node[data-id="celebrate"],
-.life[data-node="recall"] .node[data-id="recall"] { background: #2c2c30; }
+.life[data-node="recall"] .node[data-id="recall"] { background: #2d2d2d; }
 
 /* The legend counts the ink squares */
 .legend {

@@ -42,7 +42,7 @@
 .selector:hover, .selector[aria-selected="true"] { color: var(--color-ink); }
 /* The chosen tab stands on a plane that slides between them, as the
    nav's does; no underline. */
-.selectionLine { position: absolute; top: 0; bottom: 0; left: 0; width: 25%; border-radius: var(--r-raised); corner-shape: squircle; background: #232326; transition: transform 180ms cubic-bezier(.2,.8,.2,1); }
+.selectionLine { position: absolute; top: 0; bottom: 0; left: 0; width: 25%; border-radius: var(--r-raised); corner-shape: squircle; background: #242424; transition: transform 180ms cubic-bezier(.2,.8,.2,1); }
 .selector:focus-visible, .more:focus-visible, .panel:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 
 :global(html[lang="zh-CN"]) .title { font-family: var(--font-sans); font-size: 19px; font-weight: 400; line-height: 1.4; }

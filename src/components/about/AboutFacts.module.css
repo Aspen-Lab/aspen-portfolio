@@ -7,7 +7,7 @@
 .tabs { display: flex; gap: 2px; }
 .tab { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding-inline: 14px; border-radius: calc(var(--r-plane) - 6px); corner-shape: squircle; font-size: 12px; color: var(--color-mute); cursor: pointer; transition: color 160ms, background-color 160ms; }
 .tab span { font: 9px var(--font-mono); opacity: .6; }
-.tab:hover { color: var(--color-ink); background: #1d1d20; }
+.tab:hover { color: var(--color-ink); background: #1e1e1e; }
 .tab[aria-selected="true"] { color: var(--color-ink); background: var(--raised); }
 .tab:focus-visible, .panel:focus-visible { outline: 1px solid var(--color-ink); outline-offset: -3px; }
 

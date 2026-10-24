@@ -70,7 +70,7 @@ export function Hero() {
             stays where the line was. It opens from the centre, once, the
             way the line used to be drawn (.hero-horizon, globals.css). */}
         <div className="relative flex flex-col sm:flex-[2_1_auto]">
-          <div aria-hidden className="hero-horizon absolute inset-y-0 left-1/2 -z-10 w-screen -translate-x-1/2 bg-[#1d1d20]" />
+          <div aria-hidden className="hero-horizon absolute inset-y-0 left-1/2 -z-10 w-screen -translate-x-1/2 bg-[#1e1e1e]" />
           <div className="flex flex-col gap-10 pt-7 pb-12 sm:pt-9 sm:pb-14 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <HeroBio />

@@ -5,7 +5,7 @@
 
 /** Raised bezel tray — top edge catches light, bottom edge falls to shadow. */
 export const TRAY_STYLE = {
-  background: "linear-gradient(180deg, #29292B 0%, #232324 55%, #1F1F20 100%)",
+  background: "linear-gradient(180deg, #2A2A2A 0%, #232323 55%, #1F1F1F 100%)",
   boxShadow: [
     "inset 0 1px 0 rgba(255,255,255,0.07)",
     "inset 0 -1px 0 rgba(0,0,0,0.42)",
@@ -33,7 +33,7 @@ export const HOVER_CAP_STYLE = {
 
 /** Solid raised cap — a physical thumb/button that casts a shadow. */
 export const CAP_STYLE = {
-  background: "linear-gradient(180deg, #323234 0%, #28282A 100%)",
+  background: "linear-gradient(180deg, #333333 0%, #292929 100%)",
   boxShadow: [
     "inset 0 1px 0 rgba(255,255,255,0.09)",
     "inset 0 0 0 1px rgba(255,255,255,0.02)",

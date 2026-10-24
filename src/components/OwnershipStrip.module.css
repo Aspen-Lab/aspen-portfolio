@@ -21,7 +21,7 @@
 
 .tools {
   padding: 24px 20px;
-  background: var(--sheet, #17171a);
+  background: var(--sheet, #181818);
 }
 @media (min-width: 640px) {
   .tools { padding: 40px; }
@@ -59,7 +59,7 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 
 .note {

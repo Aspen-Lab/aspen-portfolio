@@ -168,9 +168,9 @@
       background-color var(--t-1) var(--ease-arrive);
   }
   @media (hover: hover) {
-    .root[data-count="4"] .tab:hover { background: #232326; }
+    .root[data-count="4"] .tab:hover { background: #242424; }
   }
-  .root[data-count="4"] .tab:focus-visible { background: #232326; }
+  .root[data-count="4"] .tab:focus-visible { background: #242424; }
 }
 
 /* ── The sheet contract ── a caller's panels and marks, keyed by tab k:

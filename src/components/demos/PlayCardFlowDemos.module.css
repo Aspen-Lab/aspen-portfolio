@@ -22,34 +22,34 @@
 }
 
 .brand {
-  fill: #eeeae4;
+  fill: #e9e9e9;
   font-size: 22px;
   font-weight: 500;
   letter-spacing: -.7px;
 }
 
 .eyebrow {
-  fill: #a3a69e;
+  fill: #a2a2a2;
   font-family: var(--font-geist-mono), monospace;
   font-size: 10px;
   letter-spacing: 1px;
 }
 
 .playHeadline {
-  fill: #e5e6df;
+  fill: #e3e3e3;
   font-size: 40px;
   font-weight: 400;
   letter-spacing: -1.5px;
 }
 
 .description {
-  fill: #a4a99d;
+  fill: #a3a3a3;
   font-size: 13px;
 }
 
 .keycaps rect {
-  fill: #232721;
-  stroke: #3b4036;
+  fill: #242424;
+  stroke: #3b3b3b;
 }
 
 .keycaps path {
@@ -106,20 +106,20 @@
 }
 
 .toolText {
-  fill: #918891;
+  fill: #8e8e8e;
   font-size: 11px;
   font-family: var(--font-geist-mono), monospace;
 }
 
 .documentTitle {
-  fill: #efebe7;
+  fill: #ebebeb;
   font-size: 23px;
   font-weight: 600;
   letter-spacing: -.5px;
 }
 
-.documentBody { fill: #a29aa2; font-size: 13px; }
-.documentSection { fill: #ddd3d7; font-size: 16px; font-weight: 500; }
+.documentBody { fill: #9f9f9f; font-size: 13px; }
+.documentSection { fill: #d8d8d8; font-size: 16px; font-weight: 500; }
 .coverTitle { fill: #f2e7e2; font-size: 31px; font-weight: 600; letter-spacing: 1px; }
 .cardSmall { fill: #bca397; font-size: 10px; letter-spacing: .5px; }
 .writingMask { transform: scaleX(0); transform-box: fill-box; transform-origin: right center; }

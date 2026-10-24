@@ -61,7 +61,7 @@
   z-index: -1;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #232326);
+  background: var(--raised, #242424);
   opacity: 0;
   transition: opacity var(--t-2) var(--ease-arrive);
 }
@@ -167,7 +167,7 @@
   flex: none;
   width: 6px;
   height: 6px;
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 .note { color: var(--color-mute); }
 
@@ -233,9 +233,9 @@
   background: transparent;
   transition: background-color var(--t-1) var(--ease-arrive);
 }
-.disc[aria-checked="true"]::before { background: #2c2c30; }
+.disc[aria-checked="true"]::before { background: #2d2d2d; }
 @media (hover: hover) {
-  .disc[aria-checked="false"]:hover::before { background: #252528; }
+  .disc[aria-checked="false"]:hover::before { background: #262626; }
 }
 .dot {
   flex: none;
@@ -307,16 +307,16 @@
 .readName { margin: 0; }
 .readHex {
   margin: 12px 0 0;
-  color: #f4f4f2;
+  color: #f3f3f3;
 }
 .sep {
   margin: 0 10px;
-  color: #6b6b71;
+  color: #6d6d6d;
 }
 .readNote {
   max-width: 34ch;
   margin: 16px 0 0;
-  color: #d2d2d0;
+  color: #d1d1d1;
   text-wrap: pretty;
 }
 
@@ -457,7 +457,7 @@
     background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .faceRow[aria-pressed="false"]:hover { background: #121214; }
+  .faceRow[aria-pressed="false"]:hover { background: #131313; }
 }
 .faceRow[aria-pressed="true"] { background: var(--sheet); }
 .faceRowRows { color: var(--color-mute); }
@@ -549,8 +549,8 @@
   column-gap: 16px;
   align-items: baseline;
 }
-.useHex { color: #f4f4f2; }
-.useNote { color: #d2d2d0; text-wrap: pretty; }
+.useHex { color: #f3f3f3; }
+.useNote { color: #d1d1d1; text-wrap: pretty; }
 
 /* Stepper (042): done rows green with their values, the current row
    orange on a sliding pill, the rest an open ring */

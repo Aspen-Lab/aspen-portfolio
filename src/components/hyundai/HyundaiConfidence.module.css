@@ -22,7 +22,7 @@
   width: 6px;
   height: 6px;
   margin-top: calc((1.35em - 6px) / 2);
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 
 
@@ -63,7 +63,7 @@
 .formula {
   display: flex;
   align-items: center;
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-weight: 300;
   letter-spacing: 0;
   white-space: nowrap;
@@ -94,14 +94,14 @@
   margin-right: 0.22em;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
-.op { color: #a0a0a5; }
-.paren { color: #a0a0a5; }
+.op { color: #a2a2a2; }
+.paren { color: #a2a2a2; }
 .plus {
   margin-left: 0.04em;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
-.dot { color: #6b6b71; }
-.coefSym { color: #a0a0a5; }
+.dot { color: #6d6d6d; }
+.coefSym { color: #a2a2a2; }
 .frac {
   display: inline-grid;
   justify-items: center;
@@ -122,7 +122,7 @@
   font-size: 15px;
   line-height: 0;
   vertical-align: baseline;
-  color: #d2d2d0;
+  color: #d1d1d1;
 }
 
 /* A term lit: the others step back */
@@ -160,7 +160,7 @@
 .root[data-term="hrv"] .row[data-k="hrv"],
 .root[data-term="hrdiff"] .row[data-k="hrdiff"],
 .root[data-term="ecgvar"] .row[data-k="ecgvar"],
-.root[data-term="t"] .row[data-k="t"] { background-color: var(--raised, #26262a); }
+.root[data-term="t"] .row[data-k="t"] { background-color: var(--raised, #272727); }
 .code {
   position: relative;
   justify-self: start;
@@ -172,7 +172,7 @@
   border-radius: var(--r-tag, 10px);
   corner-shape: squircle;
   background: var(--raised);
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.35;
@@ -182,7 +182,7 @@
 .codeLit {
   position: absolute;
   inset: 0;
-  background: #f4f4f2;
+  background: #f3f3f3;
   color: #0a0a0a;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
@@ -193,15 +193,15 @@
 .root[data-term="t"] .row[data-k="t"] .codeLit { opacity: 1; }
 .desc {
   padding-top: 1px;
-  color: #d2d2d0;
+  color: #d1d1d1;
   text-wrap: pretty;
 }
 .coefLine {
   margin: 20px 0 0;
-  color: #d2d2d0;
+  color: #d1d1d1;
 }
 .coefLine .coefSym { font-size: 15px; }
-.coefEq { color: #a0a0a5; }
+.coefEq { color: #a2a2a2; }
 
 /* ══ The pipeline ══ */
 .tree { display: none; margin: auto 0; padding-top: 28px; }
@@ -244,7 +244,7 @@
   border-radius: var(--r-tag, 10px);
   corner-shape: squircle;
   background-color: var(--raised);
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.3;
@@ -255,8 +255,8 @@
     color var(--t-1) var(--ease-arrive);
 }
 .node[data-p] {
-  background-color: #161618;
-  color: #8a8a90;
+  background-color: #171717;
+  color: #8c8c8c;
 }
 .node[data-accent] {
   padding: 8px 14px;
@@ -267,7 +267,7 @@
 .root[data-term="hrdiff"] .node[data-t~="hrdiff"],
 .root[data-term="ecgvar"] .node[data-t~="ecgvar"],
 .root[data-term="t"] .node[data-t~="t"] {
-  background-color: #f4f4f2;
+  background-color: #f3f3f3;
   color: #0a0a0a;
 }
 
@@ -315,7 +315,7 @@
 }
 .seg[data-p] { border-style: dashed; }
 .seg[data-ink] {
-  border-color: #f4f4f2;
+  border-color: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -338,7 +338,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: #f4f4f2;
+  background: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -381,7 +381,7 @@
   fill: var(--grey-2);
   stroke: none;
 }
-.ldot { color: #6b6b71; }
+.ldot { color: #6d6d6d; }
 .lend {
   display: flex;
   flex-wrap: wrap;

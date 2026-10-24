@@ -52,7 +52,7 @@
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .toggle:hover { background-color: #2e2e32; }
+  .toggle:hover { background-color: #2f2f2f; }
 }
 .toggle:active svg { transform: translateY(1px); }
 
@@ -101,9 +101,9 @@
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .clip:hover { background-color: #161618; }
+  .clip:hover { background-color: #171717; }
 }
-.clip[data-on="true"] { background-color: var(--tile, #1d1d20); }
+.clip[data-on="true"] { background-color: var(--tile, #1e1e1e); }
 .thumb {
   position: relative;
   display: block;
@@ -129,7 +129,7 @@
   position: relative;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6b6b71);
+  background: var(--grey-2, #6d6d6d);
 }
 .sq::after {
   content: "";
@@ -141,7 +141,7 @@
 }
 .clip[data-on="true"] .sq::after { opacity: 1; }
 .title {
-  color: var(--color-mute, #a0a0a5);
+  color: var(--color-mute, #a2a2a2);
   line-height: 1.35;
   text-wrap: pretty;
 }

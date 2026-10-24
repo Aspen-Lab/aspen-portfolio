@@ -5,9 +5,9 @@
   --study-bg: var(--tile);
   --study-line: color-mix(in srgb, var(--color-ink) 37%, var(--study-bg));
   --study-quiet: color-mix(in srgb, var(--color-ink) 13%, var(--study-bg));
-  --study-deep: #212124;
-  --study-plane: #2a2a2e;
-  --study-light: #36363a;
+  --study-deep: #222222;
+  --study-plane: #2b2b2b;
+  --study-light: #373737;
   color: var(--color-ink);
 }
 
@@ -45,7 +45,7 @@
 }
 
 .remix:hover {
-  background: #2c2c30;
+  background: #2d2d2d;
 }
 
 .remix:focus-visible {

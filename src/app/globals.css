@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #0F0F10;
-  --color-cream: #1d1d20;
-  --color-line: #252528;
-  --color-ink: #F4F4F2;
-  --color-mute: #A0A0A5;
-  --color-soft: #717177;
+  --color-paper: #0F0F0F;
+  --color-cream: #1e1e1e;
+  --color-line: #262626;
+  --color-ink: #F3F3F3;
+  --color-mute: #A2A2A2;
+  --color-soft: #737373;
 
   --font-display: var(--font-switzer), "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-sans: var(--font-switzer), "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -92,10 +92,10 @@ html[lang="zh-CN"] .type-display {
 }
 /* No edge to brighten: the plane itself lifts a tone */
 .plate:hover {
-  background: #232326;
+  background: #242424;
 }
 .plate:active {
-  background: #26262a;
+  background: #272727;
   transition-duration: 90ms;
 }
 /* The figure sits edge to edge inside the plate. The rule that separates
@@ -118,11 +118,11 @@ html[lang="zh-CN"] .type-display {
 .plate-button {
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #26262a;
+  background: #272727;
   transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
 }
 .plate-button:hover {
-  background: #2e2e32;
+  background: #2f2f2f;
 }
 
 ::selection {
@@ -180,11 +180,11 @@ button {
 }
 /* Planes, not frames: hover and focus lift the plane a tone */
 .card-material:has(:focus-visible) {
-  background: #232326;
+  background: #242424;
 }
 @media (hover: hover) {
   .card-material:hover {
-    background: #232326;
+    background: #242424;
   }
 }
 
@@ -208,7 +208,7 @@ button {
   transform: translate(10px, 10px);
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: #131314;
+  background: #131313;
   pointer-events: none;
 }
 
@@ -324,7 +324,7 @@ button {
 }
 .notion-root .notion-link {
   color: var(--color-ink);
-  border-bottom: 1px solid rgba(244,244,242,0.2);
+  border-bottom: 1px solid rgba(243,243,243,0.2);
 }
 .notion-root .notion-hr {
   border-color: var(--color-line);
@@ -413,7 +413,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
 /* Monochrome focus ring — replaces the UA default everywhere. It follows
    the element's own (G2) corners, so it sets no radius of its own. */
 :focus-visible {
-  outline: 2px solid rgba(244, 244, 242, 0.35);
+  outline: 2px solid rgba(243, 243, 243, 0.35);
   outline-offset: 2px;
 }
 
@@ -444,31 +444,31 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   --r-tag: 10px;
   /* planes */
   --slab: #0a0a0a;
-  /* The grain lifts the ground to about #19191a where it shows, so a
+  /* The grain lifts the ground to about #191919 where it shows, so a
      plane has to sit a clear step above that to read as a plane. */
-  --tile: #1d1d20;
-  --sheet: #1d1d20;
-  --raised: #26262a;
+  --tile: #1e1e1e;
+  --sheet: #1e1e1e;
+  --raised: #272727;
   --edge: transparent;
   /* kept aliases: no plane is outlined */
   --slab-line: transparent;
   --tile-line: transparent;
   --paper-edge: transparent;
-  --slab-rule: #252528;
-  --paper: #1d1d20;
+  --slab-rule: #262626;
+  --paper: #1e1e1e;
   /* the two back planes behind every chart sheet, stepping down */
-  --paper-back-1: #161618;
+  --paper-back-1: #171717;
   --paper-back-1-edge: transparent;
-  --paper-back-2: #0c0c0d;
+  --paper-back-2: #0c0c0c;
   --paper-back-2-edge: transparent;
   /* chart structure and marks */
-  --grid: rgb(244 244 242 / 6%);
-  --axis: rgb(244 244 242 / 24%);
-  --grey-1: #a0a0a5;
-  --grey-2: #6b6b71;
-  --grey-3: #3a3a3f;
-  --mark: #6b6b71;
-  --tick: #8a8a90;
+  --grid: rgb(243 243 243 / 6%);
+  --axis: rgb(243 243 243 / 24%);
+  --grey-1: #a2a2a2;
+  --grey-2: #6d6d6d;
+  --grey-3: #3c3c3c;
+  --mark: #6d6d6d;
+  --tick: #8c8c8c;
   --on-fill: #0a0a0a;
   /* motion: feedback, state, entrance; stagger, rise, dim */
   --t-1: 160ms;
@@ -483,7 +483,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
    element's own corners. The inset variant is for cells inside a
    clipped box. */
 [data-bands] :focus-visible {
-  outline: 1px solid #f4f4f2;
+  outline: 1px solid #f3f3f3;
   outline-offset: 3px;
 }
 [data-bands] [data-ring="inset"]:focus-visible {
@@ -574,7 +574,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
     border-radius: var(--r-tag);
     corner-shape: squircle;
     background: var(--raised);
-    color: #f4f4f2;
+    color: #f3f3f3;
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 400;
@@ -599,7 +599,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
     border-radius: var(--r-raised);
     corner-shape: squircle;
     background: var(--raised);
-    color: #f4f4f2;
+    color: #f3f3f3;
     font-size: 15px;
     font-weight: 400;
     line-height: 1.2;
@@ -615,7 +615,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   /* ── Type ramp (S2–S7) ── exact values; a component picks a style and
      sets no other size. S1 is the H1 alone (case.module.css). */
   .t-figure {
-    color: #f4f4f2;
+    color: #f3f3f3;
     font-family: var(--font-sans);
     font-size: clamp(44px, 3vw + 20px, 64px);
     font-weight: 300;
@@ -626,7 +626,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   }
   .t-heading {
     max-width: 48rem;
-    color: #f4f4f2;
+    color: #f3f3f3;
     font-family: var(--font-sans);
     font-size: clamp(28px, 2.4vw + 12px, 44px);
     font-weight: 300;
@@ -640,7 +640,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
     letter-spacing: -0.01em;
   }
   .t-subhead {
-    color: #f4f4f2;
+    color: #f3f3f3;
     font-family: var(--font-sans);
     font-size: 22px;
     font-weight: 400;
@@ -650,17 +650,17 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   }
   .t-body {
     max-width: 40rem;
-    color: #d2d2d0;
+    color: #d1d1d1;
     font-family: var(--font-sans);
     font-size: 18px;
     font-weight: 400;
     line-height: 1.65;
     text-wrap: pretty;
   }
-  .t-body strong { font-weight: 500; color: #f4f4f2; }
+  .t-body strong { font-weight: 500; color: #f3f3f3; }
   .t-body em { font-style: italic; }
   html[lang="zh-CN"] .t-body { line-height: 1.8; }
-  html[lang="zh-CN"] .t-body em { font-style: normal; color: #f4f4f2; }
+  html[lang="zh-CN"] .t-body em { font-style: normal; color: #f3f3f3; }
   .t-small {
     font-family: var(--font-sans);
     font-size: 15px;
@@ -669,7 +669,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   }
   html[lang="zh-CN"] .t-small { line-height: 1.65; }
   .t-label {
-    color: #8a8a90;
+    color: #8c8c8c;
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 400;

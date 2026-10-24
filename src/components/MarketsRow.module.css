@@ -34,11 +34,11 @@
   height: 100%;
 }
 
-.gridDot { fill: #3a3a3f; }
+.gridDot { fill: #3c3c3c; }
 
 .ring {
   fill: none;
-  stroke: #3a3a3f;
+  stroke: #3c3c3c;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -51,13 +51,13 @@
   vector-effect: non-scaling-stroke;
 }
 .spoke {
-  stroke: #6b6b71;
+  stroke: #6d6d6d;
   stroke-width: 1;
   transform-box: fill-box;
   transform-origin: 0 50%;
 }
 .overlay {
-  stroke: #f4f4f2;
+  stroke: #f3f3f3;
   stroke-width: 1.5;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
@@ -80,12 +80,12 @@
 .point {
   width: 8px;
   height: 8px;
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 .hub {
   width: 14px;
   height: 14px;
-  background: var(--accent, #f4f4f2);
+  background: var(--accent, #f3f3f3);
 }
 
 /* ── The labels ── */
@@ -121,7 +121,7 @@
 
 /* S4 */
 .name {
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-size: 22px;
   font-weight: 400;
   line-height: 1.25;
@@ -135,7 +135,7 @@
   font-weight: 400;
   line-height: 1.5;
 }
-.reg { color: #a0a0a5; }
+.reg { color: #a2a2a2; }
 :is(.reg, .hubLabel, .legend):lang(zh) { line-height: 1.65; }
 
 .scope {
@@ -148,11 +148,11 @@
   box-sizing: border-box;
   width: 8px;
   height: 8px;
-  border: 1px solid #6b6b71;
+  border: 1px solid #6d6d6d;
 }
 .sq[data-on="true"] {
-  border-color: #f4f4f2;
-  background: #f4f4f2;
+  border-color: #f3f3f3;
+  background: #f3f3f3;
 }
 
 /* The hub's label, 16px under the ring's foot (--py is the foot, y 300).
@@ -161,7 +161,7 @@
   left: 50%;
   margin: 0;
   translate: -50% 16px;
-  color: #f4f4f2;
+  color: #f3f3f3;
   white-space: nowrap;
 }
 
@@ -173,7 +173,7 @@
   flex-wrap: wrap;
   gap: 8px 24px;
   margin: 24px 0 0;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 .legendItem {
   display: inline-flex;
@@ -190,11 +190,11 @@
   box-sizing: border-box;
   width: 8px;
   height: 8px;
-  border: 1px solid #3a3a3f;
+  border: 1px solid #3c3c3c;
 }
 .legendSq[data-on="true"] {
-  border-color: #f4f4f2;
-  background: #f4f4f2;
+  border-color: #f3f3f3;
+  background: #f3f3f3;
 }
 
 /* ── Pointing at a market: its spoke in ink, the other markets fade.
@@ -246,7 +246,7 @@
   .rowPoint {
     width: 8px;
     height: 8px;
-    background: #f4f4f2;
+    background: #f3f3f3;
   }
   .rowText {
     display: flex;

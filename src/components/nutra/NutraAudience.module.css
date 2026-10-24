@@ -86,8 +86,8 @@
   height: 48px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #232326);
-  color: #a0a0a5;
+  background: var(--raised, #242424);
+  color: #a2a2a2;
   font-family: var(--font-sans);
   font-size: 30px;
   font-weight: 300;
@@ -102,14 +102,14 @@
   }
 }
 .letter[data-front="true"] {
-  background: var(--accent, #f4f4f2);
+  background: var(--accent, #f3f3f3);
   color: #0a0a0a;
 }
 
 .names { min-width: 0; }
 .label { margin: 0; }
 .title { margin: 6px 0 0; }
-[data-side="A"] .title { color: #a0a0a5; }
+[data-side="A"] .title { color: #a2a2a2; }
 
 .rows {
   display: grid;
@@ -125,25 +125,25 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  color: #d2d2d0;
+  color: #d1d1d1;
 }
-[data-side="A"] .row { color: #a0a0a5; }
+[data-side="A"] .row { color: #a2a2a2; }
 /* A 6px square, centred on the first line */
 .sq {
   flex: none;
   width: 6px;
   height: 6px;
   margin-top: calc((1lh - 6px) / 2);
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
-[data-side="A"] .sq { background: #6b6b71; }
+[data-side="A"] .sq { background: #6d6d6d; }
 
 /* The foot, held off by space: who the group is served by */
 .tag {
   margin: auto 0 0;
   padding-top: 16px;
 }
-[data-side="B"] .tag { color: #f4f4f2; }
+[data-side="B"] .tag { color: #f3f3f3; }
 
 /* Chinese is held word by word, so no line ends inside a word */
 .word { white-space: nowrap; }

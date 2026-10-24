@@ -32,7 +32,7 @@
   align-content: center;
   margin-top: 20px;
   padding: 28px 16px;
-  background: var(--sheet, #1d1d20);
+  background: var(--sheet, #1e1e1e);
 }
 
 /* The screen and its notes share one box: the notes are placed in % of
@@ -76,9 +76,9 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
-.strip .pin { background: var(--accent, #f4f4f2); }
+.strip .pin { background: var(--accent, #f3f3f3); }
 .strip .note {
   top: calc(100% + 8px);
   left: 0;
@@ -117,7 +117,7 @@
   flex: none;
   width: 6px;
   height: 6px;
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 
 .root .seg {
@@ -162,9 +162,9 @@
   color: inherit;
   text-align: left;
 }
-.cause { color: #f4f4f2; }
+.cause { color: #f3f3f3; }
 .cue {
-  color: #a0a0a5;
+  color: #a2a2a2;
   text-wrap: balance;
 }
 
@@ -176,13 +176,13 @@
   align-self: center;
   width: 12px;
   height: 12px;
-  background: var(--grey-3, #3a3a3f);
+  background: var(--grey-3, #3c3c3c);
 }
 .check::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: #f4f4f2;
+  background: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }

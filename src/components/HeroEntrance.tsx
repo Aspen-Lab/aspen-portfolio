@@ -22,9 +22,9 @@ export function HeroEntrance() {
         >
           <path className={styles.curveTrace} pathLength="1" d="M5 24C5 9 27 23 27 8" />
           <path d="M5 24V8M27 8v16" opacity=".35" />
-          <circle cx="5" cy="8" r="2" fill="#0f0f10" />
-          <circle cx="27" cy="24" r="2" fill="#0f0f10" />
-          <path d="M2.5 21.5h5v5h-5zM24.5 5.5h5v5h-5z" fill="#0f0f10" />
+          <circle cx="5" cy="8" r="2" fill="#0f0f0f" />
+          <circle cx="27" cy="24" r="2" fill="#0f0f0f" />
+          <path d="M2.5 21.5h5v5h-5zM24.5 5.5h5v5h-5z" fill="#0f0f0f" />
         </svg>
 
         <svg

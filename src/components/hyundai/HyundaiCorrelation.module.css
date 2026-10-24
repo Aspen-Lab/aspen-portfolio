@@ -39,7 +39,7 @@
 }
 .titleSub {
   margin: 6px 0 0;
-  color: #f4f4f2;
+  color: #f3f3f3;
   text-wrap: pretty;
 }
 .titleChip { flex: none; }
@@ -105,7 +105,7 @@
   min-width: 0;
   text-wrap: pretty;
 }
-.measure .r { color: #a0a0a5; }
+.measure .r { color: #a2a2a2; }
 
 /* r with its subscript: the variable in the serif italic at 15px, its
    measure in the sans at 12px, dropped a little below the baseline */
@@ -143,7 +143,7 @@
 }
 .links path {
   fill: none;
-  stroke: var(--grey-2, #6b6b71);
+  stroke: var(--grey-2, #6d6d6d);
   stroke-width: 1px;
   vector-effect: non-scaling-stroke;
 }
@@ -160,7 +160,7 @@
 .stub {
   width: 1px;
   height: 20px;
-  background: var(--grey-2, #6b6b71);
+  background: var(--grey-2, #6d6d6d);
 }
 @media (min-width: 1240px) {
   .stub { display: none; }
@@ -169,7 +169,7 @@
   padding: 14px 16px;
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
-  background: var(--raised, #26262a);
+  background: var(--raised, #272727);
 }
 @media (min-width: 640px) {
   .node { padding: 18px 22px; }
@@ -179,12 +179,12 @@
   align-items: center;
   gap: 10px;
   margin: 0;
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1;
 }
-.eq { color: #a0a0a5; }
+.eq { color: #a2a2a2; }
 .frac {
   display: inline-grid;
   justify-items: center;
@@ -193,7 +193,7 @@
   display: flex;
   align-items: baseline;
   padding: 0 2px 9px;
-  border-bottom: 1px solid rgb(244 244 242 / 55%);
+  border-bottom: 1px solid rgb(243 243 243 / 55%);
 }
 .term {
   display: inline-flex;
@@ -201,7 +201,7 @@
 }
 .plus {
   margin: 0 0.3em;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 .den { padding-top: 8px; }
 @media (max-width: 389px) {
@@ -238,7 +238,7 @@
   right: 0;
   top: var(--ay);
   height: 1px;
-  background: var(--axis, rgb(244 244 242 / 24%));
+  background: var(--axis, rgb(243 243 243 / 24%));
   transform-origin: 0 50%;
 }
 .tick {
@@ -247,7 +247,7 @@
   left: calc(var(--x) * 100%);
   width: 1px;
   height: 6px;
-  background: var(--axis, rgb(244 244 242 / 24%));
+  background: var(--axis, rgb(243 243 243 / 24%));
 }
 .minor {
   position: absolute;
@@ -255,7 +255,7 @@
   left: calc(var(--x) * 100%);
   width: 1px;
   height: 3px;
-  background: var(--grey-3, #3a3a3f);
+  background: var(--grey-3, #3c3c3c);
 }
 .tickLabel {
   position: absolute;
@@ -278,7 +278,7 @@
   left: calc(var(--x) * 100% - 4px);
   width: 8px;
   height: 8px;
-  background: var(--grey-1, #a0a0a5);
+  background: var(--grey-1, #a2a2a2);
 }
 /* Their elbows: down from the square, then out to the label */
 .elbow {
@@ -286,15 +286,15 @@
   top: calc(var(--ay) + 6px);
   width: 12px;
   height: 40px;
-  border-bottom: 1px solid var(--grey-2, #6b6b71);
+  border-bottom: 1px solid var(--grey-2, #6d6d6d);
 }
 .elbow[data-p="2"] {
   right: calc(100% - var(--x) * 100%);
-  border-right: 1px solid var(--grey-2, #6b6b71);
+  border-right: 1px solid var(--grey-2, #6d6d6d);
 }
 .elbow[data-p="3"] {
   left: calc(var(--x) * 100%);
-  border-left: 1px solid var(--grey-2, #6b6b71);
+  border-left: 1px solid var(--grey-2, #6d6d6d);
 }
 .pLabel {
   position: absolute;
@@ -311,7 +311,7 @@
   left: calc(var(--x) * 100% + 20px);
 }
 .pValue {
-  color: #f4f4f2;
+  color: #f3f3f3;
   letter-spacing: 0.04em;
 }
 .pName {
@@ -333,7 +333,7 @@
   top: -6px;
   width: 12px;
   height: 12px;
-  background: var(--accent, #f4f4f2);
+  background: var(--accent, #f3f3f3);
 }
 .leader {
   position: absolute;
@@ -341,7 +341,7 @@
   bottom: 12px;
   width: 1px;
   height: 22px;
-  background: rgb(244 244 242 / 55%);
+  background: rgb(243 243 243 / 55%);
 }
 .focusLabel {
   position: absolute;

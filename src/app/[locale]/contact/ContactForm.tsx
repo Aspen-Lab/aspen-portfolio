@@ -101,7 +101,7 @@ function Field(props: InputField | TextareaField) {
   // A filled plane, not an underlined or outlined box: it lifts a tone on
   // hover and focus, and keyboard focus adds the ring on top.
   const baseClasses =
-    "w-full rounded-[var(--r-raised)] [corner-shape:squircle] bg-[var(--tile)] text-[16px] text-ink py-3 px-4 outline-none hover:bg-[#1d1d20] focus:bg-[#1d1d20] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink transition-colors duration-200 placeholder:text-soft";
+    "w-full rounded-[var(--r-raised)] [corner-shape:squircle] bg-[var(--tile)] text-[16px] text-ink py-3 px-4 outline-none hover:bg-[#1e1e1e] focus:bg-[#1e1e1e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink transition-colors duration-200 placeholder:text-soft";
 
   return (
     <div>

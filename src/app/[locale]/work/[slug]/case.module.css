@@ -482,11 +482,11 @@
    S3 heading, S5 body, S6 small, S7 label. No accent in any text. */
 .case[data-bands] {
   --color-cream: var(--tile);
-  --color-soft: #8a8a90;
-  --color-body: #d2d2d0;
+  --color-soft: #8c8c8c;
+  --color-body: #d1d1d1;
   --plane: var(--tile);
   --raised-plane: var(--raised);
-  --lift: #232326;
+  --lift: #242424;
   overflow-x: clip;
 }
 .case[data-bands] strong { font-weight: 500; color: var(--color-ink); }
@@ -608,7 +608,7 @@
   padding: 14px 22px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #f4f4f2;
+  background: #f3f3f3;
   color: #0a0a0a;
   transition: transform var(--t-1) var(--ease-arrive);
 }
@@ -831,13 +831,13 @@
 /* Hover and focus: the slab lifts a tone, the arrow's plane lifts with it
    and steps on, as on the outcome tiles. Press sinks the card 1px. */
 @media (hover: hover) {
-  .nextSplit:hover .nextSlab { background: #141416; }
+  .nextSplit:hover .nextSlab { background: #151515; }
   .nextSplit:hover .nextSplitArrow {
     background: var(--raised);
     transform: translateX(3px);
   }
 }
-.nextSplit:focus-visible .nextSlab { background: #141416; }
+.nextSplit:focus-visible .nextSlab { background: #151515; }
 .nextSplit:focus-visible .nextSplitArrow {
   background: var(--raised);
   transform: translateX(3px);

@@ -5,7 +5,7 @@
    gridlines, leaders, the route). No gradients. */
 .panel {
   --focus: var(--accent, var(--color-ink));
-  --dash: rgb(244 244 242 / 55%);
+  --dash: rgb(243 243 243 / 55%);
 }
 
 /* ── The selector: six labels on fixed columns, one plane ──
@@ -50,7 +50,7 @@
   width: calc(var(--col) + 20px);
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #232326;
+  background: #242424;
   transform: translateX(calc(var(--active, 0) * (var(--col) + var(--gap))));
   pointer-events: none;
 }
@@ -130,7 +130,7 @@
   height: 28px;
   border-radius: var(--r-tag);
   corner-shape: squircle;
-  background: #1d1d20;
+  background: #1e1e1e;
   color: var(--color-soft);
 }
 .title {
@@ -208,7 +208,7 @@
   padding: 18px 16px 16px;
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: #1d1d20;
+  background: #1e1e1e;
   container-type: inline-size;
 }
 @media (min-width: 640px) {
@@ -254,11 +254,11 @@
   bottom: 0;
   width: 1px;
   translate: -50% 0;
-  background: rgb(244 244 242 / 6%);
+  background: rgb(243 243 243 / 6%);
 }
 .gridlines > span[data-axis="true"] {
   translate: 0 0;
-  background: rgb(244 244 242 / 22%);
+  background: rgb(243 243 243 / 22%);
 }
 
 .row { position: relative; }
@@ -293,7 +293,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  background: rgb(244 244 242 / 30%);
+  background: rgb(243 243 243 / 30%);
   transform-origin: left;
 }
 .row[data-focus="true"] .fill[data-split="false"] { background: var(--focus); }
@@ -309,13 +309,13 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background: rgb(244 244 242 / 9%);
+  background: rgb(243 243 243 / 9%);
 }
 
 .axis {
   position: relative;
   height: 26px;
-  border-top: 1px solid rgb(244 244 242 / 22%);
+  border-top: 1px solid rgb(243 243 243 / 22%);
 }
 .tick {
   position: absolute;
@@ -337,7 +337,7 @@
   left: 50%;
   width: 1px;
   height: 5px;
-  background: rgb(244 244 242 / 22%);
+  background: rgb(243 243 243 / 22%);
 }
 .tick[data-edge="start"] { translate: 0 0; }
 .tick[data-edge="start"]::before { left: 0; }
@@ -368,7 +368,7 @@
 }
 .dot {
   fill: var(--focus);
-  stroke: #1d1d20;
+  stroke: #1e1e1e;
   stroke-width: 2;
 }
 .leader {
@@ -384,7 +384,7 @@
   padding: 5px 8px 4px;
   border-radius: var(--r-tag);
   corner-shape: squircle;
-  background: #2c2c30;
+  background: #2d2d2d;
   color: var(--color-ink);
   font-family: var(--font-mono);
   font-size: 10px;
@@ -414,12 +414,12 @@
   right: calc(50% / var(--n));
   left: calc(50% / var(--n));
   height: 1px;
-  background: rgb(244 244 242 / 22%);
+  background: rgb(243 243 243 / 22%);
 }
 .lineLit {
   position: absolute;
   inset: 0;
-  background: rgb(244 244 242 / 70%);
+  background: rgb(243 243 243 / 70%);
   transform-origin: left;
 }
 .chevron {
@@ -432,7 +432,7 @@
 }
 .chevron path {
   fill: none;
-  stroke: rgb(244 244 242 / 70%);
+  stroke: rgb(243 243 243 / 70%);
   stroke-width: 1.2;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -488,7 +488,7 @@
   bottom: 23px;
   left: 11.5px;
   width: 1px;
-  background: rgb(244 244 242 / 22%);
+  background: rgb(243 243 243 / 22%);
   transform-origin: top;
 }
 .step {
@@ -577,7 +577,7 @@
 .ten > span {
   aspect-ratio: 1;
   border-radius: 1px;
-  background: rgb(244 244 242 / 52%);
+  background: rgb(243 243 243 / 52%);
 }
 /* A narrow sheet: the figure and its label share a line, the tens take
    the full width under them. */

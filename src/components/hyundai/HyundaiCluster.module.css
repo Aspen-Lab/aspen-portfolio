@@ -67,7 +67,7 @@
   inset: 0;
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
-  background: rgb(244 244 242 / 7%);
+  background: rgb(243 243 243 / 7%);
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -142,7 +142,7 @@
   padding: 6px 0;
   border: 0;
   background: none;
-  color: var(--color-mute, #a0a0a5);
+  color: var(--color-mute, #a2a2a2);
 }
 .replayIcon { flex: none; }
 @media (hover: hover) {
@@ -211,7 +211,7 @@
   align-items: center;
   gap: 10px;
 }
-.stepIdx { color: var(--color-soft, #8a8a90); }
+.stepIdx { color: var(--color-soft, #8c8c8c); }
 .step[data-current="true"] .stepIdx { color: var(--color-ink); }
 @media (hover: hover) {
   .stepBtn:hover .stepIdx { color: var(--color-ink); }
@@ -224,7 +224,7 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6b6b71);
+  background: var(--grey-2, #6d6d6d);
 }
 .sq::after {
   content: "";
@@ -237,7 +237,7 @@
 .step[data-current="true"] .sq::after { opacity: 1; }
 
 .stepLabel {
-  color: var(--color-mute, #a0a0a5);
+  color: var(--color-mute, #a2a2a2);
   line-height: 1.35;
 }
 /* a phone's step tiles keep two lines for every label, so the 2 × 2
@@ -274,7 +274,7 @@
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
   background-color: var(--tile);
-  color: var(--color-mute, #a0a0a5);
+  color: var(--color-mute, #a2a2a2);
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.06em;
@@ -287,7 +287,7 @@
   cursor: default;
 }
 @media (hover: hover) {
-  .gapBtn:not([aria-disabled="true"]):hover { color: var(--color-ink); background-color: #232326; }
+  .gapBtn:not([aria-disabled="true"]):hover { color: var(--color-ink); background-color: #242424; }
 }
 .gapBtn[data-on="true"],
 .gapBtn[data-on="true"]:hover {
@@ -335,26 +335,26 @@
 .root[data-part="panel"] .partBtn[data-k="panel"],
 .root[data-part="scene"] .partBtn[data-k="scene"],
 .root[data-part="ring"] .partBtn[data-k="ring"],
-.partBtn[aria-pressed="true"] { background-color: var(--tile, #1d1d20); }
+.partBtn[aria-pressed="true"] { background-color: var(--tile, #1e1e1e); }
 .partIdx {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 4px;
-  color: var(--color-soft, #8a8a90);
+  color: var(--color-soft, #8c8c8c);
 }
 .partSq {
   flex: none;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6b6b71);
+  background: var(--grey-2, #6d6d6d);
 }
 .partTitle {
   font-size: 18px;
   line-height: 1.3;
 }
 .partLine {
-  color: var(--color-mute, #a0a0a5);
+  color: var(--color-mute, #a2a2a2);
   text-wrap: pretty;
 }
 /* A lit part inks its index and square (never the accent) */
@@ -386,7 +386,7 @@
   grid-template-columns: 30px minmax(0, 1fr);
   align-items: baseline;
   gap: 10px;
-  color: var(--color-body, #d2d2d0);
+  color: var(--color-body, #d1d1d1);
 }
 /* The HMI's own colours (board 22's palette), drawn as the system's
    square marks: the legend sits outside the render */
@@ -466,7 +466,7 @@
     display: block;
     height: 1px;
     overflow: hidden;
-    background: var(--grey-3, #3a3a3f);
+    background: var(--grey-3, #3c3c3c);
     pointer-events: none;
   }
   /* the rule starts after the index */
@@ -474,7 +474,7 @@
   .fill {
     position: absolute;
     inset: 0;
-    background: rgb(244 244 242 / 55%);
+    background: rgb(243 243 243 / 55%);
     transform: scaleX(0);
     transform-origin: 0 0;
   }

@@ -10,8 +10,8 @@
 .frame {
   /* The picture is dark-native: its markers keep the dark tokens
      wherever the frame sits */
-  --color-cream: var(--tile, #1d1d20);
-  --color-ink: #f4f4f2;
+  --color-cream: var(--tile, #1e1e1e);
+  --color-ink: #f3f3f3;
   position: relative;
   overflow: hidden;
   border-radius: var(--r-plane);
@@ -41,8 +41,8 @@
   padding-left: 0.12em;
   border-radius: var(--r-tag);
   corner-shape: squircle;
-  background: var(--raised, #26262a);
-  color: #f4f4f2;
+  background: var(--raised, #272727);
+  color: #f3f3f3;
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1;
@@ -60,7 +60,7 @@
   padding-left: 0.12em;
   border-radius: inherit;
   corner-shape: squircle;
-  background: #f4f4f2;
+  background: #f3f3f3;
   color: #0a0a0a;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
@@ -115,7 +115,7 @@
     transform var(--t-1, 160ms) var(--ease-arrive);
 }
 .note:active { transform: translateY(1px); }
-.note[data-on="true"] { background: var(--tile, #1d1d20); }
+.note[data-on="true"] { background: var(--tile, #1e1e1e); }
 .note[data-dim="true"] { opacity: var(--dim, 0.45); }
 
 /* The number in soft grey; lit, an ink copy fades in over it */
@@ -123,7 +123,7 @@
   position: relative;
   grid-row: span 2;
   padding-top: 5px;
-  color: #8a8a90;
+  color: #8c8c8c;
 }
 .num::before {
   content: attr(data-n);
@@ -163,7 +163,7 @@
    comes within 12px of the slab's foot (8px at the sides), so its corner
    is the slab's minus 12px: concentric, never larger. */
 .joined .note { border-radius: calc(var(--r-plane) - 12px); }
-.joined .note[data-on="true"] { background: var(--tile, #1d1d20); }
+.joined .note[data-on="true"] { background: var(--tile, #1e1e1e); }
 .slab { display: block; }
 .slab .caption {
   display: block;

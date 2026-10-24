@@ -538,8 +538,8 @@
    like every other split card. No outline round them, no rule between
    and no back sheets (a lighter back sheet behind the slab would read as
    an edge): the change of tone is the seam.
-   One dark system: the marks are ink #f4f4f2 and the greys #6b6b71 and
-   #3a3a3f, the lines --grid and --axis, and the page accent fills the one
+   One dark system: the marks are ink #f3f3f3 and the greys #6d6d6d and
+   #3c3c3c, the lines --grid and --axis, and the page accent fills the one
    focus column and nothing else. Every motion is opacity or transform. */
 .splitStack { min-width: 0; }
 
@@ -586,7 +586,7 @@
 .sTick,
 .sRticks,
 .slabKicker {
-  color: #8a8a90;
+  color: #8c8c8c;
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 400;
@@ -651,9 +651,9 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: rgb(244 244 242 / 6%);
+  background: rgb(243 243 243 / 6%);
 }
-.sGline[data-base="true"] { background: rgb(244 244 242 / 24%); }
+.sGline[data-base="true"] { background: rgb(243 243 243 / 24%); }
 
 .sTick {
   position: absolute;
@@ -686,7 +686,7 @@
   overflow: visible;
 }
 .sLink line {
-  stroke: #3a3a3f;
+  stroke: #3c3c3c;
   stroke-width: 1;
   stroke-dasharray: 3 3;
 }
@@ -697,10 +697,10 @@
   left: calc(var(--slot) * (var(--i) + 0.5) - var(--bw) / 2);
   width: var(--bw);
   height: calc(var(--v) * 100%);
-  background: #6b6b71;
+  background: #6d6d6d;
   transform-origin: 50% 100%;
 }
-.sBar[data-focus="true"] { background: var(--accent, #f4f4f2); }
+.sBar[data-focus="true"] { background: var(--accent, #f3f3f3); }
 
 /* The focus's earlier level (v1): one ink rule across its column and 8px
    past each side, its name 8px past the rule's end */
@@ -713,7 +713,7 @@
   transform-origin: 0 50%;
 }
 .sWas line {
-  stroke: #f4f4f2;
+  stroke: #f3f3f3;
   stroke-width: 1.5;
   stroke-dasharray: 5 4;
 }
@@ -722,7 +722,7 @@
   bottom: calc(var(--w) * 100%);
   left: calc(var(--slot) * (var(--i) + 0.5) + var(--bw) / 2 + 16px);
   translate: 0 50%;
-  color: #f4f4f2;
+  color: #f3f3f3;
   line-height: 1;
   white-space: nowrap;
 }
@@ -732,7 +732,7 @@
   bottom: calc(var(--v) * 100% + 8px);
   left: calc(var(--slot) * (var(--i) + 0.5));
   translate: -50% 0;
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-size: 15px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -748,7 +748,7 @@
 }
 .sName {
   padding: 0 4px;
-  color: #a0a0a5;
+  color: #a2a2a2;
   font-size: 15px;
   line-height: 1.5;
   text-align: center;
@@ -758,7 +758,7 @@
   line-height: 1.65;
   word-break: keep-all;
 }
-.sName[data-focus="true"] { color: #f4f4f2; }
+.sName[data-focus="true"] { color: #f3f3f3; }
 
 /* The columns are buttons, each its slot from the headroom to the names */
 .sHit {
@@ -790,9 +790,9 @@
   bottom: 0;
   left: calc((100% - var(--gutter)) * var(--t));
   width: 1px;
-  background: rgb(244 244 242 / 6%);
+  background: rgb(243 243 243 / 6%);
 }
-.sRgrid[data-base="true"] { background: rgb(244 244 242 / 24%); }
+.sRgrid[data-base="true"] { background: rgb(243 243 243 / 24%); }
 
 .sRow {
   position: relative;
@@ -807,7 +807,7 @@
 .sRow + .sRow { margin-top: 8px; }
 .sRowName {
   padding-left: 8px;
-  color: #a0a0a5;
+  color: #a2a2a2;
   font-size: 15px;
   line-height: 1.5;
 }
@@ -815,7 +815,7 @@
   line-height: 1.65;
   word-break: keep-all;
 }
-.sRowName[data-focus="true"] { color: #f4f4f2; }
+.sRowName[data-focus="true"] { color: #f3f3f3; }
 
 .sTrack {
   position: relative;
@@ -826,10 +826,10 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: calc((100% - var(--gutter)) * var(--v));
-  background: #6b6b71;
+  background: #6d6d6d;
   transform-origin: 0 50%;
 }
-.sRowBar[data-focus="true"] { background: var(--accent, #f4f4f2); }
+.sRowBar[data-focus="true"] { background: var(--accent, #f3f3f3); }
 
 /* The earlier level on the focus row: an ink tick across the track, its
    name beside it above the track */
@@ -842,7 +842,7 @@
   translate: -50% 0;
 }
 .sRowWas line {
-  stroke: #f4f4f2;
+  stroke: #f3f3f3;
   stroke-width: 1.5;
   stroke-dasharray: 5 4;
 }
@@ -850,7 +850,7 @@
   position: absolute;
   bottom: calc(100% + 2px);
   left: 8px;
-  color: #f4f4f2;
+  color: #f3f3f3;
   line-height: 1;
   white-space: nowrap;
 }
@@ -860,7 +860,7 @@
   top: 50%;
   left: calc((100% - var(--gutter)) * var(--v) + 8px);
   translate: 0 -50%;
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-size: 15px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -892,7 +892,7 @@
   width: 6px;
   height: 6px;
   margin-top: calc((1.35em - 6px) / 2);
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 .slabBody { margin-top: 32px; }
 @media (min-width: 1024px) {
@@ -928,7 +928,7 @@
 }
 /* S2 */
 .roValue {
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-size: clamp(44px, 3vw + 20px, 64px);
   font-weight: 300;
   line-height: 1;
@@ -939,7 +939,7 @@
 /* S4 */
 .roLabel {
   margin-top: 16px;
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-size: 22px;
   font-weight: 400;
   line-height: 1.25;
@@ -966,7 +966,7 @@
 .roCaption {
   max-width: 36ch;
   margin-top: 8px;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 
 .slabNotes {
@@ -981,12 +981,12 @@
   gap: 4px;
 }
 .slabNoteLabel {
-  color: #f4f4f2;
+  color: #f3f3f3;
   font-variant-numeric: tabular-nums;
 }
 .slabNoteText {
   max-width: 36ch;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 
 /* ── Pointing at a step: the other grey marks and their words fade.

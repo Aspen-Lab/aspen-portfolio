@@ -44,18 +44,18 @@ function FrontendScene({ cn }: { cn: boolean }) {
         <circle cx="372" cy="31" r="2" className={styles.dimFill} />
         <text x="485" y="34" textAnchor="middle" className={styles.micro}>{cn ? "组件预览" : "Component preview"}</text>
         <g className={styles.frontendResult}>
-          <rect x="359" y="58" width="252" height="93" rx="2" fill="#d6d4ca" />
-          <path d="M359 131 423 91l43 27 47-41 98 69v5H359Z" fill="#b0afa6" />
-          <path d="m359 151 106-37 55 37" fill="#95968e" />
-          <path d="m518 151 48-31 45 24v7" fill="#c7c5bb" />
-          <circle cx="564" cy="82" r="11" fill="#eeece2" />
+          <rect x="359" y="58" width="252" height="93" rx="2" fill="#d1d1d1" />
+          <path d="M359 131 423 91l43 27 47-41 98 69v5H359Z" fill="#acacac" />
+          <path d="m359 151 106-37 55 37" fill="#939393" />
+          <path d="m518 151 48-31 45 24v7" fill="#c2c2c2" />
+          <circle cx="564" cy="82" r="11" fill="#e9e9e9" />
           <text x="359" y="184" className={styles.serif} style={cn ? { fontSize: 22 } : undefined}>{cn ? "下一站，出发。" : "A place to go."}</text>
           <path d="M359 198h126" className={styles.placeholder} />
           <path d="M359 209h87" className={styles.placeholder} opacity=".5" />
           <g className={styles.buttonReveal}>
-            <rect x="522" y="179" width="89" height="36" rx="3" fill="#e4e2d8" />
+            <rect x="522" y="179" width="89" height="36" rx="3" fill="#dfdfdf" />
             <text x="533" y="201" className={styles.buttonText}>{cn ? "探索" : "Explore"}</text>
-            <path d="M588 197h11m-4-4 4 4-4 4" fill="none" stroke="#30302e" strokeWidth="1.25" />
+            <path d="M588 197h11m-4-4 4 4-4 4" fill="none" stroke="#2f2f2f" strokeWidth="1.25" />
           </g>
         </g>
       </g>
@@ -91,15 +91,15 @@ function EmailScene({ cn }: { cn: boolean }) {
       </g>
       <Flow d="M414 130H441" delay={600} />
       <g className={styles.emailResult}>
-        <rect x="450" y="17" width="177" height="227" rx="3" fill="#e8e6dc" />
-        <path d="M464 39h24" fill="none" stroke="#252522" strokeWidth="2" />
+        <rect x="450" y="17" width="177" height="227" rx="3" fill="#e3e3e3" />
+        <path d="M464 39h24" fill="none" stroke="#242424" strokeWidth="2" />
         <text x="613" y="42" textAnchor="end" className={styles.paperMicro}>{cn ? "收件箱" : "Inbox"}</text>
-        <path d="M464 54h149" fill="none" stroke="#c8c6bc" />
+        <path d="M464 54h149" fill="none" stroke="#c3c3c3" />
         <text x="464" y="82" className={styles.emailGreeting}>{cn ? "你好，Traveler。" : "Hello, Traveler."}</text>
-        <path d="M465 97h125m-125 9h102" stroke="#aaa89f" strokeWidth="2" />
-        <rect x="464" y="123" width="149" height="61" fill="#d7d5cb" />
-        <path d="m473 173 129-34m-64 17-7-20 10 3 11 13m-3 5-3 15 7-2 10-18" fill="none" stroke="#8a8a80" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
-        <rect x="464" y="197" width="149" height="28" rx="2" fill="#292925" />
+        <path d="M465 97h125m-125 9h102" stroke="#a6a6a6" strokeWidth="2" />
+        <rect x="464" y="123" width="149" height="61" fill="#d2d2d2" />
+        <path d="m473 173 129-34m-64 17-7-20 10 3 11 13m-3 5-3 15 7-2 10-18" fill="none" stroke="#878787" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="464" y="197" width="149" height="28" rx="2" fill="#282828" />
         <text x="538" y="215" textAnchor="middle" className={styles.emailButton}>{cn ? "查看详情" : "View details"}</text>
       </g>
       <text x="86" y="219" textAnchor="middle" className={styles.micro}>{cn ? "示例数据" : "Sample payload"}</text>
@@ -131,7 +131,7 @@ function BackendScene({ cn }: { cn: boolean }) {
         <path d="M262 91V206" className={styles.rule} />
         {stages.map((stage, i) => (
           <g key={stage} className={styles.stage} style={{ "--i": i } as CSSProperties}>
-            <circle cx="262" cy={87 + i * 38} r="3" fill="#c2c2b9" />
+            <circle cx="262" cy={87 + i * 38} r="3" fill="#bfbfbf" />
             <text x="279" y={91 + i * 38} className={styles.codeBright}>{stage}</text>
             <path d={"m426 " + (84 + i * 38) + " 3 3 5-6"} className={styles.stageCheck} />
           </g>

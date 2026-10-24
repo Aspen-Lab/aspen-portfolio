@@ -49,7 +49,7 @@ export function AvatarAscii() {
         style={{
           lineHeight: "1.15",
           letterSpacing: "0",
-          color: "#F4F4F2",
+          color: "#F3F3F3",
         }}
       >
         {AVATAR_ASCII.map((row, i) => {

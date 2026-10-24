@@ -26,7 +26,7 @@
   padding: 16px;
   border-radius: var(--r-plane, 32px);
   corner-shape: squircle;
-  background: var(--paper, #1d1d20);
+  background: var(--paper, #1e1e1e);
 }
 /* a phone's card rests on two back sheets, as .paper-stack's */
 .col::before,
@@ -40,12 +40,12 @@
 }
 .col::before {
   z-index: -1;
-  background: var(--paper-back-1, #161618);
+  background: var(--paper-back-1, #171717);
   transform: translate(3px, 5px);
 }
 .col::after {
   z-index: -2;
-  background: var(--paper-back-2, #0c0c0d);
+  background: var(--paper-back-2, #0c0c0c);
   transform: translate(6px, 11px);
 }
 
@@ -75,11 +75,11 @@
 .title { margin: 12px 0 0; }
 .effect {
   margin: 8px 0 0;
-  color: #f4f4f2;
+  color: #f3f3f3;
 }
 .insight {
   margin: 20px 0 0;
-  color: #a0a0a5;
+  color: #a2a2a2;
   text-wrap: pretty;
 }
 
@@ -87,7 +87,7 @@
 .quote {
   position: relative;
   margin: 0;
-  color: #f4f4f2;
+  color: #f3f3f3;
   text-wrap: pretty;
 }
 .hang {
@@ -111,13 +111,13 @@
   width: 8px;
   height: 8px;
   margin-top: calc((1.25em - 8px) / 2);
-  background: #f4f4f2;
+  background: #f3f3f3;
 }
 .sq::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--accent, #f4f4f2);
+  background: var(--accent, #f3f3f3);
   opacity: var(--on);
   transition: opacity var(--t-2) var(--ease-arrive);
 }
@@ -194,7 +194,7 @@
 .line,
 .joint {
   position: absolute;
-  background: #3a3a3f;
+  background: #3c3c3c;
 }
 .line {
   top: 0;
@@ -215,7 +215,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: #f4f4f2;
+  background: #f3f3f3;
   opacity: var(--on);
   transition: opacity var(--t-2) var(--ease-arrive);
 }
@@ -257,12 +257,12 @@
   }
   .stack::before {
     z-index: -1;
-    background: var(--paper-back-1, #161618);
+    background: var(--paper-back-1, #171717);
     transform: translate(4px, 8px);
   }
   .stack::after {
     z-index: -2;
-    background: var(--paper-back-2, #0c0c0d);
+    background: var(--paper-back-2, #0c0c0c);
     transform: translate(9px, 16px);
   }
   .sheet {
@@ -272,7 +272,7 @@
     padding: 32px;
     border-radius: var(--r-plane, 32px);
     corner-shape: squircle;
-    background: var(--paper, #1d1d20);
+    background: var(--paper, #1e1e1e);
   }
   .col {
     grid-row: 1 / span 7;

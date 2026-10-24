@@ -34,14 +34,14 @@
   border-radius: var(--r-raised);
   corner-shape: squircle;
   background: var(--raised);
-  color: #f4f4f2;
+  color: #f3f3f3;
   white-space: nowrap;
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 /* The pole of a pointed-at trait lifts a tone, as the trait does */
 .sheet[data-pole="serious"] .pole[data-p="serious"],
 .sheet[data-pole="fun"] .pole[data-p="fun"] {
-  background: #2c2c30;
+  background: #2d2d2d;
 }
 
 .beam {
@@ -55,13 +55,13 @@
   right: 0;
   top: 50%;
   height: 1px;
-  background: #6b6b71;
+  background: #6d6d6d;
 }
 .balance {
   position: absolute;
   left: 50%;
   bottom: calc(50% + 22px);
-  color: #a0a0a5;
+  color: #a2a2a2;
   white-space: nowrap;
   transform: translateX(-50%);
 }
@@ -134,7 +134,7 @@
 }
 .trait:focus { outline: none; }
 .trait:focus-visible {
-  outline: 1px solid #f4f4f2;
+  outline: 1px solid #f3f3f3;
   outline-offset: 3px;
 }
 /* A pointed-at trait: its plane lifts a tone */
@@ -142,9 +142,9 @@
 .sheet[data-trait="type"] .trait[data-t="type"],
 .sheet[data-trait="color"] .trait[data-t="color"],
 .sheet[data-trait="art"] .trait[data-t="art"] {
-  background: #2c2c30;
+  background: #2d2d2d;
 }
-.name { color: #f4f4f2; }
+.name { color: #f3f3f3; }
 
 /* The rail: each cell draws the stretch from the cell (or pole) above
    down to itself, the last only to its middle; then its arrow in */
@@ -154,7 +154,7 @@
 .group[data-p="serious"]::after {
   position: absolute;
   width: 1px;
-  background: #6b6b71;
+  background: #6d6d6d;
 }
 .seg {
   top: -13px;
@@ -166,7 +166,7 @@
   content: "";
   inset: 0;
   width: auto;
-  background: #f4f4f2;
+  background: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -187,9 +187,9 @@
   height: 100%;
   overflow: visible;
 }
-.stub svg[data-k="g"] { color: #6b6b71; }
+.stub svg[data-k="g"] { color: #6d6d6d; }
 .stub svg[data-k="k"] {
-  color: #f4f4f2;
+  color: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -209,7 +209,7 @@
   bottom: -25px;
 }
 .group[data-p="serious"]::after {
-  background: #f4f4f2;
+  background: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -242,9 +242,9 @@
   padding: 12px 14px 10px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #3a3a3f;
+  background: #3c3c3c;
 }
-.swatches[data-well] .hex { color: #b4b4b8; }
+.swatches[data-well] .hex { color: #b5b5b5; }
 .swatch {
   display: grid;
   justify-items: start;
@@ -256,7 +256,7 @@
   border-radius: 8px;
 }
 .swatch i[data-round="true"] { border-radius: 50%; }
-.hex { color: #8a8a90; }
+.hex { color: #8c8c8c; }
 
 .faces {
   display: flex;
@@ -275,7 +275,7 @@
   letter-spacing: -0.01em;
 }
 .faceName {
-  color: #a0a0a5;
+  color: #a2a2a2;
   font-size: 15px;
   line-height: 1.2;
   white-space: nowrap;

@@ -67,7 +67,7 @@
    the readout under the plate (Aspen: 「小字很多 + staging小」).
    The row on the plate stands on a plane, its top on the plate's top, so
    the two read as one choice. The plane is a tone over the grain of the
-   ground (#1d1d20: the tile's tone sits level with the grain and would
+   ground (#1e1e1e: the tile's tone sits level with the grain and would
    not read); it reaches 20px past the column on either side, into the
    gutter and the gap, so the folio and the name keep the page's left
    edge. It moves with the pointer as a change of tone, never an edge. */
@@ -82,7 +82,7 @@
     corner-shape: squircle;
     transition: background-color 180ms var(--ease-arrive);
   }
-  .description[data-current="true"] { background: #1d1d20; }
+  .description[data-current="true"] { background: #1e1e1e; }
   .rowContent { grid-template-columns: 2.25rem minmax(0, 1fr) auto; column-gap: 20px; }
   .name { font-size: 40px; }
   .sub { font-size: 16px; }

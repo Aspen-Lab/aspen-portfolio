@@ -150,35 +150,35 @@
 }
 .plot { display: block; width: 100%; height: auto; overflow: visible; }
 
-.grid line { stroke: rgb(244 244 242 / 6%); stroke-width: 1; }
-.axis { fill: none; stroke: rgb(244 244 242 / 22%); stroke-width: 1; }
+.grid line { stroke: rgb(243 243 243 / 6%); stroke-width: 1; }
+.axis { fill: none; stroke: rgb(243 243 243 / 22%); stroke-width: 1; }
 .ink { fill: var(--color-ink); }
 .dot { fill: var(--color-ink); }
 .focus { fill: var(--accent-ink); }
 
 /* The loop: the way out in brighter ink than the way back */
-.route { fill: none; stroke: rgb(244 244 242 / 62%); stroke-width: 1.2; }
-.trace { fill: none; stroke: rgb(244 244 242 / 26%); stroke-width: 1; }
+.route { fill: none; stroke: rgb(243 243 243 / 62%); stroke-width: 1.2; }
+.trace { fill: none; stroke: rgb(243 243 243 / 26%); stroke-width: 1; }
 .chevron {
   fill: none;
-  stroke: rgb(244 244 242 / 70%);
+  stroke: rgb(243 243 243 / 70%);
   stroke-width: 1.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.chevron.dim { stroke: rgb(244 244 242 / 34%); }
+.chevron.dim { stroke: rgb(243 243 243 / 34%); }
 .station { fill: var(--color-cream); stroke: var(--color-ink); stroke-width: 1.2; }
 
 /* A window drawn on the sheet: a darker plane, no edge */
 .panel { fill: var(--color-paper); }
-.rule { stroke: rgb(244 244 242 / 10%); stroke-width: 1; }
+.rule { stroke: rgb(243 243 243 / 10%); stroke-width: 1; }
 .mark line { stroke: var(--color-ink); stroke-width: 1.2; stroke-linecap: round; }
 .port { fill: var(--color-cream); stroke: var(--color-ink); stroke-width: 1.2; }
 
-.band { fill: rgb(244 244 242 / 4.5%); }
-.mid { fill: none; stroke: rgb(244 244 242 / 20%); stroke-width: 1; stroke-dasharray: 2 4; }
+.band { fill: rgb(243 243 243 / 4.5%); }
+.mid { fill: none; stroke: rgb(243 243 243 / 20%); stroke-width: 1; stroke-dasharray: 2 4; }
 
-.leader { stroke: rgb(244 244 242 / 55%); stroke-width: 1; stroke-dasharray: 2 3; }
+.leader { stroke: rgb(243 243 243 / 55%); stroke-width: 1; stroke-dasharray: 2 3; }
 
 /* The hexagon on its own layer: a box turned as a whole, which the
    compositor does without painting the sheet. The turn rides on
@@ -193,7 +193,7 @@
 .item[data-in="true"] .ring { animation: turn 24s linear infinite; }
 .hex {
   fill: none;
-  stroke: rgb(244 244 242 / 55%);
+  stroke: rgb(243 243 243 / 55%);
   stroke-width: 1;
   stroke-dasharray: 3 4;
 }
@@ -202,9 +202,9 @@
 /* The switch on the preview: off until the change lands, then on in the
    accent — the one thing on the sheet that carries it. Only opacity and
    the knob's slide change. */
-.track { fill: none; stroke: rgb(244 244 242 / 32%); stroke-width: 1; }
+.track { fill: none; stroke: rgb(243 243 243 / 32%); stroke-width: 1; }
 .trackOn { fill: var(--accent-ink); }
-.knobOff { fill: rgb(244 244 242 / 45%); }
+.knobOff { fill: rgb(243 243 243 / 45%); }
 .knobOn { fill: var(--color-paper); }
 .trackOn,
 .knobOn,
@@ -254,7 +254,7 @@
   padding: 4px 7px 3px;
   border-radius: var(--r-tag);
   corner-shape: squircle;
-  background: var(--raised, #232326);
+  background: var(--raised, #242424);
   color: var(--color-ink);
   font-family: var(--font-mono);
   font-size: 10px;
@@ -376,7 +376,7 @@
 }
 
 /* ══ Tiles ══ Latent's outcome cards: a solid tile per entry (the global
-   .tile: a #18181a plane, no edge, its own padding), the glyph on top, the
+   .tile: a #191919 plane, no edge, its own padding), the glyph on top, the
    title (S4), the text (S6 in mute), chips at the foot (the global
    .chip). "joined" hangs the tiles from one 2px ink bar. Arrival only, by
    opacity and transform; no hover. The marks palette is the system's

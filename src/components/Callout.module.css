@@ -73,7 +73,7 @@
 
 /* ── Slab ── the banded pages' callout: a black block (global .slab),
    one column: an S7 kicker, an S4 title, the note at S5 in the body colour
-   (#d2d2d0, pretty), the same as the section prose beside it. No
+   (#d1d1d1, pretty), the same as the section prose beside it. No
    accent and no mark; the slab itself is the note's sign. */
 .slab {
   display: grid;
@@ -113,7 +113,7 @@
 .slabText {
   max-width: 40rem;
   margin-top: 12px;
-  color: var(--color-body, #d2d2d0);
+  color: var(--color-body, #d1d1d1);
   font-size: 18px;
   font-weight: 400;
   line-height: 1.65;

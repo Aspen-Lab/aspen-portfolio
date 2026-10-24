@@ -11,7 +11,7 @@
   padding: 20px;
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: var(--sheet, #18181a);
+  background: var(--sheet, #191919);
 }
 
 /* ── Phone: one row per surface, the frame on the left ── */
@@ -42,7 +42,7 @@
   width: calc(var(--w) * 100%);
 }
 .svg {
-  --frame-ink: #f4f4f2;
+  --frame-ink: #f3f3f3;
   display: block;
   width: 100%;
   height: auto;
@@ -68,8 +68,8 @@
   width: 12px;
   height: 12px;
 }
-.sq[data-fill="true"] { background: var(--grey-2, #6b6b71); }
-.sq[data-fill="false"] { border: 1.5px solid var(--grey-2, #6b6b71); }
+.sq[data-fill="true"] { background: var(--grey-2, #6d6d6d); }
+.sq[data-fill="false"] { border: 1.5px solid var(--grey-2, #6d6d6d); }
 .tech { color: var(--color-ink); }
 
 /* ── From 640px: the ledger. A lane column, then four surfaces ── */
@@ -156,46 +156,46 @@
 /* ── Inside the frames (frame units): product drawings in the system's
    greys; the pixel art keeps its own opacities ── */
 .night { fill: var(--night); }
-.mail { fill: #141416; }
-.chrome { fill: #1e1e21; }
+.mail { fill: #151515; }
+.chrome { fill: #1f1f1f; }
 .edge {
   fill: none;
-  stroke: rgb(244 244 242 / 30%);
+  stroke: rgb(243 243 243 / 30%);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 .inner {
   fill: none;
-  stroke: rgb(244 244 242 / 12%);
+  stroke: rgb(243 243 243 / 12%);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 .bezel {
   fill: none;
-  stroke: rgb(244 244 242 / 7%);
+  stroke: rgb(243 243 243 / 7%);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
-.island { fill: #000; stroke: rgb(244 244 242 / 10%); stroke-width: 0.6; }
+.island { fill: #000; stroke: rgb(243 243 243 / 10%); stroke-width: 0.6; }
 .panel {
-  fill: #1e1e21;
-  stroke: rgb(244 244 242 / 12%);
+  fill: #1f1f1f;
+  stroke: rgb(243 243 243 / 12%);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 .rule {
-  stroke: rgb(244 244 242 / 11%);
+  stroke: rgb(243 243 243 / 11%);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
-.t1 { fill: #f4f4f2; }
-.t2 { fill: #a0a0a5; }
-.t3 { fill: #6b6b71; }
-.t4 { fill: #3a3a3f; }
+.t1 { fill: #f3f3f3; }
+.t2 { fill: #a2a2a2; }
+.t3 { fill: #6d6d6d; }
+.t4 { fill: #3c3c3c; }
 .hole { fill: var(--night); }
 .stroke {
   fill: none;
-  stroke: #f4f4f2;
+  stroke: #f3f3f3;
   stroke-width: 1.3;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -215,7 +215,7 @@
 }
 .route {
   fill: none;
-  stroke: rgb(244 244 242 / 50%);
+  stroke: rgb(243 243 243 / 50%);
   stroke-width: 1.15;
   stroke-linecap: round;
   stroke-dasharray: 0.01 2.6;
@@ -228,19 +228,19 @@
 .near { opacity: 0.36; }
 .snow { opacity: 0.6; }
 .ground { fill: var(--night); }
-.moon { fill: rgb(244 244 242 / 85%); }
-.cloud { fill: rgb(244 244 242 / 26%); }
-.star { fill: rgb(244 244 242 / 45%); }
-.bright { fill: rgb(244 244 242 / 62%); }
+.moon { fill: rgb(243 243 243 / 85%); }
+.cloud { fill: rgb(243 243 243 / 26%); }
+.star { fill: rgb(243 243 243 / 45%); }
+.bright { fill: rgb(243 243 243 / 62%); }
 
 /* The sign: a raised plate, lit dots in ink. No accent in the frames. */
 .plate {
-  fill: #1e1e21;
-  stroke: rgb(244 244 242 / 30%);
+  fill: #1f1f1f;
+  stroke: rgb(243 243 243 / 30%);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
-.dots { fill: #f4f4f2; }
+.dots { fill: #f3f3f3; }
 
 /* ── SurfaceTabs: the chart sheet (inside the tabs' .paper) ──
    An open stage with one surface drawn large on the sheet, then the
@@ -341,8 +341,8 @@
   }
   .lsq { grid-column: 1; }
 }
-.lsq[data-fill="true"] { background: var(--grey-2, #6b6b71); }
-.lsq[data-fill="false"] { border: 1.5px solid var(--grey-2, #6b6b71); }
+.lsq[data-fill="true"] { background: var(--grey-2, #6d6d6d); }
+.lsq[data-fill="false"] { border: 1.5px solid var(--grey-2, #6d6d6d); }
 /* The lit copy, shown by the tab in view (opacity only): ink in the
    design lane, the accent in the code lane, the chart's one focus mark */
 .lit {
@@ -418,7 +418,7 @@
   }
   .hex { left: 6px; }
 }
-.hex polygon { fill: var(--raised, #232326); }
+.hex polygon { fill: var(--raised, #242424); }
 
 /* Once, at a third in view: the surface fades in, the squares fade on
    lane by lane, the signs come on last. Opacity only, done by 1200ms. */

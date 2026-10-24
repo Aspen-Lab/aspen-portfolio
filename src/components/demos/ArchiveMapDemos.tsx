@@ -48,20 +48,20 @@ export function SkylerDemo({ playing, cn }: DemoProps) {
           </g>
         </svg>
         <g className={styles.loupe}>
-          <circle cx="714" cy="338" r="110" fill="#090a0a" stroke="#f0eee5" strokeWidth="1.5" />
+          <circle cx="714" cy="338" r="110" fill="#0a0a0a" stroke="#ececec" strokeWidth="1.5" />
           <g clipPath={`url(#${loupeId})`}>
             <svg x="611" y="235" width="206" height="206" viewBox="560 523 118 118" preserveAspectRatio="xMidYMid slice">
               <image href="/side/skyler.jpg" width="1440" height="900" />
             </svg>
           </g>
-          <path d="M596 338H611M817 338H832M714 220V235M714 441V456" stroke="#f0eee5" strokeWidth="1.5" />
-          <rect x="658" y="452" width="112" height="29" rx="2" fill="#f0eee5" />
+          <path d="M596 338H611M817 338H832M714 220V235M714 441V456" stroke="#ececec" strokeWidth="1.5" />
+          <rect x="658" y="452" width="112" height="29" rx="2" fill="#ececec" />
           <text x="714" y="472" textAnchor="middle" className={styles.loupeLabel}>{cn ? "细节放大" : "DETAIL ×2"}</text>
         </g>
         <text x="40" y="527" className={styles.mono}>F–0101 / CHARACTER LINEUP</text>
         <text x="918" y="527" textAnchor="end" className={styles.dimMono}>01 — 03</text>
         <text x="40" y="566" className={styles.helper}>{cn ? "浏览作品条，再放大看细节。" : "Browse the strip. Get closer to the work."}</text>
-        <path d="M877 559H918M910 552L918 559L910 566" stroke="#b2b6af" />
+        <path d="M877 559H918M910 552L918 559L910 566" stroke="#b2b2b2" />
       </svg>
 
       {/* Compact: the name, the strip, and the loupe over it. */}
@@ -81,14 +81,14 @@ export function SkylerDemo({ playing, cn }: DemoProps) {
           </g>
         </svg>
         <g className={styles.loupe}>
-          <circle cx="226" cy="128" r="44" fill="#090a0a" stroke="#f0eee5" strokeWidth="1.2" />
+          <circle cx="226" cy="128" r="44" fill="#0a0a0a" stroke="#ececec" strokeWidth="1.2" />
           <g clipPath={`url(#${compactLoupeId})`}>
             <svg x="184.5" y="86.5" width="83" height="83" viewBox="560 523 118 118" preserveAspectRatio="xMidYMid slice">
               <image href="/side/skyler.jpg" width="1440" height="900" />
             </svg>
           </g>
-          <path d="M176 128H182M270 128H276M226 78V84M226 172V178" stroke="#f0eee5" strokeWidth="1.2" />
-          <rect x="190" y="177" width="72" height="17" rx="1.5" fill="#f0eee5" />
+          <path d="M176 128H182M270 128H276M226 78V84M226 172V178" stroke="#ececec" strokeWidth="1.2" />
+          <rect x="190" y="177" width="72" height="17" rx="1.5" fill="#ececec" />
           <text x="226" y="189" textAnchor="middle" className={styles.loupeLabel}>{cn ? "细节放大" : "DETAIL ×2"}</text>
         </g>
       </svg>
@@ -103,8 +103,8 @@ function Track() {
     <>
       <image className={styles.mapImage} href="/side/typhoon-map.jpg" width="1420" height="888" />
       <path d="M350 598L533 359" stroke="#fdc27f" strokeWidth="4" />
-      <circle cx="350" cy="598" r="7" fill="#e5ece6" stroke="#111a1b" strokeWidth="3" />
-      <circle cx="533" cy="359" r="7" fill="#e5ece6" stroke="#111a1b" strokeWidth="3" />
+      <circle cx="350" cy="598" r="7" fill="#e8e8e8" stroke="#171717" strokeWidth="3" />
+      <circle cx="533" cy="359" r="7" fill="#e8e8e8" stroke="#171717" strokeWidth="3" />
       <g className={`${styles.connection} ${styles.connectionOne}`}><path d="M614 552L422 504" /></g>
       <g className={`${styles.connection} ${styles.connectionTwo}`}><path d="M507 442L483 423" /></g>
       <g className={`${styles.connection} ${styles.connectionThree}`}><path d="M431 337L506 394" /></g>
@@ -124,10 +124,10 @@ export function TyphoonDemo({ playing, cn }: DemoProps) {
     <div className={`${styles.frame} ${styles.map}`} data-playing={playing} data-cn={cn} aria-hidden="true">
       <svg className={`${styles.canvas} ${styles.wide}`} viewBox="0 0 960 600" fill="none">
         <svg width="960" height="600" viewBox="0 0 1420 888"><Track /></svg>
-        <rect width="960" height="102" fill="#111a1b" fillOpacity="0.93" />
+        <rect width="960" height="102" fill="#171717" fillOpacity="0.93" />
         <path d="M40 101H920" stroke="#364341" />
         {/* The reading panel is a flat sheet on a hairline, not a fade. */}
-        <rect x="630" y="102" width="330" height="387" fill="#111a1b" fillOpacity="0.9" />
+        <rect x="630" y="102" width="330" height="387" fill="#171717" fillOpacity="0.9" />
         <path d="M630.5 102V489" stroke="#364341" />
         <text x="40" y="39" className={styles.mapEyebrow}>{cn ? "香港天文台公报 · 历史回放" : "HKO BULLETIN / ARCHIVE REPLAY"}</text>
         <text x="38" y="80" className={styles.mapTitle}>BAVI <tspan className={styles.mapTitleDim}>×</tspan> HX253</text>
@@ -143,14 +143,14 @@ export function TyphoonDemo({ playing, cn }: DemoProps) {
           <text y="200" className={styles.mapHelper}>{cn ? "时间向前，" : "Move through time."}</text>
           <text y="229" className={styles.mapHelper}>{cn ? "看风暴与航线的关系。" : "See the route in context."}</text>
         </g>
-        <rect x="0" y="489" width="960" height="111" fill="#111a1b" />
+        <rect x="0" y="489" width="960" height="111" fill="#171717" />
         <path d="M40 489H920" stroke="#364341" />
         <text x="40" y="524" className={styles.mapEyebrow}>{cn ? "拖动时间轴" : "SCRUB THE TIMELINE"}</text>
         <text x="920" y="524" textAnchor="end" className={styles.mapEyebrow}>{cn ? "历史公报示意" : "HISTORICAL BULLETIN DEMO"}</text>
         <path d="M54 554H906" stroke="#465754" strokeWidth="2" />
         <path className={styles.timelineFill} d="M54 554H906" stroke="#b8ddd0" strokeWidth="2" pathLength="1" />
         {[54, 480, 906].map((x) => <circle key={x} cx={x} cy="554" r="4" fill="#91aaa1" />)}
-        <g className={styles.scrubber}><rect x="-5" y="-11" width="10" height="22" rx="3" fill="#e3efe8" /><path d="M0-7V7" stroke="#63766e" /></g>
+        <g className={styles.scrubber}><rect x="-5" y="-11" width="10" height="22" rx="3" fill="#e9e9e9" /><path d="M0-7V7" stroke="#63766e" /></g>
         <text x="54" y="584" className={styles.timelineLabel}>{cn ? "较早位置" : "EARLIER"}</text>
         <text x="480" y="584" textAnchor="middle" className={styles.timelineLabel}>{cn ? "沿路径移动" : "ALONG THE TRACK"}</text>
         <text x="906" y="584" textAnchor="end" className={styles.timelineLabel}>{cn ? "公报位置" : "BULLETIN POSITION"}</text>
@@ -159,18 +159,18 @@ export function TyphoonDemo({ playing, cn }: DemoProps) {
       {/* Compact: the map, cropped to the storm and the route, under two thin bands. */}
       <svg className={`${styles.canvas} ${styles.compact}`} viewBox="0 0 320 200" fill="none">
         <svg width="320" height="200" viewBox="48 175 865 540.5" preserveAspectRatio="xMidYMid slice"><Track /></svg>
-        <rect width="320" height="34" fill="#111a1b" fillOpacity="0.93" />
+        <rect width="320" height="34" fill="#171717" fillOpacity="0.93" />
         <path d="M0 34.5H320" stroke="#364341" />
         <text x="16" y="23.5" className={styles.mapTitle}>BAVI <tspan className={styles.mapTitleDim}>×</tspan> HX253</text>
         <path d="M210 18.5H222" stroke="#fdc27f" strokeWidth="2" />
         <text x="304" y="23" textAnchor="end" className={styles.routeTitle}>HKG — SHA</text>
-        <rect y="168" width="320" height="32" fill="#111a1b" fillOpacity="0.93" />
+        <rect y="168" width="320" height="32" fill="#171717" fillOpacity="0.93" />
         <path d="M0 168.5H320" stroke="#364341" />
         <text x="16" y="188" className={styles.mapEyebrow}>{cn ? "时间轴" : "TIMELINE"}</text>
         <path d="M90 184.5H302" stroke="#465754" strokeWidth="1.5" />
         <path className={styles.timelineFill} d="M90 184.5H302" stroke="#b8ddd0" strokeWidth="1.5" pathLength="1" />
         {[90, 196, 302].map((x) => <circle key={x} cx={x} cy="184.5" r="2.5" fill="#91aaa1" />)}
-        <g className={styles.scrubber}><rect x="-3.5" y="-8" width="7" height="16" rx="2" fill="#e3efe8" /><path d="M0-4.5V4.5" stroke="#63766e" /></g>
+        <g className={styles.scrubber}><rect x="-3.5" y="-8" width="7" height="16" rx="2" fill="#e9e9e9" /><path d="M0-4.5V4.5" stroke="#63766e" /></g>
       </svg>
     </div>
   );

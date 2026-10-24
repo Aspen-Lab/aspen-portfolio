@@ -89,12 +89,12 @@
   width: 28px;
   height: 28px;
   border-radius: 2px;
-  background: var(--raised, #232326);
-  color: #a0a0a5;
+  background: var(--raised, #242424);
+  color: #a2a2a2;
   letter-spacing: 0.04em;
 }
 .row[data-chosen] .index {
-  background: var(--accent, #f4f4f2);
+  background: var(--accent, #f3f3f3);
   color: #0a0a0a;
 }
 
@@ -112,8 +112,8 @@
   letter-spacing: -0.01em;
   text-wrap: balance;
 }
-.problemTitle { color: #d2d2d0; }
-.directionTitle { color: #f4f4f2; }
+.problemTitle { color: #d1d1d1; }
+.directionTitle { color: #f3f3f3; }
 @media (max-width: 639px) {
   .problemTitle,
   .directionTitle { font-size: 20px; }
@@ -124,8 +124,8 @@
   max-width: 34rem;
   text-wrap: pretty;
 }
-.problemText { color: #a0a0a5; }
-.directionText { color: #d2d2d0; }
+.problemText { color: #a2a2a2; }
+.directionText { color: #d1d1d1; }
 
 /* ── The connector: 1px grey with a 6px head, problem → direction. Row
    02's is ink and carries the boxed tag. Across from 1024px, down on a
@@ -135,9 +135,9 @@
   position: relative;
   height: 48px;
   margin: 8px 0;
-  --c: #6b6b71;
+  --c: #6d6d6d;
 }
-.row[data-chosen] .link { --c: #f4f4f2; }
+.row[data-chosen] .link { --c: #f3f3f3; }
 .line {
   position: absolute;
   top: 0;
@@ -199,7 +199,7 @@
 /* The caption, set off by space under the last row */
 .caption {
   margin: 16px 0 0;
-  color: #8a8a90;
+  color: #8c8c8c;
   text-wrap: pretty;
 }
 

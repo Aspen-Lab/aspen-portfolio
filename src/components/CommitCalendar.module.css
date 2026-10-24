@@ -18,11 +18,11 @@
 .day i { transition: transform 120ms ease; }
 .day[data-selected="true"] i { transform: scale(1.25); }
 .day:focus-visible::after { content: ""; position: absolute; inset: -1px; border: 1px solid var(--color-ink); pointer-events: none; }
-.activity [data-level="0"] { background: #29292b; }
-.activity [data-level="1"] { background: #414143; }
-.activity [data-level="2"] { background: #6c6c6e; }
+.activity [data-level="0"] { background: #2a2a2a; }
+.activity [data-level="1"] { background: #424242; }
+.activity [data-level="2"] { background: #6d6d6d; }
 .activity [data-level="3"] { background: #a8a8a8; }
-.activity [data-level="4"] { background: #e6e6e2; }
+.activity [data-level="4"] { background: #e5e5e5; }
 .readout { display: flex; align-items: center; justify-content: space-between; gap: 6px; height: 22px; padding-top: 5px; white-space: nowrap; color: var(--color-soft); font: 9px/14px var(--font-sans); font-variant-numeric: tabular-nums; }
 .readout[data-active="true"] { color: var(--color-mute); }
 .readout strong { color: var(--color-ink); font-weight: 400; }

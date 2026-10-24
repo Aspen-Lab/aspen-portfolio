@@ -9,7 +9,7 @@ import styles from "./LayerSheet.module.css";
 /* The three layers of TikTok's KYC problem as Latent's tabbed platform
    chart (latenthealth.com, "Platform"): the tabs on the left, one dark
    sheet on the right whose whole state changes with the tab. Each state
-   is the layer drawn twice: BEFORE on the left in grey (#6b6b71 plates,
+   is the layer drawn twice: BEFORE on the left in grey (#6d6d6d plates,
    1px lines), AFTER on the right in solid ink (2px rail), with one focus
    mark in the page accent, the only accent on the sheet.
 

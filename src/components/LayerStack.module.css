@@ -116,7 +116,7 @@
     margin-bottom: 1px;
     overflow: visible;
     fill: none;
-    stroke: rgb(244 244 242 / 55%);
+    stroke: rgb(243 243 243 / 55%);
     stroke-width: 1;
     clip-path: inset(0 100% 0 0);
     transition: clip-path 600ms var(--ease-arrive);

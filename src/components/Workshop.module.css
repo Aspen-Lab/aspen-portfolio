@@ -14,7 +14,7 @@
 .evidence { min-width: 0; }
 .smallHeading { display: flex; justify-content: space-between; align-items: center; gap: 12px; font: 10px/1.6 var(--font-mono); letter-spacing: .12em; color: var(--color-soft); }
 /* The figures on a plane: a tone over the grain, flat, no edge */
-.impact { padding: 22px 28px 14px; border-radius: var(--r-plane); corner-shape: squircle; background: #1d1d20; }
+.impact { padding: 22px 28px 14px; border-radius: var(--r-plane); corner-shape: squircle; background: #1e1e1e; }
 .metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin: 25px 0 0; }
 .metrics p { white-space: nowrap; font: 39px/1.12 var(--font-newsreader), Georgia, serif; letter-spacing: -.04em; }
 .metrics p span { color: var(--color-soft); font: 13px var(--font-mono); letter-spacing: -.02em; vertical-align: middle; }
@@ -48,17 +48,17 @@
    sits on the bottom edge (margin-top: auto), so no footnote line is needed
    to fill the card. */
 /* Both faces are one plane, the same tone as the figures' plane; no edge */
-.cardFace { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; border-radius: var(--r-plane); corner-shape: squircle; padding: 19px 22px 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #1d1d20; color: #e3e7e2; }
-.faceLabel { position: relative; font-size: 13px; line-height: 1.4; color: #99a098; }
+.cardFace { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; border-radius: var(--r-plane); corner-shape: squircle; padding: 19px 22px 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #1e1e1e; color: #e4e4e4; }
+.faceLabel { position: relative; font-size: 13px; line-height: 1.4; color: #9b9b9b; }
 .personalityType { position: relative; margin-top: auto; font: 61px/.9 var(--font-newsreader), Georgia, serif; letter-spacing: -.045em; }
-.personalityType span { margin-left: 4px; font: 25px var(--font-newsreader), Georgia, serif; color: #a6afa3; letter-spacing: -.02em; }
-.faceCopy { position: relative; margin-top: 14px; font-size: 14.5px; line-height: 1.45; color: #c2c9bf; }
+.personalityType span { margin-left: 4px; font: 25px var(--font-newsreader), Georgia, serif; color: #a8a8a8; letter-spacing: -.02em; }
+.faceCopy { position: relative; margin-top: 14px; font-size: 14.5px; line-height: 1.45; color: #c3c3c3; }
 .fingerprint { position: absolute; right: 17px; top: 28px; color: #adb8a7; opacity: .2; pointer-events: none; }
 .cardBack { transform: rotateY(180deg); }
-.cardBack .faceLabel { color: #989893; }
+.cardBack .faceLabel { color: #969696; }
 .educationTitle { position: relative; font: 29px/1.08 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; margin-top: auto; }
-.educationTitle span { color: #babbb4; }
-.school { font-size: 13px; line-height: 1.4; color: #c0c1ba; margin-top: 12px; }
+.educationTitle span { color: #b8b8b8; }
+.school { font-size: 13px; line-height: 1.4; color: #bebebe; margin-top: 12px; }
 .personalNote { max-width: 420px; color: var(--color-mute); font-size: 14.5px; line-height: 1.65; margin-top: 13px; text-wrap: balance; }
 @media (max-width: 1150px) {
   .intro, .practiceGrid, .personalGrid { gap: 36px; }

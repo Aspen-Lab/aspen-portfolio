@@ -85,7 +85,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
               <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100">
                 {/* The index on a small raised plane, no edge: a solid tone reads
                     over a white mat as well as a night sky. */}
-                <span className="absolute left-[14px] top-[14px] rounded-[var(--r-tag)] [corner-shape:squircle] bg-[#232326] px-[7px] py-[5px] font-mono text-[10px] leading-none uppercase tracking-[0.16em] text-ink tabular-nums">
+                <span className="absolute left-[14px] top-[14px] rounded-[var(--r-tag)] [corner-shape:squircle] bg-[#242424] px-[7px] py-[5px] font-mono text-[10px] leading-none uppercase tracking-[0.16em] text-ink tabular-nums">
                   {pad(i + 1)} <span className="text-soft">/</span> {pad(frames.length)}
                 </span>
               </span>

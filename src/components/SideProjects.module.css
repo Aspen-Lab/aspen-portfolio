@@ -18,7 +18,7 @@
   line-height: 1.8;
 }
 .prompt { color: var(--color-soft); user-select: none; }
-.command { color: rgb(244 244 242 / 78%); overflow-wrap: anywhere; }
+.command { color: rgb(243 243 243 / 78%); overflow-wrap: anywhere; }
 
 .output {
   grid-column: 2;
@@ -51,7 +51,7 @@
   left: 1px;
   width: 0.6em;
   height: 1.15em;
-  background: rgb(244 244 242 / 55%);
+  background: rgb(243 243 243 / 55%);
 }
 .output .caret::after { width: 1.5px; background: var(--color-mute); }
 /* Like a real terminal, it holds still while keys land and blinks only

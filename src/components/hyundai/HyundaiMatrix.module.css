@@ -48,7 +48,7 @@
      (four label lines on a phone), so a pick never moves the cells */
   min-height: calc(4lh + 12px);
   margin: 14px 0 22px;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 @media (min-width: 640px) {
   .phoneConds { min-height: calc(2lh + 4px); }
@@ -56,7 +56,7 @@
 .head {
   grid-row: 3;
   margin-bottom: 10px;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 .head[data-c="0"] { grid-column: 1; }
 .head[data-c="1"] { grid-column: 2; }
@@ -118,7 +118,7 @@
 }
 .item:focus { outline: none; }
 .item:focus-visible {
-  outline: 1px solid #f4f4f2;
+  outline: 1px solid #f3f3f3;
   outline-offset: 3px;
 }
 .itemHead {
@@ -132,7 +132,7 @@
   top: 16px;
   width: 8px;
   height: 8px;
-  background: var(--grey-3, #3a3a3f);
+  background: var(--grey-3, #3c3c3c);
 }
 .sq i {
   position: absolute;
@@ -140,10 +140,10 @@
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
-.sq i[data-k="ink"] { background: #f4f4f2; }
+.sq i[data-k="ink"] { background: #f3f3f3; }
 .sq i[data-k="accent"] { background: var(--accent); }
 .name {
-  color: #f4f4f2;
+  color: #f3f3f3;
   white-space: nowrap;
   opacity: 0.62;
   transition: opacity var(--t-1) var(--ease-arrive);
@@ -154,10 +154,10 @@
 
 @media (max-width: 1023px) {
   @media (hover: hover) {
-    .item:hover { background-color: #232326; }
+    .item:hover { background-color: #242424; }
   }
   .item[aria-selected="true"],
-  .item[aria-selected="true"]:hover { background-color: var(--raised, #26262a); }
+  .item[aria-selected="true"]:hover { background-color: var(--raised, #272727); }
 }
 
 /* (wide) a row of the tree: no chip, the square in the gutter the joins
@@ -175,7 +175,7 @@
   .own,
   .cond {
     display: block;
-    color: #a0a0a5;
+    color: #a2a2a2;
   }
   .own { margin-top: 8px; }
   /* each condition holds two 16px lines (one in Chinese), so the joins
@@ -194,7 +194,7 @@
     right: -6px;
     top: -6px;
     height: 34px;
-    border: 1px solid #f4f4f2;
+    border: 1px solid #f3f3f3;
     border-radius: var(--r-tag, 10px);
     corner-shape: squircle;
     pointer-events: none;
@@ -214,7 +214,7 @@
     /* 24px inside the sheet's edges (40 less 16): concentric with it */
     border-radius: max(var(--r-tag, 10px), calc(var(--r-plane, 32px) - 24px));
     corner-shape: squircle;
-    background: var(--raised, #26262a);
+    background: var(--raised, #272727);
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--t-1) var(--ease-arrive);
@@ -267,9 +267,9 @@
   height: 1px;
   background: currentColor;
 }
-.join i[data-k="grey"] { color: #6b6b71; }
+.join i[data-k="grey"] { color: #6d6d6d; }
 .join i[data-k="ink"] {
-  color: #f4f4f2;
+  color: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -314,7 +314,7 @@
   place-items: center;
   aspect-ratio: 280 / 164;
 }
-.empty > span { color: #6b6b71; }
+.empty > span { color: #6d6d6d; }
 @media (max-width: 639px) {
   .empty { aspect-ratio: 170 / 164; }
 }
@@ -345,7 +345,7 @@
 }
 .caption {
   min-width: 0;
-  color: #a0a0a5;
+  color: #a2a2a2;
 }
 @media (min-width: 1024px) {
   .caption { white-space: nowrap; }
@@ -374,27 +374,27 @@
   position: relative;
   width: 8px;
   height: 8px;
-  background: var(--grey-3, #3a3a3f);
+  background: var(--grey-3, #3c3c3c);
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 .pageSq::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: #f4f4f2;
+  background: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
 .page[aria-checked="true"] .pageSq::after { opacity: 1; }
 @media (hover: hover) {
-  .page:hover .pageSq { background-color: var(--grey-2, #6b6b71); }
+  .page:hover .pageSq { background-color: var(--grey-2, #6d6d6d); }
 }
 
 /* ── Inside a render (design px on the 280 × 176 canvas) ── */
 .canvas {
   position: absolute;
   inset: 0;
-  color: #fcfbfb;
+  color: #fbfbfb;
   font-feature-settings: normal;
   font-variant-numeric: normal;
   letter-spacing: normal;

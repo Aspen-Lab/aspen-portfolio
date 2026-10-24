@@ -23,8 +23,8 @@
 }
 
 .archive {
-  background: #090a0a;
-  color: #eeeee9;
+  background: #0a0a0a;
+  color: #ececec;
 }
 
 /* The dot grid sits in the masthead band only and stops on its rule
@@ -34,12 +34,12 @@
   inset: 0 0 72% 0;
   content: "";
   opacity: 0.15;
-  background-image: radial-gradient(#b9c0b9 0.6px, transparent 0.6px);
+  background-image: radial-gradient(#bbbbbb 0.6px, transparent 0.6px);
   background-size: 9px 9px;
 }
 
 .rule {
-  stroke: #363b36;
+  stroke: #383838;
   stroke-width: 1;
 }
 
@@ -52,14 +52,14 @@
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 1.8px;
-  fill: #c6cbc3;
+  fill: #c7c7c7;
 }
 
 .mono { font-size: 15px; }
 
 .dimMono {
   font-size: 14px;
-  fill: #8e968d;
+  fill: #909090;
 }
 
 .archiveTitle {
@@ -67,17 +67,17 @@
   font-size: 89px;
   font-weight: 850;
   letter-spacing: -5px;
-  fill: #f1f1eb;
+  fill: #efefef;
 }
 
 .archiveOutline {
   fill: transparent;
-  stroke: #ced2c9;
+  stroke: #cecece;
   stroke-width: 1.2;
 }
 
 .projectTitle {
-  fill: #e4e7dd;
+  fill: #e3e3e3;
   font-family: var(--font-geist-sans), sans-serif;
   font-size: 21px;
   font-weight: 750;
@@ -94,13 +94,13 @@
 }
 
 .loupeLabel {
-  fill: #141715;
+  fill: #151515;
   font-size: 14px;
   letter-spacing: 1px;
 }
 
 .helper {
-  fill: #a5aca1;
+  fill: #a6a6a6;
   font-family: var(--font-geist-sans), sans-serif;
   font-size: 19px;
 }
@@ -114,7 +114,7 @@
 }
 
 .map {
-  background: #111a1b;
+  background: #171717;
 }
 
 .mapImage {
@@ -128,7 +128,7 @@
 }
 
 .mapTitle {
-  fill: #e4eae2;
+  fill: #e5e5e5;
   font-family: var(--font-geist-sans), sans-serif;
   font-size: 35px;
   font-weight: 550;
@@ -141,7 +141,7 @@
 }
 
 .routeTitle {
-  fill: #edf0e7;
+  fill: #ececec;
   font-family: var(--font-geist-sans), sans-serif;
   font-size: 31px;
   font-weight: 450;
@@ -155,7 +155,7 @@
 }
 
 .mapHelper {
-  fill: #dae4d9;
+  fill: #dddddd;
   font-family: var(--font-geist-sans), sans-serif;
   font-size: 22px;
   letter-spacing: -0.3px;
@@ -274,7 +274,7 @@
 .compact .archiveOutline { stroke-width: 0.8; }
 .compact .projectTitle { font-size: 12px; letter-spacing: 0.6px; }
 .compact .mapTitle { font-size: 17px; letter-spacing: -0.4px; }
-.compact .routeTitle { font-size: 13px; letter-spacing: 0; fill: #dfe6dc; }
+.compact .routeTitle { font-size: 13px; letter-spacing: 0; fill: #e0e0e0; }
 .frame[data-cn="true"] .compact .mono,
 .frame[data-cn="true"] .compact .mapEyebrow,
 .frame[data-cn="true"] .compact .loupeLabel { font-size: 11px; letter-spacing: 0.4px; }
