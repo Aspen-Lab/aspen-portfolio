@@ -10,8 +10,9 @@ import styles from "./NutraDirection.module.css";
 
 /* Visual direction, in three blocks 56px apart.
    A, the first pass: the light NutSave render (board 038, kept as the
-   picture it is) on a tile, beside a slab that names what it was made
-   of: the two colours and the two typefaces board 037 prints.
+   picture it is) on a plane, beside a darker slab that names what it was
+   made of: the two colours and the two typefaces board 037 prints. The
+   two halves are told apart by tone; nothing outlines them.
    B, the second pass: why the app went dark (NutraBalance, board 039).
    C, the goal card: its five versions and the colour of its rim
    (NutraRim, boards 047 and 045).
@@ -38,10 +39,6 @@ export function NutraDirection() {
             sizes="(max-width: 1023px) 100vw, 720px"
             className={styles.mediaImg}
           />
-          <span aria-hidden className="reg-mark tl" />
-          <span aria-hidden className="reg-mark tr" />
-          <span aria-hidden className="reg-mark br" />
-          <span aria-hidden className="reg-mark bl" />
         </div>
         <div className={`slab ${styles.note}`}>
           <p className={`t-label ${styles.label}`}>{say("First pass · NutSave", "第一版 · NutSave")}</p>

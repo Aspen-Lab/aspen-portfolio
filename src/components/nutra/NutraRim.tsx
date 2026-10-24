@@ -20,8 +20,9 @@ import styles from "./NutraRim.module.css";
    progress rim, reward marks, clear button); the legend beside them is
    one listbox, one tab stop. Under the legend, the colour decision from
    board 045, folded into the Final state: the rim in red and in orange,
-   each with the verdicts the board prints; the chosen orange row carries
-   the block's one accent outline. On a stage too narrow for a side
+   each on a plane with the verdicts the board prints; the chosen orange
+   row is the raised plane and carries the block's one accent mark, a
+   small solid square. Nothing in the setting is outlined. On a stage too narrow for a side
    column, the colour rows sit under the stage instead.
 
    The 3D characters are the app's own raster art (ART in product.ts),

@@ -1,22 +1,18 @@
 /* Axel §01: the PR as the figure. The global .paper-stack > .paper gives
    the sheet and its two back sheets; the type comes from the ramp
-   (.t-subhead, .t-small, .t-label). The run is grey mass with ink marks
-   and words, the checks are ink; the preview's frame and tab are the one
-   accent. Flat fills, 1px lines, no gradient, no shadow (the frame's
-   edges use an inset box-shadow only as a hard band, never a blur). */
+   (.t-subhead, .t-small, .t-label). Planes, not frames: the PR on the
+   sheet beside its preview on the slab, told apart by tone; the run is
+   grey mass with ink marks and words, the checks are ink, the preview is
+   a plane on the slab and its tab is the one accent. Flat fills, no
+   outline, no rule, no gradient, no shadow. */
 .root {
-  /* The run's metrics: its posts and its block. The stage reads them
-     too, to hang the preview's tab on the run's centre line. */
+  /* The run's metrics: the air above and below its block, and the block.
+     The stage reads them too, to hang the preview's tab on the run's
+     centre line. */
   --post: 14px;
   --block: 44px;
-  /* The frame's edge: 1.5px, which a 1x screen can only draw blurred, so
-     there it is 2 */
-  --frame: 2px;
   width: 100%;
   margin: 0;
-}
-@media (min-resolution: 2dppx) {
-  .root { --frame: 1.5px; }
 }
 @media (max-width: 639px) {
   .root { --post: 10px; --block: 40px; }
@@ -48,10 +44,9 @@
 }
 
 /* ── The owner lane ── one row: the owner, then one grey block holding
-   the five steps. The column lines stand as posts above and below it,
-   so the block is seen to cross every one. Each column is as wide as its
-   word, and the width left over is shared out equally, so every word
-   stands the same distance from the next line. */
+   the five steps, one pair of hands from end to end. Each column is as
+   wide as its word, and the width left over is shared out equally, so
+   every word stands the same distance from the next. */
 .lane {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -68,19 +63,13 @@
   grid-template-columns: repeat(var(--n, 5), auto);
   grid-template-rows: var(--post) var(--block) var(--post);
 }
-.post {
-  grid-row: 1 / -1;
-  border-left: 1px solid var(--edge, #333336);
-}
-.post[data-last] { border-right: 1px solid var(--edge, #333336); }
+.post { grid-row: 1 / -1; }
 /* Beside the preview, the run goes on through the sheet's margin and
-   ends on the slab's edge, which is its last line: the PR arrives where
-   its preview begins */
+   ends where the slab begins: the PR arrives where its preview begins */
 @media (min-width: 1024px) {
   .lane { margin-right: -40px; }
-  .lane .post[data-last] { border-right: 0; }
 }
-/* Grey mass, not a light plane: the accent frame stays the one focus */
+/* Grey mass, not a light plane: the accent tab stays the one focus */
 .bar {
   grid-row: 2;
   grid-column: 1 / -1;
@@ -112,7 +101,7 @@
 /* With room, the steps are set at S4, the checklist's size (S4's exact
    values: 22px/1.25, -0.01em): beside the preview, and when stacked,
    whenever the lane is 560px wide. Below 1200px beside the preview, the
-   posts alone mark the steps, as on phones. */
+   words alone mark the steps, as on phones. */
 @media (min-width: 1024px) {
   .step {
     gap: 10px;
@@ -151,22 +140,20 @@
 .label { margin: 0; }
 
 .items {
-  margin: 16px 0 0;
+  margin: 12px 0 0;
   padding: 0;
-  border-bottom: 1px solid var(--color-line);
   list-style: none;
 }
+/* The lines are set apart by space alone. The check starts on the
+   list's left edge; the arrow, slid, ends on its right edge */
 .item {
   position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
   width: 100%;
-  /* The check starts on the rules' left end; the arrow, slid, ends on
-     their right end */
-  padding: 14px 3px 14px 0;
+  padding: 12px 3px 12px 0;
   border: 0;
-  border-top: 1px solid var(--color-line);
   background: none;
   color: var(--color-ink);
   text-align: left;
@@ -176,9 +163,9 @@
 /* The line being shown keeps full ink; the others step back */
 .root[data-show] .item[data-on="false"] { opacity: var(--dim, 0.45); }
 
-/* A line's focus ring is the band's ring (1px ink, radius 2) drawn on the
-   line's two rules and 12px out to each side, so it clears the check and
-   the arrow; the sheet's padding (20px and up) holds it */
+/* A line's focus ring is the band's ring (1px ink, radius 2) drawn round
+   the line and 12px out to each side, so it clears the check and the
+   arrow; the sheet's padding (20px and up) holds it */
 .root .item:focus-visible {
   z-index: 1;
   outline: none;
@@ -220,24 +207,24 @@
   .item[data-on="true"] .arrow { transform: rotate(90deg) translateX(3px); }
 }
 
-/* An ink check square: an outlined square at rest, filled with a dark
+/* A check square: a grey-3 plane at rest, filled with ink and a dark
    tick once it is checked */
 .check {
   position: relative;
   flex: none;
   width: 16px;
   height: 16px;
-  border: 1.5px solid var(--grey-2, #6b6b71);
+  background: var(--grey-3, #3a3a3f);
 }
 .check::before {
   content: "";
   position: absolute;
-  inset: -1.5px;
+  inset: 0;
   background: var(--color-ink);
 }
 .check svg {
   position: absolute;
-  inset: -1.5px;
+  inset: 0;
   overflow: visible;
 }
 .check path {
@@ -247,15 +234,15 @@
   stroke-linecap: square;
 }
 
-/* ── The slab: a dark stage with a fine dot grid, crop marks in its
-   corners, the preview set on it. The dots are whole on every edge: the
-   12px tiles are spaced to fit, so each edge's row sits 6px in. ── */
+/* ── The slab: a dark stage with a fine dot grid, the preview set on it.
+   It meets the sheet edge to edge: the change of tone is the seam. The
+   dots are whole on every edge: the 12px tiles are spaced to fit, so
+   each edge's row sits 6px in. ── */
 .stage {
   position: relative;
   display: grid;
   place-items: center;
   padding: 64px 20px 72px;
-  border-top: 1px solid var(--edge, #333336);
   background-color: var(--slab, #0a0a0a);
   background-image: radial-gradient(circle at center, var(--grey-3, #3a3a3f) 0.75px, transparent 1.25px);
   background-size: 12px 12px;
@@ -270,49 +257,34 @@
   .stage {
     align-items: start;
     padding: calc(40px + var(--post) + var(--block) / 2 - 12px) 40px 64px;
-    border-top: 0;
-    border-left: 1px solid var(--edge, #333336);
   }
   .device { margin-top: 24px; }
 }
 
-/* The device: the frame and the card in it. Its box is the wide card's;
-   the phone copy sits over it, centred, and the frame narrows to it by
-   transform (--sx, --sy, --ox, --dy are measured in the script). */
+/* The device: the preview's plane and the card on it. Its box is the
+   wide card's; the phone copy sits over it, centred, and the plane
+   narrows to it by transform (--sx, --sy, --ox are measured in the script). */
 .device {
   --sx: 1;
   --sy: 1;
   --ox: 0px;
-  --dy: 0px;
   position: relative;
   width: 100%;
   max-width: 360px;
 }
-.surface,
-.edge {
+.surface {
   position: absolute;
+  inset: 0;
+  background: var(--tile, #18181a);
   transform-origin: 0 0;
 }
 .surface,
-.edge,
 .tag {
   transition: transform var(--t-2, 360ms) var(--ease-arrive);
 }
-.surface {
-  inset: 0;
-  background: var(--tile, #141416);
-}
-/* The one accent mark: four edges and the tab. Each edge is a band drawn
-   by an inset shadow on one side of a thin box. A 1.5px fill snaps to 1
-   or 2 pixels by where it lands and a border's width is floored, but the
-   band is drawn exactly from the box's snapped side, so all four come out
-   alike at any position (3 device pixels on a 2x screen). The script also
-   sets the frame on whole device pixels, for the narrowed frame's
-   transforms. */
-.edge[data-e="t"] { top: 0; left: 0; right: 0; height: 4px; box-shadow: inset 0 var(--frame) var(--accent); }
-.edge[data-e="b"] { bottom: 0; left: 0; right: 0; height: 4px; box-shadow: inset 0 calc(var(--frame) * -1) var(--accent); }
-.edge[data-e="l"] { top: 0; bottom: 0; left: 0; width: 4px; box-shadow: inset var(--frame) 0 var(--accent); }
-.edge[data-e="r"] { top: 0; bottom: 0; right: 0; width: 4px; box-shadow: inset calc(var(--frame) * -1) 0 var(--accent); }
+/* The one accent mark: the tab, a solid plane on the preview's top edge.
+   The script sets the device on whole device pixels, so the narrowed
+   plane's transformed edges stay crisp. */
 .tag {
   position: absolute;
   bottom: 100%;
@@ -327,16 +299,12 @@
 }
 
 /* Responsive layouts, in sequence, so no word ever stands outside the
-   frame: narrowing, the wide card fades (--t-1), then the frame moves,
+   plane: narrowing, the wide card fades (--t-1), then the plane narrows,
    then the phone copy fades in; widening, the phone copy fades as the
-   frame opens, and the wide card returns once it nearly has */
+   plane opens, and the wide card returns once it nearly has */
 .root[data-show="narrow"] .surface { transform: translateX(var(--ox)) scale(var(--sx), var(--sy)); }
-.root[data-show="narrow"] .edge[data-e="t"] { transform: translateX(var(--ox)) scaleX(var(--sx)); }
-.root[data-show="narrow"] .edge[data-e="b"] { transform: translate(var(--ox), var(--dy)) scaleX(var(--sx)); }
-.root[data-show="narrow"] .edge[data-e="l"] { transform: translateX(var(--ox)) scaleY(var(--sy)); }
-.root[data-show="narrow"] .edge[data-e="r"] { transform: translateX(calc(var(--ox) * -1)) scaleY(var(--sy)); }
 .root[data-show="narrow"] .tag { transform: translateX(var(--ox)); }
-.root[data-show="narrow"] :is(.surface, .edge, .tag) { transition-delay: var(--t-1, 160ms); }
+.root[data-show="narrow"] :is(.surface, .tag) { transition-delay: var(--t-1, 160ms); }
 
 /* ── The running card: Axel's flight card ── */
 .app {
@@ -503,7 +471,7 @@
 /* A phone's width: Nonstop over a full-width button. The phone copy
    (200px of content at most) always is one; the wide card keeps Nonstop
    beside its button down to a 360px screen (224px), so narrowing the
-   frame always shows the card reflow. */
+   plane always shows the card reflow. */
 @container (max-width: 209px) {
   .foot {
     flex-direction: column;
@@ -562,21 +530,24 @@
 
 /* ── The legend's demos ── */
 
-/* Reusable components: each part of the card outlined, one after
-   another */
+/* Reusable components: each part of the card set on a raised plane of
+   its own, one after another. The card isolates, so each plane lies on
+   the preview's plane and under its part. */
+.app { isolation: isolate; }
 .app [data-part] { position: relative; }
 .app [data-part]::before {
   content: "";
   position: absolute;
+  z-index: -1;
   inset: -5px;
-  border: 1px dashed rgb(244 244 242 / 55%);
   border-radius: 3px;
+  background: #2e2e32;
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
 .trip[data-part]::before { border-radius: 13px; }
-/* The search's outline takes in its hung quote */
+/* The search's plane takes in its hung quote */
 .device:not([data-booked="true"]) .title[data-hang]::before { left: calc(-5px - 0.36em); }
 .button[data-part]::before { border-radius: 999px; }
 .root[data-show="parts"] [data-part]::before {
@@ -698,11 +669,10 @@
   }
   .device[data-booked] :is(.window, .hold, .flight),
   .surface,
-  .edge,
   .tag { transition: none; }
-  /* Narrowing, the frame still waits for the wide card to fade: a swap
+  /* Narrowing, the plane still waits for the wide card to fade: a swap
      at --t-1 */
-  .root[data-show="narrow"] :is(.surface, .edge, .tag) { transition: transform 0s var(--t-1, 160ms); }
+  .root[data-show="narrow"] :is(.surface, .tag) { transition: transform 0s var(--t-1, 160ms); }
   .arrow,
   .item[data-on="true"] .arrow {
     transform: none;
@@ -727,11 +697,11 @@
   .lane { grid-template-columns: minmax(0, 1fr); }
   .owner { padding: 0 0 8px; }
   .step { padding: 0 6px; }
-  /* No room for the stops: the posts alone mark the steps */
+  /* No room for the stops: the words alone mark the steps */
   .stop { display: none; }
   .item {
     gap: 12px;
-    padding: 12px 3px 12px 0;
+    padding: 10px 3px 10px 0;
     font-size: 15px;
     line-height: 1.5;
     letter-spacing: 0;

@@ -29,7 +29,10 @@ import styles from "./LayerSheet.module.css";
    its secondary words left out. All three states stay mounted and swap
    by PlatformTabs' opacity contract; nothing here re-renders on a
    switch. The sheet carries ~40 words of prose, so it never advances by
-   itself. Flat fills and 1px lines only. */
+   itself. Planes, not frames: the drawing stands on the sheet itself, with
+   no box round it, no drafting grid and no rule between BEFORE and AFTER
+   (one arrowhead says which way it goes). Flat fills; the only lines are
+   the drawing's own rails, connectors and leaders. */
 
 type Layer = { label: string; problem: string; approach: string; title?: string };
 type F = "desk" | "phone";
@@ -142,11 +145,8 @@ const LayerSheet = memo(function LayerSheet({ layers, t, cn }: { layers: Layer[]
                 <Before f="desk" t={t} />
                 <Before f="phone" t={t} />
               </div>
-              {/* The fold: a dashed 1px line with the arrow from BEFORE to AFTER */}
+              {/* The turn from BEFORE to AFTER: one arrowhead, no rule */}
               <span className={styles.divider}>
-                <svg className={styles.fold}>
-                  <line x1="0.5" x2="0.5" y1="0" y2="100%" />
-                </svg>
                 <svg viewBox="0 0 10 12" className={styles.arrow}>
                   <path d="M1 0 L9 6 L1 12 Z" />
                 </svg>
@@ -170,24 +170,13 @@ type DrawProps = { f: F; t: Copy };
 
 const pc = (v: number, of: number) => `${Math.round((v / of) * 10000) / 100}%`;
 
-/** One half's drawing in one frame: a drafting grid, the marks, then the
-    words pinned over them. */
+/** One half's drawing in one frame: the marks on the bare sheet, then
+    the words pinned over them. */
 function Frame({ f, marks, words }: { f: F; marks: ReactNode; words?: ReactNode }) {
   const { w, h } = FRAME[f];
-  // An 80-unit grid: across both halves, Latent's plot of eight by five
-  const xs = Array.from({ length: w / 80 - 1 }, (_, k) => (k + 1) * 80);
-  const ys = Array.from({ length: Math.ceil(h / 80) - 1 }, (_, k) => (k + 1) * 80);
   return (
     <div className={styles.frame} data-f={f}>
       <svg viewBox={`0 0 ${w} ${h}`} className={styles.svg}>
-        <g className={styles.grid}>
-          {xs.map((x) => (
-            <line key={`v${x}`} x1={x} x2={x} y1={0} y2={h} />
-          ))}
-          {ys.map((y) => (
-            <line key={`h${y}`} x1={0} x2={w} y1={y} y2={y} />
-          ))}
-        </g>
         {marks}
       </svg>
       {words}

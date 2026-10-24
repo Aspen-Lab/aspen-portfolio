@@ -1,8 +1,11 @@
 /* The journey band, before (s-03) and after (s-11): one sheet on two back
-   sheets, five stage columns over a "Feelings & thought" band, a slab
-   for the reading under it. Hairline columns, flat fills, square marks,
-   no gradient. The curve is ink; the accent fills the one focus square
-   of each state (the lowest point; Rewards). */
+   planes, five stage columns over a "Feelings & thought" band, a slab
+   for the reading under it. No column rules and no row rule: the five
+   columns are held by the stage words alone, and the column in view is a
+   raised plane. Flat fills, filled square marks, no gradient. The only
+   lines are the curves (data) and a tag's leader. The curve is ink; the
+   accent fills the one focus square of each state (the lowest point;
+   Rewards). */
 .root {
   --lead: 40px;
   --px: 12px;
@@ -33,15 +36,6 @@
   inset: 0 var(--px);
   pointer-events: none;
 }
-.rule {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--k) * 20%);
-  width: 1px;
-  margin-left: -0.5px;
-  background: var(--color-line, #252528);
-}
 /* The column in view sits on the raised plane, stage cell and band */
 .hi {
   position: absolute;
@@ -49,7 +43,7 @@
   bottom: 0;
   left: 0;
   width: 20%;
-  background: var(--raised, #1e1e21);
+  background: var(--raised, #232326);
   transition: transform var(--t-2, 360ms) var(--ease-arrive);
 }
 /* The grid's side padding sits outside the five columns: at the first and
@@ -82,16 +76,6 @@
   margin: 0;
   padding: 0;
   list-style: none;
-}
-/* The rule under the row runs the sheet's full width */
-.stages::after {
-  content: "";
-  position: absolute;
-  left: calc(-1 * var(--px));
-  right: calc(-1 * var(--px));
-  bottom: 0;
-  height: 1px;
-  background: var(--color-line, #252528);
 }
 .stage {
   position: relative;
@@ -126,8 +110,8 @@
   .stageName { display: block; }
 }
 
-/* Interactive stages: the one in view reads full, the rest step back;
-   the committed one carries a 2px ink rule on the row's edge */
+/* Interactive stages: the one in view reads full on its raised column,
+   the rest step back */
 .root[data-stage] .stageNum,
 .root[data-stage] .stageName {
   opacity: var(--dim, 0.45);
@@ -138,19 +122,6 @@
 .root[data-show="2"] .stage[data-k="2"] :is(.stageNum, .stageName),
 .root[data-show="3"] .stage[data-k="3"] :is(.stageNum, .stageName),
 .root[data-show="4"] .stage[data-k="4"] :is(.stageNum, .stageName) { opacity: 1; }
-.stage[data-k]::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  height: 2px;
-  background: #f4f4f2;
-  transform: scaleX(0);
-  transition: transform var(--t-2, 360ms) var(--ease-arrive);
-}
-.stage[data-on="true"]::after { transform: none; }
 .stage[data-k]:active { transform: translateY(1px); }
 .grid[data-live] { cursor: pointer; }
 
@@ -387,21 +358,20 @@
   inset: 0;
 }
 
-/* Mascot shows up: 8px squares, ink outline, the sheet inside */
+/* Mascot shows up: 8px squares, filled ink */
 .node {
   position: absolute;
   left: calc(var(--u) * 100% - 4px);
   top: calc((1 - var(--l)) * 100% - 4px);
   width: 8px;
   height: 8px;
-  border: 1px solid #f4f4f2;
-  background: var(--sheet, #17171a);
+  background: #f4f4f2;
   transition: opacity var(--t-2, 360ms) var(--ease-arrive);
 }
 .after[data-view="before"] .node { opacity: var(--dim, 0.45); }
 
 /* Rewards: the After state's one focus. In Before it stays as a grey
-   outline, so nothing moves when the emphasis swaps. */
+   square, so nothing moves when the emphasis swaps. */
 .reward {
   position: absolute;
   left: calc(var(--u) * 100%);
@@ -417,10 +387,7 @@
   width: 10px;
   height: 10px;
 }
-.rewardSq {
-  border: 1px solid var(--grey-2, #6b6b71);
-  background: var(--sheet, #17171a);
-}
+.rewardSq { background: var(--grey-2, #6b6b71); }
 .rewardFocus {
   background: var(--accent, #f4f4f2);
   transition: opacity var(--t-2, 360ms) var(--ease-arrive);
@@ -443,18 +410,17 @@
 .rewardTag { transition: opacity var(--t-2, 360ms) var(--ease-arrive); }
 .after[data-view="before"] :is(.rewardFocus, .rewardLeader, .rewardTag) { opacity: 0; }
 
-/* The legend, under the band */
+/* The legend, under the band, set off by space */
 .legend {
   display: flex;
   flex-wrap: wrap;
   gap: 10px 28px;
   margin: 0;
-  padding: 16px 20px 18px;
-  border-top: 1px solid var(--color-line, #252528);
+  padding: 20px 20px 24px;
   list-style: none;
 }
 @media (min-width: 640px) {
-  .legend { padding: 18px 40px 20px; }
+  .legend { padding: 24px 40px 28px; }
 }
 .legendItem {
   display: flex;
@@ -479,7 +445,7 @@
   flex: none;
   width: 8px;
   height: 8px;
-  border: 1px solid #f4f4f2;
+  background: #f4f4f2;
 }
 
 /* A phone's key to the stage indices */
@@ -488,8 +454,7 @@
   flex-wrap: wrap;
   gap: 8px 16px;
   margin: 0;
-  padding: 14px 20px 18px;
-  border-top: 1px solid var(--color-line, #252528);
+  padding: 0 20px 24px;
   list-style: none;
 }
 @media (min-width: 768px) {
@@ -575,8 +540,7 @@
 
 /* Reduced motion: the final frame; a swap is a fade, nothing slides */
 @media (prefers-reduced-motion: reduce) {
-  .hi,
-  .stage[data-k]::after { transition: none; }
+  .hi { transition: none; }
   .hi::before,
   .hi::after,
   .twin > span { transition-duration: var(--t-1, 160ms); }

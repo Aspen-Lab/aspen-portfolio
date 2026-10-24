@@ -50,7 +50,7 @@ export function FactGrid() {
     <dl className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 max-w-4xl">
       {BLOCKS.map((b) => (
         <div key={b.label}>
-          <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft mb-4 pb-3 border-b border-line">
+          <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-soft mb-4">
             {b.label}
           </dt>
           <dd>

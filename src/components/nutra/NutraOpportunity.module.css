@@ -1,7 +1,8 @@
 /* Problem → direction on one chart sheet (global .paper-stack > .paper).
-   Three rows on #252528 hairlines; the accent fills only row 02's index
-   square. Flat fills, 1px lines, no gradient. Type from the ramp: S4
-   titles, S6 sentences, S7 labels. */
+   Three rows held apart by space, no rules; each index a small raised
+   plane, the accent filling only row 02's. The only lines are the
+   connectors (problem → direction). Flat fills, no gradient. Type from
+   the ramp: S4 titles, S6 sentences, S7 labels. */
 .root {
   margin: 0;
 }
@@ -55,12 +56,10 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  border-bottom: 1px solid #252528;
 }
 .row {
   position: relative;
   padding: 24px 0;
-  border-top: 1px solid #252528;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
 @media (min-width: 1024px) {
@@ -81,7 +80,7 @@
   .rowIn { grid-template-areas: "idx problem link direction"; }
 }
 
-/* The index: a 28px square outlined in grey; row 02's is solid accent */
+/* The index: a 28px raised square; row 02's is solid accent */
 .index {
   grid-area: idx;
   display: grid;
@@ -89,12 +88,12 @@
   box-sizing: border-box;
   width: 28px;
   height: 28px;
-  border: 1px solid #6b6b71;
+  border-radius: 2px;
+  background: var(--raised, #232326);
   color: #a0a0a5;
   letter-spacing: 0.04em;
 }
 .row[data-chosen] .index {
-  border-color: var(--accent, #f4f4f2);
   background: var(--accent, #f4f4f2);
   color: #0a0a0a;
 }
@@ -197,7 +196,7 @@
   }
 }
 
-/* The caption, under the last rule */
+/* The caption, set off by space under the last row */
 .caption {
   margin: 16px 0 0;
   color: #8a8a90;

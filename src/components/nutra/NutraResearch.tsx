@@ -26,11 +26,12 @@ import styles from "./NutraResearch.module.css";
    02 Persona (015): who the Group B user is; his motivation, "external
    encouragement", carries the accent square. The persona has no name.
 
-   Tabs: click, tap, or arrow keys with Home/End. The underline slides; the
-   panels cross-fade (all mounted; the one in view sets the height). On
+   Tabs: click, tap, or arrow keys with Home/End. The raised plane under
+   the tab in view slides; the panels cross-fade (all mounted; the one in view sets the height). On
    tab 01 the eight tiles are one listbox with one tab stop (arrows move);
    pointing at or focusing a tile writes data-on on the root (no React
-   render) and CSS lifts its square on the age line; a tap toggles it.
+   render) and CSS lifts its square on the age line and raises the tile
+   a tone; a tap toggles it.
    The reviews' entrance plays once, the first time their tab is shown:
    the labels first, then the bars grow from the baseline 60ms apart, the
    1★ bar last, then its tag. Reduced motion shows the final frame and

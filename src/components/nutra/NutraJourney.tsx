@@ -98,15 +98,12 @@ const Line = memo(function Line({ pts, className }: { pts: string; className?: s
   );
 });
 
-/* The five columns' track, inside the grid's side padding: the four
-   column rules and, on the interactive map, the raised column */
-function Track({ hi = false, ref }: { hi?: boolean; ref?: Ref<HTMLSpanElement> }) {
+/* The five columns' track, inside the grid's side padding: no rules
+   between them, only the raised plane under the column in view */
+function Track({ ref }: { ref?: Ref<HTMLSpanElement> }) {
   return (
     <span ref={ref} aria-hidden className={styles.track}>
-      {hi && <span className={styles.hi} />}
-      {[1, 2, 3, 4].map((k) => (
-        <span key={k} className={styles.rule} style={{ "--k": k } as CSSProperties} />
-      ))}
+      <span className={styles.hi} />
     </span>
   );
 }
@@ -301,7 +298,7 @@ export function NutraJourney() {
               commit(columnAt(e));
             }}
           >
-            <Track hi ref={track} />
+            <Track ref={track} />
 
             <div className={styles.stages} role="tablist" aria-label={copy.stagesLabel}>
               {copy.stages.map((s, k) => (
@@ -479,7 +476,6 @@ export function NutraJourneyAfter() {
       <div className="paper-stack">
         <div className={`paper ${styles.sheet}`}>
           <div className={styles.grid}>
-            <Track />
             <ol className={styles.stages} aria-hidden>
               {copy.stages.map((name, k) => (
                 <li key={k} className={styles.stage} data-static="">

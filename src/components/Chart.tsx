@@ -36,25 +36,27 @@ type Props = {
 };
 
 /* Columns on Latent's plotted sheet (latenthealth.com, "Platform"): a flat
-   card with a second sheet offset under it, a hairline grid, mono ticks at
+   plane with a second plane offset under it, a faint grid, mono ticks at
    0 / 25 / 50 / 75 / 100, and one flat column per datum. The axis always
    starts at zero and every column is exactly its value, so close numbers
    look close. One column is the focus: it carries the accent, a static
-   dashed hexagon at its top and a boxed tag on a dashed leader with its
-   value. A funnel keeps its steps in the order they happen, joined top to
-   top by a dashed rule. When the focus has an earlier value (a v1 to a v2)
-   that level crosses its column as a dashed rule with a short end label,
-   and the tag reads from → to. Phones lay the same data on its side, one
-   bar per row, the earlier level a tick on the track.
+   dashed hexagon at its top and a tag (a raised plane) on a dashed leader
+   with its value. A funnel keeps its steps in the order they happen,
+   joined top to top by a dashed rule. When the focus has an earlier value
+   (a v1 to a v2) that level crosses its column as a dashed rule with a
+   short end label, and the tag reads from → to. Phones lay the same data
+   on its side, one bar per row, the earlier level a tick on the track.
 
    The default layout writes captions out as numbered footnotes under the
    sheet. The split layout (Latent's outcome card, the banded pages) is
-   one outlined card on a stack: the plot on a dark sheet, solid grey
-   columns and the focus the page's one accent, and a black slab beside it
-   with a big readout of the step being pointed at and the other notes
-   under a rule. Pointing at a column crossfades the readout and fades the
-   other grey marks; its own note leaves, since the readout now prints it.
-   All of it is written straight to the DOM so nothing re-renders. */
+   two planes side by side on the ground, with no outline, no rule between
+   them and no back sheets (behind the slab they would read as an edge):
+   the plot on a dark sheet, solid grey columns and the focus the page's
+   one accent, and a black slab beside it with a big readout of the step
+   being pointed at and the other notes under it. Pointing at a column crossfades the
+   readout and fades the other grey marks; its own note leaves, since the
+   readout now prints it. All of it is written straight to the DOM so
+   nothing re-renders. */
 
 type Geo = { W: number; H: number; PL: number; PR: number; PT: number; PB: number };
 const GEO: Geo = { W: 1000, H: 400, PL: 88, PR: 968, PT: 80, PB: 378 };
@@ -644,7 +646,9 @@ function SplitChart({ type, data, max = 100, title }: Props) {
   const dm = (i: number) => (i === focus ? undefined : i);
 
   return (
-    <div className={`paper-stack ${styles.splitStack}`}>
+    // No back sheets under the split card: behind its black slab they
+    // would show as a lighter band, an edge drawn round it
+    <div className={styles.splitStack}>
       <figure
         ref={root}
         className={styles.split}

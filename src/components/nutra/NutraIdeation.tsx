@@ -17,27 +17,32 @@ import { hold } from "@/lib/hold";
 import { roveFocus, roveKeys, roveSync } from "./rove";
 import styles from "./NutraIdeation.module.css";
 
-/* Ideation as two of Latent's numbered tabs over stacked panels.
+/* Ideation as two numbered tabs over stacked panels; the tab in view
+   sits on a plane, the same sheet as the panel it opens. Nothing is
+   outlined: tiles, nodes and sheets are planes told apart by tone.
 
    01 How might we: board 021's six questions as a 3×2 grid of tiles,
-   each with its idea count. The selected tile's ideas (the board's own
-   sticky notes, typos fixed) sit on a sheet under the grid; on a phone
-   the sheet opens directly under the selected tile. Tile 03, the
-   gamification question the case follows, carries the panel's one focus:
-   a solid accent square by its index. Click, tap or keyboard focus
-   selects; a pointer resting on a tile previews its ideas (a data
+   each with its idea count; a pointer lifts a tile a tone, the selected
+   one is raised. The selected tile's ideas (the board's own sticky
+   notes, typos fixed) sit on a sheet under the grid; on a phone the
+   sheet opens directly under the selected tile. Tile 03, the
+   gamification question the case follows, carries the panel's one
+   focus: a solid accent square by its index. Click, tap or keyboard
+   focus selects; a pointer resting on a tile previews its ideas (a data
    attribute written through a ref, no re-render).
 
    02 Goal lifecycle: board 022 as three columns, Set goal → Progress →
-   End, each a tree of raised nodes joined by orthogonal 1px connectors
-   with heads. The decision is the fork after Reminder: on track →
-   Congrats, not on track → Solution; Solution carries the accent outline
-   and its incoming line is ink. Every 'Emotional support' the board
-   places is an ink square beside its node, so the eye can count them;
-   the legend counts them from the data. Pointing at or focusing a node
-   with branches previews its outgoing connectors in ink (opacity only);
-   a click, tap, Enter or Space pins them (aria-pressed) until pressed
-   again. The five branching nodes are one tab stop; arrow keys move.
+   End, each a tree of raised planes joined by orthogonal 1px connectors
+   with heads (a flow, so they stay lines). The decision is the fork
+   after Reminder: on track → Congrats, not on track → Solution; Solution
+   carries the accent, a filled square before its name, and its incoming
+   line is ink. Every 'Emotional support' the board places is an ink
+   square beside its node, so the eye can count them; the legend counts
+   them from the data. Pointing at or focusing a node with branches lifts
+   its plane a tone and previews its outgoing connectors in ink (opacity
+   only); a click, tap, Enter or Space pins them (aria-pressed) until
+   pressed again. The five branching nodes are one tab stop; arrow keys
+   move.
 
    All panels stay mounted; tabs crossfade. Entrance, once: tiles step in;
    the lifecycle's columns appear left to right the first time it is

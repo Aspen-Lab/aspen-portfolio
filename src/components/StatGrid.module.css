@@ -1,12 +1,12 @@
-/* An outcome ledger: a hairline over each entry, mono entry numbers, the
-   figures large and light. Flat; no gradients, no cards. */
+/* An outcome ledger: one plane per entry (no edge, no rule over it),
+   mono entry numbers, the figures large and light. Flat; no gradients. */
 .ledger {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  column-gap: 32px;
+  gap: 12px;
 }
 @media (min-width: 640px) {
-  .ledger { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 40px; }
+  .ledger { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .ledger[data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (min-width: 1024px) {
@@ -24,8 +24,9 @@
     "value text";
   column-gap: 16px;
   align-items: start;
-  padding: 14px 0 22px;
-  border-top: 1px solid var(--color-line);
+  padding: 18px 20px 22px;
+  border-radius: 2px;
+  background: var(--color-cream);
 }
 @media (min-width: 640px) {
   .entry {
@@ -34,24 +35,9 @@
       "num icon"
       "value value"
       "text text";
-    padding: 16px 0 0;
+    padding: 20px 24px 24px;
   }
 }
-
-/* The rule that runs out over the hairline once, entry after entry. */
-.run {
-  position: absolute;
-  top: -1px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--color-ink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 1100ms var(--ease-arrive);
-  transition-delay: calc(120ms + var(--i) * 160ms);
-}
-.ledger[data-lit="true"] .run { transform: none; }
 
 .num {
   grid-area: num;
@@ -115,8 +101,5 @@
 /* Reduced motion: the finished ledger from the first paint (set here, not
    from JS, so the server's markup already matches) */
 @media (prefers-reduced-motion: reduce) {
-  .run,
-  .num { transition: none; }
-  .run { transform: none; }
-  .num { color: var(--color-ink); }
+  .num { transition: none; color: var(--color-ink); }
 }

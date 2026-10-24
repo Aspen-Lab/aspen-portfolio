@@ -13,12 +13,14 @@ import styles from "./NutraBalance.module.css";
    by a beam whose knob sits at Balance. Each pole hangs its two traits
    on a rail, and each trait carries a specimen of the product itself:
    the two background tokens, the two typefaces, the two brand colours,
-   the 3D acorn. The knob (a solid accent square in a 1px ink ring) is the
-   block's one focus mark; it slides in from the Seriousness end to the
-   centre once, when the sheet comes into view.
+   the 3D acorn. The knob (a solid accent square) is the block's one
+   focus mark; it slides in from the Seriousness end to the centre once,
+   when the sheet comes into view. Poles and traits are raised planes,
+   never outlined.
 
    Pointing at, tapping or focusing a trait writes data-trait / data-pole
-   on the sheet; CSS fades its rail, its arrow and its pole's edge to ink.
+   on the sheet; CSS fades its rail and its arrow to ink and lifts the
+   trait's plane and its pole's a tone.
    A tap keeps its trait lit until another is tapped. The four traits are
    one listbox with one tab stop (arrow keys move; the lit trait is the
    selected option). Wide,
@@ -36,9 +38,9 @@ const TRAITS: Trait[] = [
 ];
 
 /* Board 043 prints the tokens without a "#" */
-function Swatches({ items, round }: { items: string[]; round?: boolean }) {
+function Swatches({ items, round, well }: { items: string[]; round?: boolean; well?: boolean }) {
   return (
-    <span className={styles.swatches}>
+    <span className={styles.swatches} data-well={well || undefined}>
       {items.map((hex) => (
         <span key={hex} className={styles.swatch}>
           <i style={{ background: `#${hex}` }} data-round={round} />
@@ -52,7 +54,7 @@ function Swatches({ items, round }: { items: string[]; round?: boolean }) {
 }
 
 function Specimen({ id }: { id: string }) {
-  if (id === "dark") return <Swatches items={[NUTRA.bg.slice(1), NUTRA.surface.slice(1)]} />;
+  if (id === "dark") return <Swatches items={[NUTRA.bg.slice(1), NUTRA.surface.slice(1)]} well />;
   if (id === "color") return <Swatches items={[NUTRA.orange.slice(1), NUTRA.green.slice(1)]} round />;
   if (id === "type")
     return (

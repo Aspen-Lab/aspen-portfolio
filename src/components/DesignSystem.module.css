@@ -1,9 +1,11 @@
-/* Aspen Origin on the home page: a title and tagline, then one Latent
-   sheet (cream fill, one hairline, 4px corners, no shadow) that holds the
-   surface study and the way into the docs. The sheet, the selector and
-   the links are the site's own flat chrome; only the exploded slabs keep
+/* Aspen Origin on the home page: a title and tagline, then one plane
+   (flat, no edge, no shadow: 「线框我们用面」) that holds the surface study
+   and the way into the docs. The plane, the selector and the links are
+   the site's own flat chrome: planes on a plane, lifting a tone when
+   chosen or pointed at, never an outline. Only the exploded slabs keep
    Origin's material (bevels, the recess, compact shadows), because that
-   material is what the study shows.
+   material is what the study shows; they float over a floor that is a
+   plane too, not a drawn grid.
    Small print is cut to what carries structure: one kicker on the sheet's
    header row, the selected slab's engraving, the entry numerals and the
    token readout, none under 11px. The old eyebrow and version repeat the
@@ -16,22 +18,20 @@
 .introRight { max-width: 435px; }
 .introRight > p { font-size: 16px; line-height: 1.6; color: var(--color-mute); text-wrap: pretty; }
 
-/* ── The sheet ── */
+/* ── The plane ── a tone over the grain of the ground */
 .workbench {
   --surface-base: #181818;
   --surface-inset: #202020;
   --surface-raised: #242424;
   overflow: hidden;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
+  border-radius: 2px;
+  background: #1d1d20;
 }
 .benchHeader {
   display: flex;
   align-items: center;
   min-height: 52px;
   padding: 0 28px;
-  border-bottom: 1px solid var(--color-line);
   color: var(--color-soft);
   font-family: var(--font-mono);
   font-size: 11px;
@@ -42,21 +42,23 @@
 .benchHeader .live { display: none; }
 .labGrid { display: grid; grid-template-columns: 1.18fr 1fr; }
 
-/* ── The study: Origin's three surfaces, exploded over a hairline floor ── */
+/* ── The study: Origin's three surfaces, exploded over a floor plane ── */
 .material { min-width: 0; padding: 0 30px 28px; }
 .stage { position: relative; height: 330px; perspective: 1100px; }
 .stageFolio, .stageLabel, .stageHint { display: none; }
-.ground { position: absolute; left: 50%; top: 48%; width: min(108%, 390px); transform: translate(-50%, -37%); color: #3d3d3d; }
+.ground { position: absolute; left: 50%; top: 48%; width: min(108%, 390px); transform: translate(-50%, -37%); color: #161618; }
 .ground svg { width: 100%; }
 .stack { position: absolute; width: 256px; height: 256px; top: 49%; left: 50%; transform-style: preserve-3d; transform: translate(-50%, -39%) rotateX(54deg) rotateZ(-34deg); }
-.slab { position: absolute; inset: 0; border-radius: 18px; border: 1px solid #ffffff12; transform-style: preserve-3d; transition: transform 420ms var(--ease-arrive), border-color 180ms ease; }
+/* The chosen slab is told by its lift and its engraving, not by a lit
+   outline */
+.slab { position: absolute; inset: 0; border-radius: 18px; transform-style: preserve-3d; transition: transform 420ms var(--ease-arrive); }
 .canvasSlab { background: var(--surface-base); box-shadow: 0 1px 0 #111, 0 3px 0 #111, 0 10px 18px #0007, inset 0 1px 0 #ffffff08; }
-.canvasSlab[data-selected="true"] { transform: translateZ(9px); border-color: #bcbcbc; }
+.canvasSlab[data-selected="true"] { transform: translateZ(9px); }
 .insetSlab { inset: 19px; background: var(--surface-inset); transform: translateZ(38px); box-shadow: 0 2px 0 #131313, 0 5px 0 #131313, 0 12px 15px #0005, inset 0 1px 0 #ffffff0a; }
-.insetSlab[data-selected="true"] { transform: translateZ(49px); border-color: #bcbcbc; }
+.insetSlab[data-selected="true"] { transform: translateZ(49px); }
 .recess { position: absolute; inset: 12px; border-radius: 11px; background: #202020; box-shadow: inset 0 2px 6px #0008, inset 0 -1px 1px #ffffff06; }
 .raisedSlab { inset: 39px; background: var(--surface-raised); transform: translateZ(75px); box-shadow: 0 2px 0 #161616, 0 5px 0 #161616, 0 16px 23px #0005, inset 0 1px 1px #ffffff08; }
-.raisedSlab[data-selected="true"] { transform: translateZ(92px); border-color: #aaaaaa; }
+.raisedSlab[data-selected="true"] { transform: translateZ(92px); }
 
 /* The engraving lights only on the slab the selector names, so the
    stack carries one label at a time and it always answers the button. */
@@ -83,8 +85,9 @@
 .sculptedMark i { display: block; height: 27px; border-radius: 7px; background: #c3c3c3; box-shadow: 0 1px 0 #aaa, 0 3px 0 #777, 0 7px 7px #0005, inset 0 1px 0 #fff7; }
 .sculptedMark i:last-child { background: #737373; box-shadow: 0 1px 0 #666, 0 3px 0 #444, 0 7px 7px #0005, inset 0 1px 0 #fff2; }
 
-/* ── The selector: hairline entries. The swatch is the specimen, so it
-   keeps the surface's own inset or lift; the button around it is flat. */
+/* ── The selector: three raised planes on the plane; the chosen one lifts
+   a tone further. The swatch is the specimen, so it keeps the surface's
+   own inset or lift; the button around it is flat. */
 .surfaceChoices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .surfaceChoice {
   display: flex;
@@ -93,22 +96,22 @@
   min-width: 0;
   min-height: 48px;
   padding: 0 14px;
-  border: 1px solid var(--color-line);
   border-radius: 2px;
+  background: #232326;
   color: var(--color-mute);
   font-size: 14px;
   text-align: left;
   cursor: pointer;
-  transition: border-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
+  transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
 }
 .surfaceChoice > span:nth-child(2) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.surfaceChoice[aria-pressed="true"] { border-color: rgb(244 244 242 / 55%); color: var(--color-ink); }
+.surfaceChoice[aria-pressed="true"] { background: #323236; color: var(--color-ink); }
 .surfaceChoice:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 3px; }
 @media (hover: hover) {
   .surfaceChoice:hover { color: var(--color-ink); }
-  .surfaceChoice[aria-pressed="false"]:hover { border-color: rgb(244 244 242 / 22%); }
+  .surfaceChoice[aria-pressed="false"]:hover { background: #2a2a2e; }
 }
-.swatch { width: 18px; height: 18px; flex: 0 0 18px; border-radius: 4px; background: var(--surface-color); border: 1px solid #ffffff1a; }
+.swatch { width: 18px; height: 18px; flex: 0 0 18px; border-radius: 4px; background: var(--surface-color); }
 .swatch[data-kind="inset"] { box-shadow: inset 0 2px 4px #0009; }
 .swatch[data-kind="raised"] { box-shadow: 0 3px 5px #0008, inset 0 1px 0 #ffffff22; }
 .choiceNumber {
@@ -129,13 +132,13 @@
 .readout > div > span { color: var(--color-soft); letter-spacing: 0.06em; }
 .readout p { margin-top: 8px; font-size: 14.5px; line-height: 1.55; color: var(--color-mute); text-wrap: pretty; }
 
-/* ── The way in: hairline rows, then one ink-outline button ── */
-.systemGuide { display: flex; flex-direction: column; justify-content: center; align-items: start; min-width: 0; padding: 36px; border-left: 1px solid var(--color-line); }
+/* ── The way in: three rows kept apart by space, each lifting onto a
+   plane under the pointer, then one raised button ── */
+.systemGuide { display: flex; flex-direction: column; justify-content: center; align-items: start; min-width: 0; padding: 36px; }
 .systemGuide h3 { color: var(--color-ink); font: 300 32px/1.15 var(--font-newsreader), Georgia, serif; letter-spacing: -0.025em; }
 .guideIntro { max-width: 380px; margin-top: 12px; color: var(--color-mute); font-size: 15px; line-height: 1.6; text-wrap: pretty; }
-.guideLinks { width: 100%; max-width: 400px; margin: 24px 0 28px; }
-.guideLinks a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 0 16px; border-top: 1px solid var(--color-line); }
-.guideLinks a:last-child { border-bottom: 1px solid var(--color-line); }
+.guideLinks { display: flex; flex-direction: column; gap: 2px; width: calc(100% + 32px); max-width: 432px; margin: 20px -16px 24px; }
+.guideLinks a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px 15px; border-radius: 2px; transition: background-color 180ms var(--ease-arrive); }
 .guideLinks strong { display: block; color: var(--color-ink); font-size: 15px; font-weight: 400; }
 .guideLinks a > span > span { display: block; margin-top: 3px; color: var(--color-mute); font-size: 14px; line-height: 1.5; }
 .guideLinks svg { flex-shrink: 0; color: var(--color-soft); transition: color 180ms var(--ease-arrive), transform 180ms var(--ease-arrive); }
@@ -148,16 +151,17 @@
   max-width: 400px;
   min-height: 48px;
   padding: 0 16px;
-  border: 1px solid rgb(244 244 242 / 30%);
   border-radius: 2px;
+  background: #232326;
   color: var(--color-ink);
   font-size: 14px;
-  transition: border-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
+  transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
 }
 .enterLink svg { flex-shrink: 0; transition: transform 180ms var(--ease-arrive); }
 @media (hover: hover) {
+  .guideLinks a:hover { background: #232326; }
   .guideLinks a:hover svg { color: var(--color-ink); transform: translate(2px, -2px); }
-  .enterLink:hover { border-color: rgb(244 244 242 / 70%); }
+  .enterLink:hover { background: #2c2c30; }
   .enterLink:hover svg { transform: translate(2px, -2px); }
 }
 .guideLinks a:focus-visible, .enterLink:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
@@ -186,7 +190,7 @@
   .sculptedMark { top: 54%; grid-template-columns: repeat(2, 23px); gap: 7px; }
   .sculptedMark i { height: 23px; border-radius: 6px; }
   .surfaceChoice { padding: 0 10px; }
-  .systemGuide { border-left: 0; border-top: 1px solid var(--color-line); padding: 28px 20px; }
+  .systemGuide { padding: 20px 20px 28px; }
   .systemGuide h3 { font-size: 28px; }
   .guideLinks, .enterLink { max-width: none; }
 }
@@ -208,5 +212,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .slab, .engraving, .insetLabel, .raisedLabel, .surfaceChoice, .choiceNumber,
-  .guideLinks svg, .enterLink, .enterLink svg { transition: none; }
+  .guideLinks a, .guideLinks svg, .enterLink, .enterLink svg { transition: none; }
 }

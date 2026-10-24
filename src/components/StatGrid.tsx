@@ -23,15 +23,13 @@ type Props = {
   cols?: 2 | 3 | 4;
 };
 
-/* Results as a ledger, in the manner of Latent's numbered list
-   (latenthealth.com, "Platform"): a hairline over every entry, the entry
-   number in mono, the figure large and light, what it measures in plain
-   type under it. When the ledger comes into view an ink rule runs out
-   over each entry in turn while its figure counts up — the progress rule
-   from Latent's list, filled once and left standing.
+/* Results as a ledger of planes: every entry on a plane of its own (no
+   edge, no rule), the entry number in mono, the figure large and light,
+   what it measures in plain type under it. When the ledger comes into
+   view each entry's number turns ink in turn while its figure counts up.
    The figures share one size, worked out from the longest of them and the
    width of a column, so "70 → 90%" never breaks and every figure sits on
-   the same baseline. Reduced motion: all rules drawn, all figures final. */
+   the same baseline. Reduced motion: all numbers ink, all figures final. */
 export function StatGrid({ items, cols }: Props) {
   const c = cols ?? Math.min(items.length, 4);
   const root = useRef<HTMLUListElement>(null);
@@ -48,7 +46,6 @@ export function StatGrid({ items, cols }: Props) {
     >
       {items.map((s, i) => (
         <li key={s.label} className={styles.entry} style={{ ["--i" as string]: i } as CSSProperties}>
-          <span aria-hidden className={styles.run} />
           <span aria-hidden className={styles.num}>
             {String(i + 1).padStart(2, "0")}
           </span>

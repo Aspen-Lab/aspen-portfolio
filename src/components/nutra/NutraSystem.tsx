@@ -18,8 +18,10 @@ import { NUTRA, NUTRA_BODY, NUTRA_UI, nutraFont } from "./product";
 import styles from "./NutraSystem.module.css";
 
 /* Nutra's design system, live (s-10). Three numbered tabs over one sheet
-   on two back sheets; each tab is a split card, a render on the board's
-   own #1E1E1E ground beside a slab that reads it out.
+   on two back planes; each tab is a split card, a render on the board's
+   own #1E1E1E ground beside a slab that reads it out, told apart by tone,
+   never by an outline. A chosen swatch or face is shown by a plane lifting
+   (or the other face stepping back), not by a ring.
 
    01 Colour: the tokens laid out as board 043 lays them (Brand, Background,
    Grey; the board's Gradient swatch is left out). Labels are the board's,

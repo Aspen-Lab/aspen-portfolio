@@ -1,16 +1,17 @@
-/* The combo: a claim beside a plotted sheet, in Latent's manner — flat
-   cream card, a second sheet offset under it, hairline grid, mono ticks
-   and one focus mark. No gradients; every mark is a flat fill or a
-   1px line. */
+/* The combo: a claim beside a plotted sheet — a flat plane, a second
+   plane offset under it, mono ticks and one focus mark. No outlines on
+   any of it (「线框我们用面」): the sheets, the tags and the icon box are
+   planes, and the only lines left are the chart's own (axis, ticks,
+   gridlines, leaders, the route). No gradients. */
 .panel {
   --focus: var(--accent, var(--color-ink));
   --dash: rgb(244 244 242 / 55%);
 }
 
-/* ── The selector: six labels on fixed columns, one bracket ──
+/* ── The selector: six labels on fixed columns, one plane ──
    Columns of a fixed width put each label at a known offset, so the
-   bracket moves on a translate alone. Hover and the active label differ
-   in opacity only. */
+   plane under the active one moves on a translate alone. Hover and the
+   active label differ in opacity only. */
 .tabs {
   --col: 20px;
   --gap: 24px;
@@ -43,10 +44,12 @@
 .tab[aria-pressed="true"] { opacity: 1; }
 .bracket {
   position: absolute;
-  top: -2px;
-  bottom: -2px;
+  top: 0;
+  bottom: 0;
   left: -10px;
   width: calc(var(--col) + 20px);
+  border-radius: 2px;
+  background: #232326;
   transform: translateX(calc(var(--active, 0) * (var(--col) + var(--gap))));
   pointer-events: none;
 }
@@ -54,7 +57,7 @@
   .bracket { transition: transform 460ms cubic-bezier(0.3, 1.25, 0.45, 1); }
 }
 
-/* ── The frame: eight viewfinder marks (global .reg-mark / .vf-tick) ── */
+/* ── The frame: only room now; its eight viewfinder marks are gone ── */
 .frame {
   position: relative;
   padding: 38px 16px 40px;
@@ -124,7 +127,8 @@
   place-items: center;
   width: 28px;
   height: 28px;
-  border: 1px solid var(--color-line);
+  border-radius: 2px;
+  background: #1d1d20;
   color: var(--color-soft);
 }
 .title {
@@ -181,15 +185,16 @@
   margin-right: 10px;
   margin-bottom: 10px;
 }
+/* The back plane steps down from the front one, as the chart sheets'
+   back planes do (globals.css --paper-back-1) */
 .sheetWrap::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   transform: translate(10px, 10px);
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: #131314;
+  border-radius: 2px;
+  background: var(--paper-back-1);
 }
 .sheet {
   position: relative;
@@ -198,9 +203,8 @@
   gap: 22px;
   min-height: 340px;
   padding: 18px 16px 16px;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
+  border-radius: 2px;
+  background: #1d1d20;
   container-type: inline-size;
 }
 @media (min-width: 640px) {
@@ -222,8 +226,7 @@
   justify-content: center;
 }
 .foot {
-  padding-top: 14px;
-  border-top: 1px solid var(--color-line);
+  padding-top: 6px;
 }
 .note {
   color: var(--color-mute);
@@ -297,12 +300,12 @@
   bottom: 0;
   background: var(--focus);
 }
+/* The part a bar does not reach: a faint plane, not a dashed outline */
 .ghost {
   position: absolute;
   top: 0;
   bottom: 0;
-  border: 1px dashed rgb(244 244 242 / 40%);
-  border-left: 0;
+  background: rgb(244 244 242 / 9%);
 }
 
 .axis {
@@ -337,7 +340,7 @@
 .tick[data-edge="end"] { translate: -100% 0; }
 .tick[data-edge="end"]::before { right: 0; left: auto; }
 
-/* ── The focus: dot, dashed hexagon, dashed leader, boxed tag ── */
+/* ── The focus: dot, dashed hexagon, dashed leader, tag on a plane ── */
 .focus {
   position: absolute;
   top: 50%;
@@ -361,7 +364,7 @@
 }
 .dot {
   fill: var(--focus);
-  stroke: var(--color-cream);
+  stroke: #1d1d20;
   stroke-width: 2;
 }
 .leader {
@@ -375,8 +378,8 @@
 
 .tag {
   padding: 5px 8px 4px;
-  border: 1px solid var(--dash);
-  background: var(--color-paper);
+  border-radius: 2px;
+  background: #2c2c30;
   color: var(--color-ink);
   font-family: var(--font-mono);
   font-size: 10px;
@@ -579,15 +582,13 @@
   .cells { grid-column: 1 / -1; }
 }
 
-/* ── The awards ── */
-.awards { display: grid; }
+/* ── The awards: rows kept apart by space, not ruled ── */
+.awards { display: grid; row-gap: 6px; }
 .award {
   display: grid;
   grid-template-columns: 2.5rem minmax(0, 1fr);
-  padding: 15px 0 16px;
-  border-top: 1px solid var(--color-line);
+  padding: 12px 0;
 }
-.award:last-child { border-bottom: 1px solid var(--color-line); }
 .num {
   grid-row: span 2;
   padding-top: 4px;

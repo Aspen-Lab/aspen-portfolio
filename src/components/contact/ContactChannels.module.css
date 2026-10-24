@@ -9,8 +9,9 @@
 
 .item { display: flex; min-width: 0; }
 
+/* Each channel is a plane with no edge; under the pointer it lifts a tone. */
 .card {
-  --channel-surface: color-mix(in srgb, var(--color-cream) 62%, var(--color-paper));
+  --channel-surface: var(--tile);
   display: flex;
   position: relative;
   flex-direction: column;
@@ -18,28 +19,17 @@
   min-height: 248px;
   width: 100%;
   padding: 24px 22px 22px;
-  border: 1px solid var(--color-line);
-  border-radius: 5px;
+  border-radius: 2px;
   background: var(--channel-surface);
   color: var(--color-ink);
   text-decoration: none;
   touch-action: manipulation;
-  transition: border-color 180ms ease, transform 180ms ease;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0 22px auto;
-  height: 1px;
-  background: var(--color-ink);
-  opacity: .065;
-  pointer-events: none;
+  transition: background-color 180ms ease;
 }
 
 .topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
 .brandMark { display: block; flex: 0 0 auto; width: 37px; height: 37px; color: var(--color-ink); opacity: .84; }
-.logoCutout { fill: var(--channel-surface); }
+.logoCutout { fill: var(--channel-surface); transition: fill 180ms ease; }
 .direction { display: flex; align-items: center; gap: 12px; color: var(--color-soft); }
 .folio { font-family: var(--font-geist-mono), monospace; font-size: 9px; letter-spacing: .1em; font-variant-numeric: tabular-nums; }
 .arrow { display: block; transform-origin: center; transition: color 180ms ease, transform 180ms cubic-bezier(.2,.8,.2,1); }
@@ -75,9 +65,9 @@
 }
 
 .card:focus-visible {
+  --channel-surface: #1d1d20;
   outline: 1px solid var(--color-ink);
   outline-offset: 5px;
-  border-color: var(--color-mute);
 }
 
 .card:focus-visible .arrow { color: var(--color-ink); transform: translate(2px, -2px) scale(1.12); }
@@ -101,17 +91,16 @@
 
 @media (min-width: 1120px) {
   .card { padding: 27px 27px 24px; }
-  .card::before { inset-inline: 27px; }
   .brandMark { width: 41px; height: 41px; }
   .platform { font-size: 30px; }
 }
 
 @media (hover: hover) {
-  .card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--color-mute) 56%, var(--color-line)); }
+  .card:hover { --channel-surface: #1d1d20; }
   .card:hover .arrow { color: var(--color-ink); transform: translate(2px, -2px) scale(1.12); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card, .arrow { transition: none; }
-  .card:hover, .card:hover .arrow, .card:focus-visible .arrow { transform: none; }
+  .card, .arrow, .logoCutout { transition: none; }
+  .card:hover .arrow, .card:focus-visible .arrow { transform: none; }
 }

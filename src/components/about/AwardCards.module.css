@@ -7,20 +7,18 @@
   list-style: none;
 }
 
+/* One plane per card: the study above, its words below, no rule between. */
 .card {
   min-width: 0;
   overflow: hidden;
-  border: 1px solid var(--color-line);
   border-radius: 2px;
-  background: var(--color-paper);
+  background: var(--tile);
 }
 
 .visual {
   position: relative;
   overflow: hidden;
   aspect-ratio: 1.63;
-  border-bottom: 1px solid var(--color-line);
-  background: color-mix(in srgb, var(--color-cream) 55%, var(--color-paper));
 }
 
 .visualCaption {
@@ -40,10 +38,9 @@
 
 .visualCaption > span:last-child { color: var(--color-mute); font-variant-numeric: tabular-nums; }
 .artwork { display: block; width: 100%; height: 100%; overflow: visible; }
-.floorLine { fill: none; stroke: var(--color-line); stroke-width: .8; }
 /* 1-bit paints · each tone is a pixel pattern (see Patterns), never a grey. */
 .pixel { fill: var(--color-ink); }
-.pixelGround { fill: color-mix(in srgb, var(--color-cream) 55%, var(--color-paper)); }
+.pixelGround { fill: var(--tile); }
 .shadow { fill: var(--p-faint); }
 .paperLight { fill: var(--p-light); stroke: var(--color-ink); stroke-opacity: .55; stroke-width: .6; }
 .paperMid { fill: var(--p-mid); stroke: var(--color-ink); stroke-opacity: .45; stroke-width: .6; }

@@ -1,6 +1,8 @@
-/* ── Segmented switch ── a tile track with one raised thumb that slides
-   under the chosen option (transform only). Options are S6 in ink; the
-   one not chosen rests at --dim, hover lifts it to .75. */
+/* ── Segmented switch ── a plane for the track and one raised plane, the
+   thumb, that slides under the chosen option (transform only). No edge
+   on either: the chosen option is told by the tone it sits on. Options
+   are S6 in ink; the one not chosen rests at --dim, hover lifts it to
+   .75. */
 .seg {
   position: relative;
   display: inline-grid;
@@ -8,9 +10,8 @@
   grid-auto-columns: minmax(0, 1fr);
   max-width: 100%;
   padding: 3px;
-  border: 1px solid var(--edge);
   border-radius: 2px;
-  background: var(--tile);
+  background: var(--tile, #18181a);
 }
 .thumb {
   position: absolute;
@@ -18,9 +19,8 @@
   bottom: 3px;
   left: 3px;
   width: calc((100% - 6px) / var(--n, 2));
-  border: 1px solid rgb(244 244 242 / 55%);
   border-radius: 2px;
-  background: var(--raised);
+  background: var(--raised, #232326);
   transform: translateX(calc(var(--i, 0) * 100%));
   transition: transform var(--t-2) var(--ease-arrive);
   pointer-events: none;

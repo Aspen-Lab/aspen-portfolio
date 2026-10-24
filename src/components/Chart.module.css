@@ -1,7 +1,9 @@
-/* Latent's plotted sheet: a flat card, a second sheet offset under it, a
-   hairline grid, mono ticks, flat columns and one accent. No gradient
-   fills anywhere. Every light line is the ink token mixed down, so the
-   same plot reads on the dark page and on paper. */
+/* Latent's plotted sheet as planes, not frames: a flat plane, a second
+   plane offset under it, a faint measuring grid, mono ticks, flat columns
+   and one accent. No edge round any plane, no gradient fills anywhere.
+   Every light line is data (grid, axis, links, the earlier level) and is
+   the ink token mixed down, so the same plot reads on the dark page and
+   on paper. */
 .figure {
   --accent-ink: var(--accent, var(--color-ink));
   --hair: color-mix(in srgb, var(--color-ink) 55%, transparent);
@@ -23,14 +25,13 @@
   inset: 0;
   z-index: -1;
   transform: translate(10px, 10px);
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-paper);
+  border-radius: 2px;
+  /* a step below the sheet: the cream mixed toward the page */
+  background: color-mix(in srgb, var(--color-cream) 50%, var(--color-paper));
 }
 .sheet {
   position: relative;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
+  border-radius: 2px;
   background: var(--color-cream);
 }
 
@@ -124,8 +125,8 @@
 }
 
 /* The focus: a dashed hexagon split by the column's top edge (light on
-   the sheet, dark on the fill), a leader and a boxed tag. The hexagon is
-   still: it marks, it does not spin. */
+   the sheet, dark on the fill), a leader and a tag on a raised plane. The
+   hexagon is still: it marks, it does not spin. */
 .hex {
   fill: none;
   stroke: var(--hair);
@@ -209,13 +210,13 @@
 .tag,
 .rowTag {
   padding: 5px 8px 4px;
-  border: 1px solid var(--hair);
-  background: var(--color-paper);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--color-ink) 5%, var(--color-cream));
   color: var(--color-ink);
   font-size: 12px;
   letter-spacing: 0.12em;
   line-height: 1.3;
-  transition: border-color 220ms ease, color 220ms ease;
+  transition: color 220ms ease;
 }
 .tag,
 .sTag {
@@ -223,10 +224,7 @@
   white-space: nowrap;
   opacity: 0;
 }
-.tag[data-dim="true"] {
-  border-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
-  color: var(--color-mute);
-}
+.tag[data-dim="true"] { color: var(--color-mute); }
 .figure[data-lit="true"] :is(.tag, .sTag) {
   opacity: 1;
   animation: rise 520ms var(--ease-arrive) calc(var(--land) + 380ms) backwards;
@@ -247,7 +245,8 @@
   animation: fade 420ms ease calc(var(--land) + 560ms) backwards;
 }
 
-/* Footnote markers: a numbered disc at the foot of the column */
+/* Footnote markers: a numbered disc at the foot of the column, a raised
+   plane with no edge; lit, it fills with ink */
 .marker,
 .rowMarker,
 .noteMarker {
@@ -255,20 +254,18 @@
   place-items: center;
   width: 20px;
   height: 20px;
-  border: 1px solid color-mix(in srgb, var(--color-ink) 70%, transparent);
   border-radius: 999px;
-  background: var(--color-paper);
+  background: color-mix(in srgb, var(--color-ink) 10%, var(--color-cream));
   color: var(--color-ink);
   font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+  transition: background-color 200ms ease, color 200ms ease;
 }
 .marker { translate: -50% -50%; }
 .marker[data-on="true"],
 .note[data-on="true"] .noteMarker {
-  border-color: var(--color-ink);
   background: var(--color-ink);
   color: var(--color-paper);
 }
@@ -474,12 +471,13 @@
 }
 .rticks > span:first-child { translate: 0 0; }
 
-/* ── Footnotes ── */
+/* ── Footnotes ── set apart by space, no rule over them; the lit one is
+   told by its ink marker, the rest step back ── */
 .notes {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0 28px;
-  margin-top: 28px;
+  gap: 20px 28px;
+  margin-top: 32px;
 }
 @media (min-width: 640px) {
   .notes { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); }
@@ -488,11 +486,8 @@
   display: grid;
   grid-template-columns: 20px minmax(0, 1fr);
   column-gap: 12px;
-  padding: 14px 0 12px;
-  border-top: 1px solid var(--color-line);
-  transition: opacity 220ms ease, border-color 220ms ease;
+  transition: opacity 220ms ease;
 }
-.note[data-on="true"] { border-top-color: var(--color-ink); }
 .note[data-dim="true"] { opacity: 0.45; }
 .noteBody { display: grid; gap: 3px; padding-top: 1px; }
 .noteLabel {
@@ -535,8 +530,11 @@
 }
 
 /* ───────────── The split card (Latent's outcome card) ─────────────
-   The banded pages' chart: one outlined card on the global stack, the
-   plot on a dark sheet (7fr) and a black slab (5fr) for the reading.
+   The banded pages' chart: two planes side by side on the ground, the
+   plot on the dark sheet (7fr) and the black slab (5fr) for the reading,
+   like every other split card. No outline round them, no rule between
+   and no back sheets (a lighter back sheet behind the slab would read as
+   an edge): the change of tone is the seam.
    One dark system: the marks are ink #f4f4f2 and the greys #6b6b71 and
    #3a3a3f, the lines --grid and --axis, and the page accent fills the one
    focus column and nothing else. Every motion is opacity or transform. */
@@ -549,17 +547,15 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   width: 100%;
-  border: 1px solid #333336;
   border-radius: 2px;
   overflow: hidden;
 }
 @media (min-width: 1024px) {
   .split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
 }
-/* Two classes, so the cells win over the global planes' own frames */
+/* Two classes, so the cells win over the global planes' own corners */
 .split > .splitPaper {
   min-width: 0;
-  border: 0;
   border-radius: 0;
   padding: 20px 16px 18px;
 }
@@ -573,19 +569,11 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  border: 0;
-  border-top: 1px solid #333336;
   border-radius: 0;
   padding: 24px 20px;
 }
 @media (min-width: 640px) {
   .split > .splitSlab { padding: 40px; }
-}
-@media (min-width: 1024px) {
-  .split > .splitSlab {
-    border-top: 0;
-    border-left: 1px solid #333336;
-  }
 }
 
 /* ── S7: the one label style ── */
@@ -976,9 +964,8 @@
 .slabNotes {
   display: grid;
   gap: 16px;
-  margin: 32px 0 0;
-  padding: 16px 0 0;
-  border-top: 1px solid #252528;
+  margin: 40px 0 0;
+  padding: 0;
   list-style: none;
 }
 .slabNote {
@@ -999,7 +986,7 @@
 .split [data-dm] { transition: opacity var(--t-1, 160ms) var(--ease-arrive); }
 .split [data-dm][data-dim="true"] { opacity: 0.45; }
 /* The slab notes: a note whose column is being read leaves (the readout
-   prints it), the rest step back like the marks; the rule leaves with the
+   prints it), the rest step back like the marks; the list leaves with the
    last note. Opacity only, so the slab never changes height. */
 .slabNotes,
 .slabNote { transition: opacity var(--t-1, 160ms) var(--ease-arrive); }

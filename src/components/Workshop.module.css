@@ -1,5 +1,8 @@
-.workshop { margin-top: 88px; scroll-margin-top: 110px; }
-.ruleHeading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; border-top: 1px solid var(--color-line); padding-top: 18px; color: var(--color-soft); font: 10px var(--font-mono); letter-spacing: .17em; }
+/* No rules (「线框我们用面」): the workshop is set off from the catalogue
+   above by space, its parts from each other by space, and the one block
+   that has to read as a unit — Axel's figures — stands on a plane. */
+.workshop { margin-top: 128px; scroll-margin-top: 110px; }
+.ruleHeading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; color: var(--color-soft); font: 10px var(--font-mono); letter-spacing: .17em; }
 .intro { display: grid; grid-template-columns: 1.08fr 1fr; gap: 64px; align-items: end; margin: 44px 0 54px; }
 .intro h2 { font-size: clamp(44px, 4.8vw, 68px); line-height: 1.06; }
 .intro h2 em { color: #b9c3b5; font-weight: inherit; }
@@ -10,15 +13,15 @@
 .practiceGrid > *, .personalGrid > * { min-width: 0; }
 .evidence { min-width: 0; }
 .smallHeading { display: flex; justify-content: space-between; align-items: center; gap: 12px; font: 10px/1.6 var(--font-mono); letter-spacing: .12em; color: var(--color-soft); }
-.impact { border-top: 1px solid var(--color-line); padding-top: 17px; }
-.metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 25px 0 0; }
-.metrics > div + div { border-left: 1px solid var(--color-line); padding-left: 20px; }
+/* The figures on a plane: a tone over the grain, flat, no edge */
+.impact { padding: 22px 28px 14px; border-radius: 2px; background: #1d1d20; }
+.metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin: 25px 0 0; }
 .metrics p { white-space: nowrap; font: 39px/1.12 var(--font-newsreader), Georgia, serif; letter-spacing: -.04em; }
 .metrics p span { color: var(--color-soft); font: 13px var(--font-mono); letter-spacing: -.02em; vertical-align: middle; }
 .metrics > div > span { display: block; margin-top: 9px; color: var(--color-mute); font: 10px var(--font-mono); letter-spacing: .13em; }
-/* Revenue has a direction and no published figure: one hairline row under
-   the two counts, its label in their voice, the direction in body type. */
-.revenue { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 18px 0 16px; padding-top: 12px; border-top: 1px solid var(--color-line); }
+/* Revenue has a direction and no published figure: one row under the two
+   counts, its label in their voice, the direction in body type. */
+.revenue { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 26px 0 16px; }
 .revenue > span:first-child { color: var(--color-mute); font: 10px var(--font-mono); letter-spacing: .13em; }
 .revenue > span:last-child { display: inline-flex; align-items: center; gap: 8px; color: var(--color-ink); font-size: 15px; line-height: 1.4; }
 .revenue svg { color: var(--accent, var(--color-ink)); }
@@ -27,9 +30,9 @@
 .caseLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 5px; color: var(--color-ink); font-size: 14px; }
 .caseLink svg { transition: transform 180ms ease; }
 .caseLink:hover svg { transform: translate(2px, -2px); }
-.activity { margin-top: 25px; border-top: 1px solid var(--color-line); padding-top: 17px; }
+.activity { margin-top: 44px; }
 .activity > .smallHeading { margin-bottom: 10px; font: 13px/20px var(--font-sans); letter-spacing: 0; color: var(--color-mute); }
-.personalGrid { display: grid; grid-template-columns: 1.08fr 1fr; gap: 64px; border-top: 1px solid var(--color-line); margin-top: 56px; padding-top: 32px; }
+.personalGrid { display: grid; grid-template-columns: 1.08fr 1fr; gap: 64px; margin-top: 96px; }
 .personality { max-width: 420px; }
 .personalHeader { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 32px; margin-bottom: 12px; color: var(--color-mute); font-size: 13px; }
 /* Hover lifts opacity, not color, so it never repaints the label */
@@ -44,13 +47,14 @@
 /* Each face is a label up top and its statement at the foot: the big type
    sits on the bottom edge (margin-top: auto), so no footnote line is needed
    to fill the card. */
-.cardFace { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; border: 1px solid #303332; border-radius: 5px; padding: 19px 22px 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #151716; color: #e3e7e2; }
+/* Both faces are one plane, the same tone as the figures' plane; no edge */
+.cardFace { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; border-radius: 2px; padding: 19px 22px 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #1d1d20; color: #e3e7e2; }
 .faceLabel { position: relative; font-size: 13px; line-height: 1.4; color: #99a098; }
 .personalityType { position: relative; margin-top: auto; font: 61px/.9 var(--font-newsreader), Georgia, serif; letter-spacing: -.045em; }
 .personalityType span { margin-left: 4px; font: 25px var(--font-newsreader), Georgia, serif; color: #a6afa3; letter-spacing: -.02em; }
 .faceCopy { position: relative; margin-top: 14px; font-size: 14.5px; line-height: 1.45; color: #c2c9bf; }
 .fingerprint { position: absolute; right: 17px; top: 28px; color: #adb8a7; opacity: .2; pointer-events: none; }
-.cardBack { transform: rotateY(180deg); background: #171717; border-color: #333332; }
+.cardBack { transform: rotateY(180deg); }
 .cardBack .faceLabel { color: #989893; }
 .educationTitle { position: relative; font: 29px/1.08 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; margin-top: auto; }
 .educationTitle span { color: #babbb4; }
@@ -59,23 +63,23 @@
 @media (max-width: 1150px) {
   .intro, .practiceGrid, .personalGrid { gap: 36px; }
   .metrics p { font-size: 34px; }
-  .metrics > div + div { padding-left: 14px; }
-  .metrics { gap: 10px; }
+  .metrics { gap: 20px; }
+  .impact { padding: 20px 22px 12px; }
 }
 @media (max-width: 767px) {
-  .workshop { margin-top: 64px; }
+  .workshop { margin-top: 96px; }
   .intro, .practiceGrid, .personalGrid { grid-template-columns: 1fr; gap: 32px; }
   .intro { margin: 34px 0 36px; gap: 24px; }
   .intro h2 { font-size: 46px; }
   .introCopy p { font-size: 14.5px; margin-top: 10px; }
   .practiceGrid { gap: 38px; }
-  .personalGrid { margin-top: 38px; padding-top: 24px; gap: 38px; }
+  .personalGrid { margin-top: 64px; gap: 38px; }
   .metrics p { font-size: clamp(30px, 8vw, 42px); }
   .metrics p span { font-size: 11px; }
 }
 @media (max-width: 359px) {
-  .metrics { gap: 9px; }
-  .metrics > div + div { padding-left: 10px; }
+  .metrics { gap: 14px; }
+  .impact { padding: 18px 18px 10px; }
   .metrics p { font-size: 28px; }
   .metrics p span { font-size: 10px; }
   .cardFace { padding-left: 18px; padding-right: 18px; }

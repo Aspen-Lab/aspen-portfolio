@@ -98,12 +98,14 @@ type TextareaField = FieldBase & {
 
 function Field(props: InputField | TextareaField) {
   const { id, label, error, required } = props;
+  // A filled plane, not an underlined or outlined box: it lifts a tone on
+  // hover and focus, and keyboard focus adds the ring on top.
   const baseClasses =
-    "w-full bg-transparent border-b border-line text-[16px] text-ink py-3 px-0 outline-none focus:border-ink transition-colors placeholder:text-soft";
+    "w-full rounded-[2px] bg-[var(--tile)] text-[16px] text-ink py-3 px-4 outline-none hover:bg-[#1d1d20] focus:bg-[#1d1d20] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink transition-colors duration-200 placeholder:text-soft";
 
   return (
     <div>
-      <div className="flex items-baseline justify-between mb-1">
+      <div className="flex items-baseline justify-between mb-2">
         <label
           htmlFor={id}
           className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft"

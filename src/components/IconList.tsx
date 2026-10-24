@@ -6,17 +6,17 @@ import { useLocale } from "next-intl";
 import { Icon } from "./Icon";
 import styles from "./IconList.module.css";
 
-/* A short list set as a Latent ledger (latenthealth.com, "Platform"): each
-   entry hangs under a hairline, a mono number and a small soft glyph on
-   top, the title in ink and the text in mute. A short ink rule draws in
-   over each hairline as the entry comes into view, and a second rule runs
-   out over the full width under the pointer. Hover is CSS alone, and only
-   transforms and opacity move.
+/* A short list set as a ledger on space (Kenya Hara's planes, not frames):
+   no rule between entries, a mono number and a small soft glyph on top,
+   the title in ink and the text in mute. A short ink mark draws in over
+   each entry as it comes into view; under the pointer the number and
+   glyph lift to ink. Hover is CSS alone, and only transforms and opacity
+   move.
 
    variant="charts" puts a small plotted sheet above each entry, drawn in
-   the same manner as the big charts: a flat card, a hairline grid, marks
-   in ink, one focus in the accent with a dashed hexagon and a boxed tag on
-   a dashed leader. The three sheets are drawn for the Axel list, by
+   the same manner as the big charts: a flat plane, a faint measuring
+   grid, marks in ink, one focus in the accent with a dashed hexagon and a
+   tag (a raised plane) on a dashed leader. The three sheets are drawn for the Axel list, by
    position, and each one says in plain words what its entry says:
      01 the loop from a design decision to a working change and back,
      02 the code diff beside the preview it changes,

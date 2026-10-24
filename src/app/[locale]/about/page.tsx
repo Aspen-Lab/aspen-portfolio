@@ -255,10 +255,10 @@ const REELS: ReadonlyArray<{ key: string; title: Bi; icon: ReactNode; frames: Ph
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-/** An org's mark in a hairline square: its own artwork where one exists, its initials where not. */
+/** An org's mark on a small raised plane: its own artwork where one exists, its initials where not. */
 function OrgMark({ mark }: { mark: Mark }) {
   return (
-    <span className="grid place-items-center w-9 h-9 shrink-0 border border-line text-mute transition-colors duration-300 group-hover:text-ink group-hover:border-ink/40">
+    <span className="grid place-items-center w-9 h-9 shrink-0 rounded-[2px] bg-[var(--raised)] text-mute transition-colors duration-200 group-hover:text-ink group-hover:bg-[#2c2c30]">
       {mark.kind === "img" && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={mark.src} alt="" aria-hidden style={{ height: mark.h, width: "auto", filter: "brightness(0) invert(0.8)" }} />
@@ -327,11 +327,11 @@ export default async function About({
       {/* ── Trajectory ── */}
       <Block id="about-trajectory">
         <SectionHead folio={next()} title={cn ? "轨迹" : "Trajectory"} icon={<Briefcase strokeWidth={1.5} />} meta={cn ? `${pad(TRAJECTORY.length)} 站` : `${pad(TRAJECTORY.length)} stops`} />
-        <ol className="border-t border-line">
+        <ol>
           {TRAJECTORY.map((e, i) => (
             <li key={e.org}>
               <Reveal delay={i * 0.04}>
-                <div className="group grid grid-cols-[36px_minmax(0,1fr)] sm:grid-cols-[36px_minmax(0,1fr)_auto] items-center gap-x-4 sm:gap-x-6 gap-y-2 py-5 border-b border-line">
+                <div className="group grid grid-cols-[36px_minmax(0,1fr)] sm:grid-cols-[36px_minmax(0,1fr)_auto] items-center gap-x-4 sm:gap-x-6 gap-y-2 py-[22px]">
                   <OrgMark mark={e.mark} />
                   <div className="min-w-0 flex-1">
                     <p className="flex items-center gap-3 text-[15px] sm:text-[16px] text-ink tracking-[-0.005em]">
@@ -342,7 +342,7 @@ export default async function About({
                         </span>
                       )}
                       {e.badge && (
-                        <span className="px-1.5 py-0.5 border border-line rounded-[2px] font-mono text-[9px] uppercase tracking-[0.12em] text-mute">
+                        <span className="px-1.5 py-0.5 rounded-[2px] bg-[var(--raised)] font-mono text-[9px] uppercase tracking-[0.12em] text-mute">
                           {tr(e.badge)}
                         </span>
                       )}

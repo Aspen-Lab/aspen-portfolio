@@ -153,7 +153,6 @@ function AwardCard({ item, index, cn }: { item: AwardItem; index: number; cn: bo
         </div>
         <svg id={visualId} viewBox="0 0 400 240" className={styles.artwork} style={paints} aria-hidden="true" focusable="false">
           <Patterns id={patternId} />
-          <path className={styles.floorLine} d="M55 209H345" />
           <g className={styles.sculpture}>
             <AbstractShape kind={index % 6} />
           </g>

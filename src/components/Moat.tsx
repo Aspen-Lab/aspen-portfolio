@@ -490,20 +490,16 @@ export function Moat({ inPage = false }: { inPage?: boolean }) {
         </p>
       </Reveal>
 
-      {/* Numbered selector — six mono labels on the paper; the active one is
-          held by a registration bracket that glides between them. The
-          labels sit on fixed columns, so the bracket's place is a plain
-          translate off one custom property; hover is CSS alone. An entry
-          is chosen by click, tap or keyboard, never by passing over it. */}
+      {/* Numbered selector — six mono labels on the paper; the active one
+          stands on a small plane that glides between them (it was a
+          registration bracket; 「线框我们用面」). The labels sit on fixed
+          columns, so the plane's place is a plain translate off one custom
+          property; hover is CSS alone. An entry is chosen by click, tap or
+          keyboard, never by passing over it. */}
       <Reveal delay={0.05}>
         <div className="overflow-x-auto no-scrollbar mb-10 -mx-3 px-3 py-1">
           <div className={styles.tabs} style={v({ "--active": active })}>
-            <span aria-hidden className={styles.bracket}>
-              <span className="reg-mark tl" style={{ width: 7, height: 7, left: 0, top: 0 }} />
-              <span className="reg-mark tr" style={{ width: 7, height: 7, right: 0, top: 0 }} />
-              <span className="reg-mark br" style={{ width: 7, height: 7, right: 0, bottom: 0 }} />
-              <span className="reg-mark bl" style={{ width: 7, height: 7, left: 0, bottom: 0 }} />
-            </span>
+            <span aria-hidden className={styles.bracket} />
             {localizedCombos.map((c, i) => (
               <button
                 key={c.index}
@@ -521,19 +517,10 @@ export function Moat({ inPage = false }: { inPage?: boolean }) {
         </div>
       </Reveal>
 
-      {/* Detail panel — eight viewfinder marks around the six entries */}
+      {/* Detail panel — the six entries, stacked in one cell */}
       <Reveal delay={0.1}>
         <div ref={panel} className={styles.panel} data-run={inView}>
           <div className={styles.frame}>
-            <span className="reg-mark tl" />
-            <span className="reg-mark tr" />
-            <span className="reg-mark br" />
-            <span className="reg-mark bl" />
-            <span className="vf-tick top" />
-            <span className="vf-tick bottom" />
-            <span className="vf-tick left" />
-            <span className="vf-tick right" />
-
             <div className={styles.entries}>
               {localizedCombos.map((c, i) => (
                 <Entry key={c.index} combo={c} index={i} cn={cn} on={active === i} />

@@ -1,9 +1,11 @@
 /* The loop sheet (board 040). One sheet on the global stack; the switch
    on top; the diagram in a frame of units scaled by container width.
-   Chips are raised planes (S6 ink), panels are tiles with an S7 head,
-   lines are 1px #6b6b71 (solid: the flow) or dashed #8a8a90 (user tests,
-   revisions). The one accent: the user-flow chip's 1.5px outline, In
-   reality only. */
+   Planes, not frames: chips are raised planes (S6 ink) with no edge;
+   each prototype is a plane a step below the sheet (the slab) with an S7
+   head, its iterations raised on it. The only lines are the flow's, and
+   they are data: 1px #6b6b71 (solid: the flow) or dashed #8a8a90 (user
+   tests, revisions). The one accent: the user-flow chip filled in the
+   accent, In reality only (every revision returns there). */
 .sheet { padding: 20px; }
 @media (min-width: 640px) { .sheet { padding: 32px; } }
 @media (min-width: 1024px) { .sheet { padding: 40px; } }
@@ -81,7 +83,6 @@
   width: 100%;
   height: 100%;
   padding: 0 8px;
-  border: 1px solid var(--edge);
   border-radius: 2px;
   background: var(--raised);
   color: #f4f4f2;
@@ -93,36 +94,17 @@
 }
 .chip[data-muted] { color: var(--grey-1); }
 
-/* A panel: the tile under its iterations. The lo-fi panel is built of
-   parts so Imagine can shorten it by transform: a fill carrying the two
-   edges along the axis it grows on (they keep 1px when it scales), the
-   near edge, and the far edge riding with the style guide. */
+/* A panel: a plane a step below the sheet, under its iterations, no
+   edge. The lo-fi panel is one fill Imagine shortens by transform (it
+   scales from its near end, so it never needs an edge to stay whole). */
+.fill,
+.panel {
+  border-radius: 2px;
+  background: var(--slab);
+}
 .fill {
-  background: var(--tile);
   transform-origin: 0 0;
   transition: transform var(--t-3) var(--ease-arrive);
-}
-.fill[data-axis="x"] {
-  border-top: 1px solid var(--edge);
-  border-bottom: 1px solid var(--edge);
-}
-.fill[data-axis="y"] {
-  border-left: 1px solid var(--edge);
-  border-right: 1px solid var(--edge);
-}
-.edgeV {
-  width: 1px;
-  background: var(--edge);
-}
-.edgeH {
-  height: 1px;
-  background: var(--edge);
-}
-.edgeV[data-far] { translate: -1px 0; }
-.edgeH[data-far] { translate: 0 -1px; }
-.panel {
-  border: 1px solid var(--edge);
-  background: var(--tile);
 }
 
 .line {
@@ -141,17 +123,19 @@
 .head { fill: var(--grey-2); }
 .headDash { fill: var(--tick); }
 
-/* The focus: every revision returns to the user flow */
-.ring {
-  border-radius: 2px;
-  outline: 1.5px solid var(--accent);
-  outline-offset: -1px;
+/* The focus: every revision returns to the user flow, so In reality
+   fills its chip in the accent (a plane laid over the raised chip) */
+.focus {
   pointer-events: none;
+}
+.focus > .chip {
+  background: var(--accent);
+  color: var(--on-fill, #0a0a0a);
 }
 
 /* ── States ── Imagine moves the shared marks by transform: the first row
-   to the frame's centre, the style guide and the panel's far edge back,
-   the panel's fill shorter. */
+   to the frame's centre, the style guide back, the panel's plane
+   shorter. */
 .group { transition: transform var(--t-3) var(--ease-arrive); }
 .sheet[data-mode="imagine"] .row {
   transform: translate(calc(var(--dx) * var(--u)), calc(var(--dy) * var(--u)));

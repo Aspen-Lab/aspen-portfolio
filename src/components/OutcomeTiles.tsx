@@ -5,13 +5,12 @@ import { useInView } from "motion/react";
 import { hold } from "@/lib/hold";
 import styles from "./OutcomeTiles.module.css";
 
-/* Latent's outcome cards (latenthealth.com, "The outcomes"): solid tiles
-   with one 1px edge, the figure large, a short label and text, a footer
-   with a quiet tag or a drawing on the left and an arrow on the right.
-   Every figure is ink and is printed as it is (the server HTML carries
-   the true value; nothing counts up). A tile with an href is one link to
-   the section that shows its evidence. Hover moves only the arrow
-   (transform) and fades an ink edge in (opacity); nothing mounts. */
+/* Outcome cards as planes: solid tiles with no edge, the figure large, a
+   short label and text, a footer with a quiet tag or a drawing on the
+   left and an arrow on the right. Every figure is ink and is printed as
+   it is (the server HTML carries the true value; nothing counts up). A
+   tile with an href is one link to the section that shows its evidence.
+   Hover lifts the tile a tone and steps the arrow on; nothing mounts. */
 
 export type OutcomeTile = {
   value: string;

@@ -33,12 +33,12 @@ type Props = {
   title?: string;
 };
 
-/* A flow drawn on a chart sheet (the global .paper-stack > .paper, with a
-   faint dot canvas): every step a raised plate on one 1px grey path, the
-   decision a raised hexagon with a dashed grey-1 edge. The step that forks
-   drops a dashed leader to the branch's chip, the one accent on the sheet
-   (the product's own "your next action" red), then runs on into the place
-   the branch leads, a raised plate with a dashed edge. A step whose
+/* A flow drawn on a chart sheet (the global .paper-stack > .paper, a bare
+   plane): every step a raised plane on one 1px grey path, the decision a
+   raised hexagon, none of them edged. The step that forks drops a dashed
+   leader to the branch's chip, the one accent on the sheet (the product's
+   own "your next action" red), then runs on into the place the branch
+   leads, another raised plane. A step whose
    caption counts its progress ("3 of 4") carries a meter of that many
    segments. Start and end are marked on the path itself: a hollow ink
    square in, a solid one out.

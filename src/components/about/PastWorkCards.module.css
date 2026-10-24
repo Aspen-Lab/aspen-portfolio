@@ -1,7 +1,13 @@
+/* The studies are drawn in planes on the card's plane: three tones a step
+   apart stand in for the outlines (deep, plane, light), and the few lines
+   left are the drawing's own (members, rays, a waterline, a stroke). */
 .root {
-  --study-line: color-mix(in srgb, var(--color-ink) 37%, var(--color-cream));
-  --study-quiet: color-mix(in srgb, var(--color-ink) 13%, var(--color-cream));
-  --study-plane: color-mix(in srgb, var(--color-ink) 5%, var(--color-cream));
+  --study-bg: var(--tile);
+  --study-line: color-mix(in srgb, var(--color-ink) 37%, var(--study-bg));
+  --study-quiet: color-mix(in srgb, var(--color-ink) 13%, var(--study-bg));
+  --study-deep: #212124;
+  --study-plane: #2a2a2e;
+  --study-light: #36363a;
   color: var(--color-ink);
 }
 
@@ -29,18 +35,16 @@
   min-width: 100px;
   min-height: 44px;
   padding: 10px 16px;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
+  border-radius: 2px;
+  background: var(--raised);
   color: var(--color-ink);
   font: inherit;
   font-size: 13px;
-  transition: border-color 180ms ease, background-color 180ms ease;
+  transition: background-color 180ms ease;
 }
 
 .remix:hover {
-  border-color: var(--study-line);
-  background: var(--study-plane);
+  background: #2c2c30;
 }
 
 .remix:focus-visible {
@@ -65,32 +69,9 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
   aspect-ratio: 1.22;
   padding: 19px 20px 16px;
-  border: 1px solid var(--color-line);
   border-radius: 2px;
-  background: var(--color-cream);
-  transition: border-color 200ms ease;
+  background: var(--study-bg);
 }
-
-/* Registration corners frame the drawing on hover. */
-.stage::before {
-  content: "";
-  position: absolute;
-  inset: 12px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 220ms ease, inset 320ms cubic-bezier(0.16, 1, 0.3, 1);
-  background:
-    linear-gradient(var(--study-line), var(--study-line)) left top / 10px 1px no-repeat,
-    linear-gradient(var(--study-line), var(--study-line)) left top / 1px 10px no-repeat,
-    linear-gradient(var(--study-line), var(--study-line)) right top / 10px 1px no-repeat,
-    linear-gradient(var(--study-line), var(--study-line)) right top / 1px 10px no-repeat,
-    linear-gradient(var(--study-line), var(--study-line)) left bottom / 10px 1px no-repeat,
-    linear-gradient(var(--study-line), var(--study-line)) left bottom / 1px 10px no-repeat,
-    linear-gradient(var(--study-line), var(--study-line)) right bottom / 10px 1px no-repeat,
-    linear-gradient(var(--study-line), var(--study-line)) right bottom / 1px 10px no-repeat;
-}
-.card:hover .stage { border-color: var(--study-line); }
-.card:hover .stage::before { opacity: 1; inset: 8px; }
 
 .studyLabel,
 .disclaimer {
@@ -153,11 +134,9 @@
   stroke-width: 1.5;
 }
 
-.plane {
-  fill: var(--study-plane);
-  stroke: var(--study-line);
-  stroke-width: 1;
-}
+.plane { fill: var(--study-plane); }
+.planeDeep { fill: var(--study-deep); }
+.planeLight { fill: var(--study-light); }
 
 .solid,
 .dot {
@@ -166,28 +145,16 @@
 
 .reverseLine {
   fill: none;
-  stroke: var(--color-cream);
+  stroke: var(--study-bg);
   stroke-width: 1;
 }
 
 .reverseFill {
-  fill: var(--color-cream);
+  fill: var(--study-bg);
 }
 
 .softFill {
   fill: var(--study-quiet);
-}
-
-.blade {
-  fill: color-mix(in srgb, var(--color-ink) 11%, var(--color-cream));
-  stroke: var(--study-line);
-  stroke-width: 1;
-}
-
-.apertureCenter {
-  fill: var(--color-paper);
-  stroke: var(--color-ink);
-  stroke-width: 1;
 }
 
 .caption {
@@ -263,7 +230,8 @@
 .breathe { transform-box: fill-box; transform-origin: center; animation: study-breathe 3.2s ease-in-out infinite; }
 @keyframes study-breathe { 50% { transform: scale(1.035); } }
 
-.ring { fill: none; stroke: var(--color-ink); stroke-width: 1; }
+/* A ripple is a plane that spreads and fades, not a ring. */
+.ring { fill: var(--study-light); }
 .pulse { transform-box: fill-box; transform-origin: center; animation: study-pulse 2.6s ease-out infinite; }
 @keyframes study-pulse { from { opacity: .8; transform: scale(1); } to { opacity: 0; transform: scale(2.1); } }
 
@@ -317,7 +285,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .drawing { animation: none; }
-  .remix, .stage, .stage::before, .layerBack, .layerMid { transition: none; }
+  .remix, .layerBack, .layerMid { transition: none; }
   .motion { animation: none !important; }
   .draw, .tick, .brush { stroke-dasharray: none; stroke-dashoffset: 0; }
   .travel { display: none; }

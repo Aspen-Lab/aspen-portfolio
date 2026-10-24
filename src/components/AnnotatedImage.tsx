@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { memo, useCallback, useMemo, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import type { ImageNote } from "@/lib/work";
 import { hold } from "@/lib/hold";
@@ -8,29 +8,24 @@ import styles from "./AnnotatedImage.module.css";
 
 /* An image that explains itself. Numbered markers sit on the picture and
    the notes are written out beside or under it. Point at a marker, a
-   region or a note and a viewfinder settles on that region (a hairline,
-   four corner marks and four ticks at the middle of its edges); the
-   picture around it stays exactly as it is (Aspen, 2026-10-19: 「图片 zoom
-   不要加暗附近」), and the other notes and markers step back to 0.45.
-   Touch and keyboard pin a note with a tap or Enter. The notes are the
-   accessible copy; the markers and regions are pointer conveniences on top
-   of the image.
+   region or a note and its marker turns to a solid ink square; nothing is
+   drawn round the region, and the picture stays exactly as it is (Aspen,
+   2026-10-19: 「图片 zoom 不要加暗附近」). The other notes and markers
+   step back to 0.45. Touch and keyboard pin a note with a tap or Enter.
+   The notes are the accessible copy; the markers and regions are pointer
+   conveniences on top of the image. The picture, the regions and every
+   note are memoised: a hover re-renders only the notes and markers whose
+   state it changes.
 
-   The viewfinder moves by transform only; nothing in it is ever laid out
-   again. Its hairline edges are as big as the frame, pinned at a corner
-   and scaled to their side, and the corner marks and ticks sit on their
-   points. Between two regions it glides; coming out of nothing it lands
-   on its region at once (data-snap) and only fades in, so the first frame
-   of a hover is already on the target. The picture, the regions, the
-   viewfinder's pieces and every note are memoised: a hover re-renders
-   only the notes and markers whose state it changes.
-
-   Two joined layouts, after Latent's split card. "attached" (the cover)
-   hangs the notes under the picture on a slab that shares the frame's
-   bottom edge. "split" puts the picture on the left and the notes on a
-   slab on the right, one numbered row each. In both the row in view lights
-   its rule and its number in ink. Latent's L-marks stand in the frame's
-   corners. No accent anywhere: the picture is the colour. */
+   Planes, not frames (Aspen, 2026-10-23: 「线框我们用面」): the picture
+   sits on a plane with no edge and no corner marks, each marker is a small
+   dark plane, and the notes lie on a slab with no rules between them. Two
+   joined layouts: "attached" (the cover) hangs the slab under the
+   picture; "split" puts the picture on the left and the slab on the
+   right. The two read as one block by sitting edge to edge, the tone
+   change alone telling them apart. The note in view lifts onto a plane
+   and its number turns ink. No accent anywhere: the picture is the
+   colour. */
 
 /* Tidy lines. Chinese is held word by word (hold), so a line never ends
    inside a word. Latin copy holds a hyphenated word whole ("one-line"
@@ -50,41 +45,6 @@ function keep(text: string): ReactNode {
     ),
   );
 }
-
-const SIDES = ["top", "right", "bottom", "left"] as const;
-const CORNERS = ["tl", "tr", "br", "bl"] as const;
-const TICKS = ["top", "right", "bottom", "left"] as const;
-
-/* The viewfinder's pieces. They never re-render: where they stand comes
-   from the --x, --y, --w and --h set on the viewfinder. */
-const Viewfinder = memo(function Viewfinder() {
-  return (
-    <>
-      {SIDES.map((side) => (
-        <span key={side} className={styles.piece} data-edge={side}>
-          <span className={styles.edge} data-side={side} />
-        </span>
-      ))}
-      {CORNERS.map((c) => (
-        <span key={c} className={styles.piece} data-corner={c}>
-          <span className={styles.corner} data-c={c} />
-        </span>
-      ))}
-    </>
-  );
-});
-
-/* The crosshair: four 12px ticks, one at the middle of each edge of the
-   region, pointing out. Like the viewfinder, each piece is as big as the
-   frame and moves by transform alone. */
-const Crosshair = memo(function Crosshair() {
-  return TICKS.map((side) => <span key={side} className={styles.cross} data-tick={side} />);
-});
-
-/* Latent's L-marks in the frame's corners: still, light on the picture. */
-const RegMarks = memo(function RegMarks() {
-  return CORNERS.map((c) => <span key={c} aria-hidden className={`reg-mark ${c} ${styles.reg}`} />);
-});
 
 /* The picture and the regions never change on hover, so they never
    re-render on hover either. */
@@ -272,47 +232,17 @@ export function AnnotatedImage({
 }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [pinned, setPinned] = useState<number | null>(null);
-  // Where the viewfinder last stood, so it fades out in place
-  const [spot, setSpot] = useState(0);
-  const hoveredNow = useRef<number | null>(null);
   const pinnedNow = useRef<number | null>(null);
-  const spotEl = useRef<HTMLSpanElement>(null);
-  const snap = useRef(false);
   const shown = hovered ?? pinned;
 
-  /* Out of nothing, the viewfinder lands on its region instead of gliding
-     there from where it last stood: data-snap turns its transitions off
-     before the new region is committed, and is cleared once it has been
-     drawn there (below). */
-  const arm = useCallback(() => {
-    if (hoveredNow.current !== null || pinnedNow.current !== null) return;
-    snap.current = true;
-    spotEl.current?.setAttribute("data-snap", "");
-  }, []);
-
-  const hover = useCallback(
-    (i: number | null) => {
-      if (i !== null) arm();
-      hoveredNow.current = i;
-      setHovered(i);
-      if (i !== null) setSpot(i);
-    },
-    [arm],
-  );
+  const hover = useCallback((i: number | null) => setHovered(i), []);
   // A second tap on the pinned note lets go, even while it keeps focus
-  const pin = useCallback(
-    (i: number) => {
-      const next = pinnedNow.current === i ? null : i;
-      if (next !== null) arm();
-      pinnedNow.current = next;
-      setPinned(next);
-      if (next === null) {
-        hoveredNow.current = null;
-        setHovered(null);
-      } else setSpot(i);
-    },
-    [arm],
-  );
+  const pin = useCallback((i: number) => {
+    const next = pinnedNow.current === i ? null : i;
+    pinnedNow.current = next;
+    setPinned(next);
+    if (next === null) setHovered(null);
+  }, []);
   const point = useCallback<Point>(
     (i) => (e) => {
       if (e.pointerType === "mouse") hover(i);
@@ -321,22 +251,8 @@ export function AnnotatedImage({
   );
   const leave = useCallback(() => hover(null), [hover]);
 
-  // The jump is resolved with transitions off (reading the style settles
-  // it now), then the next frame turns the glide back on
-  useLayoutEffect(() => {
-    if (!snap.current) return;
-    snap.current = false;
-    const el = spotEl.current;
-    const piece = el?.firstElementChild;
-    if (!el || !piece) return;
-    void getComputedStyle(piece).transform;
-    requestAnimationFrame(() => el.removeAttribute("data-snap"));
-  }, [spot, hovered, pinned]);
-
   const captionText = useMemo(() => (caption ? keep(caption) : null), [caption]);
   const visibleCaption = showCaption && captionText !== null;
-
-  const [x, y, w, h] = notes[spot].box;
 
   const kickerText = useMemo(() => (kicker ? keep(kicker) : null), [kicker]);
 
@@ -348,19 +264,6 @@ export function AnnotatedImage({
     >
       <Picture src={src} alt={alt} sizes={sizes} preload={priority} position={position} />
       <Regions notes={notes} onPoint={point} onPin={pin} />
-
-      <span
-        ref={spotEl}
-        aria-hidden
-        className={styles.spot}
-        data-on={shown !== null}
-        style={{ ["--x" as string]: x, ["--y" as string]: y, ["--w" as string]: w, ["--h" as string]: h }}
-      >
-        <Viewfinder />
-        <Crosshair />
-      </span>
-
-      <RegMarks />
 
       {notes.map((note, i) => (
         <Marker

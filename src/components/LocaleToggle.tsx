@@ -9,8 +9,9 @@ const labels: Record<Locale, string> = {
   cn: "中文",
 };
 
-/* Two mono labels either side of one hairline. The active language is
-   ink; the other is soft and comes up on hover. No track, no cap. */
+/* Two mono labels, kept apart by space alone (no hairline between them:
+   the site draws no rules). The active language is ink; the other is
+   soft and comes up on hover. No track, no cap. */
 export function LocaleToggle() {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
@@ -29,8 +30,7 @@ export function LocaleToggle() {
       {(Object.keys(labels) as Locale[]).map((code, i) => {
         const active = code === locale;
         return (
-          <span key={code} className="flex items-center">
-            {i > 0 && <span aria-hidden className="mx-1 w-px h-3 bg-line" />}
+          <span key={code} className={`flex items-center ${i > 0 ? "ml-2" : ""}`}>
             <button
               type="button"
               onClick={() => switchTo(code)}

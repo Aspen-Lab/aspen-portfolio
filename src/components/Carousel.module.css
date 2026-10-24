@@ -2,7 +2,8 @@
    takes each picture's own proportions, so a long research strip is a long
    strip and a screen is a screen: no empty bands above and below. The
    controls ride in one row above the frame, so they stay put while the
-   frame grows and shrinks under them. Flat fills and hairlines only. */
+   frame grows and shrinks under them. Flat planes, no edges; the only
+   lines are the pager's ticks, which count the slides. */
 .carousel { container-type: inline-size; }
 
 /* ── The row: count, progress, arrows ── */
@@ -66,14 +67,14 @@
   place-items: center;
   width: 36px;
   height: 36px;
-  border: 1px solid var(--color-line);
-  border-radius: 999px;
-  color: var(--color-ink);
-  transition: border-color 200ms ease, background-color 200ms ease;
-}
-.arrow:hover {
-  border-color: rgb(244 244 242 / 40%);
+  border-radius: 2px;
   background: var(--color-cream);
+  color: var(--color-ink);
+  transition: background-color 160ms var(--ease-arrive);
+}
+/* No edge to brighten: the button's plane lifts a tone */
+.arrow:hover {
+  background: color-mix(in srgb, var(--color-ink) 7%, var(--color-cream));
 }
 .arrow:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 2px; }
 .arrow svg { transition: transform 300ms var(--ease-arrive); }
@@ -93,21 +94,12 @@
   aspect-ratio: var(--ratio);
   max-height: 80vh;
   height: min(calc(100cqw / var(--ratio)), 80svh);
-  border-radius: 8px;
+  border-radius: 2px;
   background: var(--color-cream);
   transition: height 560ms var(--ease-arrive);
 }
-/* A hairline over the edge, so a dark slide and the sheet around a tall
-   one still read as one frame on the page. */
-.stage::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border: 1px solid var(--color-line);
-  border-radius: inherit;
-  pointer-events: none;
-}
+/* No hairline round it: the cream plane itself holds a dark slide and the
+   sheet around a tall one together as one area on the page. */
 
 .slide {
   position: absolute;

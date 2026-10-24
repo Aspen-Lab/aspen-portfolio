@@ -1,7 +1,7 @@
 /* One split card: Group A on the slab, Group B on a sheet over two back
-   sheets. One 1px edge between them, flat fills, square marks, no
-   gradient. The accent fills B's letter block and nothing else. Type is
-   the ramp (.t-label, .t-subhead, .t-small). */
+   planes. The two meet by tone, with no edge or rule anywhere; flat
+   fills, square marks, no gradient. The accent fills B's letter block and
+   nothing else. Type is the ramp (.t-label, .t-subhead, .t-small). */
 .fig { margin: 0; }
 
 .split {
@@ -12,14 +12,13 @@
   .split { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* ── A: the slab ── on a phone it sits on top and B's sheet draws the
-   edge between them; from 768px it is the left half, the same height as
-   B's sheet (the stack's 16px margin is matched below it) */
+/* ── A: the slab ── on a phone it sits on top of B's sheet; from 768px
+   it is the left half, the same height as B's sheet (the stack's 16px
+   margin is matched below it) */
 .a.a {
   min-width: 0;
   margin: 0 6px 0 0;
   padding: 24px;
-  border-bottom: 0;
   border-radius: 2px 2px 0 0;
 }
 @media (min-width: 640px) {
@@ -29,8 +28,6 @@
   .a.a {
     margin: 0 0 16px;
     padding: 40px;
-    border-bottom: 1px solid var(--edge);
-    border-right: 0;
     border-radius: 2px 0 0 2px;
   }
 }
@@ -69,15 +66,15 @@
   .head { gap: 20px; }
 }
 
-/* The letter block: A outlined in grey, B solid accent (the focus) */
+/* The letter block: A a raised grey plane, B solid accent (the focus) */
 .letter {
   flex: none;
   display: grid;
   place-items: center;
   width: 48px;
   height: 48px;
-  border: 1px solid #6b6b71;
   border-radius: 2px;
+  background: var(--raised, #232326);
   color: #a0a0a5;
   font-family: var(--font-sans);
   font-size: 30px;
@@ -93,7 +90,6 @@
   }
 }
 .letter[data-front="true"] {
-  border-color: var(--accent, #f4f4f2);
   background: var(--accent, #f4f4f2);
   color: #0a0a0a;
 }
@@ -130,11 +126,10 @@
 }
 [data-side="A"] .sq { background: #6b6b71; }
 
-/* The foot: a hairline, then who the group is served by */
+/* The foot, held off by space: who the group is served by */
 .tag {
   margin: auto 0 0;
   padding-top: 16px;
-  border-top: 1px solid var(--color-line, #252528);
 }
 [data-side="B"] .tag { color: #f4f4f2; }
 

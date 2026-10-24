@@ -7,14 +7,14 @@ import styles from "./EmailRender.module.css";
 
 /* A render check in two blocks under two of Latent's numbered tabs. Left,
    a short Liquid template on a slab; right, what it sends, laid on the
-   dark chart sheet like a print proof with crop marks: Axel's card, the
-   wordmark beside a pixel moon (the night sky from helloaxel.com), a
-   headline, the SEA ✈ LAX trip line from the flight card, a button. The
-   tabs feed the template event data or leave the destination city out.
-   Without the city the `default` filter takes over: that token becomes a
-   solid accent chip inside a dashed hexagon, with a boxed tag, and the
-   headline swaps one word in place, underlined in ink, while the line
-   closes up around it. The chip is the chart's one focus mark; with event
+   dark chart sheet like a print proof: Axel's card, the wordmark beside
+   a pixel moon (the night sky from helloaxel.com), a headline, the
+   SEA ✈ LAX trip line from the flight card, a button. The tabs feed the
+   template event data or leave the destination city out. Without the
+   city the `default` filter takes over: that token becomes a solid
+   accent chip on a raised hexagon, with a tag on a dashed leader, and
+   the headline swaps one word in place, underlined in ink, while the
+   line closes up around it. The chip is the chart's one focus mark; with event
    data the blocks carry no accent at all.
 
    It is an example, and the caption under the sheet says so: the route is
@@ -451,9 +451,6 @@ export function EmailRender() {
 
           <div className={`paper-stack ${styles.proofStack}`}>
             <div className={`paper ${styles.proof}`}>
-              {(["tl", "tr", "br", "bl"] as const).map((c) => (
-                <span key={c} aria-hidden className={`reg-mark ${c}`} />
-              ))}
               <div className={styles.mail}>
                 <div className={styles.head}>
                   <span className={styles.wordmark}>Axel</span>

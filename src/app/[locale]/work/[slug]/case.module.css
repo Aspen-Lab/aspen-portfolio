@@ -1,11 +1,16 @@
-/* The case-study template in Latent Health's ledger manner: hairlines,
-   big light figures, mono only where a label is structural (one kicker,
-   a boxed tag, a header row), one accent. Flat fills only; no gradients.
-   Every colour is a token or ink mixed down from one, so Hyundai's light
-   case (html:has([data-project-theme="light"])) inherits all of it. */
+/* The case-study template in Kenya Hara's manner (Aspen, 2026-10-23:
+   「整体我们走原研哉风格吧 线框我们用面」): planes, not frames. Areas are
+   told apart by flat fills of a few tones and by space, never by an
+   outline or a rule; big light figures, mono only where a label is
+   structural (one kicker, a header row), one accent. No gradients, no
+   shadows. Every colour is a token or ink mixed into one, so Hyundai's
+   light case (html:has([data-project-theme="light"])) inherits all of it:
+   --plane is the cream, --raised a step of ink into it (a plane set on a
+   plane), --lift the tone a plane takes under the pointer. */
 .case {
-  --hair: color-mix(in srgb, var(--color-ink) 22%, transparent);
-  --hair-strong: color-mix(in srgb, var(--color-ink) 55%, transparent);
+  --plane: var(--color-cream);
+  --raised-plane: color-mix(in srgb, var(--color-ink) 6%, var(--color-cream));
+  --lift: color-mix(in srgb, var(--color-ink) 3%, var(--color-cream));
   --accent-ink: var(--accent, var(--color-ink));
 }
 
@@ -22,12 +27,12 @@
 .backArrow { transition: transform 320ms var(--ease-arrive); }
 .back:hover .backArrow { transform: translateX(-3px); }
 
-/* The one kicker above the title: the category as a boxed tag */
+/* The one kicker above the title: the category on a small plane */
 .kicker {
   display: inline-block;
   padding: 5px 8px 4px;
-  border: 1px solid var(--hair);
   border-radius: 2px;
+  background: var(--plane);
   color: var(--color-mute);
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -36,12 +41,13 @@
   text-transform: uppercase;
 }
 
+/* A text link keeps its underline: it is the link's mark, not a frame */
 .live {
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
   padding-bottom: 3px;
-  border-bottom: 1px solid var(--hair);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
   color: var(--color-ink);
   font-size: 15px;
   transition: border-color 200ms var(--ease-arrive);
@@ -68,32 +74,23 @@
   line-height: 1.45;
 }
 
-/* ── Outcome ledger ── one hairline per figure, an ink tick where it
-   starts. Items share the row; a long figure ("VN · MY · ID · US") keeps
-   to one line and takes the width it needs, and the rest wrap. It stops
-   at the sections' right edge (max-w-5xl), clear of the chapter rail. */
+/* ── Outcome ledger ── one plane per figure, no rule. Items share the
+   row; a long figure ("VN · MY · ID · US") keeps to one line and takes
+   the width it needs, and the rest wrap. It stops at the sections' right
+   edge (max-w-5xl), clear of the chapter rail. */
 .ledger {
   display: flex;
   flex-wrap: wrap;
-  gap: 40px 32px;
+  gap: 16px;
   max-width: 64rem;
   margin-top: 72px;
 }
 .metric {
   position: relative;
   flex: 1 1 12rem;
-  padding-top: 22px;
-  border-top: 1px solid var(--color-line);
-}
-.metric::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 32px;
-  height: 1px;
-  background: var(--color-ink);
-  transform-origin: left;
+  padding: 28px 28px 24px;
+  border-radius: 2px;
+  background: var(--plane);
 }
 .metricValue {
   display: block;
@@ -114,16 +111,16 @@
   text-wrap: pretty;
 }
 @media (max-width: 479px) {
-  .ledger { column-gap: 24px; }
-  .metric { flex-basis: 9rem; }
+  .ledger { gap: 12px; }
+  .metric { flex-basis: 9rem; padding: 22px 20px 20px; }
 }
 /* Narrower than the longest figure: let it break between words */
 @media (max-width: 359px) {
   .metricValue { white-space: normal; }
 }
 
-/* ── Chapter divider ── the kicker in mono, the title in plain type, the
-   rule running out to a short end tick like an axis. */
+/* ── Chapter divider ── the kicker in mono, the title in plain type, and
+   then air: no rule runs out from it. */
 .chapter {
   display: flex;
   align-items: baseline;
@@ -149,24 +146,6 @@
   line-height: 1.3;
   letter-spacing: -0.005em;
 }
-.chapterRule {
-  position: relative;
-  flex: 1 1 2rem;
-  align-self: center;
-  height: 1px;
-  background: var(--color-line);
-  transform-origin: left;
-}
-.chapterRule::after {
-  content: "";
-  position: absolute;
-  top: -3px;
-  right: 0;
-  width: 1px;
-  height: 7px;
-  background: var(--hair);
-}
-
 /* ── Statement ── a sentence set large, the accent only in its opening
    mark. No bar down the side. */
 .quote {
@@ -221,27 +200,22 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
-.quoteCite::before {
-  content: "";
-  flex: none;
-  width: 28px;
-  height: 1px;
-  background: var(--hair);
-}
 @media (min-width: 768px) {
   .quoteCite { grid-column: 2; }
 }
 
-/* ── Ledger table ── a mono header row over a firmer rule, hairline rows,
-   each entry numbered. Phones get the same rows as stacked sheets. */
+/* ── Ledger table ── a mono header row, then one plane per row, 4px
+   apart: the gaps between the planes are the only rules. Each entry is
+   numbered. Phones get the same rows as stacked planes. */
 .table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 4px;
+  margin-top: -4px;
   text-align: left;
 }
 .table th {
-  padding: 0 24px 12px 0;
-  border-bottom: 1px solid var(--hair);
+  padding: 0 24px 8px 0;
   color: var(--color-soft);
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -250,22 +224,30 @@
   text-transform: uppercase;
   vertical-align: bottom;
 }
-.table th:first-child { padding-left: 2.5rem; }
+.table th:first-child { padding-left: calc(20px + 2.5rem); }
 .table td {
   padding: 18px 24px 18px 0;
-  border-bottom: 1px solid var(--color-line);
+  background: var(--plane);
   color: var(--color-mute);
   font-size: 15px;
   line-height: 1.5;
   vertical-align: top;
-  transition: color 200ms ease;
+  transition: color 200ms ease, background-color 200ms ease;
 }
-.table td:first-child { color: var(--color-ink); }
+.table td:first-child {
+  padding-left: 20px;
+  border-radius: 2px 0 0 2px;
+  color: var(--color-ink);
+}
+.table td:last-child { border-radius: 0 2px 2px 0; }
 .entry {
   display: grid;
   grid-template-columns: 2.5rem minmax(0, 1fr);
 }
-.table tbody tr:hover td { color: var(--color-ink); }
+.table tbody tr:hover td {
+  background: var(--lift);
+  color: var(--color-ink);
+}
 .rowNum {
   padding-top: 3px;
   color: var(--color-soft);
@@ -287,17 +269,14 @@
   }
 }
 .card {
-  padding: 16px 16px 14px;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
+  padding: 18px 18px 16px;
+  border-radius: 2px;
+  background: var(--plane);
 }
 .cardHead {
   display: flex;
   align-items: baseline;
   gap: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--color-line);
 }
 .cardTitle {
   color: var(--color-ink);
@@ -307,7 +286,7 @@
 .cardFields {
   display: grid;
   gap: 8px;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 .cardField {
   display: grid;
@@ -332,12 +311,11 @@
   line-height: 1.5;
 }
 
-/* ── Up next ── the next case as a wide row: its cover in a framed 16:10
-   plate held by registration marks, the title large beside it. */
+/* ── Up next ── the next case as a wide row: its cover printed on a
+   16:10 plane (a mat of the plane's own tone round it), the title large
+   beside it. No rule above it: 160px of air sets it apart. */
 .next {
   margin-top: 160px;
-  padding-top: 28px;
-  border-top: 1px solid var(--color-line);
 }
 .nextKicker {
   color: var(--color-soft);
@@ -364,14 +342,12 @@
   --mat: 30px;
   position: relative;
   aspect-ratio: 16 / 10;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
-  transition: border-color 240ms var(--ease-arrive);
+  border-radius: 2px;
+  background: var(--plane);
+  transition: background-color 240ms var(--ease-arrive);
 }
 @media (max-width: 639px) { .plate { --mat: 26px; } }
-/* The print inside the mat; the marks stand at its corners like crop
-   marks, on the plate's own fill, so they read on any cover. */
+/* The print inside the mat */
 .print {
   position: absolute;
   inset: var(--mat);
@@ -380,20 +356,9 @@
   background: var(--color-paper);
 }
 .plateImage { transition: transform 700ms var(--ease-arrive); }
-.plate :global(.reg-mark) {
-  transition: transform 420ms var(--ease-arrive), opacity 240ms ease;
-}
-.plate :global(.reg-mark.tl) { left: calc(var(--mat) - 22px); top: calc(var(--mat) - 22px); }
-.plate :global(.reg-mark.tr) { right: calc(var(--mat) - 22px); top: calc(var(--mat) - 22px); }
-.plate :global(.reg-mark.br) { right: calc(var(--mat) - 22px); bottom: calc(var(--mat) - 22px); }
-.plate :global(.reg-mark.bl) { left: calc(var(--mat) - 22px); bottom: calc(var(--mat) - 22px); }
-.nextRow:hover .plate { border-color: var(--hair-strong); }
+/* Hover: the mat lifts a tone and the print takes a breath */
+.nextRow:hover .plate { background: var(--raised-plane); }
 .nextRow:hover .plateImage { transform: scale(1.03); }
-.nextRow:hover .plate :global(.reg-mark) { opacity: 0.9; }
-.nextRow:hover .plate :global(.reg-mark.tl) { transform: translate(-3px, -3px); }
-.nextRow:hover .plate :global(.reg-mark.tr) { transform: translate(3px, -3px); }
-.nextRow:hover .plate :global(.reg-mark.br) { transform: translate(3px, 3px); }
-.nextRow:hover .plate :global(.reg-mark.bl) { transform: translate(-3px, 3px); }
 
 .nextText {
   display: grid;
@@ -429,13 +394,12 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--hair);
-  border-radius: 999px;
-  transition: transform 360ms var(--ease-arrive), border-color 200ms ease, background-color 200ms ease, color 200ms ease;
+  border-radius: 2px;
+  background: var(--plane);
+  transition: transform 360ms var(--ease-arrive), background-color 200ms ease, color 200ms ease;
 }
 .nextRow:hover .nextArrow {
   transform: translateX(4px);
-  border-color: var(--color-ink);
   background: var(--color-ink);
   color: var(--color-paper);
 }
@@ -455,35 +419,14 @@
   letter-spacing: 0.06em;
 }
 
-/* ── Motion ── the hairlines draw themselves as they scroll in, where the
-   browser can tie an animation to scrolling. Without it, or with reduced
-   motion, they simply stand finished. */
-@keyframes draw {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .metric::before,
-    .chapterRule {
-      animation: draw linear both;
-      animation-timeline: view();
-      animation-range: entry 20% cover 40%;
-    }
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .backArrow,
   .liveArrow,
-  .plate,
   .plateImage,
-  .plate :global(.reg-mark),
   .nextArrow,
   .table td,
   .rowNum { transition: none; }
   .nextRow:hover .plateImage,
-  .nextRow:hover .plate :global(.reg-mark),
   .nextRow:hover .nextArrow { transform: none; }
 }
 
@@ -527,11 +470,12 @@
    Type is the shared ramp (S1–S7, globals.css .t-*), copied exactly:
    S3 heading, S5 body, S6 small, S7 label. No accent in any text. */
 .case[data-bands] {
-  --color-cream: #141416;
+  --color-cream: var(--tile);
   --color-soft: #8a8a90;
   --color-body: #d2d2d0;
-  --hair: rgb(244 244 242 / 24%);
-  --hair-strong: rgb(244 244 242 / 55%);
+  --plane: var(--tile);
+  --raised-plane: var(--raised);
+  --lift: #232326;
   overflow-x: clip;
 }
 .case[data-bands] strong { font-weight: 500; color: var(--color-ink); }
@@ -591,13 +535,13 @@
   .heroGrid { column-gap: 88px; }
 }
 
-/* The category: a quiet tag (one hairline box, the label in mute) */
+/* The category: a quiet tag (a small plane on the ground, the label in
+   mute; no edge) */
 .case[data-bands] .kicker {
   display: inline-block;
   padding: 4px 8px;
-  border: 1px solid rgb(244 244 242 / 24%);
   border-radius: 2px;
-  background: transparent;
+  background: var(--tile);
   color: var(--color-mute);
 }
 
@@ -630,12 +574,10 @@
 }
 :global(html[lang="zh-CN"]) .heroSummary { line-height: 1.8; }
 
-/* The facts: S7 labels over S6 values in ink, under one rule */
+/* The facts: S7 labels over S6 values in ink, set in air (no rule) */
 .facts {
   column-gap: 32px;
   row-gap: 24px;
-  padding-top: 24px;
-  border-top: 1px solid var(--color-line);
 }
 .case[data-bands] .factLabel { margin-bottom: 8px; }
 .case[data-bands] .factValue {
@@ -675,7 +617,7 @@
 }
 .bandSection { scroll-margin-top: 96px; }
 
-/* The chapter row: its number (S7), its title (S6 in ink), the rule */
+/* The chapter row: its number (S7) and its title (S6 in ink), no rule */
 .bandChapter {
   max-width: none;
   margin: 0 0 56px;
@@ -689,9 +631,6 @@
   letter-spacing: 0;
 }
 :global(html[lang="zh-CN"]) .case[data-bands] .chapterTitle { line-height: 1.65; }
-/* The rule stands finished: the row's Reveal is its one entrance, so it
-   is not scrubbed by the scroll a second time */
-.case[data-bands] .chapterRule { animation: none; }
 
 .sectionNum { margin-bottom: 16px; }
 
@@ -779,13 +718,14 @@
   text-wrap: balance;
 }
 
-/* ── Up next ── Latent's split card: the next cover (a tile) beside a
-   slab, one 1px outline round both, a 1px divider between them. */
+/* ── Up next ── a split card of two planes: the next cover (a tile)
+   beside a slab, edge to edge. No outline round them and no divider: the
+   tone change is the seam. */
 .nextSplit {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  border: 1px solid var(--edge);
+  overflow: hidden;
   border-radius: 2px;
   color: var(--color-ink);
   transition: transform var(--t-1) var(--ease-arrive);
@@ -806,18 +746,11 @@
   gap: 16px;
   min-width: 0;
   padding: 24px 20px;
-  border: 0;
-  border-top: 1px solid var(--edge);
   border-radius: 0;
+  transition: background-color var(--t-1) var(--ease-arrive);
 }
 @media (min-width: 640px) {
   .nextSlab { padding: 40px; }
-}
-@media (min-width: 1024px) {
-  .nextSlab {
-    border-top: 0;
-    border-left: 1px solid var(--edge);
-  }
 }
 .splitKicker {
   display: inline-flex;
@@ -873,29 +806,26 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--hair);
   border-radius: 2px;
-  transition: transform var(--t-2) var(--ease-arrive);
+  background: var(--tile);
+  transition:
+    transform var(--t-2) var(--ease-arrive),
+    background-color var(--t-1) var(--ease-arrive);
 }
-/* Hover and focus: an ink edge fades to half and the arrow steps on, as
-   on the outcome tiles. Press sinks the card 1px. Transform and opacity
-   only. */
-.nextSplit::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border: 1px solid var(--color-ink);
-  border-radius: inherit;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--t-1) var(--ease-arrive);
-}
+/* Hover and focus: the slab lifts a tone, the arrow's plane lifts with it
+   and steps on, as on the outcome tiles. Press sinks the card 1px. */
 @media (hover: hover) {
-  .nextSplit:hover::after { opacity: 0.5; }
-  .nextSplit:hover .nextSplitArrow { transform: translateX(3px); }
+  .nextSplit:hover .nextSlab { background: #141416; }
+  .nextSplit:hover .nextSplitArrow {
+    background: var(--raised);
+    transform: translateX(3px);
+  }
 }
-.nextSplit:focus-visible::after { opacity: 0.5; }
-.nextSplit:focus-visible .nextSplitArrow { transform: translateX(3px); }
+.nextSplit:focus-visible .nextSlab { background: #141416; }
+.nextSplit:focus-visible .nextSplitArrow {
+  background: var(--raised);
+  transform: translateX(3px);
+}
 .nextSplit:active { transform: translateY(1px); }
 
 /* S3 in Chinese: a looser line, closer tracking. ("halt" is left out:
@@ -912,7 +842,7 @@
   .heroSummary { font-size: 17px; }
 }
 
-/* Reduced motion: nothing moves; the edges still fade */
+/* Reduced motion: nothing moves; the planes still lift */
 @media (prefers-reduced-motion: reduce) {
   .case[data-bands] .backArrow,
   .ctaArrow,

@@ -1,16 +1,19 @@
-/* Nutra's design system, live. The frame is the site's: three numbered
-   tabs with an ink underline, one sheet on two back sheets, split cards of
-   a render beside a slab, square marks, 1px edges, no gradient and no site
-   accent. Inside a render the product speaks for itself: its own ground
-   (#1E1E1E, the boards'), colours (the --n-* tokens from product.ts), Red
-   Hat Text and Helvetica Neue, and radii as the boards draw them. */
+/* Nutra's design system, live. Around it the site's planes, never a
+   frame: three numbered tabs (the one in view raised), one sheet
+   on two back planes, split cards of a render beside a slab, told apart by
+   tone alone. No outline, no rule, no gradient, no site accent; a choice
+   is shown by a plane lifting a tone or by what steps back. Inside a
+   render the product speaks for itself: its own ground (#1E1E1E, the
+   boards'), colours (the --n-* tokens from product.ts), Red Hat Text and
+   Helvetica Neue, and radii and outlines as the boards draw them. */
 .root {
   position: relative;
   margin: 0;
 }
 .word { white-space: nowrap; }
 
-/* ── Tabs: 01 Colour / 02 Type / 03 Components ── */
+/* ── Tabs: 01 Colour / 02 Type / 03 Components ── words on the ground;
+   the tab in view sits on a raised plane */
 .tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -24,8 +27,8 @@
   align-items: baseline;
   gap: 12px;
   min-width: 0;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--color-line);
+  padding: 16px 20px;
+  isolation: isolate;
   color: var(--color-ink);
   text-align: left;
   transition: transform var(--t-1) var(--ease-arrive);
@@ -52,23 +55,21 @@
 }
 .fill {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  background: #f4f4f2;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--t-2) var(--ease-arrive);
+  inset: 0;
+  z-index: -1;
+  border-radius: 2px;
+  background: var(--raised, #232326);
+  opacity: 0;
+  transition: opacity var(--t-2) var(--ease-arrive);
 }
-.tab[aria-selected="true"] .fill { transform: none; }
+.tab[aria-selected="true"] .fill { opacity: 1; }
 /* Phones: the number over the word, so "Components" keeps its line */
 @media (max-width: 639.98px) {
   .tab {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
-    padding: 12px 0 14px;
+    padding: 12px 12px 14px;
   }
 }
 
@@ -130,10 +131,9 @@
 }
 @media (min-width: 640px) { .render { padding: 20px; } }
 
-/* The board's own ground, framed as a site plane */
+/* The board's own ground, a plane on the sheet */
 .ground {
   min-width: 0;
-  border: 1px solid var(--edge);
   border-radius: 2px;
   background: var(--n-ground);
   color: #fff;
@@ -144,17 +144,11 @@
   flex-direction: column;
   min-width: 0;
   padding: 24px 20px;
-  border: 0;
-  border-top: 1px solid var(--edge);
   border-radius: 0;
 }
 @media (min-width: 640px) { .slab.slab { padding: 32px; } }
 @media (min-width: 1024px) {
-  .split > .slab.slab {
-    padding: 40px;
-    border-top: 0;
-    border-left: 1px solid var(--edge);
-  }
+  .split > .slab.slab { padding: 40px; }
 }
 .kicker {
   display: flex;
@@ -206,34 +200,39 @@
   display: grid;
   gap: 18px;
 }
+/* Each disc's row carries a plane, empty at rest: pointing lifts it a
+   tone, the chosen token's lifts two. The padding is given back in the
+   margin, so the board's layout is unmoved. */
 .disc {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   gap: 20px;
+  margin: -6px -12px -6px -6px;
+  padding: 6px 12px 6px 6px;
   border-radius: 2px;
   text-align: left;
 }
+.disc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 2px;
+  background: transparent;
+  transition: background-color var(--t-1) var(--ease-arrive);
+}
+.disc[aria-checked="true"]::before { background: #2c2c30; }
+@media (hover: hover) {
+  .disc[aria-checked="false"]:hover::before { background: #252528; }
+}
 .dot {
-  position: relative;
   flex: none;
   width: 60px;
   height: 60px;
   border-radius: 50%;
   background: var(--c);
-}
-/* The selected disc: a 1px ink ring, 3px off */
-.dot::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border: 1px solid #f4f4f2;
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity var(--t-1) var(--ease-arrive);
-}
-.disc[aria-checked="true"] .dot::after { opacity: 1; }
-@media (hover: hover) {
-  .disc[aria-checked="false"]:hover .dot::after { opacity: 0.45; }
 }
 .dlab {
   min-width: 4ch;
@@ -258,6 +257,8 @@
   .group[data-g="grey"] .disc {
     flex-direction: column;
     gap: 10px;
+    margin: -6px;
+    padding: 6px;
   }
   .dot {
     width: 44px;
@@ -270,9 +271,7 @@
    disc writes data-peek on the panel and its readout shows instead. */
 .reads {
   display: grid;
-  margin-top: 40px;
-  padding-top: 24px;
-  border-top: 1px solid var(--color-line);
+  margin-top: 48px;
 }
 @media (min-width: 1024px) { .reads { margin-block: auto; } }
 .read {
@@ -337,19 +336,7 @@
   background: var(--n-50);
   color: #fff;
   text-align: left;
-}
-.faceCard::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border: 1px solid #f4f4f2;
-  border-radius: 24px;
-  opacity: 0;
-  transition: opacity var(--t-1) var(--ease-arrive);
-}
-.faceCard[aria-pressed="true"]::after { opacity: 1; }
-@media (hover: hover) {
-  .faceCard[aria-pressed="false"]:hover::after { opacity: 0.45; }
+  transition: opacity var(--t-2) var(--ease-arrive);
 }
 .aa {
   font-size: 48px;
@@ -369,7 +356,6 @@
 .faceName[data-f="hv"] { font-family: var(--n-hv); }
 @media (max-width: 639.98px) {
   .faceCard { padding: 16px; border-radius: 16px; }
-  .faceCard::after { border-radius: 20px; }
   .aa { font-size: 40px; }
   .faceName { font-size: 14px; }
 }
@@ -415,20 +401,21 @@
   .h1 { font-size: 32px; }
 }
 
-/* A face lights the rows it sets; the rest step back */
+/* A face lights the rows it sets and its own card; the rest step back.
+   No ring marks the chosen card: the other one recedes. */
 [data-type][data-face="rht"] .lrow[data-row-face="hv"],
 [data-type][data-face="hv"] .lrow[data-row-face="rht"],
-[data-type][data-face="rht"] .faceRow[data-face-btn="hv"],
-[data-type][data-face="hv"] .faceRow[data-face-btn="rht"] { opacity: var(--dim); }
+[data-type][data-face="rht"] :is(.faceRow, .faceCard)[data-face-btn="hv"],
+[data-type][data-face="hv"] :is(.faceRow, .faceCard)[data-face-btn="rht"] { opacity: var(--dim); }
 @media (hover: hover) {
   [data-type]:has([data-face-btn="rht"]:hover) .lrow[data-row-face="hv"],
-  [data-type]:has([data-face-btn="rht"]:hover) .faceRow[data-face-btn="hv"],
+  [data-type]:has([data-face-btn="rht"]:hover) :is(.faceRow, .faceCard)[data-face-btn="hv"],
   [data-type]:has([data-face-btn="hv"]:hover) .lrow[data-row-face="rht"],
-  [data-type]:has([data-face-btn="hv"]:hover) .faceRow[data-face-btn="rht"] { opacity: var(--dim); }
+  [data-type]:has([data-face-btn="hv"]:hover) :is(.faceRow, .faceCard)[data-face-btn="rht"] { opacity: var(--dim); }
   [data-type]:has([data-face-btn="rht"]:hover) .lrow[data-row-face="rht"],
-  [data-type]:has([data-face-btn="rht"]:hover) .faceRow[data-face-btn="rht"],
+  [data-type]:has([data-face-btn="rht"]:hover) :is(.faceRow, .faceCard)[data-face-btn="rht"],
   [data-type]:has([data-face-btn="hv"]:hover) .lrow[data-row-face="hv"],
-  [data-type]:has([data-face-btn="hv"]:hover) .faceRow[data-face-btn="hv"] { opacity: 1; }
+  [data-type]:has([data-face-btn="hv"]:hover) :is(.faceRow, .faceCard)[data-face-btn="hv"] { opacity: 1; }
 }
 
 .slabFoot {
@@ -437,32 +424,31 @@
   margin-top: 40px;
 }
 @media (min-width: 1024px) { .slabFoot { margin-block: auto; } }
+/* Two rows on the slab, apart by space; the chosen face's row is a plane
+   of the sheet's tone, pointing lifts one a step toward it */
 .faceRows {
-  margin: 0 -12px;
+  display: grid;
+  gap: 4px;
+  margin: 0 -16px;
   padding: 0;
   list-style: none;
 }
-.faceRows > li + li { margin-top: -1px; }
 .faceRow {
-  position: relative;
   display: grid;
   gap: 6px;
   width: 100%;
-  padding: 20px 12px;
+  padding: 20px 16px;
+  border-radius: 2px;
+  background: transparent;
   text-align: left;
-  transition: opacity var(--t-2) var(--ease-arrive);
+  transition:
+    opacity var(--t-2) var(--ease-arrive),
+    background-color var(--t-1) var(--ease-arrive);
 }
-.faceRow::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 12px;
-  right: 12px;
-  height: 1px;
-  background: var(--color-line);
+@media (hover: hover) {
+  .faceRow[aria-pressed="false"]:hover { background: #121214; }
 }
-.faceRow[aria-pressed="true"]::before { background: #f4f4f2; }
-.faceRow:focus-visible { outline-offset: -1px; }
+.faceRow[aria-pressed="true"] { background: var(--sheet); }
 .faceRowRows { color: var(--color-mute); }
 
 /* ── 03 Components ── specimen plates on the sheet, three columns from
@@ -506,7 +492,6 @@
 .plate {
   min-width: 0;
   padding: 20px;
-  border: 1px solid var(--edge);
   border-radius: 2px;
   background: var(--n-ground);
   color: #fff;
@@ -1132,13 +1117,8 @@
 
 /* The site's focus ring (1px ink, 3px off) keeps each control's own
    shape: the banded pages' ring rule squares corners, so the product's
-   pills, discs and cards restate theirs here. A disc's selection ring
-   sits 3px off the swatch, so its focus ring rounds the whole control,
-   swatch and label, a step further out. */
-.root .disc:focus-visible {
-  outline-offset: 7px;
-  border-radius: 999px;
-}
+   pills, discs and cards restate theirs here. A disc's ring goes round
+   its row's plane. */
 .root .disc:focus-visible .dlab { color: #fff; }
 .root .stepRow:focus-visible,
 .root .segOpt:focus-visible,
@@ -1205,5 +1185,10 @@
   .sheetCancel:active,
   .sheetSave:active { transform: none; }
   .lrow,
-  .faceRow { transition: opacity var(--t-1) var(--ease-arrive); }
+  .faceCard { transition: opacity var(--t-1) var(--ease-arrive); }
+  .faceRow {
+    transition:
+      opacity var(--t-1) var(--ease-arrive),
+      background-color var(--t-1) var(--ease-arrive);
+  }
 }

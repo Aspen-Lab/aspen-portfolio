@@ -11,12 +11,14 @@ import styles from "./NutraApp.module.css";
 /* What shipped: the hi-fi prototype rebuilt as a working app, beside the
    ledger of the first four features the case says shipped (the owner's
    "What shipped" items, each split into a title and its line; the fifth,
-   the design system, closes the section's body). A split card in the site's system: the phone
-   on a sheet, the ledger on a slab. The ledger drives the phone and the
-   phone drives the ledger: 01 is Home with its daily challenge, 02 the
-   goal setup, 03 Save Money and its reward, 04 the Data tab. The row in
-   view carries the figure's one accent mark, an 8px square; every row
-   reads at full ink, at rest as on hover.
+   the design system, closes the section's body). A split card of two
+   planes: the phone on a sheet, the ledger on the darker slab, told
+   apart by tone alone (no outline, no divider, no corner marks). The
+   ledger drives the phone and the phone drives the ledger: 01 is Home
+   with its daily challenge, 02 the goal setup, 03 Save Money and its
+   reward, 04 the Data tab. The rows are parted by space; the row in view
+   stands on a plane and carries the figure's one accent mark, an 8px
+   square; every row reads at full ink, at rest as on hover.
 
    The app inside is a product render: the app's own colours, type and
    radii (product.ts), its own demo data from Aspen's design files, its
@@ -84,10 +86,6 @@ export function NutraApp() {
     <figure ref={root} className={`paper-stack ${styles.root}`} data-in={entered}>
       <div className={styles.card}>
         <div ref={stage} className={styles.stage}>
-          <span aria-hidden className="reg-mark tl" />
-          <span aria-hidden className="reg-mark tr" />
-          <span aria-hidden className="reg-mark br" />
-          <span aria-hidden className="reg-mark bl" />
           <div className={styles.fit}>
             <Phone state={state} dispatch={dispatch} label={copy.label} entered={entered} />
           </div>

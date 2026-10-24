@@ -1,6 +1,7 @@
+/* No rules between the entries (「线框我们用面」): each card is its cover
+   and its words, and the space between two cards is what parts them. */
 .catalogue { min-width: 0; }
-.index { border-top: 1px solid var(--color-line); }
-.entry { min-width: 0; border-bottom: 1px solid var(--color-line); }
+.entry { min-width: 0; }
 .inlinePreview { padding-top: 24px; margin-bottom: 20px; }
 .coverLink { touch-action: manipulation; }
 .description { display: block; padding-bottom: 26px; touch-action: manipulation; }
@@ -54,8 +55,7 @@
 /* At tablet widths, keep the picture attached to its project. This also
    applies to larger touch screens, where hovering is not an available action. */
 @media (min-width: 768px) {
-  .index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 0; }
-  .entry { border-top: 1px solid var(--color-line); border-bottom: 0; }
+  .index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; row-gap: 8px; }
   .inlinePreview { padding-top: 26px; }
   .description { padding-bottom: 32px; }
   .name { font-size: 32px; }
@@ -64,13 +64,24 @@
 /* Shared previews belong to a layout that can actually use hover. The
    plate is the stage: it takes three fifths of the width, and a row keeps
    only its name, its line and its year. Role and field are said once, in
-   the readout under the plate (Aspen: 「小字很多 + staging小」). */
+   the readout under the plate (Aspen: 「小字很多 + staging小」).
+   The row on the plate stands on a plane, its top on the plate's top, so
+   the two read as one choice. The plane is a tone over the grain of the
+   ground (#1d1d20: the tile's tone sits level with the grain and would
+   not read); it reaches 20px past the column on either side, into the
+   gutter and the gap, so the folio and the name keep the page's left
+   edge. It moves with the pointer as a change of tone, never an edge. */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
   .catalogue { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 48px; align-items: start; }
-  .index { display: block; border-top: 1px solid var(--color-line); }
-  .entry { border-top: 0; border-bottom: 1px solid var(--color-line); }
+  .index { display: flex; flex-direction: column; gap: 4px; }
   .inlinePreview { display: none; }
-  .description { padding-block: 32px; }
+  .description {
+    margin-inline: -20px;
+    padding: 32px 20px;
+    border-radius: 2px;
+    transition: background-color 180ms var(--ease-arrive);
+  }
+  .description[data-current="true"] { background: #1d1d20; }
   .rowContent { grid-template-columns: 2.25rem minmax(0, 1fr) auto; column-gap: 20px; }
   .name { font-size: 40px; }
   .sub { font-size: 16px; }
@@ -91,7 +102,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .layer,
-  .layer[data-active="true"] { transition: none; }
+  .layer[data-active="true"],
+  .description { transition: none; }
   /* The demos do not play (CatalogueMedia), so there is nothing to replay. */
   .replay { display: none; }
   .rowArrow { transition: none; }

@@ -28,8 +28,8 @@ import styles from "./NutraTestingFixes.module.css";
              under it, with a tester's words.
      AFTER   what changed: the shipped screen redrawn as the app, in its
              own type and colours (hero video, boards 045, 046), the fixed
-             part in a 1.5px accent outline (the panel's one focus), and
-             the wins as the board lists them.
+             part tagged by a square accent pin at its corner (the
+             panel's one focus), and the wins as the board lists them.
 
    01 Goal steps  the bare page dots became a stepper; its three filled
                   rows are live: choose one to go back to that step.
@@ -37,8 +37,8 @@ import styles from "./NutraTestingFixes.module.css";
    03 Dashboard   a dense dashboard became one Total Spending card.
 
    Hovering or focusing a problem previews it: data-p on its panel (no
-   React render), and CSS lifts that pin and its outline to full ink and
-   dims the other pins. A click, tap, Enter or Space pins it (the row is a
+   React render), and CSS lifts that pin to full ink and its part's plane
+   two tones, and dims the other pins. A click, tap, Enter or Space pins it (the row is a
    toggle button, aria-pressed) until it is pressed again; a preview
    always wins while it lasts, and the pin returns after. Narrow sheets show one half
    at a time under a Before | After switch; both stay mounted and fade.
@@ -131,13 +131,13 @@ function Num({ n, base, lit }: { n: number; base: string; lit: string }) {
   );
 }
 
-/** A part of a silhouette a problem is about: a dashed outline, and the
-    pins of the problems on it, stacked on its right edge */
+/** A part of a silhouette a problem is about: a flat plane behind it,
+    and the pins of the problems on it, stacked at its top-right corner */
 function Region({ r, children, className }: { r: number[]; children: ReactNode; className?: string }) {
   return (
     <div className={`${styles.region} ${className ?? ""}`} data-r={r.join(" ")}>
       {children}
-      <span aria-hidden className={styles.regionLine} />
+      <span aria-hidden className={styles.regionPlane} />
       <span aria-hidden className={styles.regionLit} />
       <span aria-hidden className={styles.pins}>
         {r.map((n) => (
