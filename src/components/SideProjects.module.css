@@ -1,101 +1,18 @@
-/* The section's opening line: a prompt, one command, and its answer.
-   The prompt sits in the numeral column of the catalogue below and the
-   words start on its name column, so the intro and the rows share one
-   left edge. Only the command is mono; the answer is set in the sans,
-   because it is a sentence to read rather than a log line. */
+/* The section's opening line: one sentence in the text face, on the
+   rows' name column so the intro and the rows share one left edge. */
 .intro {
-  display: grid;
-  grid-template-columns: 1.4rem minmax(0, 1fr);
-  column-gap: 12px;
-  align-items: baseline;
-  margin-bottom: 20px;
-}
-
-.prompt,
-.command {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.8;
-}
-.prompt { color: var(--color-soft); user-select: none; }
-.command { color: rgb(243 243 243 / 78%); overflow-wrap: anywhere; }
-
-.output {
-  grid-column: 2;
   max-width: 36rem;
-  margin-top: 8px;
+  margin: 0 0 28px;
   color: var(--color-mute);
   font-size: 15px;
   line-height: 1.65;
   text-wrap: pretty;
 }
 
-/* Type that has not arrived yet is laid out but not drawn, so the block
-   never grows while it types and a screen reader always has the whole
-   sentence. */
-.ghost { opacity: 0; }
-
-/* A zero-width mark, so moving it never reflows the line. The command
-   gets a terminal block, the answer a text caret. */
-.caret {
-  position: relative;
-  display: inline-block;
-  width: 0;
-  height: 1em;
-  vertical-align: -0.12em;
-}
-.caret::after {
-  content: "";
-  position: absolute;
-  top: -0.05em;
-  left: 1px;
-  width: 0.6em;
-  height: 1.15em;
-  background: rgb(243 243 243 / 55%);
-}
-.output .caret::after { width: 1.5px; background: var(--color-mute); }
-/* Like a real terminal, it holds still while keys land and blinks only
-   while it waits: before the first key, and in the beat before the answer. */
-.intro[data-idle="true"] .caret::after { animation: caret-blink 1060ms steps(1, end) infinite; }
-@keyframes caret-blink { 50% { opacity: 0; } }
-
-/* Replay is its own small control, so the paragraph stays plain text.
-   Its row is always laid out; it only shows once there is something to
-   replay, so the catalogue below never jumps. */
-.actions { grid-column: 2; display: flex; margin-top: 4px; }
-.replay {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-mute);
-  cursor: pointer;
-  transition: color 180ms ease, opacity 320ms var(--ease-arrive);
-}
-.replay:lang(zh) { font-size: 12px; letter-spacing: 0.08em; }
-.replay:hover,
-.replay:focus-visible { color: var(--color-ink); }
-.replay:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
-.replay svg { transition: transform 300ms var(--ease-arrive); }
-.replay:hover svg { transform: rotate(-45deg); }
-.intro[data-typing="true"] .replay { opacity: 0; pointer-events: none; }
-
 /* Where the catalogue widens its numeral column, follow it. */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-  .intro { grid-template-columns: 2.25rem minmax(0, 1fr); column-gap: 20px; }
-  .prompt,
-  .command { font-size: 13.5px; }
-  .output { font-size: 16px; }
+  .intro { margin-left: calc(2.25rem + 20px); font-size: 16px; }
 }
-
-/* No typing for a reduced-motion visitor (SideIntro never starts it), so
-   there is nothing to replay: the row keeps its space, the button goes. */
-@media (prefers-reduced-motion: reduce) {
-  .intro[data-idle="true"] .caret::after { animation: none; }
-  .replay { visibility: hidden; transition: none; }
-  .replay:hover svg { transform: none; }
+@media (max-width: 1023px), (hover: none), (pointer: coarse) {
+  .intro { margin-left: calc(1.4rem + 12px); }
 }

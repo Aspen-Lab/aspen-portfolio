@@ -1,12 +1,12 @@
 "use client";
 
-import { memo, useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { memo, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { useInView } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { CatalogueMedia, StageMedia } from "./CatalogueMedia";
-import { demoCaption, type SideDemoId } from "./SideProjectDemo";
+import type { SideDemoId } from "./SideProjectDemo";
 import styles from "./CatalogueIndex.module.css";
 
 /* The catalogue: an index of entries beside one sticky plate.
@@ -106,32 +106,6 @@ const useIsActive = (active: Active, i: number) =>
   useSyncExternalStore(active.subscribe, () => active.get() === i, () => i === 0);
 const useActiveIndex = (active: Active) => useSyncExternalStore(active.subscribe, active.get, () => 0);
 
-/* Motion preference is read by CSS, never in render: the server cannot
-   know it, and a render that branches on it fails hydration for every
-   reduced-motion visitor. Replay is always in the markup; the stylesheet
-   takes it away when there is no motion to replay. */
-function DemoControls({ row, cn, onReplay }: {
-  row: CatalogueRow;
-  cn: boolean;
-  onReplay: (key: string) => void;
-}) {
-  if (!row.cover?.demo) return null;
-  return (
-    <div className="flex min-h-11 items-center justify-between gap-4 font-mono text-[10px] leading-relaxed text-mute">
-      <span className="min-w-0"><span className="text-soft">{cn ? "演示" : "DEMO"}</span><span className="mx-2 text-soft/50">/</span>{demoCaption(row.cover.demo, cn)}</span>
-      <button
-        type="button"
-        onClick={() => onReplay(row.key)}
-        aria-label={`${cn ? "重播" : "Replay"} ${row.name} ${cn ? "演示" : "demo"}`}
-        className={`${styles.replay} group/replay flex min-h-11 shrink-0 items-center gap-2 pl-3 uppercase tracking-[0.12em] text-mute transition-colors hover:text-ink focus-visible:text-ink`}
-      >
-        <svg aria-hidden width="12" height="12" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 motion-safe:group-hover/replay:-rotate-45"><path d="M3 5a5.5 5.5 0 1 1-.4 5M3 1.5V5h3.5" stroke="currentColor" strokeWidth="1.2" /></svg>
-        {cn ? "重播" : "Replay"}
-      </button>
-    </div>
-  );
-}
-
 function RowShell({
   row,
   i,
@@ -214,17 +188,14 @@ function RowName({ row, i, active }: { row: CatalogueRow; i: number; active: Act
   );
 }
 
-const Entry = memo(function Entry({ row, i, active, cn, replay, onReplay }: {
+const Entry = memo(function Entry({ row, i, active, cn }: {
   row: CatalogueRow;
   i: number;
   active: Active;
   cn: boolean;
-  replay: number;
-  onReplay: (key: string) => void;
 }) {
   return (
     <li className={styles.entry}>
-      {/* Keep replay beside the picture and outside its project link. */}
       {row.cover && <div className={styles.inlinePreview}>
         <RowShell
           row={row}
@@ -234,9 +205,8 @@ const Entry = memo(function Entry({ row, i, active, cn, replay, onReplay }: {
           className={`plate block relative overflow-hidden aspect-[16/10] ${styles.coverLink}`}
           style={row.cover.bg ? { backgroundColor: row.cover.bg } : undefined}
         >
-          <CatalogueMedia cover={row.cover} replay={replay} />
+          <CatalogueMedia cover={row.cover} />
         </RowShell>
-        <DemoControls row={row} cn={cn} onReplay={onReplay} />
       </div>}
       <RowName row={row} i={i} active={active} />
     </li>
@@ -247,13 +217,12 @@ const Entry = memo(function Entry({ row, i, active, cn, replay, onReplay }: {
    start (see the stylesheet), so a swap is only opacity on the
    compositor: the incoming cover rises over the outgoing one, which holds
    until it is fully in. */
-const Layer = memo(function Layer({ row, i, active, warm, inView, replay }: {
+const Layer = memo(function Layer({ row, i, active, warm, inView }: {
   row: CatalogueRow;
   i: number;
   active: Active;
   warm: boolean;
   inView: boolean;
-  replay: number;
 }) {
   const on = useIsActive(active, i);
   return (
@@ -264,7 +233,7 @@ const Layer = memo(function Layer({ row, i, active, warm, inView, replay }: {
       style={{ backgroundColor: row.cover?.bg ?? "var(--color-paper)" }}
     >
       {row.cover && (
-        <StageMedia cover={row.cover} active={on} warm={warm} inView={inView} replay={replay} />
+        <StageMedia cover={row.cover} active={on} warm={warm} inView={inView} />
       )}
     </div>
   );
@@ -290,26 +259,17 @@ function StageLink({ rows, active, cn }: { rows: CatalogueRow[]; active: Active;
   );
 }
 
-function StageCaption({ rows, active, cn, onReplay }: {
+function StageCaption({ rows, active }: {
   rows: CatalogueRow[];
   active: Active;
-  cn: boolean;
-  onReplay: (key: string) => void;
 }) {
   const index = useActiveIndex(active);
   const current = rows[index] ?? rows[0];
   return (
-    <>
-      {current.cover?.demo && <div className="pt-1">
-        <DemoControls row={current} cn={cn} onReplay={onReplay} />
-      </div>}
-      <div aria-hidden className="mt-4 grid grid-cols-[auto_1fr] items-baseline gap-5 font-mono text-[10px] leading-relaxed uppercase tracking-[0.14em] text-soft">
-        <span className="tabular-nums">
-          {folio(index)} <span className="text-soft/55">/</span> {current.readout[0]}
-        </span>
-        <span className="text-right text-balance">{current.readout[1]}</span>
-      </div>
-    </>
+    <div aria-hidden className="mt-4 flex items-baseline justify-between gap-5 text-[13px] leading-relaxed text-soft">
+      <span>{current.readout[0]}</span>
+      <span className="text-right text-balance">{current.readout[1]}</span>
+    </div>
   );
 }
 
@@ -317,12 +277,10 @@ function StageCaption({ rows, active, cn, onReplay }: {
    speaks for all of them: warm (every cover fetched and decoded before
    the plate arrives), seen (the picture settles), seen well (a scene or
    a video may play). Hidden on phones, so nothing here ever loads. */
-function Stage({ rows, active, cn, replays, onReplay }: {
+function Stage({ rows, active, cn }: {
   rows: CatalogueRow[];
   active: Active;
   cn: boolean;
-  replays: Record<string, number>;
-  onReplay: (key: string) => void;
 }) {
   const plate = useRef<HTMLDivElement>(null);
   const warm = useInView(plate, { once: true, margin: "400px 0px" });
@@ -341,7 +299,6 @@ function Stage({ rows, active, cn, replays, onReplay }: {
               active={active}
               warm={warm}
               inView={row.cover?.demo ? seenWell : seen}
-              replay={replays[row.key] ?? 0}
             />
           ))}
         </div>
@@ -349,7 +306,7 @@ function Stage({ rows, active, cn, replays, onReplay }: {
         {/* A disc of the slab tone, no ring: it reads on a white cover and a night sky alike */}
         <span aria-hidden className="pointer-events-none absolute right-5 bottom-5 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-[#0a0a0a] text-white opacity-0 transition-opacity duration-200 group-hover/preview:opacity-100 group-focus-within/preview:opacity-100">↗</span>
       </div>
-      <StageCaption rows={rows} active={active} cn={cn} onReplay={onReplay} />
+      <StageCaption rows={rows} active={active} />
     </aside>
   );
 }
@@ -358,11 +315,6 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
   const cn = useLocale() === "cn";
   const [active] = useState(createActive);
   useEffect(() => active.dispose, [active]);
-  const [replays, setReplays] = useState<Record<string, number>>({});
-  const replay = useCallback(
-    (key: string) => setReplays((previous) => ({ ...previous, [key]: (previous[key] ?? 0) + 1 })),
-    [],
-  );
   if (!rows.length) return null;
 
   return (
@@ -370,12 +322,12 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
       {/* ── The index ── */}
       <ol className={styles.index}>
         {rows.map((row, i) => (
-          <Entry key={row.key} row={row} i={i} active={active} cn={cn} replay={replays[row.key] ?? 0} onReplay={replay} />
+          <Entry key={row.key} row={row} i={i} active={active} cn={cn} />
         ))}
       </ol>
 
       {/* ── The plate — the active entry's cover ── */}
-      <Stage rows={rows} active={active} cn={cn} replays={replays} onReplay={replay} />
+      <Stage rows={rows} active={active} cn={cn} />
     </div>
   );
 }
