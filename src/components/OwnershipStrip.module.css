@@ -4,11 +4,14 @@
    .t-subhead, .t-small) and the tools from .chip. */
 .strip { margin: 0; }
 
+/* The card rounds its outer corners and clips both planes to them; the
+   seam between them stays straight */
 .box {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
 }
 /* The system split: 7fr/5fr at 1024px and up, as the Chart split and Up
    next; stacked below that, the slab under the sheet */

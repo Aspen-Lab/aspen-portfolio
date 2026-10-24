@@ -24,10 +24,14 @@
 
 /* The sheet is a split card: the PR on the sheet (7fr), its working
    preview on the slab (5fr); stacked below 1024px */
+/* It rounds its outer corners (the global .paper's) and clips the two
+   planes to them; the seam between them stays straight. */
 .sheet.sheet {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
 }
 @media (min-width: 1024px) {
   .sheet.sheet { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
@@ -163,9 +167,9 @@
 /* The line being shown keeps full ink; the others step back */
 .root[data-show] .item[data-on="false"] { opacity: var(--dim, 0.45); }
 
-/* A line's focus ring is the band's ring (1px ink, radius 2) drawn round
-   the line and 12px out to each side, so it clears the check and the
-   arrow; the sheet's padding (20px and up) holds it */
+/* A line's focus ring is the band's ring (1px ink, the raised corner)
+   drawn round the line and 12px out to each side, so it clears the check
+   and the arrow; the sheet's padding (20px and up) holds it */
 .root .item:focus-visible {
   z-index: 1;
   outline: none;
@@ -175,7 +179,8 @@
   position: absolute;
   inset: -1px -12px;
   border: 1px solid #f4f4f2;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   pointer-events: none;
 }
 
@@ -284,7 +289,10 @@
 }
 /* The one accent mark: the tab, a solid plane on the preview's top edge.
    The script sets the device on whole device pixels, so the narrowed
-   plane's transformed edges stay crisp. */
+   plane's transformed edges stay crisp. The tab rounds only its top
+   corners: its foot sits on the preview's edge, so it stays straight.
+   (The preview itself is Axel's card, a product render: its corners are
+   its own.) */
 .tag {
   position: absolute;
   bottom: 100%;
@@ -293,6 +301,8 @@
   align-items: center;
   height: 24px;
   padding: 0 8px;
+  border-radius: var(--r-tag) var(--r-tag) 0 0;
+  corner-shape: squircle;
   background: var(--accent);
   color: var(--on-fill, #0a0a0a);
   white-space: nowrap;

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { Newsreader } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
@@ -16,20 +15,20 @@ import type { Locale } from "@/i18n/routing";
 import { SITE_URL, homeCopy, htmlLang, pageMeta } from "@/lib/seo";
 import "../globals.css";
 
-/* The display face. Geist stays the UI and body voice; the headline
-   role — the hero statement, section titles, case-study titles — is set
-   in a real editorial serif with a drawn italic, not an obliqued sans.
-   Newsreader replaced Instrument Serif (2026-09-21): Instrument is a
-   condensed display cut and read as cramped at 96px. Newsreader is wider,
-   carries an optical-size axis so the 32px section titles get sturdier
-   strokes than the 96px hero on their own, and keeps the drawn italic.
-   Latin only: Chinese falls back to the grotesk (see .type-display). */
-const newsreader = Newsreader({
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  axes: ["opsz"],
+/* One family (Aspen, 2026-10-24: 「更好的字体」, chose D · Switzer): Switzer,
+   a Swiss neo-grotesk from the Indian Type Foundry's Fontshare (ITF Free
+   Font License: free for commercial use, self-hosted here). It sets the
+   headlines light and tight and the text at its regular weight; Geist
+   Mono stays only for code and small structural labels. Chinese falls
+   back to the system grotesk (PingFang SC on Apple). It replaced
+   Newsreader (headlines) and Geist (text). */
+const switzer = localFont({
+  src: [
+    { path: "../fonts/Switzer-Variable.woff2", weight: "100 900", style: "normal" },
+    { path: "../fonts/Switzer-VariableItalic.woff2", weight: "100 900", style: "italic" },
+  ],
   display: "swap",
-  variable: "--font-newsreader",
+  variable: "--font-switzer",
 });
 
 // Home copy doubles as the fallback for pages without their own (the
@@ -65,7 +64,7 @@ export default async function LocaleLayout({
 
   // The site is one bilingual experience; html lang reflects the active route.
   return (
-    <html lang={htmlLang(locale)} className={`${GeistSans.variable} ${GeistMono.variable} ${newsreader.variable}`}>
+    <html lang={htmlLang(locale)} className={`${switzer.variable} ${GeistMono.variable}`}>
       <body className="min-h-screen flex flex-col bg-paper text-ink antialiased">
         <a href="#main-content" className="skip-link">
           {locale === "cn" ? "跳到正文" : "Skip to content"}

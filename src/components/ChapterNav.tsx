@@ -235,7 +235,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
         {/* On a banded page the rail stands on a solid plane, no edge (it
             passes over sheets and tiles); without one the markup is as it
             always was */}
-        <RailPlate {...(plate ? { className: "rounded-[2px] bg-(--tile) px-3 py-2.5" } : {})}>
+        <RailPlate {...(plate ? { className: "rounded-[var(--r-raised)] [corner-shape:squircle] bg-(--tile) px-3 py-2.5" } : {})}>
         {/* Kept in the flow when hidden, so the rail never shifts between
             modes; on a plate the dots stand alone and the plate hugs them */}
         <p
@@ -268,7 +268,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
                   <span
                     className={
                       dots
-                        ? `absolute right-full top-1/2 mr-3 -translate-y-1/2 ${plate ? "rounded-[2px] bg-(--raised) px-2 py-1 duration-[160ms]" : "rounded-[2px] bg-cream px-2 py-1.5 duration-200"} pointer-events-none opacity-0 translate-x-1 transition-[opacity,translate] ease-(--ease-arrive) group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 motion-reduce:transition-none motion-reduce:translate-x-0 ${
+                        ? `absolute right-full top-1/2 mr-3 -translate-y-1/2 ${plate ? "rounded-[var(--r-tag)] [corner-shape:squircle] bg-(--raised) px-2 py-1 duration-[160ms]" : "rounded-[var(--r-tag)] [corner-shape:squircle] bg-cream px-2 py-1.5 duration-200"} pointer-events-none opacity-0 translate-x-1 transition-[opacity,translate] ease-(--ease-arrive) group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 motion-reduce:transition-none motion-reduce:translate-x-0 ${
                             isActive ? "text-ink" : "text-mute"
                           }`
                         : `transition-opacity ${plate ? "duration-[160ms] ease-(--ease-arrive)" : "duration-250"} motion-reduce:transition-none group-hover:opacity-100 group-focus-visible:opacity-100 ${

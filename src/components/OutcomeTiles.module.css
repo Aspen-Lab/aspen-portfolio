@@ -67,7 +67,8 @@
   place-items: center;
   width: 52px;
   height: 52px;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: #f4f4f2;
   color: #0a0a0a;
   font-family: var(--font-mono);
@@ -107,7 +108,8 @@
 .tag {
   display: inline-block;
   padding: 4px 8px;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: var(--raised);
   color: var(--color-mute);
   font-family: var(--font-mono);
@@ -130,7 +132,8 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised);
   color: var(--color-ink);
   font-size: 15px;

@@ -8,9 +8,16 @@
   --color-mute: #A0A0A5;
   --color-soft: #717177;
 
-  --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-switzer), "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-switzer), "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", "Menlo", "Cascadia Code", monospace;
+}
+
+/* One family: the names the site used for its old faces now point at
+   Switzer, so every stylesheet written against them follows. */
+:root {
+  --font-newsreader: var(--font-switzer);
+  --font-geist-sans: var(--font-switzer);
 }
 
 html,
@@ -54,25 +61,21 @@ body {
   background-attachment: scroll, scroll;
 }
 
-/* The headline role. Everything at display size — the hero statement,
-   section titles, case-study titles — is set in Newsreader; the UI, body
-   and labels stay Geist. Weight and tracking live here so the call sites
-   only say what size and colour they want. Newsreader's optical-size
-   axis is on (font-optical-sizing: auto is the default), so the 96px
-   hero gets the fine 72-opsz cut and a 32px title the sturdier one.
-
-   Newsreader has no CJK: on the Chinese routes the role falls back to
-   the grotesk at its old light/tight setting, which is what those
-   headlines were drawn for anyway. */
+/* The headline role. Everything at display size (the hero statement,
+   section titles, case-study titles) is Switzer at 300 with tight
+   tracking; the text is the same family at its regular weight. Weight
+   and tracking live here so the call sites only say what size and
+   colour they want. Switzer has no CJK: Chinese headlines fall back to
+   the system grotesk at the same light, slightly looser setting. */
 .type-display {
-  font-family: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  font-family: var(--font-display);
   font-weight: 300;
-  letter-spacing: -0.014em;
+  letter-spacing: -0.03em;
 }
 html[lang="zh-CN"] .type-display {
   font-family: var(--font-display);
   font-weight: 300;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 /* ── Plate ── the flat card. Latent's panel, not a keycap: one hairline,
@@ -83,7 +86,8 @@ html[lang="zh-CN"] .type-display {
    at the chart sheet's 4px corner, for panels that are not links. */
 .plate {
   background: var(--color-cream);
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   transition: background-color 180ms var(--ease-arrive);
 }
 /* No edge to brighten: the plane itself lifts a tone */
@@ -112,7 +116,8 @@ html[lang="zh-CN"] .type-display {
 }
 /* The flat button: a raised plane, no edge; it lifts a tone on hover. */
 .plate-button {
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: #26262a;
   transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
 }
@@ -169,7 +174,8 @@ button {
    Hover is gated to real pointers so a tap does not leave it lit. */
 .card-material {
   background: var(--color-cream);
-  border-radius: 4px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   transition: background-color 180ms var(--ease-arrive);
 }
 /* Planes, not frames: hover and focus lift the plane a tone */
@@ -200,7 +206,8 @@ button {
   inset: 0;
   z-index: -1;
   transform: translate(10px, 10px);
-  border-radius: 4px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: #131314;
   pointer-events: none;
 }
@@ -403,11 +410,11 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
 }
 .cursor-dots[data-pressed="true"] > span { transform: scale(.72); }
 
-/* Monochrome focus ring — replaces the UA default everywhere. */
+/* Monochrome focus ring — replaces the UA default everywhere. It follows
+   the element's own (G2) corners, so it sets no radius of its own. */
 :focus-visible {
   outline: 2px solid rgba(244, 244, 242, 0.35);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
 /* ══ Planes, not frames (one dark system) ═════════════════════════════════════════════════
@@ -423,6 +430,18 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
    kept as a name but draws nothing, so every outline written against it
    is gone at once. */
 :root {
+  /* G2 corners (Aspen, 2026-10-24: 「G2 圆角」): continuous-curvature
+     corners, a squircle where the browser draws one (corner-shape) and a
+     round corner where it does not. One radius per role: a plane (sheet,
+     slab, tile, card, media), a raised thing set on a plane (button, tab,
+     chip, field), a small tag. Data marks (points, legend and matrix
+     squares) stay square. */
+  /* A CSS squircle reads tighter than a round corner of the same radius
+     (22px looks like about 12px), so the radii are set for the curve
+     they draw, not the number. */
+  --r-plane: 32px;
+  --r-raised: 16px;
+  --r-tag: 10px;
   /* planes */
   --slab: #0a0a0a;
   /* The grain lifts the ground to about #19191a where it shows, so a
@@ -460,12 +479,12 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   --dim: 0.45;
 }
 
-/* The banded pages' one focus ring: 1px ink, 3px off, square-ish. The
-   inset variant is for cells inside a clipped box. */
+/* The banded pages' one focus ring: 1px ink, 3px off, following the
+   element's own corners. The inset variant is for cells inside a
+   clipped box. */
 [data-bands] :focus-visible {
   outline: 1px solid #f4f4f2;
   outline-offset: 3px;
-  border-radius: 2px;
 }
 [data-bands] [data-ring="inset"]:focus-visible {
   outline-offset: -1px;
@@ -487,7 +506,8 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 2px;
+    border-radius: var(--r-plane);
+    corner-shape: squircle;
     pointer-events: none;
   }
   .paper-stack::before {
@@ -521,7 +541,8 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   /* The front sheet: a dark plane a step above the ground */
   .paper {
     position: relative;
-    border-radius: 2px;
+    border-radius: var(--r-plane);
+    corner-shape: squircle;
     background: var(--paper);
     color: var(--color-ink);
   }
@@ -529,7 +550,8 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   /* ── Slab ── the text half of a card, the one plane darker than the
      ground */
   .slab {
-    border-radius: 2px;
+    border-radius: var(--r-plane);
+    corner-shape: squircle;
     background: var(--slab);
     color: var(--color-ink);
   }
@@ -538,7 +560,8 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
      big figure inside, no edge. */
   .tile {
     padding: 28px 28px 24px;
-    border-radius: 2px;
+    border-radius: var(--r-plane);
+    corner-shape: squircle;
     background: var(--tile);
   }
 
@@ -547,8 +570,9 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   .boxed-tag,
   .boxed-tag[data-dark] {
     display: inline-block;
-    padding: 4px 8px;
-    border-radius: 2px;
+    padding: 4px 9px;
+    border-radius: var(--r-tag);
+    corner-shape: squircle;
     background: var(--raised);
     color: #f4f4f2;
     font-family: var(--font-mono);
@@ -571,8 +595,9 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   .chip {
     display: inline-flex;
     align-items: center;
-    padding: 6px 10px;
-    border-radius: 2px;
+    padding: 6px 12px;
+    border-radius: var(--r-raised);
+    corner-shape: squircle;
     background: var(--raised);
     color: #f4f4f2;
     font-size: 15px;

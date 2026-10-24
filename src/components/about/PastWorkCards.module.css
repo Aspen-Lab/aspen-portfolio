@@ -35,7 +35,8 @@
   min-width: 100px;
   min-height: 44px;
   padding: 10px 16px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised);
   color: var(--color-ink);
   font: inherit;
@@ -69,7 +70,8 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
   aspect-ratio: 1.22;
   padding: 19px 20px 16px;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--study-bg);
 }
 

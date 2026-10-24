@@ -1,12 +1,13 @@
 "use client";
 
-import { useId, useRef, useState, type KeyboardEvent } from "react";
+import { useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import Image from "next/image";
 import { useLocale } from "next-intl";
 import { ArrowUpRight, Cat, Dices, Film, Gamepad2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import styles from "./PersonalArtifacts.module.css";
 
+/* ratio: each file's own width / height, so its plane fits the photo */
 const artifacts = [
   {
     key: "film",
@@ -15,6 +16,7 @@ const artifacts = [
     title: { en: "Film, by hand.", cn: "胶片，自己冲。" },
     caption: { en: "From taking the picture to developing the film.", cn: "从拍摄，到亲手冲洗。" },
     src: "/about/film-washing-3.png",
+    ratio: 1080 / 1440,
     alt: { en: "A gloved hand holding a reel of developed film above a sink", cn: "戴着手套的手在水槽上方拿着冲洗中的胶片卷" },
   },
   {
@@ -24,6 +26,7 @@ const artifacts = [
     title: { en: "Made for game night.", cn: "给桌游加点光。" },
     caption: { en: "Wireless glowing dice, built with my roommate.", cn: "和室友一起做的无线发光骰子。" },
     src: "/about/illuminated-dice-2.png",
+    ratio: 1080 / 1002,
     alt: { en: "Two illuminated dice glowing amber in a red dice tray", cn: "两颗泛着暖黄色光的骰子，放在红色骰盘里" },
   },
   {
@@ -33,6 +36,7 @@ const artifacts = [
     title: { en: "Meet my cat.", cn: "这是我的猫。" },
     caption: { en: "I love him sooooo much.", cn: "超级超级喜欢他。" },
     src: "/about/nvidia-line.png",
+    ratio: 1080 / 1553,
     alt: { en: "A tabby cat with white paws and chest looking up at the camera", cn: "白胸口、白爪子的狸花猫，抬头看着镜头" },
   },
   {
@@ -42,6 +46,7 @@ const artifacts = [
     title: { en: "A gift, drawn by hand.", cn: "亲手画的礼物。" },
     caption: { en: "A Miku Switch Lite, made for my girlfriend.", cn: "手绘 Miku Switch Lite，送给她的圣诞礼物。" },
     src: "/about/drawing-app.png",
+    ratio: 1080 / 1440,
     alt: { en: "A turquoise Nintendo Switch Lite with hand-drawn Hatsune Miku on the back", cn: "湖蓝色 Switch Lite 背面手绘的初音未来" },
   },
 ] as const;
@@ -111,7 +116,7 @@ export function PersonalArtifacts() {
         <figure className={styles.figure}>
           <div className={styles.frame}>
             {artifacts.map((artifact, index) => (
-              <div key={artifact.key} className={styles.photograph} data-visible={displayed === index} aria-hidden={displayed !== index}>
+              <div key={artifact.key} className={styles.photograph} style={{ "--ratio": artifact.ratio } as CSSProperties} data-visible={displayed === index} aria-hidden={displayed !== index}>
                 <Image
                   src={artifact.src}
                   alt={artifact.alt[locale]}

@@ -83,7 +83,8 @@
   width: 100%;
   height: 100%;
   padding: 0 8px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised);
   color: #f4f4f2;
   font-family: var(--font-sans);
@@ -96,15 +97,20 @@
 
 /* A panel: a plane a step below the sheet, under its iterations, no
    edge. The lo-fi panel is one fill Imagine shortens by transform (it
-   scales from its near end, so it never needs an edge to stay whole). */
+   scales from its near end, so it never needs an edge to stay whole);
+   while it is scaled its radius along the scaled axis grows by 1 / --s,
+   so the G2 corners stay round, not squeezed. */
 .fill,
 .panel {
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--slab);
 }
 .fill {
   transform-origin: 0 0;
-  transition: transform var(--t-3) var(--ease-arrive);
+  transition:
+    transform var(--t-3) var(--ease-arrive),
+    border-radius var(--t-3) var(--ease-arrive);
 }
 
 .line {
@@ -143,8 +149,14 @@
 .sheet[data-mode="imagine"] .sg {
   transform: translate(calc(var(--sx) * var(--u)), calc(var(--sy) * var(--u)));
 }
-.sheet[data-mode="imagine"] .fill[data-axis="x"] { transform: scaleX(var(--s)); }
-.sheet[data-mode="imagine"] .fill[data-axis="y"] { transform: scaleY(var(--s)); }
+.sheet[data-mode="imagine"] .fill[data-axis="x"] {
+  border-radius: calc(var(--r-plane) / var(--s)) / var(--r-plane);
+  transform: scaleX(var(--s));
+}
+.sheet[data-mode="imagine"] .fill[data-axis="y"] {
+  border-radius: var(--r-plane) / calc(var(--r-plane) / var(--s));
+  transform: scaleY(var(--s));
+}
 
 /* Marks of one state: In reality's step in after the move has begun,
    a --step apart; Imagine's come back once the row has moved. Short

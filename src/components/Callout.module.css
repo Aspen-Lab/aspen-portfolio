@@ -1,11 +1,13 @@
-/* The chart sheet without a chart: a cream plane, no edge, 2px corners.
-   The kicker takes a label column beside the note from tablet width up. */
+/* The chart sheet without a chart: a cream plane, no edge, the plane's
+   G2 corner. The kicker takes a label column beside the note from tablet
+   width up. */
 .callout {
   display: grid;
   gap: 10px;
   max-width: 52rem;
   padding: 20px 22px 22px;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--color-cream);
 }
 @media (min-width: 768px) {

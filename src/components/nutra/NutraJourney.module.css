@@ -24,7 +24,12 @@
   }
 }
 
-.sheet.sheet { padding: 0; }
+/* The sheet clips: at the first and last stage the raised column runs on
+   to the sheet's edge, and there it takes the sheet's own G2 corners */
+.sheet.sheet {
+  overflow: hidden;
+  padding: 0;
+}
 
 /* ── The grid: stage row + band, five columns inside the side padding ── */
 .grid {

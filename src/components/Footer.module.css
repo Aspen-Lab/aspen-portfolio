@@ -8,7 +8,7 @@
 .inner { padding: 40px 0 20px; }
 .closing { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-bottom: 25px; }
 .headline { margin: 0; font: 300 36px/1.2 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
-.contact { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; flex-shrink: 0; min-height: 44px; padding: 0 16px; border-radius: 2px; background: #232326; font-size: 13px; transition: background-color 180ms var(--ease-arrive); }
+.contact { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; flex-shrink: 0; min-height: 44px; padding: 0 16px; border-radius: var(--r-raised); corner-shape: squircle; background: #232326; font-size: 13px; transition: background-color 180ms var(--ease-arrive); }
 .contact svg { transition: transform 140ms ease; }
 .contact:hover { background: #2c2c30; }
 .contact:hover svg { transform: translate(2px, -2px); }
@@ -21,7 +21,7 @@
 .links a:hover, .top:hover, .brand:hover { color: var(--color-ink); }
 .links a:hover { text-decoration: underline; }
 .top { cursor: pointer; }
-.footer a:focus-visible, .footer button:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; border-radius: 2px; }
+.footer a:focus-visible, .footer button:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 :global(html[lang="zh-CN"]) .headline { font-family: var(--font-sans); font-size: 29px; font-weight: 400; letter-spacing: -.035em; }
 @media (max-width: 680px) {
   .footer { padding-top: 72px; }

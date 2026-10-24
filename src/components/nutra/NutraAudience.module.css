@@ -14,12 +14,14 @@
 
 /* ── A: the slab ── on a phone it sits on top of B's sheet; from 768px
    it is the left half, the same height as B's sheet (the stack's 16px
-   margin is matched below it) */
+   margin is matched below it). A split card: only the card's outer
+   corners are round (G2), where A and B meet they stay square. */
 .a.a {
   min-width: 0;
   margin: 0 6px 0 0;
   padding: 24px;
-  border-radius: 2px 2px 0 0;
+  border-radius: var(--r-plane) var(--r-plane) 0 0;
+  corner-shape: squircle;
 }
 @media (min-width: 640px) {
   .a.a { margin-right: 9px; }
@@ -28,25 +30,34 @@
   .a.a {
     margin: 0 0 16px;
     padding: 40px;
-    border-radius: 2px 0 0 2px;
+    border-radius: var(--r-plane) 0 0 var(--r-plane);
   }
 }
 
-/* ── B: the front sheet, its two back sheets showing under it ── */
+/* ── B: the front sheet, its two back sheets showing under it. The back
+   sheets are copies of the front one, so they take its corners: round on
+   the card's outside, square on the side that meets A. ── */
 .bStack {
   display: grid;
   min-width: 0;
 }
+.b.b,
+.bStack::before,
+.bStack::after {
+  border-radius: 0 0 var(--r-plane) var(--r-plane);
+  corner-shape: squircle;
+}
 .b.b {
   display: grid;
   padding: 24px;
-  border-radius: 0 0 2px 2px;
 }
 @media (min-width: 768px) {
-  .b.b {
-    padding: 40px;
-    border-radius: 0 2px 2px 0;
+  .b.b,
+  .bStack::before,
+  .bStack::after {
+    border-radius: 0 var(--r-plane) var(--r-plane) 0;
   }
+  .b.b { padding: 40px; }
 }
 
 /* ── One group ── */
@@ -73,7 +84,8 @@
   place-items: center;
   width: 48px;
   height: 48px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   color: #a0a0a5;
   font-family: var(--font-sans);

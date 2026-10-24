@@ -13,7 +13,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
 }
 @media (min-width: 1024px) {
   .first { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }

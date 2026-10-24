@@ -258,7 +258,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
 /** An org's mark on a small raised plane: its own artwork where one exists, its initials where not. */
 function OrgMark({ mark }: { mark: Mark }) {
   return (
-    <span className="grid place-items-center w-9 h-9 shrink-0 rounded-[2px] bg-[var(--raised)] text-mute transition-colors duration-200 group-hover:text-ink group-hover:bg-[#2c2c30]">
+    <span className="grid place-items-center w-9 h-9 shrink-0 rounded-[var(--r-raised)] [corner-shape:squircle] bg-[var(--raised)] text-mute transition-colors duration-200 group-hover:text-ink group-hover:bg-[#2c2c30]">
       {mark.kind === "img" && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={mark.src} alt="" aria-hidden style={{ height: mark.h, width: "auto", filter: "brightness(0) invert(0.8)" }} />
@@ -342,7 +342,7 @@ export default async function About({
                         </span>
                       )}
                       {e.badge && (
-                        <span className="px-1.5 py-0.5 rounded-[2px] bg-[var(--raised)] font-mono text-[9px] uppercase tracking-[0.12em] text-mute">
+                        <span className="px-1.5 py-0.5 rounded-[var(--r-tag)] [corner-shape:squircle] bg-[var(--raised)] font-mono text-[9px] uppercase tracking-[0.12em] text-mute">
                           {tr(e.badge)}
                         </span>
                       )}

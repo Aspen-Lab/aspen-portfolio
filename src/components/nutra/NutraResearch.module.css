@@ -1,6 +1,6 @@
 /* Three numbered tabs over one panel area. Every plane is the system's:
    split cards (a sheet beside a slab, told apart by tone) and a sheet on
-   two back planes; no edges, no rules, 2px corners, flat fills, square
+   two back planes; no edges, no rules, G2 corners, flat fills, square
    marks. The only lines are data: the age axis and the chart's baseline.
    Each panel has one accent mark: the 1★ bar, the "But" square, the
    Motivation square. */
@@ -32,7 +32,8 @@
   position: relative;
   z-index: 1;
   padding: 12px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   color: #f4f4f2;
   text-align: left;
   transition: transform var(--t-1, 160ms) var(--ease-arrive);
@@ -78,7 +79,8 @@
   bottom: 0;
   left: 0;
   width: calc((100% - 2 * var(--gap)) / 3);
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   transform: translateX(calc(var(--tab, 0) * (100% + var(--gap))));
   transition: transform var(--t-2, 360ms) var(--ease-arrive);
@@ -116,7 +118,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
 }
 @media (min-width: 1024px) {
   .split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
@@ -339,6 +342,9 @@
   gap: 4px;
   min-width: 0;
   padding: 14px 14px 12px;
+  /* a small tile set on the sheet: the raised radius, not the plane's */
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
 }
 /* The lit plane: a raised plane under the tile's words, faded on
    (opacity only, so a hover never repaints the tile). At rest the tile
@@ -348,7 +354,8 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   opacity: 0;
   pointer-events: none;
@@ -435,7 +442,8 @@
   .modelSide { padding: 32px; }
 }
 .modelSide[data-side="yes"] {
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--raised, #232326);
 }
 .modelLabel {
@@ -484,7 +492,8 @@
   place-items: center;
   width: 48px;
   height: 48px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   color: var(--grey-1, #a0a0a5);
 }

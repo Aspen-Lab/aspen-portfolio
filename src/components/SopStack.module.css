@@ -195,7 +195,8 @@
   position: relative;
   width: 96px;
   height: 20px;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: var(--raised, #232326);
 }
 /* the input's caret */

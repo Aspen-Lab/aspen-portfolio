@@ -78,7 +78,8 @@
   .description {
     margin-inline: -20px;
     padding: 32px 20px;
-    border-radius: 2px;
+    border-radius: var(--r-plane);
+    corner-shape: squircle;
     transition: background-color 180ms var(--ease-arrive);
   }
   .description[data-current="true"] { background: #1d1d20; }

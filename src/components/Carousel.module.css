@@ -67,7 +67,8 @@
   place-items: center;
   width: 36px;
   height: 36px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--color-cream);
   color: var(--color-ink);
   transition: background-color 160ms var(--ease-arrive);
@@ -94,7 +95,8 @@
   aspect-ratio: var(--ratio);
   max-height: 80vh;
   height: min(calc(100cqw / var(--ratio)), 80svh);
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--color-cream);
   transition: height 560ms var(--ease-arrive);
 }

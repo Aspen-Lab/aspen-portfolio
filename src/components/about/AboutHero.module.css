@@ -34,7 +34,8 @@
   position: relative;
   isolation: isolate;
   padding: clamp(46px, 4.6vw, 68px) clamp(22px, 5vw, 72px) clamp(40px, 4vw, 60px);
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--tile);
 }
 
@@ -60,7 +61,7 @@
    where there is room). */
 .selection { position: absolute; border-radius: 1px; transition: left 440ms var(--ease-arrive), top 440ms var(--ease-arrive), width 440ms var(--ease-arrive), height 440ms var(--ease-arrive); }
 .under .selection { background: color-mix(in srgb, var(--sel) 24%, var(--tile)); }
-.specTag, .sizeTag, .redTag { position: absolute; padding: 3px 6px; border-radius: 2px; color: #fff; font: 500 10px/1.2 var(--font-mono); letter-spacing: .03em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.specTag, .sizeTag, .redTag { position: absolute; padding: 3px 6px; border-radius: var(--r-tag); corner-shape: squircle; color: #fff; font: 500 10px/1.2 var(--font-mono); letter-spacing: .03em; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .specTag { bottom: calc(100% + 6px); left: 0; background: var(--sel); }
 .sizeTag { top: 50%; left: calc(100% + 12px); transform: translateY(-50%); background: var(--sel); }
 .sizeTag[data-place="below"] { top: calc(100% + 9px); left: 50%; transform: translateX(-50%); }
@@ -84,7 +85,7 @@
 /* Line three · a collaborator, still exploring. */
 .cursor { position: absolute; top: .44em; left: calc(100% + .14em); display: flex; align-items: flex-start; gap: 1px; font-style: normal; pointer-events: none; animation: drift 7.5s ease-in-out infinite; }
 .cursor > svg { width: 16px; height: 16px; fill: var(--peer); }
-.cursor > span { margin-top: 13px; padding: 4px 8px; border-radius: 2px 10px 10px 10px; background: var(--peer); color: #fff; font: 500 11px/1 var(--font-sans); letter-spacing: 0; }
+.cursor > span { margin-top: 13px; padding: 4px 8px; border-radius: 2px var(--r-tag) var(--r-tag) var(--r-tag); corner-shape: squircle; background: var(--peer); color: #fff; font: 500 11px/1 var(--font-sans); letter-spacing: 0; }
 @keyframes drift {
   0%, 100% { transform: translate(0, 0); }
   30% { transform: translate(22px, -12px); }
@@ -95,7 +96,7 @@
    field notes as one full-width row. The portrait gives the page a face
    after a hero that is all type. */
 .story { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(28px, 4.4vw, 64px); margin-top: clamp(16px, 2vw, 28px); }
-.portrait { margin: 0; border-radius: 2px; background: var(--tile); }
+.portrait { margin: 0; overflow: hidden; border-radius: var(--r-plane); corner-shape: squircle; background: var(--tile); }
 .portraitBar { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px 4px; font: 9px/1.5 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--color-mute); }
 .portraitBar > span:last-child { color: var(--color-soft); }
 .portraitCanvas { display: block; width: 100%; aspect-ratio: 1; color: var(--color-ink); }
@@ -128,11 +129,11 @@
 .nodeNow { background: var(--color-ink); color: var(--slab); }
 .stopTitle { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 23px; font-size: 14px; line-height: 1.45; color: var(--color-ink); }
 .stopMeta { margin-top: 3px; font-size: 12px; line-height: 1.6; color: var(--color-mute); }
-.badge { padding: 2px 6px; border-radius: 2px; background: var(--raised); font: 9px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--color-mute); }
+.badge { padding: 2px 6px; border-radius: var(--r-tag); corner-shape: squircle; background: var(--raised); font: 9px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--color-mute); }
 .badgeNow { background: #2c2c30; color: var(--color-ink); }
 
 /* The way on: a raised plane, no underline; it lifts a tone on hover. */
-.explore { display: inline-flex; align-items: center; gap: 16px; min-height: 44px; margin-top: 24px; padding-inline: 16px; border-radius: 2px; background: var(--raised); color: var(--color-ink); font-size: 12px; transition: background-color 180ms; }
+.explore { display: inline-flex; align-items: center; gap: 16px; min-height: 44px; margin-top: 24px; padding-inline: 16px; border-radius: var(--r-raised); corner-shape: squircle; background: var(--raised); color: var(--color-ink); font-size: 12px; transition: background-color 180ms; }
 .explore svg { transition: transform 180ms; }
 .explore:hover { background: #2c2c30; }
 .explore:hover svg { transform: translateY(3px); }

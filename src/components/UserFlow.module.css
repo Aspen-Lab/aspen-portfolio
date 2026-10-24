@@ -84,7 +84,8 @@
   position: relative;
   height: 100%;
   padding: 16px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--k-raised);
 }
 /* The decision is its hexagon alone: no plate box */
@@ -226,7 +227,8 @@
   top: 16px;
   left: var(--x);
   padding: 5px 8px;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: var(--accent);
   color: var(--k-on);
   font-weight: 500;
@@ -241,7 +243,8 @@
   width: fit-content;
   max-width: 100%;
   padding: 16px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--k-raised);
   opacity: 0;
   transition: opacity 360ms var(--ease-arrive) 840ms;

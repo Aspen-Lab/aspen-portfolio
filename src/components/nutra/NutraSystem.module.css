@@ -29,6 +29,8 @@
   min-width: 0;
   padding: 16px 20px;
   isolation: isolate;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   color: var(--color-ink);
   text-align: left;
   transition: transform var(--t-1) var(--ease-arrive);
@@ -57,7 +59,8 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   opacity: 0;
   transition: opacity var(--t-2) var(--ease-arrive);
@@ -131,12 +134,17 @@
 }
 @media (min-width: 640px) { .render { padding: 20px; } }
 
-/* The board's own ground, a plane on the sheet */
+/* The board's own ground, a plane on the sheet, nested in it by the
+   render's padding: its corners are the sheet's less that padding */
 .ground {
   min-width: 0;
-  border-radius: 2px;
+  border-radius: calc(var(--r-plane) - 12px);
+  corner-shape: squircle;
   background: var(--n-ground);
   color: #fff;
+}
+@media (min-width: 640px) {
+  .ground { border-radius: calc(var(--r-plane) - 20px); }
 }
 
 .slab.slab {
@@ -211,7 +219,8 @@
   gap: 20px;
   margin: -6px -12px -6px -6px;
   padding: 6px 12px 6px 6px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   text-align: left;
 }
 .disc::before {
@@ -219,7 +228,8 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: transparent;
   transition: background-color var(--t-1) var(--ease-arrive);
 }
@@ -438,7 +448,8 @@
   gap: 6px;
   width: 100%;
   padding: 20px 16px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: transparent;
   text-align: left;
   transition:
@@ -492,7 +503,8 @@
 .plate {
   min-width: 0;
   padding: 20px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--n-ground);
   color: #fff;
   font-family: var(--n-hv);

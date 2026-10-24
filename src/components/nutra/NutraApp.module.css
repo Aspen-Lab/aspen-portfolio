@@ -14,7 +14,8 @@
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "kick" "rows" "stage" "detail" "foot";
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--slab, #0a0a0a);
 }
 /* Below lg the slab's parts take their own rows round the phone */
@@ -74,7 +75,8 @@
   height: 100%;
   padding: 14px 14px 16px;
   border: 0;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--tile, #18181a);
   color: var(--color-ink);
   text-align: left;

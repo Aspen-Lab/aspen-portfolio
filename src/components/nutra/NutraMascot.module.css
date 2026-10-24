@@ -10,7 +10,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
 }
 @media (min-width: 1024px) {
   .box { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
@@ -74,7 +75,8 @@
   gap: 10px;
   min-width: 0;
   padding: 14px 16px 16px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   transition: background-color var(--t-1, 160ms) var(--ease-arrive);
 }
@@ -355,7 +357,8 @@
   place-items: center;
   width: 160px;
   height: 160px;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--sheet, #18181a);
 }
 /* 120px tall, at the cutout's own proportions */

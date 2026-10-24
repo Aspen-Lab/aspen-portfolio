@@ -415,7 +415,7 @@ export default async function CaseStudy({
           </div>
         ) : (
         <div
-          className="mt-14 aspect-[16/9] rounded-[2px] overflow-hidden bg-cream relative"
+          className="mt-14 aspect-[16/9] rounded-[var(--r-plane)] [corner-shape:squircle] overflow-hidden bg-cream relative"
           style={project.coverBg ? { backgroundColor: project.coverBg } : undefined}
         >
           {project.heroVideo ? (
@@ -691,7 +691,7 @@ export default async function CaseStudy({
                     </div>
                   )}
                   {s.images && s.images.length === 1 && (
-                    <div className="mt-12 overflow-hidden rounded-[2px] bg-cream">
+                    <div className="mt-12 overflow-hidden rounded-[var(--r-plane)] [corner-shape:squircle] bg-cream">
                       <Image
                         src={s.images[0]}
                         alt={`${s.heading} — figure`}
@@ -740,7 +740,7 @@ export default async function CaseStudy({
                         target="_blank"
                         rel="noreferrer"
                         aria-label={`${figure.alt} — ${cn ? "查看原图" : "View full-size image"}`}
-                        className="block overflow-hidden rounded-[2px] bg-cream"
+                        className="block overflow-hidden rounded-[var(--r-plane)] [corner-shape:squircle] bg-cream"
                       >
                         <Image
                           src={figure.src}
@@ -770,7 +770,7 @@ export default async function CaseStudy({
                         playsInline
                         preload="none"
                         aria-label={video.title}
-                        className="block h-auto w-full rounded-[2px] bg-cream"
+                        className="block h-auto w-full rounded-[var(--r-plane)] [corner-shape:squircle] bg-cream"
                       >
                         <a href={video.src}>
                           {cn ? "观看演示视频" : "Watch the prototype video"}
@@ -930,8 +930,8 @@ function BandedCase({
   blocks.push({ kind: "next" });
 
   const host = project.liveUrl?.replace(/^https?:\/\//, "").replace(/\/$/, "");
-  /* An image frame is a tile: the tile's plane, no edge */
-  const frame = "rounded-[2px] bg-(--tile)";
+  /* An image frame is a tile: the tile's plane, no edge, its G2 corner */
+  const frame = "rounded-[var(--r-plane)] [corner-shape:squircle] bg-(--tile)";
 
   const renderSection = (s: Section, i: number) => {
     const prevChapter = i > 0 ? sections[i - 1].chapter : undefined;

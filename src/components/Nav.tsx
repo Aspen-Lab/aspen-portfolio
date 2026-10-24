@@ -173,7 +173,7 @@ export function Nav() {
               ref={planeRef}
               aria-hidden
               data-glide="false"
-              className="pointer-events-none absolute left-0 top-2 bottom-2 rounded-[2px] bg-[#232326] opacity-0 data-[glide=true]:transition-[transform,width,opacity] data-[glide=true]:duration-[420ms] data-[glide=true]:ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="pointer-events-none absolute left-0 top-2 bottom-2 rounded-[var(--r-raised)] [corner-shape:squircle] bg-[#232326] opacity-0 data-[glide=true]:transition-[transform,width,opacity] data-[glide=true]:duration-[420ms] data-[glide=true]:ease-[cubic-bezier(0.16,1,0.3,1)]"
             />
             {ITEMS.map((item) => {
               const current = item.key === active;

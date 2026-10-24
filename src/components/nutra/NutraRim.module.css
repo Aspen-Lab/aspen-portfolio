@@ -60,7 +60,8 @@
   place-items: center;
   height: 88px;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: #0a0e11;
   transition: background-color var(--t-1) var(--ease-arrive);
 }
@@ -118,7 +119,8 @@
   height: 32px;
   padding: 0;
   border: 0;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised);
   color: #f4f4f2;
   cursor: pointer;
@@ -138,7 +140,8 @@
   position: relative;
   margin-top: 12px;
   padding: 36px 10px;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: #0a0e11;
 }
 @media (min-width: 640px) {
@@ -318,7 +321,8 @@
   gap: 16px;
   min-width: 0;
   padding: 8px 28px 8px 8px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: #141418;
 }
 /* On the sheet the rejected row steps down into the slab */
@@ -335,13 +339,15 @@
   height: 8px;
   background: var(--accent);
 }
-/* The rim on the app's card fill: a product render */
+/* The rim on the app's card fill: a product render, nested in its row
+   8px in, so its corners are the row's less those 8px */
 .optRim {
   display: grid;
   place-items: center;
   width: 76px;
   height: 76px;
-  border-radius: 2px;
+  border-radius: calc(var(--r-raised) - 8px);
+  corner-shape: squircle;
   background: #17191d;
 }
 .miniRim {

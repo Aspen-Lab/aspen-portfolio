@@ -31,7 +31,8 @@
   place-items: center;
   height: 40px;
   padding: 0 10px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised);
   color: #f4f4f2;
   white-space: nowrap;
@@ -115,7 +116,8 @@
   align-items: flex-start;
   gap: 16px;
   padding: 18px 18px 20px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised);
   cursor: default;
   transition: background-color var(--t-1) var(--ease-arrive);
@@ -238,7 +240,8 @@
 .swatches[data-well] {
   gap: 14px;
   padding: 12px 14px 10px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: #3a3a3f;
 }
 .swatches[data-well] .hex { color: #b4b4b8; }

@@ -226,13 +226,15 @@
 .focusChip {
   position: relative;
   padding: 5px 8px;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: var(--accent);
 }
 /* The place the escape path leads: a raised plane, no edge */
 .dest {
   padding: 8px 12px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--k-raised);
   color: var(--k-ink);
 }

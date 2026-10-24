@@ -25,13 +25,15 @@
   inset: 0;
   z-index: -1;
   transform: translate(10px, 10px);
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   /* a step below the sheet: the cream mixed toward the page */
   background: color-mix(in srgb, var(--color-cream) 50%, var(--color-paper));
 }
 .sheet {
   position: relative;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--color-cream);
 }
 
@@ -210,7 +212,8 @@
 .tag,
 .rowTag {
   padding: 5px 8px 4px;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: color-mix(in srgb, var(--color-ink) 5%, var(--color-cream));
   color: var(--color-ink);
   font-size: 12px;
@@ -547,7 +550,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   width: 100%;
-  border-radius: 2px;
+  /* the outer corners only: the cells are clipped to them, the seam
+     between them stays straight */
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   overflow: hidden;
 }
 @media (min-width: 1024px) {
@@ -766,7 +772,8 @@
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: transparent;
   cursor: default;
 }
@@ -790,7 +797,8 @@
 .sRow {
   position: relative;
   padding: 4px 0;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform var(--t-1, 160ms) var(--ease-arrive);

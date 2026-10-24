@@ -144,7 +144,8 @@
 /* ── The sheet ── a plane, no edge */
 .sheet {
   position: relative;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--tile, var(--color-cream));
 }
 .plot { display: block; width: 100%; height: auto; overflow: visible; }
@@ -251,7 +252,8 @@
 }
 .tag {
   padding: 4px 7px 3px;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   color: var(--color-ink);
   font-family: var(--font-mono);

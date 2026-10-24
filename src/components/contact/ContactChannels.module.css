@@ -19,7 +19,8 @@
   min-height: 248px;
   width: 100%;
   padding: 24px 22px 22px;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--channel-surface);
   color: var(--color-ink);
   text-decoration: none;

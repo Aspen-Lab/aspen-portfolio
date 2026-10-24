@@ -29,7 +29,8 @@
   display: grid;
   gap: 18px;
   padding: 22px 20px 26px;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--color-cream);
   opacity: 0;
   transform: translateY(8px);

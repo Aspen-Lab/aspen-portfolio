@@ -24,7 +24,8 @@
   --surface-inset: #202020;
   --surface-raised: #242424;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: #1d1d20;
 }
 .benchHeader {
@@ -96,7 +97,8 @@
   min-width: 0;
   min-height: 48px;
   padding: 0 14px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: #232326;
   color: var(--color-mute);
   font-size: 14px;
@@ -138,7 +140,7 @@
 .systemGuide h3 { color: var(--color-ink); font: 300 32px/1.15 var(--font-newsreader), Georgia, serif; letter-spacing: -0.025em; }
 .guideIntro { max-width: 380px; margin-top: 12px; color: var(--color-mute); font-size: 15px; line-height: 1.6; text-wrap: pretty; }
 .guideLinks { display: flex; flex-direction: column; gap: 2px; width: calc(100% + 32px); max-width: 432px; margin: 20px -16px 24px; }
-.guideLinks a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px 15px; border-radius: 2px; transition: background-color 180ms var(--ease-arrive); }
+.guideLinks a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px 15px; border-radius: var(--r-raised); corner-shape: squircle; transition: background-color 180ms var(--ease-arrive); }
 .guideLinks strong { display: block; color: var(--color-ink); font-size: 15px; font-weight: 400; }
 .guideLinks a > span > span { display: block; margin-top: 3px; color: var(--color-mute); font-size: 14px; line-height: 1.5; }
 .guideLinks svg { flex-shrink: 0; color: var(--color-soft); transition: color 180ms var(--ease-arrive), transform 180ms var(--ease-arrive); }
@@ -151,7 +153,8 @@
   max-width: 400px;
   min-height: 48px;
   padding: 0 16px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: #232326;
   color: var(--color-ink);
   font-size: 14px;

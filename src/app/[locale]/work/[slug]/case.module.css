@@ -30,7 +30,8 @@
 .kicker {
   display: inline-block;
   padding: 5px 8px 4px;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: var(--plane);
   color: var(--color-mute);
   font-family: var(--font-mono);
@@ -88,7 +89,8 @@
   position: relative;
   flex: 1 1 12rem;
   padding: 28px 28px 24px;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--plane);
 }
 .metricValue {
@@ -205,7 +207,10 @@
 
 /* ── Ledger table ── a mono header row, then one plane per row, 4px
    apart: the gaps between the planes are the only rules. Each entry is
-   numbered. Phones get the same rows as stacked planes. */
+   numbered. Phones get the same rows as stacked planes. A row is a thin
+   strip, so it takes the raised corner; the phone cards take the plane's.
+   corner-shape sits on every cell: a cell's own radius is 0 but for the
+   row's two ends. */
 .table {
   width: 100%;
   border-collapse: separate;
@@ -231,14 +236,15 @@
   font-size: 15px;
   line-height: 1.5;
   vertical-align: top;
+  corner-shape: squircle;
   transition: color 200ms ease, background-color 200ms ease;
 }
 .table td:first-child {
   padding-left: 20px;
-  border-radius: 2px 0 0 2px;
+  border-radius: var(--r-raised) 0 0 var(--r-raised);
   color: var(--color-ink);
 }
-.table td:last-child { border-radius: 0 2px 2px 0; }
+.table td:last-child { border-radius: 0 var(--r-raised) var(--r-raised) 0; }
 .entry {
   display: grid;
   grid-template-columns: 2.5rem minmax(0, 1fr);
@@ -269,7 +275,8 @@
 }
 .card {
   padding: 18px 18px 16px;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--plane);
 }
 .cardHead {
@@ -341,17 +348,21 @@
   --mat: 30px;
   position: relative;
   aspect-ratio: 16 / 10;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--plane);
   transition: background-color 240ms var(--ease-arrive);
 }
 @media (max-width: 639px) { .plate { --mat: 26px; } }
-/* The print inside the mat */
+/* The print inside the mat. The mat (26–30px) is wider than the plate's
+   corner, so the print cannot run concentric with it; it takes the tag's
+   small corner, the print's own. */
 .print {
   position: absolute;
   inset: var(--mat);
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: var(--color-paper);
 }
 .plateImage { transition: transform 700ms var(--ease-arrive); }
@@ -393,7 +404,8 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--plane);
   transition: transform 360ms var(--ease-arrive), background-color 200ms ease, color 200ms ease;
 }
@@ -539,7 +551,8 @@
 .case[data-bands] .kicker {
   display: inline-block;
   padding: 4px 8px;
-  border-radius: 2px;
+  border-radius: var(--r-tag);
+  corner-shape: squircle;
   background: var(--tile);
   color: var(--color-mute);
 }
@@ -593,7 +606,8 @@
   align-items: center;
   gap: 12px;
   padding: 14px 22px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: #f4f4f2;
   color: #0a0a0a;
   transition: transform var(--t-1) var(--ease-arrive);
@@ -719,13 +733,15 @@
 
 /* ── Up next ── a split card of two planes: the next cover (a tile)
    beside a slab, edge to edge. No outline round them and no divider: the
-   tone change is the seam. */
+   tone change is the seam. The card rounds its outer corners and clips
+   the two planes to them; the seam stays straight. */
 .nextSplit {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   color: var(--color-ink);
   transition: transform var(--t-1) var(--ease-arrive);
 }
@@ -805,7 +821,8 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--tile);
   transition:
     transform var(--t-2) var(--ease-arrive),

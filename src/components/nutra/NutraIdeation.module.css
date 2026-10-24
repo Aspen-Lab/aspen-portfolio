@@ -23,7 +23,8 @@
   min-width: 0;
   padding: 12px;
   border: 0;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: none;
   color: var(--color-ink, #f4f4f2);
   text-align: left;
@@ -61,7 +62,8 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   opacity: 0;
   transition: opacity var(--t-2, 360ms) var(--ease-arrive);
@@ -148,7 +150,8 @@
   position: absolute;
   z-index: -1;
   inset: 0;
-  border-radius: 2px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   pointer-events: none;
   opacity: 0;
@@ -411,7 +414,8 @@
   position: relative;
   max-width: 100%;
   padding: 9px 13px;
-  border-radius: 2px;
+  border-radius: var(--r-raised);
+  corner-shape: squircle;
   background: var(--raised, #232326);
   color: #f4f4f2;
   font-size: 15px;
