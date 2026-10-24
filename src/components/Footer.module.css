@@ -1,9 +1,16 @@
-.footer { margin-top: auto; padding-top: 56px; color: var(--color-ink); scroll-margin-top: 96px; }
-.inner { border-top: 1px solid var(--color-line); padding: 28px 0 18px; }
+/* The page ends on a plane, not under a rule (「线框我们用面」): the footer
+   is a full-bleed plane a tone over the grain — the same tone as the
+   plane under the home hero's horizon, so the home page opens and closes
+   on it. Its one action is a raised plane, not an underline. Hyundai's
+   light case gets the light paper's own planes. */
+.footer { margin-top: auto; padding-top: 96px; color: var(--color-ink); scroll-margin-top: 96px; }
+.plane { background: #1d1d20; }
+.inner { padding: 40px 0 20px; }
 .closing { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-bottom: 25px; }
 .headline { margin: 0; font: 300 36px/1.2 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
-.contact { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; flex-shrink: 0; min-height: 44px; border-bottom: 1px solid var(--color-soft); font-size: 13px; }
+.contact { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; flex-shrink: 0; min-height: 44px; padding: 0 16px; border-radius: 2px; background: #232326; font-size: 13px; transition: background-color 180ms var(--ease-arrive); }
 .contact svg { transition: transform 140ms ease; }
+.contact:hover { background: #2c2c30; }
 .contact:hover svg { transform: translate(2px, -2px); }
 .bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; }
 .identity { display: flex; align-items: center; gap: 14px; }
@@ -17,8 +24,8 @@
 .footer a:focus-visible, .footer button:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; border-radius: 2px; }
 :global(html[lang="zh-CN"]) .headline { font-family: var(--font-sans); font-size: 29px; font-weight: 400; letter-spacing: -.035em; }
 @media (max-width: 680px) {
-  .footer { padding-top: 36px; }
-  .inner { padding: 24px 0 16px; }
+  .footer { padding-top: 72px; }
+  .inner { padding: 32px 0 16px; }
   .closing { flex-direction: column; align-items: flex-start; gap: 12px; padding-bottom: 22px; }
   .headline { max-width: 25ch; font-size: 30px; }
   .contact { font-size: 12px; }
@@ -27,6 +34,6 @@
   :global(html[lang="zh-CN"]) .headline { font-size: 26px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .contact svg, .links a, .top { transition: none; }
+  .contact, .contact svg, .links a, .top { transition: none; }
   .contact:hover svg { transform: none; }
 }

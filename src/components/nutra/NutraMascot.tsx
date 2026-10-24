@@ -9,33 +9,35 @@ import { ART, nutraFont } from "./product";
 import { roveFocus, roveKeys, roveSync } from "./rove";
 import styles from "./NutraMascot.module.css";
 
-/* Why gamification, why a nut, as one split card.
+/* Why gamification, why a nut, as one split card: two planes, the sheet
+   and the slab a tone below it, side by side with no edge between.
 
    The sheet (7/12) draws Nutra's own loop, the four product strings in
    the order the app shows them (hero video, boards 030 and 023): Save
    Money → "Saving successful!" → "Check Reward" → "Nut found a pair of
-   glasses in the forest!" and back to Save Money. The nodes stand in a
-   2×2 ring, joined clockwise by 1px arrows; the owner's three words
-   describe the whole loop, so they caption it once (Short · Visible ·
-   Rewarding) rather than any one step. Node 1 is a product render (the
-   app's own Save Money chip: Red Hat Text, orange on #312F36); node 3,
-   the reward, carries the figure's one accent outline. The strings stay
-   in the app's English; on /cn each carries its Chinese gloss under it.
-   Under a rule, the precedents from board 019 (two mechanics quoted as
-   printed, four more apps by name) and its market reflection. No logos,
-   awards or ratings.
+   glasses in the forest!" and back to Save Money. The nodes are raised
+   planes in a 2×2 ring, joined clockwise by 1px arrows (a flow, so they
+   stay lines); the owner's three words describe the whole loop, so they
+   caption it once (Short · Visible · Rewarding) rather than any one
+   step. Node 1 is a product render (the app's own Save Money chip: Red
+   Hat Text, orange on #312F36); node 3, the reward, carries the figure's
+   one accent: a filled square by its index. The strings stay in the
+   app's English; on /cn each carries its Chinese gloss under it. Below,
+   rows held apart by space, the precedents from board 019 (two
+   mechanics quoted as printed, four more apps by name) and its market
+   reflection. No logos, awards or ratings.
 
-   The slab (5/12) says why a nut: the 3D acorn from the app on a raised
-   square, and board 020's four keywords. No accent there.
+   The slab (5/12) says why a nut: the 3D acorn from the app on a plain
+   square plane, and board 020's four keywords. No accent there.
 
    Pointing at, focusing or tapping a node writes data-node on the root:
-   CSS inks that node's outgoing arrow and steps the others back. Opacity
-   only (each arrow is drawn twice, grey under ink); nothing re-renders.
-   The nodes are one listbox with one tab stop (arrow keys move). A phone
-   stacks the nodes, joined by down arrows, with the return drawn up the
-   right edge. Entrance, once: nodes rise 60ms apart, the arrows draw in
-   behind them, the acorn rises last. Reduced motion: final frame, no
-   idle animation. */
+   CSS lifts that node's plane a tone, inks its outgoing arrow and steps
+   the others back (each arrow is drawn twice, grey under ink, so that is
+   opacity only); nothing re-renders. The nodes are one listbox with one
+   tab stop (arrow keys move). A phone stacks the nodes, joined by down
+   arrows, with the return drawn up the right edge. Entrance, once: nodes
+   rise 60ms apart, the arrows draw in behind them, the acorn rises last.
+   Reduced motion: final frame, no idle animation. */
 
 const COPY = {
   en: {

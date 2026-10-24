@@ -8,7 +8,7 @@ import styles from "./NutraAudience.module.css";
 
 /* The problem as two users, one split card. Left, on the slab, Group A:
    the disciplined "Pro" most budgeting apps are built for, drawn
-   receding (an outlined letter, grey squares, grey words). Right, on a
+   receding (a grey letter block, grey squares, grey words). Right, on a
    sheet laid over two back sheets, Group B: the new learner Nutra is for,
    in ink, its letter block the figure's one accent mark. Neither group is
    drawn bigger than the other; the owner's "much larger" stays in the

@@ -1,9 +1,10 @@
-/* The split card in the site's one dark system: the phone on a sheet
-   (#17171a, a faint dot grid, the four registration marks), the ledger
-   on a slab (#0a0a0a), one 1px edge round both and one between them.
-   Type is the ramp (.t-label, .t-subhead, .t-small); the accent fills
-   only the 8px square of the row in view. Inside the phone the product's
-   own language applies (app/phone.module.css). */
+/* The split card in the site's one dark system of planes: the phone on
+   an empty sheet (#18181a), the ledger on the slab (#0a0a0a). No edge
+   round them and none between them: the tones meet. The rows are parted
+   by space; the row in view stands on a plane (a pointed-at row lifts a
+   tone), and the accent fills only its 8px square. Type is the ramp
+   (.t-label, .t-subhead, .t-small). Inside the phone the product's own
+   language applies (app/phone.module.css). */
 /* The figure is a .paper-stack: the whole split card rests on the
    global sheet stack, two back sheets offset under it */
 .root { display: block; }
@@ -13,7 +14,6 @@
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "kick" "rows" "stage" "detail" "foot";
   overflow: hidden;
-  border: 1px solid var(--edge, #333336);
   border-radius: 2px;
   background: var(--slab, #0a0a0a);
 }
@@ -27,14 +27,8 @@
   display: grid;
   justify-items: center;
   padding: 28px 12px;
-  border-block: 1px solid var(--edge, #333336);
-  background-color: var(--sheet, #17171a);
-  /* a tiny dot grid, the drafting ground of the sheet */
-  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 7%) 1px, transparent 1.5px);
-  background-size: 16px 16px;
-  background-position: 8px 8px;
+  background: var(--sheet, #18181a);
 }
-.stage :global(.reg-mark) { opacity: 0.32; }
 
 /* The phone's box at its drawn size times the scale (--s, from the
    ResizeObserver; the media fallbacks hold the first paint) */
@@ -79,13 +73,20 @@
   width: 100%;
   height: 100%;
   padding: 14px 14px 16px;
-  border: 1px solid var(--edge, #333336);
+  border: 0;
   border-radius: 2px;
-  background: var(--tile, #141416);
+  background: var(--tile, #18181a);
   color: var(--color-ink);
   text-align: left;
-  transition: transform var(--t-1) var(--ease-arrive);
+  transition:
+    transform var(--t-1) var(--ease-arrive),
+    background-color var(--t-1) var(--ease-arrive);
 }
+/* A pointed-at row lifts a tone; the row in view is raised */
+@media (hover: hover) {
+  .row:hover { background: #1d1d20; }
+}
+.row[data-on="true"] { background: var(--raised, #232326); }
 .row:active { transform: translateY(1px); }
 .row:focus-visible { outline-offset: 3px; }
 
@@ -130,8 +131,8 @@
 :global(html[lang="zh-CN"]) .detail,
 :global(html[lang="zh-CN"]) .note { line-break: strict; }
 
-/* Every row reads at full ink; the row in view is marked by its accent
-   square alone (as Axel's ledger). A pointer on a row inks its index. */
+/* Every row reads at full ink; the row in view is marked by its plane
+   and its accent square. A pointer on a row inks its index. */
 @media (hover: hover) {
   .row:hover .idx { color: var(--color-ink); }
 }
@@ -161,9 +162,8 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  margin: 16px 16px 0;
-  padding: 16px 0 20px;
-  border-top: 1px solid var(--color-line);
+  margin: 24px 16px 0;
+  padding: 0 0 24px;
 }
 .note {
   color: var(--color-soft, #8a8a90);
@@ -185,7 +185,7 @@
   .kicker { padding: 32px 32px 0; }
   .rows { padding: 20px 32px; }
   .detail { padding: 24px 32px 0; }
-  .foot { margin: 20px 32px 0; padding-bottom: 28px; }
+  .foot { margin: 32px 32px 0; padding-bottom: 32px; }
 }
 
 /* ── lg: the split. The phone's sheet left, the slab right; the kicker
@@ -200,39 +200,33 @@
     grid-area: auto;
     align-items: center;
     padding: 48px;
-    border-block: 0;
   }
   .slab {
     display: flex;
     flex-direction: column;
     min-width: 0;
     padding: 40px;
-    border-left: 1px solid var(--edge, #333336);
   }
   .kicker { padding: 0; }
+  /* The rows, parted by space: no rule between them. At rest they lie on
+     the slab; the row in view stands on the sheet's own plane */
   .rows {
-    display: block;
-    margin: auto -12px 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    margin: auto -16px 0;
     padding: 40px 0 0;
-  }
-  .item { position: relative; }
-  /* hairlines at the copy's measure, above every row and under the last */
-  .item::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 12px;
-    right: 12px;
-    height: 1px;
-    background: var(--color-line);
   }
   .row {
     grid-template-columns: 52px minmax(0, 1fr);
     gap: 0;
-    padding: 22px 12px 24px;
-    border: 0;
-    background: none;
+    padding: 20px 16px 22px;
+    background: transparent;
   }
+  @media (hover: hover) {
+    .row:hover { background: #121214; }
+  }
+  .row[data-on="true"] { background: var(--sheet, #18181a); }
   .row:focus-visible { outline-offset: -1px; }
   .idx { align-self: start; padding-top: 6px; }
   .title { display: block; }
@@ -241,7 +235,7 @@
   .detail { display: none; }
   .foot {
     margin: 0;
-    padding: 20px 0 0;
+    padding: 28px 0 0;
   }
 }
 

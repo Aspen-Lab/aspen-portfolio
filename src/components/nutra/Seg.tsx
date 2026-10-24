@@ -4,8 +4,9 @@ import { useRef, type CSSProperties, type KeyboardEvent, type ReactNode } from "
 import styles from "./Seg.module.css";
 
 /* Nutra's one segmented switch, shared by its figures (the testing loop,
-   the before/after fixes, the journey's After | Before): a tile track and
-   one raised thumb that slides under the chosen option, transform only.
+   the before/after fixes, the journey's After | Before): a plane for the
+   track and one raised plane that slides under the chosen option,
+   transform only. No edges.
    Radio semantics: arrows move the choice; the chosen option holds the
    tab stop. */
 export function Seg<T extends string>({

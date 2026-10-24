@@ -64,6 +64,7 @@ export function AboutHero({ cn }: { cn: boolean }) {
     : ["Newsreader Light", "Newsreader Light", "Newsreader Italic"];
   const box = boxes[active];
   const pad = 6;
+  const selection = box && { left: box.x - pad, top: box.y - 2, width: box.w + pad * 2, height: box.h + 4 };
 
   return (
     <div className={styles.hero}>
@@ -111,23 +112,24 @@ export function AboutHero({ cn }: { cn: boolean }) {
             </h1>
 
             {box && (
-              <div className={`${styles.overlay} ${styles.anno}`} aria-hidden>
-                <div
-                  className={styles.selection}
-                  style={{ left: box.x - pad, top: box.y - 2, width: box.w + pad * 2, height: box.h + 4 }}
-                >
-                  <i /><i /><i /><i />
-                  <span className={styles.specTag}>H1 · {faces[active]} · {box.size}/{box.lead}</span>
-                  <span className={styles.sizeTag} data-place={active === 2 ? "below" : "right"}>{Math.round(box.w)} × {Math.round(box.h)}</span>
+              <>
+                <div className={`${styles.under} ${styles.anno}`} aria-hidden>
+                  <div className={styles.selection} style={selection} />
                 </div>
-                <div
-                  className={styles.measure}
-                  data-show={hovering ? "on" : "off"}
-                  style={{ top: box.y + box.h / 2, width: Math.max(0, box.x - pad) }}
-                >
-                  <span className={styles.redTag}>{Math.round(box.x - pad)}</span>
+                <div className={`${styles.overlay} ${styles.anno}`} aria-hidden>
+                  <div className={styles.selection} style={selection}>
+                    <span className={styles.specTag}>H1 · {faces[active]} · {box.size}/{box.lead}</span>
+                    <span className={styles.sizeTag} data-place={active === 2 ? "below" : "right"}>{Math.round(box.w)} × {Math.round(box.h)}</span>
+                  </div>
+                  <div
+                    className={styles.measure}
+                    data-show={hovering ? "on" : "off"}
+                    style={{ top: box.y + box.h / 2, width: Math.max(0, box.x - pad) }}
+                  >
+                    <span className={styles.redTag}>{Math.round(box.x - pad)}</span>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
         </div>

@@ -1,9 +1,11 @@
-/* Two of Latent's numbered tabs over two blocks: the template on a slab,
-   the message on the dark chart sheet like a print proof. Grey tones for
-   the syntax; the one accent is the fallback token, a solid focus chip,
-   in the Missing value state only. Flat fills and 1px lines; no gradient.
-   The code listing and the mock email are product renders: they keep
-   their own type and their pixel-art opacities. */
+/* Two of Latent's numbered tabs over two planes: the template on a slab,
+   the message on the dark chart sheet like a print proof. No outline, no
+   rule, no crop mark: the tabs are set apart by space, the blocks by
+   their tone. Grey tones for the syntax; the one accent is the fallback
+   token, a solid focus chip on a raised plane, in the Missing value
+   state only. Flat fills; no gradient. The code listing and the mock
+   email are product renders: they keep their own type, their own rule
+   and their pixel-art opacities. */
 .sheet {
   position: relative;
   margin: 0;
@@ -34,7 +36,6 @@
   gap: 12px;
   min-width: 0;
   padding: 16px 0;
-  border-bottom: 1px solid var(--color-line);
   color: var(--color-ink);
   text-align: left;
   cursor: pointer;
@@ -64,13 +65,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* The underline: 2px ink, drawn full under the tab in view; the second
-   tab's fills once, left to right, before the sheet switches to it */
+/* The underline, the tab's one mark: 2px ink, drawn full under the tab
+   in view; the second tab's fills once, left to right, before the sheet
+   switches to it */
 .fill {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -1px;
+  bottom: 0;
   height: 2px;
   background: #f4f4f2;
   transform: scaleX(0);
@@ -111,7 +113,7 @@
   min-width: 0;
 }
 
-/* The proof: Axel's card laid on the sheet, crop marks in the corners */
+/* The proof: Axel's card laid on the sheet */
 .proofStack { display: grid; min-width: 0; }
 .proof.proof {
   position: relative;
@@ -283,7 +285,11 @@
 .sheet[data-state="missing"] .fallback [data-k] { opacity: 0; }
 
 /* The ring and its leader are elements of their own, so they fade on the
-   compositor: the hexagon with the chip, the leader with the tag */
+   compositor: the hexagon with the chip, the leader with the tag. The
+   hexagon is a raised plane under the chip (the token isolates, so it
+   lies on the focus line's band and under the words); the leader stays a
+   dashed line, the one connector to the tag. */
+.fallback { isolation: isolate; }
 .ring,
 .lead {
   position: absolute;
@@ -292,12 +298,8 @@
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
-.hex {
-  fill: none;
-  stroke: var(--grey-1, #a0a0a5);
-  stroke-width: 1.5;
-  stroke-dasharray: 3 3;
-}
+.ring { z-index: -1; }
+.hex { fill: var(--raised, #232326); }
 .leader {
   stroke: var(--grey-1, #a0a0a5);
   stroke-width: 1.5;
@@ -305,9 +307,11 @@
 }
 .sheet[data-state="missing"] .ring { opacity: 1; }
 
+/* The tag stands in the slab's blank line: a plane, as on any slab */
 .sheet .tag {
   position: absolute;
   left: 50%;
+  background: var(--tile, #18181a);
   pointer-events: none;
   user-select: none;
   opacity: 0;
@@ -329,7 +333,6 @@
   width: 100%;
   max-width: 380px;
   padding: 24px 20px;
-  border: 1px solid var(--edge, #333336);
   border-radius: 14px;
   background: var(--slab, #0a0a0a);
   color: var(--color-ink);

@@ -39,10 +39,10 @@ function LayoutStudy({ cn }: { cn: boolean }) {
   return (
     <>
       <Plate>
-        <path d="M36 4v162m328-162v162" className={styles.guide} />
         {[0, 1, 2].map((i) => (
           <g key={i} className={styles.layoutTile} style={{ transform: columns ? `translate(${48 + i * 104}px, 10px)` : `translate(48px, ${10 + i * 52}px)`, transitionDelay: `${i * 50}ms` }}>
-            <rect width={columns ? 96 : 304} height={columns ? 150 : 46} rx="3" className={cx(styles.tile, styles.scan, styles.motion)} style={{ ...at(i), transitionDelay: `${i * 50}ms` }} />
+            <rect width={columns ? 96 : 304} height={columns ? 150 : 46} rx="3" className={styles.tile} style={{ transitionDelay: `${i * 50}ms` }} />
+            <rect width={columns ? 96 : 304} height={columns ? 150 : 46} rx="3" className={cx(styles.tileLift, styles.scan, styles.motion)} style={{ ...at(i), transitionDelay: `${i * 50}ms` }} />
             <g className={styles.layoutSymbol} style={{ transform: columns ? "translate(48px, 56px)" : "translate(25px, 23px)" }}>
               {i === 0 && <circle r="8" className={styles.symbolFill} />}
               {i === 1 && <path d="m0-10 9.5 16h-19Z" className={styles.symbolFill} />}
@@ -74,7 +74,6 @@ function StateStudy({ cn }: { cn: boolean }) {
   return (
     <>
       <Plate labels={<span className={styles.codeTag} style={pin(200, 132)}>{`<Button state="${state}" />`}</span>}>
-        <path d="M20 66h52m256 0h52" className={styles.guide} />
         <rect x="72" y="22" width="256" height="88" rx="8" className={styles.tile} />
         <g key={state} transform="translate(102 54)">
           {state === "idle" && (
@@ -100,7 +99,7 @@ function StateStudy({ cn }: { cn: boolean }) {
         <path d={`M${BAR.x} ${BAR.y}h${BAR.w}`} className={styles.guide} />
         <path pathLength={1} d={`M${BAR.x} ${BAR.y}h${BAR.w}`} className={styles.stateProgress} style={{ strokeDashoffset: 1 - FILLED[state] }} />
         {state === "loading" && <circle cx={BAR.x + BAR.w * FILLED.loading} cy={BAR.y} r="2.5" className={cx(styles.symbolFill, styles.blink, styles.motion)} />}
-        {/* a dashed leader from the component down to its props, as a boxed tag */}
+        {/* a dashed leader from the component down to its props, set on a raised tag */}
         <path d="M200 110v22" className={styles.leader} />
       </Plate>
       <div className={styles.controls} role="group" aria-label={cn ? "切换示例组件状态" : "Change the sample component state"}>
@@ -218,6 +217,7 @@ function FocusStudy({ cn }: { cn: boolean }) {
     <>
       <Plate>
         <rect x="56" y="10" width="288" height="152" rx="3" className={styles.tile} />
+        <rect x={action ? 238 : 66} y={action ? 116 : 24} width={action ? 96 : 228} height={action ? 40 : 32} rx="3" className={styles.focusPlane} />
         <g className={styles.focusGroup} opacity={action ? .35 : 1}>
           <circle cx="84" cy="40" r="7" className={styles.symbolFill} />
           <path d="M102 34h104m-104 12h160" className={styles.contentLine} />
@@ -235,7 +235,6 @@ function FocusStudy({ cn }: { cn: boolean }) {
           ))}
           <circle r="3.5" className={cx(styles.gaze, styles.motion)} style={{ offsetPath: `path("${scanpath}")` }} />
         </g>
-        <rect x={action ? 238 : 66} y={action ? 116 : 24} width={action ? 96 : 228} height={action ? 40 : 32} rx="4" className={styles.focusOutline} />
         <path d={action ? "M334 136H376" : "M294 40H376"} className={styles.focusLeader} />
         <circle cx="378" cy={action ? 136 : 40} r="2.5" className={styles.symbolFill} />
       </Plate>

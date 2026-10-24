@@ -2,7 +2,8 @@
    sheet stack on the right at lg; below lg the tabs sit between the text
    and the sheet (2×2 tiles for four, rows for three), then the details.
    One dark system: the sheet is --sheet on the global stack, the tabs are
-   S7 numbers and kickers over S4 titles, the fill is ink. */
+   S7 numbers and kickers over S4 titles, the fill is ink. No rules: the
+   tabs are set apart by space (rows) or are planes (tiles). */
 .root {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -33,26 +34,26 @@
   .sheet { padding: 40px; }
 }
 
-/* ── Tabs ── an S7 number and kicker, an S4 title; each row has a 1px
-   rule, and its lower edge carries the 2px ink fill. Inactive rows rest
-   at .45, hover lifts them to .75, the selected row is full. Focus shows
-   what hover shows, plus the ring. */
+/* ── Tabs ── an S7 number and kicker, an S4 title, the rows set apart by
+   space alone. The selected row's lower edge carries the 2px ink fill,
+   its one mark (and autoplay's progress). Inactive rows rest at .45,
+   hover lifts them to .75, the selected row is full. Focus shows what
+   hover shows, plus the ring. */
 .tab {
   position: relative;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr);
   align-items: baseline;
   width: 100%;
-  padding: 16px 0 24px;
+  padding: 20px 0 24px;
   border: 0;
-  border-top: 1px solid var(--color-line);
   border-radius: 0;
   background: none;
   color: var(--color-ink);
   text-align: left;
   transition: transform var(--t-1) var(--ease-arrive);
 }
-.tab:last-child { border-bottom: 1px solid var(--color-line); }
+.tab:first-child { padding-top: 0; }
 .tab:active { transform: translateY(1px); }
 .num,
 .words {
@@ -110,7 +111,7 @@
   position: absolute;
   z-index: 1;
   right: 0;
-  bottom: -1px;
+  bottom: 0;
   left: 0;
   height: 2px;
   overflow: hidden;
@@ -144,27 +145,31 @@
   to { transform: scaleX(1); }
 }
 
-/* Below lg: four tabs as a 2×2 grid of tiles, three or fewer as rows.
-   The opacities are the same as on desktop. */
+/* Below lg: four tabs as a 2×2 grid of tiles (planes, no edge; hover
+   lifts the plane a tone), three or fewer as rows. The opacities are the
+   same as on desktop; the fill runs along the tile's foot. */
 @media (max-width: 1023px) {
   .root[data-count="4"] .tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
   .root[data-count="4"] .tab,
-  .root[data-count="4"] .tab:last-child {
+  .root[data-count="4"] .tab:first-child {
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
     gap: 8px;
     padding: 16px;
-    border: 1px solid var(--tile-line);
+    overflow: hidden;
     border-radius: 2px;
     background: var(--tile);
+    transition:
+      transform var(--t-1) var(--ease-arrive),
+      background-color var(--t-1) var(--ease-arrive);
   }
-  .root[data-count="4"] .bar {
-    right: -1px;
-    left: -1px;
+  @media (hover: hover) {
+    .root[data-count="4"] .tab:hover { background: #232326; }
   }
+  .root[data-count="4"] .tab:focus-visible { background: #232326; }
 }
 
 /* ── The sheet contract ── a caller's panels and marks, keyed by tab k:

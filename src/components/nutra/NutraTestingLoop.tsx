@@ -14,7 +14,8 @@ import styles from "./NutraTestingLoop.module.css";
    In reality: the same chips, pulled apart. The lo-fi prototype runs to
    a 1st, 2nd, 3rd iteration and "…", a round of user tests between each
    pair, and three revisions return from under the iterations to the user
-   flow (the one accent mark: every revision lands there). The style
+   flow (the one accent mark, the user-flow chip filled: every revision
+   lands there). The style
    guide follows, then a hi-fi prototype of its own iterations and tests.
 
    Counts are the board's: lo-fi 3 iterations + "…", 3 test loops, 3
@@ -27,8 +28,7 @@ import styles from "./NutraTestingLoop.module.css";
    wide one shown from an 800px sheet. Chips both states share are laid
    out once, at their "In reality" places, and Imagine moves them there
    by transform alone: the whole first row slides to the centre, the
-   style guide (and the lo-fi panel's far edge) slide back, the panel's
-   fill scales. Marks only "In reality" has fade in, a step apart.
+   style guide slides back, the lo-fi panel's plane scales. Marks only "In reality" has fade in, a step apart.
 
    It opens on In reality, the figure's point, with every mark in place;
    the switch takes the reader back to the plan they imagined, and the
@@ -89,6 +89,16 @@ const at = (b: Partial<Box>, extra?: Record<string, number>) =>
 
 /** Which state a mark belongs to: both (""), Imagine only, In reality only */
 const modeClass = (c: Cls) => (c === "i" ? styles.i : c === "r" ? styles.r : "");
+
+/** The user flow's accent fill, In reality only: the same chip, filled,
+    laid over the raised one and faded in */
+function Focus({ b, text, k }: { b: Box; text: string; k: number }) {
+  return (
+    <span className={`${styles.abs} ${styles.r} ${styles.focus}`} style={at(b, { "--k": k })}>
+      <span className={styles.chip}>{text}</span>
+    </span>
+  );
+}
 
 /** A raised chip, S6 in ink. `e` is its place in the entrance (marks
     Imagine shows); `k` its place in the In-reality stagger. */
@@ -189,33 +199,16 @@ function Line({ d, dashed }: { d: string; dashed?: boolean }) {
   return <path d={d} className={dashed ? styles.dash : styles.line} vectorEffect="non-scaling-stroke" />;
 }
 
-/** The lo-fi panel's pieces that stay in the first row: its fill (which
-    scales to the Imagine width) and its near edge and its head. The far
-    edge travels with the style guide. */
+/** The lo-fi panel: one plane (which scales to the Imagine width from
+    its near end) and its head. No edge, so nothing rides with the style
+    guide. */
 function PanelNear({ b, axis, head, e }: { b: Box; axis: "x" | "y"; head: string; e: number }) {
   return (
     <span className={`${styles.layer} ${styles.e}`} style={{ "--e": e } as CSSProperties}>
       <span className={`${styles.abs} ${styles.fill}`} data-axis={axis} style={at(b)} />
-      {axis === "x" ? (
-        <span className={`${styles.abs} ${styles.edgeV}`} style={at({ x: b.x, y: b.y, h: b.h })} />
-      ) : (
-        <span className={`${styles.abs} ${styles.edgeH}`} style={at({ x: b.x, y: b.y, w: b.w })} />
-      )}
       <span className={`${styles.pinWrap}`} data-a="l" style={at({ x: b.x + 20, y: b.y + 18 })}>
         <span className={`t-label ${styles.label}`}>{head}</span>
       </span>
-    </span>
-  );
-}
-
-function PanelFar({ b, axis, e }: { b: Box; axis: "x" | "y"; e: number }) {
-  return (
-    <span className={`${styles.layer} ${styles.e}`} style={{ "--e": e } as CSSProperties}>
-      {axis === "x" ? (
-        <span className={`${styles.abs} ${styles.edgeV}`} data-far="" style={at({ x: b.x + b.w, y: b.y, h: b.h })} />
-      ) : (
-        <span className={`${styles.abs} ${styles.edgeH}`} data-far="" style={at({ x: b.x, y: b.y + b.h, w: b.w })} />
-      )}
     </span>
   );
 }
@@ -320,7 +313,7 @@ const DeskFrame = memo(function DeskFrame({ t }: { t: Copy }) {
         </svg>
 
         <Chip b={uf} text={t.flow} e={0} />
-        <span className={`${styles.abs} ${styles.r} ${styles.ring}`} style={at(uf, { "--k": 8 })} />
+        <Focus b={uf} text={t.flow} k={8} />
         <Chip b={chip(lo[0])} text={t.it[0]} e={3} />
         <Chip b={chip(lo[1])} text={t.it[1]} e={5} />
         <Label x={loops[0].mid} y={row + D.ch + 36} text={t.tests} e={4} />
@@ -342,7 +335,6 @@ const DeskFrame = memo(function DeskFrame({ t }: { t: Copy }) {
         ))}
 
         <div className={`${styles.group} ${styles.sg}`}>
-          <PanelFar b={lp} axis="x" e={2} />
           <svg viewBox={`0 0 ${D.W} ${D.H}`} className={styles.svg}>
             <G e={6}>
               <Line d={`M${lp.x + lp.w} ${cy} H${sg.x - 8}`} />
@@ -440,7 +432,7 @@ const PhoneFrame = memo(function PhoneFrame({ t }: { t: Copy }) {
         </svg>
 
         <Chip b={uf} text={t.flow} e={0} />
-        <span className={`${styles.abs} ${styles.r} ${styles.ring}`} style={at(uf, { "--k": 8 })} />
+        <Focus b={uf} text={t.flow} k={8} />
         <Chip b={chip(lo[0])} text={t.it[0]} e={3} />
         <Chip b={chip(lo[1])} text={t.it[1]} e={5} />
         <Label x={cx} y={loops[0].mid} text={t.tests} e={4} />
@@ -460,7 +452,6 @@ const PhoneFrame = memo(function PhoneFrame({ t }: { t: Copy }) {
         ))}
 
         <div className={`${styles.group} ${styles.sg}`}>
-          <PanelFar b={lp} axis="y" e={2} />
           <svg viewBox={`0 0 ${P.W} ${P.H}`} className={styles.svg}>
             <G e={6}>
               <Line d={`M${cx} ${lp.y + lp.h} V${sg.y - 8}`} />

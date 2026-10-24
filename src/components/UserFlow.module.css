@@ -1,17 +1,16 @@
-/* A flow on a chart sheet (the global .paper-stack > .paper): a faint dot
-   canvas, raised plates on one 1px grey path, a raised hexagon with a
-   dashed edge, one accent chip on the branch. Flat fills and 1px lines
-   only. The marks palette is the system's own, pinned here so it reads
-   the same on any plane. Entrance by opacity and transform alone. */
+/* A flow on a chart sheet (the global .paper-stack > .paper): a bare
+   plane, raised planes on one 1px grey path, a raised hexagon, one accent
+   chip on the branch. Planes, not frames: no plate has an edge; the only
+   lines are the path and the branch's dashed leader. The marks palette is
+   the system's own, pinned here so it reads the same on any plane.
+   Entrance by opacity and transform alone. */
 
 .sheet {
   --k-ink: var(--color-ink);
   --k-g1: var(--grey-1);
   --k-g2: var(--grey-2);
-  --k-g3: var(--grey-3);
   --k-sheet: var(--sheet);
   --k-raised: var(--raised);
-  --k-edge: var(--edge);
   --k-mute: var(--color-mute);
   --k-on: var(--on-fill);
   /* narrow sheets: the path runs down the left, at --rail */
@@ -23,11 +22,7 @@
   --lift: var(--vgap);
   container-type: inline-size;
   padding: 20px;
-  /* the canvas: 1px grey-3 dots on the sheet (the radial is the dot only) */
   background-color: var(--k-sheet);
-  background-image: radial-gradient(circle, var(--k-g3) 0 1px, transparent 1.5px);
-  background-size: 16px 16px;
-  background-position: -8px -8px;
   color: var(--k-ink);
 }
 @media (min-width: 640px) {
@@ -84,19 +79,17 @@
 .sheet[data-lit="true"] .step::after,
 .sheet[data-lit="true"] .fork::before { transform: none; }
 
-/* ── The plates: raised, one 1px edge ── */
+/* ── The plates: raised planes, no edge ── */
 .box {
   position: relative;
   height: 100%;
   padding: 16px;
-  border: 1px solid var(--k-edge);
   border-radius: 2px;
   background: var(--k-raised);
 }
 /* The decision is its hexagon alone: no plate box */
 .box[data-kind="decision"] {
   padding: 16px 28px;
-  border: 0;
   background: none;
 }
 
@@ -162,8 +155,8 @@
   background: var(--k-ink);
 }
 
-/* The decision: a raised hexagon with a dashed grey-1 edge, drawn behind
-   the text to the box's own size */
+/* The decision: a raised hexagon, no edge, drawn behind the text to the
+   box's own size */
 .hex {
   position: absolute;
   inset: 0;
@@ -171,12 +164,7 @@
   height: 100%;
   overflow: visible;
 }
-.hexShape {
-  fill: var(--k-raised);
-  stroke: var(--k-g1);
-  stroke-width: 1;
-  stroke-dasharray: 3 3;
-}
+.hexShape { fill: var(--k-raised); }
 
 /* ── A branch: a dashed drop to the accent chip, then a dashed run into
    where it leads. The drop leaves from the hexagon's foot. ── */
@@ -247,13 +235,12 @@
   opacity: 0;
   transition: opacity 160ms var(--ease-arrive) 720ms;
 }
-/* Where the branch leads: a raised plate with a dashed grey-1 edge */
+/* Where the branch leads: a raised plane, no edge */
 .dest {
   position: relative;
   width: fit-content;
   max-width: 100%;
   padding: 16px;
-  border: 1px dashed var(--k-g1);
   border-radius: 2px;
   background: var(--k-raised);
   opacity: 0;

@@ -379,7 +379,7 @@ export default async function CaseStudy({
       </Reveal>
 
       <Reveal delay={0.08}>
-        <dl className={`grid grid-cols-2 ${editorial ? "sm:grid-cols-3" : "sm:grid-cols-4"} lg:grid-cols-1 gap-x-8 gap-y-7 lg:gap-y-5 border-t border-line pt-7 lg:pt-6 max-w-4xl`}>
+        <dl className={`grid grid-cols-2 ${editorial ? "sm:grid-cols-3" : "sm:grid-cols-4"} lg:grid-cols-1 gap-x-8 gap-y-7 lg:gap-y-5 max-w-4xl`}>
           {facts.map((f, i) => (
             <div
               key={f.label}
@@ -415,7 +415,7 @@ export default async function CaseStudy({
           </div>
         ) : (
         <div
-          className="mt-14 aspect-[16/9] rounded-[4px] border border-line overflow-hidden bg-cream relative"
+          className="mt-14 aspect-[16/9] rounded-[2px] overflow-hidden bg-cream relative"
           style={project.coverBg ? { backgroundColor: project.coverBg } : undefined}
         >
           {project.heroVideo ? (
@@ -449,7 +449,7 @@ export default async function CaseStudy({
         )}
       </Reveal>
 
-      {/* The outcome ledger: one hairline per figure, the figure large,
+      {/* The outcome ledger: one plane per figure, the figure large,
           stopping at the sections' right edge, clear of the chapter rail */}
       {project.metrics && project.metrics.length > 0 && (
         <Reveal delay={0.18}>
@@ -511,7 +511,6 @@ export default async function CaseStudy({
                       {cn ? "章节" : "Chapter"} {String(chapterIndex + 1).padStart(2, "0")}
                     </span>
                     <span className={styles.chapterTitle}>{s.chapter}</span>
-                    <span aria-hidden className={styles.chapterRule} />
                   </div>
                 </Reveal>
               )}
@@ -692,7 +691,7 @@ export default async function CaseStudy({
                     </div>
                   )}
                   {s.images && s.images.length === 1 && (
-                    <div className="mt-12 overflow-hidden rounded-[4px] border border-line bg-cream">
+                    <div className="mt-12 overflow-hidden rounded-[2px] bg-cream">
                       <Image
                         src={s.images[0]}
                         alt={`${s.heading} — figure`}
@@ -741,7 +740,7 @@ export default async function CaseStudy({
                         target="_blank"
                         rel="noreferrer"
                         aria-label={`${figure.alt} — ${cn ? "查看原图" : "View full-size image"}`}
-                        className="block overflow-hidden rounded-[4px] border border-line bg-cream"
+                        className="block overflow-hidden rounded-[2px] bg-cream"
                       >
                         <Image
                           src={figure.src}
@@ -771,7 +770,7 @@ export default async function CaseStudy({
                         playsInline
                         preload="none"
                         aria-label={video.title}
-                        className="block h-auto w-full rounded-[4px] border border-line bg-cream"
+                        className="block h-auto w-full rounded-[2px] bg-cream"
                       >
                         <a href={video.src}>
                           {cn ? "观看演示视频" : "Watch the prototype video"}
@@ -818,7 +817,7 @@ export default async function CaseStudy({
         })}
       </div>
 
-      {/* Up next: the next case as a wide row, its cover framed as a plate */}
+      {/* Up next: the next case as a wide row, its cover printed on a plane */}
       <Reveal delay={0.1}>
         <div data-chapters-end className={styles.next}>
           <p className={styles.nextKicker}>{cn ? "下一个项目" : "Up next"}</p>
@@ -839,10 +838,6 @@ export default async function CaseStudy({
                   />
                 )}
               </span>
-              <span aria-hidden className="reg-mark tl" />
-              <span aria-hidden className="reg-mark tr" />
-              <span aria-hidden className="reg-mark br" />
-              <span aria-hidden className="reg-mark bl" />
             </span>
             <span className={styles.nextText}>
               <span className={`type-display ${styles.nextTitle}`}>
@@ -935,8 +930,8 @@ function BandedCase({
   blocks.push({ kind: "next" });
 
   const host = project.liveUrl?.replace(/^https?:\/\//, "").replace(/\/$/, "");
-  /* An image frame is a tile: the tile fill, the one plane edge */
-  const frame = "rounded-[2px] border border-(--edge) bg-(--tile)";
+  /* An image frame is a tile: the tile's plane, no edge */
+  const frame = "rounded-[2px] bg-(--tile)";
 
   const renderSection = (s: Section, i: number) => {
     const prevChapter = i > 0 ? sections[i - 1].chapter : undefined;
@@ -1159,7 +1154,6 @@ function BandedCase({
             <div data-chapter={chapterIndex} className={`${styles.chapter} ${styles.bandChapter}`}>
               <span className={styles.chapterNum}>{pad(chapterIndex + 1)}</span>
               <span className={styles.chapterTitle}>{cn && s.chapter ? heldWords(s.chapter) : s.chapter}</span>
-              <span aria-hidden className={styles.chapterRule} />
             </div>
           </Reveal>
         )}
@@ -1193,7 +1187,8 @@ function BandedCase({
     );
   };
 
-  /* Up next as Latent's split card: the next cover (a tile) beside a slab.
+  /* Up next as a split card of two planes: the next cover (a tile) beside
+     a slab, edge to edge.
      The title breaks after its dash: "Name —" / "the claim". */
   const nextParts = splitTitle(nextTitle);
   /* The slab keeps the summary's first sentence (to its first "。" or
@@ -1216,10 +1211,6 @@ function BandedCase({
                 style={{ objectFit: "cover", objectPosition: next.coverPosition }}
               />
             )}
-            <span aria-hidden className="reg-mark tl" />
-            <span aria-hidden className="reg-mark tr" />
-            <span aria-hidden className="reg-mark br" />
-            <span aria-hidden className="reg-mark bl" />
           </span>
           <span className={`slab ${styles.nextSlab}`}>
             <span className={styles.splitKicker}>
@@ -1358,10 +1349,6 @@ function BandedCase({
                   priority
                 />
               ) : null}
-              <span aria-hidden className="reg-mark tl" />
-              <span aria-hidden className="reg-mark tr" />
-              <span aria-hidden className="reg-mark br" />
-              <span aria-hidden className="reg-mark bl" />
             </div>
           )}
         </Reveal>

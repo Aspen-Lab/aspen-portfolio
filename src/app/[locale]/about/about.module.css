@@ -1,21 +1,24 @@
-.jumpNav { display: flex; flex-wrap: wrap; gap: 6px 35px; margin-top: 64px; padding-block: 14px; border-block: 1px solid var(--color-line); }
-.jumpNav a { display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 12px; color: var(--color-mute); transition: color 180ms; }
-.jumpNav a:hover { color: var(--color-ink); }
+/* The jump links sit on the ground with no rules around them; each one is a
+   plane that only appears under the pointer. The row is pulled out by the
+   links' own padding so the first label still lines up with the column. */
+.jumpNav { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 56px -14px 0; }
+.jumpNav a { display: flex; align-items: center; gap: 12px; min-height: 44px; padding-inline: 14px; border-radius: 2px; font-size: 12px; color: var(--color-mute); transition: color 180ms, background-color 180ms; }
+.jumpNav a:hover { color: var(--color-ink); background: var(--raised); }
 .jumpNav a > span { color: var(--color-soft); font: 9px var(--font-mono); }
 .jumpNav a > svg { opacity: .55; }
-.jumpNav a:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 5px; }
-.studyNote { display: flex; align-items: flex-start; gap: 18px; padding: 22px 26px; margin-bottom: 28px; border: 1px solid var(--color-line); background: var(--color-cream); color: var(--color-mute); }
+.jumpNav a:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+.studyNote { display: flex; align-items: flex-start; gap: 18px; padding: 24px 28px; margin-bottom: 28px; border-radius: 2px; background: var(--tile); color: var(--color-mute); }
 .studyNote > svg { margin-top: 2px; flex: none; }
 .studyNote p { max-width: 100ch; font-size: 12px; line-height: 1.8; }
 .studyNote .noteTitle { margin-bottom: 6px; color: var(--color-ink); font-size: 14px; }
 .sectionNote { max-width: 85ch; margin-bottom: 27px; color: var(--color-mute); font-size: 13px; line-height: 1.8; }
 @media (max-width: 1023px) {
-  .jumpNav { margin-top: 44px; }
+  .jumpNav { margin-top: 40px; }
 }
 @media (max-width: 600px) {
   .page > section > header { flex-wrap: wrap; row-gap: 14px; }
   .page > section > header > div { min-width: 0; }
-  .jumpNav { gap: 2px 24px; }
+  .jumpNav { gap: 0 4px; }
   .studyNote { gap: 12px; padding: 18px 16px; }
   .studyNote > svg { width: 17px; }
 }

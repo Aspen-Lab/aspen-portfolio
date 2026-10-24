@@ -1,16 +1,16 @@
-/* Four frames drawn in Axel's manner, on one baseline, and two lanes ruled
-   under them. The frames are product drawings in the system's greys; the
-   ledger's marks are the system's: 12px squares in grey, the column in
-   view lit in ink and, on its code square, the accent. No gradient
-   anywhere: the night is a flat fill, the mountains and the moon a dot
+/* Four frames drawn in Axel's manner, on one baseline, and two lanes
+   under them, set apart by space, not ruled. The frames are product
+   drawings in the system's greys; the ledger's marks are the system's:
+   12px squares in grey, the column in view lit in ink and, on its code
+   square, the accent. No outline, no gradient anywhere: the sheet is a
+   plane, the night a flat fill, the mountains and the moon a dot
    pattern. The type comes from the ramp (.t-small, .t-label). */
 .sheet {
   --night: #0a0a0a;
   position: relative;
   padding: 20px;
-  border: 1px solid var(--edge, #333336);
   border-radius: 2px;
-  background: var(--sheet, #17171a);
+  background: var(--sheet, #18181a);
 }
 
 /* ── Phone: one row per surface, the frame on the left ── */
@@ -25,7 +25,6 @@
   column-gap: 24px;
   padding: 16px 0;
 }
-.col + .col { border-top: 1px solid var(--color-line); }
 .col:first-of-type { padding-top: 0; }
 .col:last-of-type { padding-bottom: 0; }
 
@@ -80,7 +79,6 @@
     grid-template-columns: 72px repeat(4, minmax(0, 1fr));
   }
   .col { display: contents; }
-  .col + .col { border-top: 0; }
 
   .stage {
     grid-column: var(--c);
@@ -100,13 +98,9 @@
     text-align: center;
   }
 
-  /* Each lane is a 56px row with a hairline above it, drawn by every cell
-     in the row at once, so it runs the full width of the grid */
+  /* Each lane is a 56px row; the rows are set apart by their height */
   .lane,
-  .cell {
-    height: 56px;
-    border-top: 1px solid var(--color-line);
-  }
+  .cell { height: 56px; }
   .lane[data-lane="design"],
   .cell[data-lane="design"] { grid-row: 3; margin-top: 24px; }
   .lane[data-lane="code"],
@@ -248,8 +242,9 @@
 .dots { fill: #f4f4f2; }
 
 /* ── SurfaceTabs: the chart sheet (inside the tabs' .paper) ──
-   A stage on a 40px drafting grid with one surface drawn large, then the
-   ledger, always whole. */
+   An open stage with one surface drawn large on the sheet, then the
+   ledger, always whole. No box round the stage, no rules in the ledger:
+   space and the drawings' own planes hold it. */
 .board {
   --night: #0a0a0a;
   --label: 48px;
@@ -268,22 +263,9 @@
   position: relative;
   display: grid;
   height: 220px;
-  border: 1px solid var(--color-line);
   overflow: hidden;
 }
 @media (min-width: 640px) { .drafting { height: 340px; } }
-.gridSvg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.gridLine {
-  fill: none;
-  stroke: var(--grid);
-  stroke-width: 1;
-  shape-rendering: crispEdges;
-}
 /* Four surfaces in one cell; the tabs show one at a time */
 .panel {
   position: relative;
@@ -323,8 +305,6 @@
   .colName { padding: 0 8px 0 0; text-align: left; }
 }
 
-.laneName,
-.lcell { border-top: 1px solid var(--color-line); }
 .laneName {
   grid-column: 1;
   display: flex;
@@ -333,14 +313,16 @@
 .laneName[data-lane="design"],
 .lcell[data-lane="design"] { grid-row: 2; }
 .laneName[data-lane="code"],
-.lcell[data-lane="code"] { grid-row: 3; border-bottom: 1px solid var(--color-line); }
+.lcell[data-lane="code"] { grid-row: 3; }
 
 /* Phone: the square stands at the column's centre. From 640px it stands
    on the column's left edge, under the name, and the tech word follows it
-   at 16px: clear of the hexagon that rings the code square in view
-   (it reaches 10px past the square). */
+   at 16px: clear of the hexagon the code square in view sits on (it
+   reaches 10px past the square). The cells lie over the focus, so the
+   hexagon's plane stays under the square. */
 .lcell {
   position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
@@ -395,7 +377,7 @@
   will-change: transform;
 }
 /* The tags span the column. On a phone each sits on the column's centre,
-   the last one flush with the ledger's right rule so it never passes it;
+   the last one flush with the ledger's right edge so it never passes it;
    from 640px each hangs off the column's left edge, like the rest of it */
 .tags {
   position: absolute;
@@ -417,8 +399,8 @@
 }
 /* The tag rides with the column and only fades: no rise of its own */
 .focus .tags > [data-pt] { transform: none; }
-/* Ringed round the code square: the centre of the code row, on the
-   square's own centre (the column's, on a phone) */
+/* The code square's plane: a raised hexagon under it, on the centre of
+   the code row and the square's own centre (the column's, on a phone) */
 .hex {
   position: absolute;
   left: 50%;
@@ -435,12 +417,7 @@
   }
   .hex { left: 6px; }
 }
-.hex polygon {
-  fill: none;
-  stroke: var(--grey-1, #a0a0a5);
-  stroke-width: 1.5;
-  stroke-dasharray: 3 3;
-}
+.hex polygon { fill: var(--raised, #232326); }
 
 /* Once, at a third in view: the surface fades in, the squares fade on
    lane by lane, the signs come on last. Opacity only, done by 1200ms. */

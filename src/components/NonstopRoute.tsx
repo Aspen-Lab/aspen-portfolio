@@ -8,24 +8,23 @@ import styles from "./NonstopRoute.module.css";
 
 /* Axel §01, "My handoff is a pull request", drawn as the pull request
    itself: one split card on the chart sheet (the global .paper-stack >
-   .paper, two back sheets behind it), whose structure is the section's
-   two claims.
+   .paper, two back sheets behind it), two planes whose structure is the
+   section's two claims. No outline and no rule: the sheet and the slab
+   are told apart by their tone, the checklist's lines by space.
 
    Left, on the sheet, the PR. First its owner lane: one row, Aspen's, and
    in it one solid grey block that holds the whole route (Problem, Design,
-   Build, Test, PR), each step an ink word. The column lines stand above
-   and below the block as 1px posts, so the block is seen to cross every
-   one of them: one pair of hands, no handoff. Beside the preview the
-   block runs on through the sheet's margin to the slab's edge, level with
-   the preview's tab, so the route reads straight into the working
-   preview. Under it, what the PR carries, as a checklist, led by ink
-   check squares, each line with a grey arrow toward the preview.
+   Build, Test, PR), each step an ink word: one pair of hands, no
+   handoff. Beside the preview the block runs on through the sheet's
+   margin to the slab's edge, level with the preview's tab, so the route
+   reads straight into the working preview. Under it, what the PR
+   carries, as a checklist, led by ink check squares, each line with a
+   grey arrow toward the preview.
 
-   Right, on the slab (a fine dot grid, crop marks in its corners, as on
-   §04's proof), the last thing the PR carries, not listed but running:
-   Axel's flight card (the traveller's "Seattle to LA, Friday morning",
-   SEA to LAX, Nonstop, Book) inside the figure's one accent mark, a 1.5px
-   frame with its name on a solid tab. It behaves. Book books it: the
+   Right, on the slab (a fine dot grid), the last thing the PR carries,
+   not listed but running: Axel's flight card (the traveller's "Seattle
+   to LA, Friday morning", SEA to LAX, Nonstop, Book) on a plane of its
+   own, named by the figure's one accent mark, a solid tab. It behaves. Book books it: the
    headline becomes "Your Los Angeles flight is booked", the plane flies
    SEA to LAX and leaves a solid line behind it, and the button becomes
    View trip, which settles the plane back to SEA. The button has its
@@ -33,8 +32,8 @@ import styles from "./NonstopRoute.module.css";
 
    The checklist is the preview's legend. Pointing at a line, focusing it
    or tapping it shows that line in the preview while the others step
-   back: the card's reusable parts are outlined; the frame narrows to a
-   phone's width and the same card reflows (a container query, not a
+   back: the card's reusable parts each lift onto a plane; the preview
+   narrows to a phone's width and the same card reflows (a container query, not a
    second design); the button runs through its states; the plane flies.
    A line writes data-show on the figure and data-on and aria-pressed on
    itself, straight to the DOM, and CSS does the rest, so a pointer never
@@ -155,8 +154,8 @@ const Check = () => (
   </span>
 );
 
-/* Axel's flight card. Two copies run in the frame: the one at the
-   frame's width, and the same component at a phone's width, which the
+/* Axel's flight card. Two copies run on the preview's plane: the one at
+   the plane's width, and the same component at a phone's width, which the
    legend's "responsive layouts" fades in. */
 function App({
   words,
@@ -237,10 +236,10 @@ function App({
   );
 }
 
-/* The working preview: the accent frame and the running card. Only this
-   re-renders, and only on a click. The frame is drawn as a surface and
-   four edges, so it can narrow to the phone copy by transforms alone; the
-   sizes are measured when the layout changes, never per frame. */
+/* The working preview: a plane, the accent tab and the running card.
+   Only this re-renders, and only on a click. The plane narrows to the
+   phone copy by transform alone; the sizes are measured when the layout
+   changes, never per frame. */
 const Preview = memo(function Preview({
   id,
   words,
@@ -269,7 +268,7 @@ const Preview = memo(function Preview({
     const narrow = box?.querySelector<HTMLElement>('[data-v="narrow"]');
     if (!box || !wide || !narrow) return;
     // A nudge of under a pixel that puts the box on whole device pixels,
-    // so the narrowed frame's edges (drawn through transforms, which are
+    // so the narrowed plane's edges (drawn through transforms, which are
     // not snapped) stay as crisp as the resting ones. It is a relative
     // offset, not a transform, so the card itself is still snapped.
     let nx = 0;
@@ -294,7 +293,6 @@ const Preview = memo(function Preview({
       box.style.setProperty("--sx", (w / W).toFixed(4));
       box.style.setProperty("--sy", (h / H).toFixed(4));
       box.style.setProperty("--ox", `${snap((W - w) / 2)}px`);
-      box.style.setProperty("--dy", `${h - H}px`);
     };
     measure();
     // The box moves when anything above it changes height, when the fonts
@@ -315,9 +313,6 @@ const Preview = memo(function Preview({
   return (
     <div ref={device} id={id} className={styles.device} data-booked={booked}>
       <span aria-hidden className={styles.surface} />
-      {(["t", "r", "b", "l"] as const).map((e) => (
-        <span key={e} aria-hidden className={styles.edge} data-e={e} />
-      ))}
       <span className={`t-label ${styles.tag}`}>{hold(label, styles.word)}</span>
       <App words={words} nonstop={nonstop} booked={booked} onToggle={toggle} />
       <App words={words} nonstop={nonstop} booked={booked} onToggle={toggle} narrow />
@@ -555,7 +550,7 @@ export function NonstopRoute({ meta, from, to, stops, cargoLabel, cargo, preview
         <div className={`paper ${styles.sheet}`}>
           <div className={styles.doc}>
             {/* The owner lane: one row, Aspen's; the five steps are printed
-                inside one solid block that crosses every column line */}
+                inside one solid block */}
             <div className={styles.lane} aria-hidden style={{ "--n": steps.length } as CSSProperties}>
               <span className={`t-label ${styles.owner}`}>{owner}</span>
               <span className={styles.run}>
@@ -594,9 +589,6 @@ export function NonstopRoute({ meta, from, to, stops, cargoLabel, cargo, preview
           </div>
 
           <div className={styles.stage}>
-            {(["tl", "tr", "br", "bl"] as const).map((c) => (
-              <span key={c} aria-hidden className={`reg-mark ${c}`} />
-            ))}
             <Preview id={previewId} words={preview} nonstop={nonstop} label={label} onBook={onBook} />
           </div>
         </div>

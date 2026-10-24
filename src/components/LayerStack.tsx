@@ -16,9 +16,10 @@ export type Layer = {
    number and name on the left, then the problem and the approach side by
    side, a dashed leader carrying one into the other. Nothing is hidden
    behind a tab, so the three can be read against each other. The rows
-   arrive one after another when the ledger comes into view; pointing at a
-   row runs an ink rule out over it. Phones stack each row, and the column
-   heads move into the rows. Reduced motion: everything already in place. */
+   arrive one after another when the ledger comes into view, each on a
+   plane of its own; pointing at a row lifts its plane a tone. Phones
+   stack each row, and the column heads move into the rows. Reduced
+   motion: everything already in place. */
 export function LayerStack({ layers }: { layers: Layer[] }) {
   const cn = useLocale() === "cn";
   const root = useRef<HTMLDivElement>(null);
@@ -38,7 +39,6 @@ export function LayerStack({ layers }: { layers: Layer[] }) {
       <ol className={styles.rows}>
         {layers.map((layer, i) => (
           <li key={layer.label} className={styles.row} style={{ ["--i" as string]: i } as CSSProperties}>
-            <span aria-hidden className={styles.run} />
             <p className={styles.name}>
               <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
               <span className={styles.label}>{layer.label}</span>

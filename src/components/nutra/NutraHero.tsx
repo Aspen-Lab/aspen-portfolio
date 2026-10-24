@@ -16,7 +16,7 @@ import styles from "./NutraHero.module.css";
    progress rims, Data with the month's spending), drawn by the same code
    as the working prototype in "What shipped". A product render on the
    site's dark tile: inside each phone the app's own colours, type and
-   radii; around them the hero frame's tile, edge and corner marks.
+   radii; around them the hero's plain plane.
 
    It is a picture, not a control: one img role with the owner's line for
    the launch-page hero as its name, everything inside inert. The phones

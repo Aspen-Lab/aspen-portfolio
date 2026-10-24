@@ -3,7 +3,8 @@
    index rows and the About page's [A-0x] heads, so the whole site counts
    in one voice: a folio numeral, the title in the display serif, and one
    mono figure on the right when the section has a number worth stating
-   (a count, a version). A hairline above; the rhythm below is the
+   (a count, a version). No rule above it (「线框我们用面」): the space
+   before a section is what ends the one above; the rhythm below is the
    section's own. */
 export function SectionHead({
   folio,
@@ -18,7 +19,7 @@ export function SectionHead({
   icon?: React.ReactNode;
 }) {
   return (
-    <header className="flex items-end justify-between gap-6 border-t border-line pt-5 mb-10 sm:mb-14">
+    <header className="flex items-end justify-between gap-6 pt-5 mb-10 sm:mb-14">
       <div className="flex items-baseline gap-4 sm:gap-6">
         <span className="font-mono text-[10px] tracking-[0.2em] text-soft tabular-nums">
           {folio}

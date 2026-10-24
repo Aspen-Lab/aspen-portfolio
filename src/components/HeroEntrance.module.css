@@ -21,64 +21,23 @@
   animation-fill-mode: both;
 }
 
+/* The two halves are planes of two tones, so where they meet is an edge
+   between planes, not a drawn line: the ground above, the hero's lower
+   plane below. */
 .top {
   top: 0;
-  border-bottom: 1px solid rgba(244, 244, 242, 0.09);
   animation-name: openTop;
 }
 
 .bottom {
   bottom: 0;
-  border-top: 1px solid rgba(244, 244, 242, 0.09);
+  background: rgba(29, 29, 32, 0.985);
   animation-name: openBottom;
 }
 
-.horizontalGuide,
-.verticalGuide {
-  position: absolute;
-  background: rgba(244, 244, 242, 0.2);
-}
-
-.horizontalGuide {
-  left: 6%;
-  right: 6%;
-  top: 50%;
-  height: 1px;
-  animation: guideAcross 1.08s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.horizontalGuide::before,
-.horizontalGuide::after {
-  content: "";
-  position: absolute;
-  top: -1px;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #aaa9a5;
-}
-.horizontalGuide::before { left: 0; }
-.horizontalGuide::after { right: 0; }
-
-.curveTrace, .codeTrace, .registration { stroke-dasharray: 1; }
+.curveTrace, .codeTrace { stroke-dasharray: 1; }
 .curveTrace { animation: drawMark 0.48s 0.07s cubic-bezier(.22,1,.36,1) both; }
 .codeTrace { animation: drawMark 0.42s 0.17s cubic-bezier(.22,1,.36,1) both; }
-.registration { animation: drawMark 0.36s 0.45s ease-out both; }
-
-.verticalGuide {
-  top: 12%;
-  bottom: 12%;
-  width: 1px;
-  animation: guideDown 1.04s 0.12s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.leftGuide {
-  left: 6%;
-}
-
-.rightGuide {
-  right: 6%;
-}
 
 .stage {
   position: absolute;
@@ -135,19 +94,6 @@
 @keyframes openBottom {
   from { transform: translateY(0); }
   to { transform: translateY(101%); }
-}
-
-@keyframes guideAcross {
-  0% { transform: scaleX(0); opacity: 0; }
-  36% { transform: scaleX(1); opacity: 0.65; }
-  65% { transform: scaleX(1); opacity: 0.4; }
-  100% { transform: scaleX(1); opacity: 0; }
-}
-
-@keyframes guideDown {
-  0% { transform: scaleY(0); opacity: 0; }
-  42% { transform: scaleY(1); opacity: 0.45; }
-  100% { transform: scaleY(1); opacity: 0; }
 }
 
 @keyframes designArrives {

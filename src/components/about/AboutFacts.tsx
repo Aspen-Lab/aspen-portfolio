@@ -6,7 +6,7 @@ import { Building2, Camera, CirclePause, Dice6, Fingerprint, GraduationCap, MapP
 import styles from "./AboutFacts.module.css";
 
 /** Field notes as one row of properties, the way a design tool lists a
-    layer's attributes: a label above, the value below, hairlines between.
+    layer's attributes: a label above, the value below, space between.
     Two tabs swap the row between work and life. */
 export function AboutFacts({ cn }: { cn: boolean }) {
   const [personal, setPersonal] = useState(false);

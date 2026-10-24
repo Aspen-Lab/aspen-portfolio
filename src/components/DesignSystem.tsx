@@ -50,8 +50,9 @@ export function DesignSystem() {
               <div className={styles.stage} aria-hidden data-active={current.key}>
                 <span className={styles.stageFolio}>01 — 03</span>
                 <span className={styles.stageLabel}>{cn ? "同一种石墨，三个层次。" : "ONE MATERIAL. THREE LEVELS."}</span>
+                {/* The floor: one flat plane under the slabs, no grid drawn on it */}
                 <div className={styles.ground}>
-                  <svg viewBox="0 0 400 320" fill="none"><path d="M20 160 200 52 380 160 200 268ZM65 133 245 241M110 106 290 214M155 79 335 187M65 187 245 79M110 214 290 106M155 241 335 133" stroke="currentColor" strokeWidth=".65" /></svg>
+                  <svg viewBox="0 0 400 320"><path d="M20 160 200 52 380 160 200 268Z" fill="currentColor" /></svg>
                 </div>
                 <div className={styles.stack}>
                   <div className={styles.slab + " " + styles.canvasSlab} data-selected={active === 0}>

@@ -1,7 +1,9 @@
-/* Three of Latent's numbered tabs over one panel area. Every plane is the
-   system's: split cards (sheet + slab) and a sheet on two back sheets,
-   1px edges, 2px corners, flat fills, square marks. Each panel has one
-   accent mark: the 1★ bar, the "But" square, the Motivation square. */
+/* Three numbered tabs over one panel area. Every plane is the system's:
+   split cards (a sheet beside a slab, told apart by tone) and a sheet on
+   two back planes; no edges, no rules, 2px corners, flat fills, square
+   marks. The only lines are data: the age axis and the chart's baseline.
+   Each panel has one accent mark: the 1★ bar, the "But" square, the
+   Motivation square. */
 .root {
   --gap: 16px;
   margin: 0;
@@ -27,8 +29,10 @@
   align-items: flex-start;
   gap: 4px;
   min-width: 0;
-  padding: 14px 0 12px;
-  border-bottom: 1px solid var(--color-line, #252528);
+  position: relative;
+  z-index: 1;
+  padding: 12px;
+  border-radius: 2px;
   color: #f4f4f2;
   text-align: left;
   transition: transform var(--t-1, 160ms) var(--ease-arrive);
@@ -38,7 +42,7 @@
     flex-direction: row;
     align-items: baseline;
     gap: 12px;
-    padding: 16px 0;
+    padding: 14px 16px;
   }
 }
 .tab:active { transform: translateY(1px); }
@@ -65,14 +69,17 @@
 .tab[data-on="true"] .tabNum,
 .tab[data-on="true"] .tabLabel { opacity: 1; }
 
-/* The one underline, 2px ink, sliding to the tab in view */
+/* The tab in view sits on a raised plane that slides under it (the
+   chosen thing is raised, as everywhere on the page); the others are
+   words on the ground */
 .bar {
   position: absolute;
-  left: 0;
+  top: 0;
   bottom: 0;
+  left: 0;
   width: calc((100% - 2 * var(--gap)) / 3);
-  height: 2px;
-  background: #f4f4f2;
+  border-radius: 2px;
+  background: var(--raised, #232326);
   transform: translateX(calc(var(--tab, 0) * (100% + var(--gap))));
   transition: transform var(--t-2, 360ms) var(--ease-arrive);
 }
@@ -103,12 +110,12 @@
     visibility 0s;
 }
 
-/* ── The split card (01, 03): one outline, a sheet and a slab ── */
+/* ── The split card (02, 03): a sheet and a slab side by side, told
+   apart by tone alone ── */
 .split {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border: 1px solid var(--edge, #333336);
   border-radius: 2px;
 }
 @media (min-width: 1024px) {
@@ -120,12 +127,7 @@
 .split > .chartCell {
   min-width: 0;
   padding: 28px 16px 18px;
-  border: 0;
   border-radius: 0;
-  /* a fine dot grid, whole on every edge */
-  background-image: radial-gradient(circle at center, var(--grey-3, #3a3a3f) 0.75px, transparent 1.25px);
-  background-size: 12px 12px;
-  background-repeat: space;
 }
 @media (min-width: 640px) {
   .split > .chartCell { padding: 48px 40px 28px; }
@@ -214,18 +216,10 @@
   flex-direction: column;
   min-width: 0;
   padding: 24px 20px;
-  border: 0;
-  border-top: 1px solid var(--edge, #333336);
   border-radius: 0;
 }
 @media (min-width: 640px) {
   .split > .reviewSlab { padding: 40px; }
-}
-@media (min-width: 1024px) {
-  .split > .reviewSlab {
-    border-top: 0;
-    border-left: 1px solid var(--edge, #333336);
-  }
 }
 .figure { margin: 0; }
 .figLabel {
@@ -242,12 +236,13 @@
 .named {
   display: grid;
   gap: 12px;
-  margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid var(--color-line, #252528);
+  margin-top: 40px;
 }
 @media (min-width: 1024px) {
-  .named { margin-top: auto; }
+  .named {
+    margin-top: auto;
+    padding-top: 40px;
+  }
 }
 .named > p { margin: 0; }
 .chips {
@@ -345,18 +340,21 @@
   min-width: 0;
   padding: 14px 14px 12px;
 }
-/* The lit edge: an ink outline over the tile's own, faded on (opacity
-   only, so a hover never repaints the tile) */
-.person::after {
+/* The lit plane: a raised plane under the tile's words, faded on
+   (opacity only, so a hover never repaints the tile). At rest the tile
+   is the sheet's own tone: eight entries in space. */
+.person::before {
   content: "";
   position: absolute;
-  inset: -1px;
-  border: 1px solid #f4f4f2;
+  inset: 0;
+  z-index: 0;
   border-radius: 2px;
+  background: var(--raised, #232326);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
+.person > * { position: relative; }
 @media (min-width: 640px) {
   .person.person { padding: 20px 20px 18px; }
 }
@@ -364,7 +362,7 @@
 .personStage { color: #a0a0a5; }
 
 /* Pointing at a tile (data-on, written by the component): its square on
-   the age line lifts, the others step back, its edge turns ink */
+   the age line lifts, the others step back, the tile rises a tone */
 .root[data-on] .age { opacity: var(--dim, 0.45); }
 .root[data-on="0"] .age[data-i="0"],
 .root[data-on="1"] .age[data-i="1"],
@@ -405,24 +403,23 @@
   opacity: 1;
   transform: translate(-50%, 0);
 }
-.root[data-on="0"] .person[data-i="0"]::after,
-.root[data-on="1"] .person[data-i="1"]::after,
-.root[data-on="2"] .person[data-i="2"]::after,
-.root[data-on="3"] .person[data-i="3"]::after,
-.root[data-on="4"] .person[data-i="4"]::after,
-.root[data-on="5"] .person[data-i="5"]::after,
-.root[data-on="6"] .person[data-i="6"]::after,
-.root[data-on="7"] .person[data-i="7"]::after {
+.root[data-on="0"] .person[data-i="0"]::before,
+.root[data-on="1"] .person[data-i="1"]::before,
+.root[data-on="2"] .person[data-i="2"]::before,
+.root[data-on="3"] .person[data-i="3"]::before,
+.root[data-on="4"] .person[data-i="4"]::before,
+.root[data-on="5"] .person[data-i="5"]::before,
+.root[data-on="6"] .person[data-i="6"]::before,
+.root[data-on="7"] .person[data-i="7"]::before {
   opacity: 1;
 }
 
-/* The shared mental model: Yes on a raised plane, But on the sheet */
+/* The shared mental model: Yes on a raised plane, But on the sheet
+   beside it; the change of plane is the only division */
 .model {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   margin-top: 24px;
-  border: 1px solid var(--edge, #333336);
-  border-radius: 2px;
 }
 @media (min-width: 640px) {
   .model { margin-top: 32px; }
@@ -437,13 +434,9 @@
 @media (min-width: 640px) {
   .modelSide { padding: 32px; }
 }
-.modelSide[data-side="yes"] { background: var(--raised, #1e1e21); }
-.modelSide[data-side="but"] { border-top: 1px solid var(--edge, #333336); }
-@media (min-width: 768px) {
-  .modelSide[data-side="but"] {
-    border-top: 0;
-    border-left: 1px solid var(--edge, #333336);
-  }
+.modelSide[data-side="yes"] {
+  border-radius: 2px;
+  background: var(--raised, #232326);
 }
 .modelLabel {
   display: flex;
@@ -469,9 +462,7 @@
 }
 .quote {
   position: relative;
-  margin: 24px 0 0;
-  padding-top: 20px;
-  border-top: 1px solid var(--color-line, #252528);
+  margin: 40px 0 0;
 }
 /* The open quote hangs in the margin, so the words align */
 .hang {
@@ -483,7 +474,6 @@
 .split > .personaSlab {
   min-width: 0;
   padding: 24px 20px;
-  border: 0;
   border-radius: 0;
 }
 @media (min-width: 640px) {
@@ -494,9 +484,8 @@
   place-items: center;
   width: 48px;
   height: 48px;
-  border: 1px solid var(--edge, #333336);
   border-radius: 2px;
-  background: var(--raised, #1e1e21);
+  background: var(--raised, #232326);
   color: var(--grey-1, #a0a0a5);
 }
 .personaSlab .chips { margin-top: 24px; }
@@ -508,8 +497,6 @@
 .split > .personaSheet {
   min-width: 0;
   padding: 4px 20px;
-  border: 0;
-  border-top: 1px solid var(--edge, #333336);
   border-radius: 0;
 }
 @media (min-width: 640px) {
@@ -519,8 +506,6 @@
   .split > .personaSheet {
     display: flex;
     align-items: center;
-    border-top: 0;
-    border-left: 1px solid var(--edge, #333336);
   }
 }
 .rows {
@@ -529,17 +514,16 @@
   padding: 0;
   list-style: none;
 }
+/* Three rows held apart by space alone */
 .row {
   display: flex;
   align-items: flex-start;
   gap: 16px;
   padding: 20px 0;
-  border-top: 1px solid var(--color-line, #252528);
 }
 @media (min-width: 640px) {
   .row { padding: 28px 0; }
 }
-.row:first-child { border-top: 0; }
 .rowSq {
   flex: none;
   width: 8px;
@@ -593,6 +577,6 @@
   .tab,
   .age { transition: none; }
   .ageTag { transition: opacity var(--t-1, 160ms) var(--ease-arrive); }
-  .person::after { transition: none; }
+  .person::before { transition: none; }
   .tab:active { transform: none; }
 }

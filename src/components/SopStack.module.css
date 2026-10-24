@@ -1,7 +1,9 @@
 /* The SOP as documents: three dark sheets on their back sheets (global
    .paper-stack > .paper, static), then a black slab (global .slab) with
-   the cycle. Ink and grey marks, 1px / 1.5px / 2px lines, no gradients;
-   the page accent only on the 'With the SOP' bar. */
+   the cycle. Planes, not frames: no rule on a sheet, no edge round a
+   part; the only lines are the workflow's own rule and gates. Ink and
+   grey marks, no gradients; the page accent only on the 'With the SOP'
+   bar. */
 .root { width: 100%; }
 
 .docs {
@@ -58,19 +60,17 @@
   .title { font-size: 20px; }
 }
 
-/* A fixed drawing height, so the three drawings and foot rules align */
+/* A fixed drawing height, so the three drawings and texts align */
 .drawing {
   display: flex;
   align-items: center;
   height: 120px;
-  margin: 24px 0;
+  margin: 24px 0 32px;
 }
 
-/* S6, under a 1px rule straight after the drawing, so the three rules
-   and the three texts start on one line whatever their length */
+/* S6, straight after the drawing (space, no rule), so the three texts
+   start on one line whatever their length */
 .text {
-  padding-top: 16px;
-  border-top: 1px solid #252528;
   color: #a0a0a5;
   font-size: 15px;
   font-weight: 400;
@@ -113,13 +113,13 @@
   padding: 0;
   list-style: none;
 }
+/* The rows stand apart by space alone, no rule between them */
 .check {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 0;
+  padding: 6px 0;
 }
-.check + .check { border-top: 1px solid #252528; }
 .tick {
   display: block;
   flex: none;
@@ -190,13 +190,13 @@
   height: 2px;
   background: #0a0a0a;
 }
+/* The input: a raised plane, no edge, its caret in ink */
 .input {
   position: relative;
-  box-sizing: border-box;
   width: 96px;
   height: 20px;
-  border: 1.5px solid #f4f4f2;
   border-radius: 2px;
+  background: var(--raised, #232326);
 }
 /* the input's caret */
 .input::after {
@@ -292,15 +292,14 @@
   width: calc(var(--w) * 100%);
   background: var(--accent, #f4f4f2);
 }
-/* What the SOP cut, outlined where the old cycle ran on */
+/* What the SOP cut: a faint raised plane where the old cycle ran on */
 .barCut {
   position: absolute;
   top: 0;
   bottom: 0;
   left: calc(var(--w) * 100%);
   right: 0;
-  border: 1px dashed #6b6b71;
-  border-left: 0;
+  background: var(--raised, #232326);
 }
 
 /* ── Entrance: each sheet's marks fade in reading order, 60ms apart from

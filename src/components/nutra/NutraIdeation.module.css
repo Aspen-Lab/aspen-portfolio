@@ -1,27 +1,29 @@
-/* Two numbered tabs (as EmailRender) over two stacked panes: the HMW
-   tiles with their ideas sheet, and the goal lifecycle on a chart sheet.
-   Planes from the one dark system (.tile, .paper-stack > .paper, .chip);
-   ink and grey marks, 1px lines, no gradient. The accent: tile 03's
-   square in pane 01, Solution's outline in pane 02. */
+/* Two numbered tabs over two stacked panes: the HMW tiles with their
+   ideas sheet, and the goal lifecycle on a chart sheet. Planes from the
+   one dark system (.tile, .paper-stack > .paper, .chip), told apart by
+   tone, never outlined; rows and heads held apart by space. The only
+   lines are the lifecycle's connectors (a flow). The accent, a filled
+   square each pane: by tile 03's index, and inside Solution. */
 .root { margin: 0; }
 
-/* ── The tabs: 01 How might we / 02 Goal lifecycle ── */
+/* ── The tabs: 01 How might we / 02 Goal lifecycle. Words on the ground;
+   the tab in view sits on a raised plane ── */
 .tabs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 16px;
+  column-gap: 8px;
 }
-@media (min-width: 640px) { .tabs { column-gap: 24px; } }
+@media (min-width: 640px) { .tabs { column-gap: 12px; } }
 .tab {
   position: relative;
+  isolation: isolate;
   display: flex;
   align-items: baseline;
   gap: 12px;
   min-width: 0;
-  padding: 16px 0;
+  padding: 12px;
   border: 0;
-  border-bottom: 1px solid var(--color-line, #252528);
-  border-radius: 0;
+  border-radius: 2px;
   background: none;
   color: var(--color-ink, #f4f4f2);
   text-align: left;
@@ -50,25 +52,28 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* The 2px ink underline under the tab in view */
+@media (min-width: 640px) {
+  .tab { padding: 14px 16px; }
+}
+/* The raised plane under the tab in view (opacity only): the chosen
+   thing is raised, as everywhere on the page */
 .fill {
   position: absolute;
-  right: 0;
-  bottom: -1px;
-  left: 0;
-  height: 2px;
-  background: #f4f4f2;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--t-2, 360ms) var(--ease-arrive);
+  inset: 0;
+  z-index: -1;
+  border-radius: 2px;
+  background: var(--raised, #232326);
+  opacity: 0;
+  transition: opacity var(--t-2, 360ms) var(--ease-arrive);
 }
-.tab[data-on="true"] .fill { transform: none; }
+.tab[data-on="true"] .fill { opacity: 1; }
 
 /* ── Panes: stacked in one cell; the tab in view fades in ── */
 .panes {
   display: grid;
-  margin-top: 24px;
+  margin-top: 16px;
 }
+@media (min-width: 640px) { .panes { margin-top: 24px; } }
 .pane {
   grid-area: 1 / 1;
   min-width: 0;
@@ -111,8 +116,9 @@
   .hmw { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-/* A question tile: the global .tile plane as a button. The selected one
-   is raised with an ink edge; both are overlays, so a choice only fades. */
+/* A question tile: the global .tile plane as a button. A pointer lifts
+   it a tone; the selected one is raised (an overlay, so a choice only
+   fades). No edge either way. */
 .tileBtn {
   position: relative;
   isolation: isolate;
@@ -126,45 +132,34 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: transform var(--t-1, 160ms) var(--ease-arrive);
+  transition:
+    transform var(--t-1, 160ms) var(--ease-arrive),
+    background-color var(--t-1, 160ms) var(--ease-arrive);
 }
 @media (min-width: 640px) {
   .tileBtn { padding: 24px 24px 20px; }
 }
 .tileBtn:active { transform: translateY(1px); }
-.tileBtn::before,
-.tileBtn::after {
+@media (hover: hover) {
+  .tileBtn:hover { background-color: #1d1d20; }
+}
+.tileBtn::before {
   content: "";
   position: absolute;
+  z-index: -1;
+  inset: 0;
   border-radius: 2px;
+  background: var(--raised, #232326);
   pointer-events: none;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
-.tileBtn::before {
-  z-index: -1;
-  inset: 0;
-  background: #1e1e21;
-}
-.tileBtn::after {
-  inset: -1px;
-  border: 1px solid #f4f4f2;
-}
-@media (hover: hover) {
-  .tileBtn:hover::after { opacity: 0.35; }
-}
 .hmw[data-sel="0"] .tileBtn[data-k="0"]::before,
-.hmw[data-sel="0"] .tileBtn[data-k="0"]::after,
 .hmw[data-sel="1"] .tileBtn[data-k="1"]::before,
-.hmw[data-sel="1"] .tileBtn[data-k="1"]::after,
 .hmw[data-sel="2"] .tileBtn[data-k="2"]::before,
-.hmw[data-sel="2"] .tileBtn[data-k="2"]::after,
 .hmw[data-sel="3"] .tileBtn[data-k="3"]::before,
-.hmw[data-sel="3"] .tileBtn[data-k="3"]::after,
 .hmw[data-sel="4"] .tileBtn[data-k="4"]::before,
-.hmw[data-sel="4"] .tileBtn[data-k="4"]::after,
-.hmw[data-sel="5"] .tileBtn[data-k="5"]::before,
-.hmw[data-sel="5"] .tileBtn[data-k="5"]::after { opacity: 1; }
+.hmw[data-sel="5"] .tileBtn[data-k="5"]::before { opacity: 1; }
 .tileBtn:focus-visible { outline-offset: 3px; }
 
 .tileTop {
@@ -303,7 +298,7 @@
 }
 
 /* ══ 02 · Goal lifecycle ═══════════════════════════════════════════════
-   Three columns of trees. A node is a raised box; a child hangs off its
+   Three columns of trees. A node is a raised plane; a child hangs off its
    parent's trunk (x = 6px under the parent) by an elbow that turns into
    it with a 6px head. --cy is a one-line node's centre line. */
 .lifeSheet { padding: 20px; }
@@ -343,13 +338,11 @@
   min-width: 0;
 }
 
-/* The column head: number and name over a rule */
+/* The column head: number and name, then air */
 .colHead {
   display: flex;
   gap: 12px;
-  margin: 0 0 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #252528;
+  margin: 0 0 24px;
 }
 
 /* Between stacked columns (below 1024px): an arrow down into the next */
@@ -417,32 +410,27 @@
 .node {
   position: relative;
   max-width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #333336;
+  padding: 9px 13px;
   border-radius: 2px;
-  background: #1e1e21;
+  background: var(--raised, #232326);
   color: #f4f4f2;
   font-size: 15px;
   font-weight: 400;
   line-height: 20px;
   outline-offset: 3px;
+  transition: background-color var(--t-1, 160ms) var(--ease-arrive);
 }
 .node[data-parent] { cursor: pointer; }
-.node::before,
-.node[data-focus]::after {
+/* Solution: the pane's one focus, a filled square before its name */
+.node[data-focus]::before {
   content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: 2px;
-  pointer-events: none;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  background: var(--accent, #f4f4f2);
+  vertical-align: 1px;
 }
-.node::before {
-  border: 1px solid #f4f4f2;
-  opacity: 0;
-  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
-}
-/* Solution: the pane's one focus */
-.node[data-focus]::after { border: 1.5px solid var(--accent, #f4f4f2); }
 
 /* ■ Emotional support: an ink square and its label, the last row under
    its node */
@@ -666,21 +654,20 @@
 .life[data-node="reminder"] :is(.kid[data-from="reminder"] > .elbow, .kid[data-from="reminder"] > .branched > .branch, .subs[data-from="reminder"] > .elbow) :is(.lit, .bLit),
 .life[data-node="solution"] :is(.kid[data-from="solution"] > .elbow, .kid[data-from="solution"] > .branched > .branch, .subs[data-from="solution"] > .elbow) :is(.lit, .bLit),
 .life[data-node="celebrate"] :is(.kid[data-from="celebrate"] > .elbow, .kid[data-from="celebrate"] > .branched > .branch, .subs[data-from="celebrate"] > .elbow) :is(.lit, .bLit),
-.life[data-node="recall"] :is(.kid[data-from="recall"] > .elbow, .kid[data-from="recall"] > .branched > .branch, .subs[data-from="recall"] > .elbow) :is(.lit, .bLit),
-.life[data-node="create"] .node[data-id="create"]::before,
-.life[data-node="reminder"] .node[data-id="reminder"]::before,
-.life[data-node="solution"] .node[data-id="solution"]::before,
-.life[data-node="celebrate"] .node[data-id="celebrate"]::before,
-.life[data-node="recall"] .node[data-id="recall"]::before { opacity: 1; }
+.life[data-node="recall"] :is(.kid[data-from="recall"] > .elbow, .kid[data-from="recall"] > .branched > .branch, .subs[data-from="recall"] > .elbow) :is(.lit, .bLit) { opacity: 1; }
+/* ...and its plane lifts a tone */
+.life[data-node="create"] .node[data-id="create"],
+.life[data-node="reminder"] .node[data-id="reminder"],
+.life[data-node="solution"] .node[data-id="solution"],
+.life[data-node="celebrate"] .node[data-id="celebrate"],
+.life[data-node="recall"] .node[data-id="recall"] { background: #2c2c30; }
 
 /* The legend counts the ink squares */
 .legend {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 32px 0 0;
-  padding-top: 16px;
-  border-top: 1px solid #252528;
+  margin: 48px 0 0;
 }
 
 /* Chinese is held word by word, so no line ends inside a word */
@@ -720,9 +707,8 @@
   .tab,
   .tileBtn,
   .tileBtn::before,
-  .tileBtn::after,
   .fill,
-  .node::before,
+  .node,
   .lit,
   .bLit { transition: none; }
   .tab:active,

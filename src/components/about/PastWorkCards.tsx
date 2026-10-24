@@ -15,8 +15,9 @@ const at = (index: number) => ({ "--d": index }) as CSSProperties;
 
 /* One study per role, drawn from what the work was about (a structure and
    its sign-off, a cargo bike, light split into chained blocks, a ship under
-   a detection box, a cold-chain case, a canvas and a pen) in the same line
-   language as before. They stay studies: none of them is a project screen.
+   a detection box, a cold-chain case, a canvas and a pen) in planes a tone
+   apart, with lines only where the thing itself is a line. They stay
+   studies: none of them is a project screen.
    Lines draw in when the card enters the view; each study then keeps one or
    two quiet loops that say what the thing does. */
 
@@ -30,6 +31,7 @@ function Truss({ alternate }: StudyProps) {
     <>
       <path d="M60 62H300M60 56v12M300 56v12" className={styles.guide} />
       <path d="M36 158H324" className={styles.guide} />
+      <rect x={mid[0] - 10} y={mid[1] - 10} width="20" height="20" className={cx(styles.planeLight, styles.breathe, styles.motion)} />
       <path pathLength={1} d="M60 140H300M100 88H260M60 140L100 88M300 140L260 88" className={cx(styles.strongLine, styles.draw, styles.motion)} />
       <path pathLength={1} d="M100 88V140M140 88V140M180 88V140M220 88V140M260 88V140M100 88L140 140M260 88L220 140M140 88L180 140M220 88L180 140" className={cx(styles.line, styles.draw, styles.motion)} style={at(2)} />
       {joints.map(([x, y], index) => (
@@ -40,8 +42,7 @@ function Truss({ alternate }: StudyProps) {
       <path d="M300 140L291 152H309Z" className={styles.plane} />
       <circle cx="294" cy="155" r="2.5" className={styles.dot} />
       <circle cx="306" cy="155" r="2.5" className={styles.dot} />
-      <rect x={mid[0] - 9} y={mid[1] - 9} width="18" height="18" className={cx(styles.guide, styles.breathe, styles.motion)} />
-      <path d={`M${mid[0]} ${mid[1] + 9}L180 187`} className={cx(styles.dashedLine, styles.flow, styles.motion)} />
+      <path d={`M${mid[0]} ${mid[1] + 10}L180 187`} className={cx(styles.dashedLine, styles.flow, styles.motion)} />
       <path d="M110 196H241" className={styles.line} />
       <circle cx="110" cy="196" r="6" className={styles.plane} />
       <circle cx="180" cy="196" r="8" className={styles.plane} />
@@ -143,20 +144,20 @@ function Ship({ alternate }: StudyProps) {
       <path d="M300 200L176 70" className={cx(styles.dashedLine, styles.sweep, styles.motion)} />
       <path d="M28 168H332" className={styles.guide} />
       <path d="M40 182H120M150 182H250" className={cx(styles.dashedLine, styles.flow, styles.motion)} />
+      <g className={cx(styles.breathe, styles.motion)}>
+        <rect x="58" y="78" width="248" height="102" rx="2" className={styles.planeDeep} />
+      </g>
       <g className={cx(styles.float, styles.motion)}>
         <path d="M70 140H276L258 168H92Z" className={styles.plane} />
-        <rect x="88" y="104" width="34" height="36" className={styles.plane} />
+        <rect x="88" y="104" width="34" height="36" className={styles.planeLight} />
         <path d="M94 114h22" className={styles.line} />
-        <rect x="98" y="88" width="10" height="16" className={styles.plane} />
+        <rect x="98" y="88" width="10" height="16" className={styles.planeLight} />
         {[0, 1, 2].map((index) => (
           <circle key={index} cx="103" cy="82" r={2 + index * 0.6} className={cx(styles.guide, styles.rise, styles.motion)} style={at(index * 3)} />
         ))}
         {[130, 154, 178, 202, 226].map((x, index) => (
-          <rect key={x} x={x} y={index % 2 ? 118 : 124} width="22" height={index % 2 ? 22 : 16} className={styles.plane} />
+          <rect key={x} x={x} y={index % 2 ? 118 : 124} width="22" height={index % 2 ? 22 : 16} className={styles.planeLight} />
         ))}
-      </g>
-      <g className={cx(styles.breathe, styles.motion)}>
-        <path d="M58 92V78h14M292 78h14v14M58 166v14h14M306 166v14h-14" className={styles.strongLine} />
       </g>
       <rect x="58" y="60" width="60" height="14" rx="2" className={styles.solid} />
       <path d="M64 67h26" className={styles.reverseLine} />
@@ -172,8 +173,8 @@ function ColdCase({ alternate }: StudyProps) {
   return (
     <>
       <path d="M112 106L180 140V192L112 158Z" className={styles.plane} />
-      <path d="M180 140L248 106V158L180 192Z" className={styles.plane} />
-      <path d="M180 72L248 106L180 140L112 106Z" className={styles.plane} />
+      <path d="M180 140L248 106V158L180 192Z" className={styles.planeDeep} />
+      <path d="M180 72L248 106L180 140L112 106Z" className={styles.planeLight} />
       <path d="M124 128v24M136 134v24M224 134v24M236 128v24" className={styles.guide} />
       {alternate ? (
         <>
@@ -217,10 +218,10 @@ function Canvas({ alternate }: StudyProps) {
   return (
     <>
       <g transform="rotate(-6 168 121)">
-        <rect x="104" y="38" width="160" height="150" rx="3" className={cx(styles.guide, styles.layerBack)} />
+        <rect x="104" y="38" width="160" height="150" rx="3" className={cx(styles.planeDeep, styles.layerBack)} />
         <rect x="96" y="44" width="160" height="150" rx="3" className={cx(styles.plane, styles.layerMid)} />
-        <rect x="88" y="50" width="160" height="150" rx="3" className={styles.plane} />
-        <path d="M100 186h40M100 192h24" className={styles.guide} />
+        <rect x="88" y="50" width="160" height="150" rx="3" className={styles.planeLight} />
+        <path d="M100 186h40M100 192h24" className={styles.line} />
       </g>
       <path pathLength={1} d={stroke} className={cx(styles.strongLine, styles.brush, styles.motion)} style={{ strokeWidth: 8, strokeLinecap: "round" }} />
       <g className={cx(styles.float, styles.motion)}>
@@ -232,10 +233,10 @@ function Canvas({ alternate }: StudyProps) {
       <g className={cx(styles.twinkle, styles.motion)} style={at(4)}>
         <path d={alternate ? "M300 92Q301 98 307 99Q301 100 300 106Q299 100 293 99Q299 98 300 92Z" : "M70 74Q71 80 77 81Q71 82 70 88Q69 82 63 81Q69 80 70 74Z"} className={styles.plane} />
       </g>
+      <circle cx="56" cy="182" r="9" className={cx(styles.plane, styles.breathe, styles.motion)} />
       {[60, 76, 92].map((y, index) => (
-        <circle key={y} cx="56" cy={y + 90} r="5" className={index === 2 ? styles.solid : styles.plane} />
+        <circle key={y} cx="56" cy={y + 90} r="5" className={index === 2 ? styles.solid : styles.planeLight} />
       ))}
-      <circle cx="56" cy="182" r="9" className={cx(styles.guide, styles.breathe, styles.motion)} />
     </>
   );
 }

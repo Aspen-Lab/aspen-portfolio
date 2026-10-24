@@ -9,13 +9,16 @@ import { CatalogueMedia, StageMedia } from "./CatalogueMedia";
 import { demoCaption, type SideDemoId } from "./SideProjectDemo";
 import styles from "./CatalogueIndex.module.css";
 
-/* The catalogue: a ruled index with one sticky viewfinder plate.
+/* The catalogue: an index of entries beside one sticky plate.
    Built for the works, then generalised so the side projects read as
    their peer — same rows, same plate, same readout, one component
    (Aspen: 「和作品平级」). On the left every entry is a row with a folio
-   numeral, its name in the display serif, and a mono readout. A fine
-   pointer gets one sticky preview. Phones and touch tablets get a
-   preview on every card, with two columns where there is room. */
+   numeral, its name in the display serif, and a mono readout. Nothing is
+   ruled or framed (「线框我们用面」): the rows are kept apart by space, and
+   the entry on the plate stands on a plane of its own, the same tone as
+   the plate. A fine pointer gets one sticky preview. Phones and touch
+   tablets get a preview on every card, with two columns where there is
+   room. */
 
 export type CatalogueCover = {
   src: string;
@@ -297,7 +300,7 @@ function StageCaption({ rows, active, cn, onReplay }: {
   const current = rows[index] ?? rows[0];
   return (
     <>
-      {current.cover?.demo && <div className="border-b border-line pt-1">
+      {current.cover?.demo && <div className="pt-1">
         <DemoControls row={current} cn={cn} onReplay={onReplay} />
       </div>}
       <div aria-hidden className="mt-4 grid grid-cols-[auto_1fr] items-baseline gap-5 font-mono text-[10px] leading-relaxed uppercase tracking-[0.14em] text-soft">
@@ -310,7 +313,7 @@ function StageCaption({ rows, active, cn, onReplay }: {
   );
 }
 
-/* The viewfinder. The layers share one box, so one set of observers
+/* The plate. The layers share one box, so one set of observers
    speaks for all of them: warm (every cover fetched and decoded before
    the plate arrives), seen (the picture settles), seen well (a scene or
    a video may play). Hidden on phones, so nothing here ever loads. */
@@ -328,7 +331,7 @@ function Stage({ rows, active, cn, replays, onReplay }: {
   return (
     <aside className={styles.preview}>
       <div ref={plate} className="group/preview plate relative overflow-hidden aspect-[16/10]">
-        {/* The covers stack in their own context, under the marks and the link */}
+        {/* The covers stack in their own context, under the link */}
         <div className={styles.layers}>
           {rows.map((row, i) => (
             <Layer
@@ -342,12 +345,9 @@ function Stage({ rows, active, cn, replays, onReplay }: {
             />
           ))}
         </div>
-        <span className="reg-mark tl" />
-        <span className="reg-mark tr" />
-        <span className="reg-mark br" />
-        <span className="reg-mark bl" />
         <StageLink rows={rows} active={active} cn={cn} />
-        <span aria-hidden className="pointer-events-none absolute right-5 bottom-5 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white opacity-0 transition-opacity duration-200 group-hover/preview:opacity-100 group-focus-within/preview:opacity-100">↗</span>
+        {/* A disc of the slab tone, no ring: it reads on a white cover and a night sky alike */}
+        <span aria-hidden className="pointer-events-none absolute right-5 bottom-5 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-[#0a0a0a] text-white opacity-0 transition-opacity duration-200 group-hover/preview:opacity-100 group-focus-within/preview:opacity-100">↗</span>
       </div>
       <StageCaption rows={rows} active={active} cn={cn} onReplay={onReplay} />
     </aside>
@@ -374,7 +374,7 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
         ))}
       </ol>
 
-      {/* ── The viewfinder — one plate, the active entry's cover ── */}
+      {/* ── The plate — the active entry's cover ── */}
       <Stage rows={rows} active={active} cn={cn} replays={replays} onReplay={replay} />
     </div>
   );

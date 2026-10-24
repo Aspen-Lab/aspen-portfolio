@@ -1,15 +1,11 @@
-/* The hero's stage: it fills the page's hero frame (the tile, its 1px
-   edge and corner marks belong to the frame) with a faint dot grid, the
-   drafting ground the prototype's sheet uses too. Three phones in a row,
+/* The hero's stage: it fills the page's hero plane and leaves it empty
+   (no dot grid: the phones stand on a plain plane). Three phones in a row,
    centred, scaled together by --s (written by a ResizeObserver; these
    fallbacks hold the first paint). Inside each phone the app's own
    language applies (app/phone.module.css). */
 .root {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgb(244 244 242 / 6%) 1px, transparent 1.5px);
-  background-size: 16px 16px;
-  background-position: 8px 8px;
 }
 
 .stage {

@@ -11,13 +11,14 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
    切，而且横向不好」). Now every photo keeps its own proportions — the
    sizes come from the files — in a masonry of two or three columns that
    fills the width, no cropping, no sideways scroll. Hovering shows the
-   registration corners and the frame number; clicking opens the frame
-   in a full-size viewfinder that also never crops (object-contain), with
-   a readout, arrows, ← → and Esc.
+   frame number; clicking opens the frame full size, never cropped
+   (object-contain), with a readout, arrows, ← → and Esc. No corner marks
+   on either (「线框我们用面」): a photo is its own plane.
    Captions are sentences, so they are set as sentences: the sans, in
    sentence case, in mute, brightening with the photo on hover. Mono is
-   kept for the one thing that is a label — the frame index, boxed in
-   the corner of the photo and in the viewer's readout. */
+   kept for the one thing that is a label — the frame index, set on a
+   small raised plane in the corner of the photo, and in the viewer's
+   readout. */
 
 export type Frame = {
   src: string;
@@ -69,7 +70,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
               type="button"
               onClick={() => setOpen(i)}
               aria-label={`${label} · ${pad(i + 1)} / ${pad(frames.length)}${f.caption ? ` · ${f.caption}` : ""}`}
-              className="relative block w-full plate plate-figure cursor-pointer outline-none focus-visible:border-ink/45"
+              className="relative block w-full plate plate-figure cursor-pointer"
             >
               <Image
                 src={f.src}
@@ -82,13 +83,9 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                 style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
               />
               <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100">
-                <span className="reg-mark tl" />
-                <span className="reg-mark tr" />
-                <span className="reg-mark br" />
-                <span className="reg-mark bl" />
-                {/* The index rides inside the top-left registration mark as a boxed tag:
-                    paper fill and a hairline, so it reads over a white mat as well as a night sky. */}
-                <span className="absolute left-[18px] top-[18px] border border-[rgb(244_244_242/55%)] bg-paper px-[7px] py-[5px] font-mono text-[10px] leading-none uppercase tracking-[0.16em] text-ink tabular-nums">
+                {/* The index on a small raised plane, no edge: a solid tone reads
+                    over a white mat as well as a night sky. */}
+                <span className="absolute left-[14px] top-[14px] rounded-[2px] bg-[#232326] px-[7px] py-[5px] font-mono text-[10px] leading-none uppercase tracking-[0.16em] text-ink tabular-nums">
                   {pad(i + 1)} <span className="text-soft">/</span> {pad(frames.length)}
                 </span>
               </span>
@@ -160,15 +157,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="relative p-5 sm:p-7">
-                    <span className="reg-mark tl" />
-                    <span className="reg-mark tr" />
-                    <span className="reg-mark br" />
-                    <span className="reg-mark bl" />
-                    <span className="vf-tick top" />
-                    <span className="vf-tick bottom" />
-                    <span className="vf-tick left" />
-                    <span className="vf-tick right" />
-                    {/* The frame takes the photo's own ratio and fits the viewport; nothing is cropped. */}
+                    {/* The photo takes its own ratio and fits the viewport; nothing is cropped. */}
                     <div
                       className="relative plate overflow-hidden"
                       style={{

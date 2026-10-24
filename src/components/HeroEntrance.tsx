@@ -1,15 +1,14 @@
 import styles from "./HeroEntrance.module.css";
 
-/** Draw, converge, then open — present at first paint without hydration. */
+/** Draw, converge, then open — present at first paint without hydration.
+    Two planes, the ground over the hero's lower tone, meet at the middle
+    and part; no guide lines and no registration corners are drawn
+    (「线框我们用面」). */
 export function HeroEntrance() {
   return (
     <div className={styles.entrance} data-hero-entrance aria-hidden="true">
       <div className={`${styles.shutter} ${styles.top}`} />
       <div className={`${styles.shutter} ${styles.bottom}`} />
-
-      <div className={styles.horizontalGuide} />
-      <div className={`${styles.verticalGuide} ${styles.leftGuide}`} />
-      <div className={`${styles.verticalGuide} ${styles.rightGuide}`} />
 
       <div className={styles.stage}>
         <svg
@@ -52,7 +51,6 @@ export function HeroEntrance() {
           strokeWidth="1.5"
         >
           <path className={styles.letter} pathLength="1" d="M6 39 20 8l14 31M11 28h18" />
-          <path className={styles.registration} pathLength="1" d="M0 8V0h8M32 0h8v8M0 40v8h8M32 48h8v-8" opacity=".28" />
         </svg>
       </div>
     </div>

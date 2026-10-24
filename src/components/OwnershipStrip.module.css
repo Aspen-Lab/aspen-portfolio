@@ -1,6 +1,6 @@
-/* One split card: the tools on the sheet, what stays mine on the slab,
-   one 1px outline round both and a 1px divider between. Flat fills, 1px
-   lines, no gradient, no accent. The type comes from the ramp (.t-label,
+/* One split card of two planes: the tools on the sheet, what stays mine
+   on the slab, told apart by their tone alone. No outline, no divider,
+   no gradient, no accent. The type comes from the ramp (.t-label,
    .t-subhead, .t-small) and the tools from .chip. */
 .strip { margin: 0; }
 
@@ -8,11 +8,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border: 1px solid var(--edge);
   border-radius: 2px;
 }
 /* The system split: 7fr/5fr at 1024px and up, as the Chart split and Up
-   next; stacked, divider on top, below that */
+   next; stacked below that, the slab under the sheet */
 @media (min-width: 1024px) {
   .box { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
 }
@@ -34,22 +33,13 @@
   margin-top: 24px;
 }
 
-/* The slab draws only the divider between the halves; the outline is the
-   box's */
+/* The slab meets the sheet edge to edge: the change of tone is the seam */
 .mine.mine {
   padding: 24px 20px;
-  border: 0;
-  border-top: 1px solid var(--edge);
   border-radius: 0;
 }
 @media (min-width: 640px) {
   .mine.mine { padding: 40px; }
-}
-@media (min-width: 1024px) {
-  .mine.mine {
-    border-top: 0;
-    border-left: 1px solid var(--edge);
-  }
 }
 
 .list {

@@ -29,13 +29,14 @@ type Props = {
 /* The Vendor Docking SOP drawn as the documents it was: three dark sheets,
    each on its two back sheets (the global stack, static), each with a
    header, a title, a drawing of what the page holds and the case's own
-   line under a rule. The drawings use only ink and grey marks and the
+   line under it. The drawings use only ink and grey marks and the
    labels the case gives: the workflow as stages on a rule through dashed
    gates, an owner bar under each stage; acceptance as a ticked checklist;
    delivery as a ramp of tokens, a button and an input, and the market
    codes as chips. A black slab under the documents carries what the SOP
    cut: the cycle as two bars, the new one as long as the old one minus
-   the cut (the page accent, the figure's one focus), the cut outlined.
+   the cut (the page accent, the figure's one focus), the cut a faint
+   raised plane.
    A statement, not a control: no hover, no tab stops. Entry: each sheet's
    marks fade in reading order once it is in view, and the bars run out
    once; reduced motion draws everything at once. */

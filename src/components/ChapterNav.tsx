@@ -6,8 +6,9 @@ import { motion, useReducedMotion } from "motion/react";
 
 type ChapterNavProps = {
   chapters: string[];
-  /** Banded pages: the rail sits on a solid plate, so it reads over a
-      light band too, and the phone bar spans an article with no gutter. */
+  /** Banded pages: the rail sits on a solid plane, so it reads over
+      whatever passes under it, and the phone bar spans an article with
+      no gutter. */
   plate?: boolean;
 };
 
@@ -168,9 +169,10 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
           for the rail's plate: from 1024 to ~1350 it sat on the right
           edge of the chart sheets and their back sheets. At 1360 the
           plate clears the back sheet by ~19px, and more above that.
-          On a plate the bar sticks 1px higher, so its top edge tucks
-          under the header's rule: one line at the seam, not two. */}
-      <div ref={mobileNavRef} className={`sticky z-30 mt-16 ${plate ? "top-[95px] sm:top-[63px] min-[1360px]:hidden mx-0 border-y border-[#333336] bg-[#141416]" : "top-24 sm:top-16 lg:hidden bg-paper/90 backdrop-blur-md border-y border-line/80 -mx-[max(1.25rem,4vw)]"}`}>
+          The bar is a plane with no rule above or below it (planes, not
+          frames): on a plate it is the sheet's tone, and it sticks 1px
+          higher so it meets the header with no seam of ground between. */}
+      <div ref={mobileNavRef} className={`sticky z-30 mt-16 ${plate ? "top-[95px] sm:top-[63px] min-[1360px]:hidden mx-0 bg-(--tile)" : "top-24 sm:top-16 lg:hidden bg-cream -mx-[max(1.25rem,4vw)]"}`}>
         <motion.div
           ref={scrollerRef}
           layoutScroll
@@ -209,7 +211,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
               {active === i && (
                 <motion.span
                   layoutId="chapter-nav-indicator-mobile"
-                  className="absolute -bottom-3.5 left-0 right-0 h-px bg-ink"
+                  className="absolute -bottom-3.5 left-0 right-0 h-0.5 bg-ink"
                   transition={glide ?? { type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
@@ -220,7 +222,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
 
       {/* Desktop: fixed side rail (lg+, banded pages 1360+). Labelled where the gutter holds
           the widest label; otherwise dots in the gutter, each naming its
-          chapter in a boxed tag on hover or focus. */}
+          chapter in a small raised plane on hover or focus. */}
       <nav
         ref={railRef}
         aria-label={cn ? "章节导航" : "Chapter navigation"}
@@ -230,9 +232,10 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
           hidden ? "opacity-0" : "opacity-100"
         }`}
       >
-        {/* On a banded page the rail stands on a solid plate (it passes
-            over light bands); without one the markup is as it always was */}
-        <RailPlate {...(plate ? { className: "rounded-[2px] border border-[#333336] bg-[#141416] px-3 py-2.5" } : {})}>
+        {/* On a banded page the rail stands on a solid plane, no edge (it
+            passes over sheets and tiles); without one the markup is as it
+            always was */}
+        <RailPlate {...(plate ? { className: "rounded-[2px] bg-(--tile) px-3 py-2.5" } : {})}>
         {/* Kept in the flow when hidden, so the rail never shifts between
             modes; on a plate the dots stand alone and the plate hugs them */}
         <p
@@ -259,12 +262,13 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
                   className="group relative flex items-center gap-3 h-2.5 cursor-pointer pointer-events-auto before:absolute before:-inset-x-2 before:-inset-y-2 before:content-['']"
                 >
                   {/* Labels: the active one always, the rest on hover/focus.
-                      Dots: every label waits for hover/focus, then appears as
-                      a boxed tag on a short leader, over whatever is beside. */}
+                      Dots: every label waits for hover/focus, then appears on
+                      a small raised plane beside its dot, over whatever is
+                      beside. No edge, no leader. */}
                   <span
                     className={
                       dots
-                        ? `absolute right-full top-1/2 mr-3 -translate-y-1/2 border border-ink/55 ${plate ? "rounded-[2px] bg-[#1e1e21] px-2 py-1 duration-[160ms]" : "bg-paper px-2 py-1.5 duration-200"} pointer-events-none opacity-0 translate-x-1 transition-[opacity,translate] ease-(--ease-arrive) group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 motion-reduce:transition-none motion-reduce:translate-x-0 after:absolute after:left-full after:top-1/2 after:w-2 after:h-px after:bg-ink/55 after:content-[''] ${
+                        ? `absolute right-full top-1/2 mr-3 -translate-y-1/2 ${plate ? "rounded-[2px] bg-(--raised) px-2 py-1 duration-[160ms]" : "rounded-[2px] bg-cream px-2 py-1.5 duration-200"} pointer-events-none opacity-0 translate-x-1 transition-[opacity,translate] ease-(--ease-arrive) group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 motion-reduce:transition-none motion-reduce:translate-x-0 ${
                             isActive ? "text-ink" : "text-mute"
                           }`
                         : `transition-opacity ${plate ? "duration-[160ms] ease-(--ease-arrive)" : "duration-250"} motion-reduce:transition-none group-hover:opacity-100 group-focus-visible:opacity-100 ${

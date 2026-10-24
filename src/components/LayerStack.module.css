@@ -1,5 +1,6 @@
-/* A numbered ledger: hairlines between the rows, mono numbers, the
-   problem in the muted voice and the approach in ink. Flat; no fills. */
+/* A numbered ledger of planes: one plane per row, 8px apart, no rule
+   between them; mono numbers, the problem in the muted voice and the
+   approach in ink. Flat; no gradients. */
 .ledger { --cols: minmax(0, 0.64fr) minmax(0, 1fr) 40px minmax(0, 1fr); }
 
 /* Column heads, once, over the ledger — from a tablet up */
@@ -9,7 +10,7 @@
     display: grid;
     grid-template-columns: var(--cols);
     column-gap: 24px;
-    padding-bottom: 14px;
+    padding: 0 28px 12px;
     color: var(--color-soft);
     font-family: var(--font-mono);
     font-size: 11px;
@@ -18,20 +19,25 @@
   }
 }
 
-.rows { border-bottom: 1px solid var(--color-line); }
+.rows {
+  display: grid;
+  gap: 8px;
+}
 
 .row {
   position: relative;
   display: grid;
   gap: 18px;
-  padding: 22px 0 26px;
-  border-top: 1px solid var(--color-line);
+  padding: 22px 20px 26px;
+  border-radius: 2px;
+  background: var(--color-cream);
   opacity: 0;
   transform: translateY(8px);
   transition:
     opacity 600ms ease,
-    transform 700ms var(--ease-arrive);
-  transition-delay: calc(var(--i) * 140ms);
+    transform 700ms var(--ease-arrive),
+    background-color 160ms var(--ease-arrive);
+  transition-delay: calc(var(--i) * 140ms), calc(var(--i) * 140ms), 0ms;
 }
 @media (min-width: 768px) {
   .row {
@@ -39,24 +45,13 @@
     column-gap: 24px;
     /* The name, the first line of each cell and the leader share a baseline */
     align-items: baseline;
-    padding: 26px 0 30px;
+    padding: 26px 28px 30px;
   }
 }
 .ledger[data-lit="true"] .row { opacity: 1; transform: none; }
 
-/* Latent's progress rule: runs out over the row in view of the pointer */
-.run {
-  position: absolute;
-  top: -1px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--color-ink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 520ms var(--ease-arrive);
-}
-.row:hover .run { transform: none; }
+/* The row in view of the pointer lifts a tone */
+.row:hover { background: color-mix(in srgb, var(--color-ink) 3%, var(--color-cream)); }
 
 .name {
   display: flex;
@@ -132,8 +127,7 @@
 
 /* Reduced motion: every row in place from the first paint */
 @media (prefers-reduced-motion: reduce) {
-  .row,
-  .run,
+  .row { transition: background-color 160ms var(--ease-arrive); }
   .num,
   .leader { transition: none; }
   .row { opacity: 1; transform: none; }

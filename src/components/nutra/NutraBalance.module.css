@@ -1,8 +1,10 @@
-/* The balance (board 039) on the chart sheet: raised pills for the poles,
-   a 1px beam, raised cells for the traits hung on 1px rails. Lines are
-   grey-2; a pointed-at trait fades its rail, arrow and pole edge to ink
-   (opacity only). The knob is the one accent mark. Product specimens
-   inside the cells keep the app's own colours and type. */
+/* The balance (board 039) on the chart sheet: raised planes for the
+   poles, a 1px beam, raised planes for the traits hung on 1px rails (the
+   beam and the rails are the diagram, so they stay lines; nothing is
+   outlined). Lines are grey-2; a pointed-at trait fades its rail and
+   arrow to ink (opacity only) and lifts its own plane and its pole's a
+   tone. The knob, a solid accent square, is the one accent mark. Product
+   specimens inside the planes keep the app's own colours and type. */
 
 .sheet.sheet { padding: 24px 20px 28px; }
 @media (min-width: 640px) {
@@ -29,26 +31,16 @@
   place-items: center;
   height: 40px;
   padding: 0 10px;
-  border: 1px solid var(--edge);
   border-radius: 2px;
   background: var(--raised);
   color: #f4f4f2;
   white-space: nowrap;
+  transition: background-color var(--t-1) var(--ease-arrive);
 }
-.pole::after,
-.trait::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border: 1px solid #f4f4f2;
-  border-radius: 2px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--t-1) var(--ease-arrive);
-}
-.sheet[data-pole="serious"] .pole[data-p="serious"]::after,
-.sheet[data-pole="fun"] .pole[data-p="fun"]::after {
-  opacity: 1;
+/* The pole of a pointed-at trait lifts a tone, as the trait does */
+.sheet[data-pole="serious"] .pole[data-p="serious"],
+.sheet[data-pole="fun"] .pole[data-p="fun"] {
+  background: #2c2c30;
 }
 
 .beam {
@@ -78,13 +70,11 @@
   display: grid;
   place-items: center;
 }
-/* The focus mark: a solid accent square in a 1px ink ring 4px off */
+/* The focus mark: a solid accent square on the beam, nothing round it */
 .knob {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   background: var(--accent);
-  outline: 1px solid #f4f4f2;
-  outline-offset: 4px;
 }
 /* Once, on view: from the Seriousness end to the centre */
 @media (prefers-reduced-motion: no-preference) {
@@ -125,10 +115,10 @@
   align-items: flex-start;
   gap: 16px;
   padding: 18px 18px 20px;
-  border: 1px solid var(--edge);
   border-radius: 2px;
   background: var(--raised);
   cursor: default;
+  transition: background-color var(--t-1) var(--ease-arrive);
   -webkit-tap-highlight-color: transparent;
 }
 @media (min-width: 640px) {
@@ -145,11 +135,12 @@
   outline: 1px solid #f4f4f2;
   outline-offset: 3px;
 }
-.sheet[data-trait="dark"] .trait[data-t="dark"]::after,
-.sheet[data-trait="type"] .trait[data-t="type"]::after,
-.sheet[data-trait="color"] .trait[data-t="color"]::after,
-.sheet[data-trait="art"] .trait[data-t="art"]::after {
-  opacity: 0.4;
+/* A pointed-at trait: its plane lifts a tone */
+.sheet[data-trait="dark"] .trait[data-t="dark"],
+.sheet[data-trait="type"] .trait[data-t="type"],
+.sheet[data-trait="color"] .trait[data-t="color"],
+.sheet[data-trait="art"] .trait[data-t="art"] {
+  background: #2c2c30;
 }
 .name { color: #f4f4f2; }
 
@@ -241,6 +232,16 @@
   display: flex;
   gap: 16px;
 }
+/* The two background tokens are darker than every plane here, and 242728
+   is the raised plane's own tone: they sit on a lighter well, a plane of
+   their own, rather than in a ring */
+.swatches[data-well] {
+  gap: 14px;
+  padding: 12px 14px 10px;
+  border-radius: 2px;
+  background: #3a3a3f;
+}
+.swatches[data-well] .hex { color: #b4b4b8; }
 .swatch {
   display: grid;
   justify-items: start;
@@ -250,9 +251,8 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
 }
-.swatch i[data-round="true"] { border-radius: 50%; box-shadow: none; }
+.swatch i[data-round="true"] { border-radius: 50%; }
 .hex { color: #8a8a90; }
 
 .faces {

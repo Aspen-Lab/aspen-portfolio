@@ -7,8 +7,8 @@ import styles from "./OwnershipStrip.module.css";
 
 /* The claim of the section as one split card: on the left, on the sheet,
    what the AI coding tools do, as two raised chips; on the right, on the
-   slab, what stays mine, each line led by a solid ink square. One 1px
-   outline holds both halves, so they read as one statement. Every word
+   slab, what stays mine, each line led by a solid ink square. The two
+   planes meet edge to edge, so they read as one statement. Every word
    restates the section's body; nothing here is new. The squares fade on
    once, one after another, when the card comes into view; nothing
    responds to a pointer. Reduced motion shows them still. */

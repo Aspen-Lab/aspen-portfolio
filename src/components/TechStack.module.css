@@ -2,12 +2,15 @@
 .intro { max-width: 660px; color: var(--color-mute); font-size: 15px; line-height: 1.8; }
 .layout { display: grid; grid-template-columns: minmax(190px, 23%) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: start; margin-top: 32px; }
 .layout > * { min-width: 0; }
-.tabs { border-top: 1px solid var(--color-line); }
-.tab { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 59px; border-bottom: 1px solid var(--color-line); padding: 11px 10px; color: var(--color-mute); text-align: left; cursor: pointer; transition: color 140ms, background-color 140ms; outline: none; }
-.tab::before { content: ""; position: absolute; width: 2px; left: 0; top: 17px; bottom: 17px; background: var(--color-ink); opacity: 0; transition: opacity 140ms; }
+/* The disciplines: no rules between them and no bar beside the chosen
+   one (「线框我们用面」). The chosen discipline stands on a raised plane;
+   the one under the pointer on a plane a tone lower. (Both sit above the
+   grain's own tone, or they would not read.) */
+.tabs { display: flex; flex-direction: column; gap: 2px; }
+.tab { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 57px; border-radius: 2px; padding: 11px 10px; color: var(--color-mute); text-align: left; cursor: pointer; transition: color 140ms, background-color 160ms; outline: none; }
 .tab:hover, .tab[aria-selected="true"] { color: var(--color-ink); }
-.tab[aria-selected="true"] { background: #ffffff04; }
-.tab[aria-selected="true"]::before { opacity: .8; }
+.tab:hover { background: #1d1d20; }
+.tab[aria-selected="true"] { background: #232326; }
 .tab:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 3px; }
 .categoryIcon { flex: 0 0 28px; display: grid; place-items: center; width: 28px; height: 28px; }
 .tabCopy { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -29,8 +32,9 @@
 .replay { display: flex; align-items: center; gap: 6px; min-height: 40px; padding-left: 8px; font-size: 10px; color: var(--color-mute); cursor: pointer; flex-shrink: 0; }
 .replay:hover { color: var(--color-ink); }
 .replay:focus-visible, .caseLink:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
-.tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 22px; border-top: 1px solid var(--color-line); }
-.tool { display: flex; align-items: center; gap: 10px; min-height: 60px; padding: 11px 0; border-bottom: 1px solid var(--color-line); }
+/* The tools: four entries kept apart by space, not ruled */
+.tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 22px; margin-top: 8px; }
+.tool { display: flex; align-items: center; gap: 10px; min-height: 60px; padding: 11px 0; }
 .toolIcon { display: flex; width: 36px; flex-shrink: 0; color: #c9c9c5; }
 .toolCopy { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .toolCopy > span { font-size: 11px; line-height: 1.5; color: var(--color-ink); }
@@ -40,21 +44,22 @@
 .note { margin-top: 6px; font-size: 11px; line-height: 1.7; color: var(--color-mute); max-width: 53ch; }
 .caseLink { flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px; min-height: 40px; font-size: 11px; color: var(--color-ink); text-underline-offset: 4px; }
 .caseLink:hover { text-decoration: underline; }
-.spectrum { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--color-line); }
+.spectrum { margin-top: 72px; }
 .spectrumHeading { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; color: var(--color-soft); }
 .spectrumTrack { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 28px; max-width: 780px; margin-top: 20px; }
-.spectrumItem { position: relative; display: flex; align-items: center; gap: 10px; padding: 5px 0 14px; font-size: 11px; color: var(--color-mute); }
+/* Each stage stands on its own plane, which opens from the left as the
+   row comes in (it was a hairline under the word, drawn the same way). */
+.spectrumItem { position: relative; isolation: isolate; display: flex; align-items: center; gap: 10px; padding: 12px 12px; font-size: 11px; color: var(--color-mute); }
 .spectrumItem > svg { flex-shrink: 0; }
-.spectrumLine { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--color-soft); opacity: .4; transform-origin: left; }
+.spectrumLine { position: absolute; inset: 0; z-index: -1; border-radius: 2px; background: #1d1d20; transform-origin: left; }
 .spectrumArrow { position: absolute; right: -20px; color: var(--color-soft); }
 .spectrumNote { margin-top: 17px; color: var(--color-mute); font-size: 12px; line-height: 1.7; max-width: 68ch; }
 :global(html[lang="zh-CN"]) .title { font: 400 29px/1.3 var(--font-sans); letter-spacing: -.025em; }
 @keyframes scene-in { from { opacity: .65; } to { opacity: 1; } }
 @media (max-width: 1023px) {
   .layout { grid-template-columns: minmax(0, 1fr); gap: 26px; margin-top: 28px; }
-  .tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 12px; }
+  .tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px 8px; }
   .tab { min-height: 50px; padding: 10px 8px; gap: 8px; }
-  .tab::before { top: 14px; bottom: 14px; }
   .tabName { font-size: 11px; }
   .tabCaption { display: none; }
   .categoryIcon { width: 24px; flex-basis: 24px; }
@@ -62,7 +67,7 @@
 }
 @media (max-width: 600px) {
   .intro { font-size: 14px; }
-  .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+  .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 8px; }
   .tab { min-height: 46px; }
   .tabName { font-size: 11px; }
   .panelHeading { min-height: 38px; margin-bottom: 12px; }
@@ -71,16 +76,16 @@
   .scrollHint { display: block; margin-top: 9px; color: var(--color-soft); font-size: 10px; }
   .sceneFooter { margin: 6px 0 10px; }
   .tools { gap: 0 15px; }
-  .tool { align-items: start; flex-direction: column; gap: 8px; padding: 12px 0; }
+  .tool { align-items: start; flex-direction: column; gap: 8px; padding: 12px 0; min-height: 0; }
   .toolCopy small { font-size: 10px; }
   .evidence { align-items: start; flex-direction: column; gap: 4px; }
   .spectrumTrack { gap: 12px; }
-  .spectrumItem { flex-direction: column; gap: 9px; font-size: 10px; text-align: center; }
-  .spectrumArrow { right: -11px; top: 10px; width: 9px; }
+  .spectrumItem { flex-direction: column; gap: 9px; padding: 12px 4px; font-size: 10px; text-align: center; }
+  .spectrumArrow { right: -11px; top: 19px; width: 9px; }
   .spectrumHeading { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .tab, .tab::before { transition: none; }
+  .tab { transition: none; }
   .scene { animation: none; }
 }
 

@@ -14,20 +14,21 @@ import styles from "./SurfaceLedger.module.css";
    site's FOUND badge with the word taken out. Text is placeholder bars;
    the only word in any frame is "Axel". The frames are drawn in the
    system's greys: no accent inside them.
-   Under the frames, two lanes make the claim a ledger: Design is filled
-   in all four columns, Code in the last three, with the tech named; the
-   one hollow square, the ad's code, is what makes the rest believable.
+   Under the frames, two lanes, set apart by space, make the claim a
+   ledger: Design is filled in all four columns, Code in the last three,
+   with the tech named; the one hollow square, the ad's code, is what
+   makes the rest believable.
    The frames are a drawing, not screenshots, and imply no measurements.
 
    SurfaceTabs is the same claim as Latent's platform chart: four numbered
-   tabs beside one dark chart sheet. The sheet's stage shows one surface
-   at a time, drawn large on a drafting grid; under it the ledger stays
-   whole, every square a solid grey. The tab in view lights its column:
-   the design square in ink and the code square in the accent, the
-   chart's one focus mark (on the ad, a hollow accent outline, since that
-   square is the one I don't build). A dashed hexagon rings that code
-   square and a boxed tag above it names the code; the two glide to the
-   column by transform, and the tag only fades.
+   tabs beside one dark chart sheet. The sheet's open stage shows one
+   surface at a time, drawn large; under it the ledger stays whole, every
+   square a solid grey. The tab in view lights its column: the design
+   square in ink and the code square in the accent, the chart's one focus
+   mark (on the ad, a hollow accent outline, since that square is the one
+   I don't build). That code square sits on a raised hexagon and a tag
+   above it names the code; the two glide to the column by transform, and
+   the tag only fades.
    It enters once, at a third in view: the surface fades in, the squares
    fade on lane by lane in 60ms steps, the signs come on last; all of it
    is done by 1200ms. Reduced motion shows the last frame. */
@@ -534,13 +535,12 @@ const TABS = {
   ],
 };
 
-/* What the code square of each column says, on the boxed tag over it */
+/* What the code square of each column says, on the tag over it */
 const TAGS = { en: ["Design only", "React", "React", "Liquid"], cn: ["只做设计", "React", "React", "Liquid"] };
 
-/* A pointy-topped hexagon round the code square (px, centred on 0,0),
-   drawn at its one size on every screen, so the dash and the 1.5px line
-   stay true. It reaches 10px past the square, well inside the 16px gap
-   to the tech word. */
+/* A pointy-topped hexagon under the code square (px, centred on 0,0),
+   drawn at its one size on every screen. It reaches 10px past the
+   square, well inside the 16px gap to the tech word. */
 const HEX = [
   [0, -18],
   [15.59, -9],
@@ -565,14 +565,6 @@ const SurfaceSheet = memo(function SurfaceSheet({ cn }: { cn: boolean }) {
   return (
     <figure ref={sheet} className={styles.board} data-in={inView} data-cn={cn}>
       <div className={styles.drafting}>
-        <svg aria-hidden className={styles.gridSvg}>
-          <defs>
-            <pattern id={`${uid}-grid`} width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M0 0.5 H40 M0.5 0 V40" className={styles.gridLine} />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill={`url(#${uid}-grid)`} />
-        </svg>
         {COLS.map((c, i) => (
           <div key={c.id} data-pt={i} className={styles.panel}>
             <div

@@ -36,7 +36,9 @@
 .selector { position: relative; display: flex; min-width: 0; min-height: 36px; align-items: center; justify-content: center; gap: 7px; color: var(--color-mute); background: transparent; font-size: 11px; cursor: pointer; transition: color 140ms; }
 .selector svg { flex: 0 0 auto; }
 .selector:hover, .selector[aria-selected="true"] { color: var(--color-ink); }
-.selectionLine { position: absolute; bottom: 0; left: 0; width: 25%; height: 1px; background: #b4b5b0; transition: transform 180ms cubic-bezier(.2,.8,.2,1); }
+/* The chosen tab stands on a plane that slides between them, as the
+   nav's does; no underline. */
+.selectionLine { position: absolute; top: 0; bottom: 0; left: 0; width: 25%; border-radius: 2px; background: #232326; transition: transform 180ms cubic-bezier(.2,.8,.2,1); }
 .selector:focus-visible, .more:focus-visible, .panel:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 
 :global(html[lang="zh-CN"]) .title { font-family: var(--font-sans); font-size: 19px; font-weight: 400; line-height: 1.4; }

@@ -1,6 +1,6 @@
-/* A Latent ledger: hairlines, mono numbers, one short ink rule per entry.
-   The chart sheets are flat cards with a hairline grid and one accent.
-   No gradient fills anywhere. Everything that moves moves by transform
+/* A ledger set on space, not lines: mono numbers, one short ink mark per
+   entry, no rule between entries. The chart sheets are flat planes with a
+   faint measuring grid and one accent. No gradient fills anywhere. Everything that moves moves by transform
    or opacity (and the stroke offset of a few small paths), so neither
    hover nor arrival ever lays the page out again. */
 .wrap {
@@ -24,34 +24,24 @@
   min-width: 0;
 }
 
-/* ── The entry ── */
+/* ── The entry ── no hairline over it: one short ink mark (a mark, not a
+   rule) draws in on arrival, scaled, never resized. */
 .entry {
   position: relative;
   padding-top: 16px;
-  border-top: 1px solid var(--color-line);
 }
-/* Two rules over the hairline: a short one that draws in on arrival, and
-   a full-width one that runs out from it under the pointer. Both are
-   scaled, never resized. */
-.entry::before,
-.entry::after {
+.entry::before {
   content: "";
   position: absolute;
-  top: -1px;
+  top: 0;
   left: 0;
+  width: 2.25rem;
   height: 1px;
   background: var(--color-ink);
   transform: scaleX(0);
   transform-origin: left;
   pointer-events: none;
-}
-.entry::before {
-  width: 2.25rem;
   transition: transform 760ms var(--ease-arrive) calc(var(--stagger) + 120ms);
-}
-.entry::after {
-  width: 100%;
-  transition: transform 520ms var(--ease-arrive);
 }
 .item[data-in="true"] .entry::before { transform: none; }
 
@@ -79,7 +69,6 @@
 .icon { display: inline-flex; }
 
 @media (hover: hover) {
-  .item:hover .entry::after { transform: none; }
   .item:hover .num,
   .item:hover .icon { opacity: 1; }
 }
@@ -102,7 +91,7 @@
 }
 
 /* One column with room to spare: a true ledger row, the number in a
-   gutter, the last row closed by a hairline. */
+   gutter; rows are told apart by the space between them. */
 @container (min-width: 520px) {
   .wrap[data-variant="ledger"] .list { row-gap: 0; }
   .wrap[data-variant="ledger"] .entry {
@@ -113,7 +102,6 @@
   }
   .wrap[data-variant="ledger"] .head { grid-row: span 2; height: 22px; }
   .wrap[data-variant="ledger"] .label { margin-top: 0; }
-  .wrap[data-variant="ledger"] .item:last-child .entry { border-bottom: 1px solid var(--color-line); }
 }
 
 /* Columns, when the list asks for them and has the width */
@@ -124,7 +112,6 @@
   }
   .wrap[data-variant="ledger"][data-cols="2"] .entry { display: block; padding: 16px 0 0; }
   .wrap[data-variant="ledger"][data-cols="2"] .label { margin-top: 12px; }
-  .wrap[data-variant="ledger"][data-cols="2"] .item:last-child .entry { border-bottom: 0; }
 }
 @container (min-width: 720px) {
   .wrap[data-variant="ledger"][data-cols="3"] .list {
@@ -133,7 +120,6 @@
   }
   .wrap[data-variant="ledger"][data-cols="3"] .entry { display: block; padding: 16px 0 0; }
   .wrap[data-variant="ledger"][data-cols="3"] .label { margin-top: 12px; }
-  .wrap[data-variant="ledger"][data-cols="3"] .item:last-child .entry { border-bottom: 0; }
   .wrap[data-cols="3"] .item { --stagger: calc(var(--i) * 140ms); }
 }
 
@@ -155,12 +141,11 @@
   .wrap[data-variant="charts"] .item { --stagger: calc(var(--i) * 160ms); }
 }
 
-/* ── The sheet ── */
+/* ── The sheet ── a plane, no edge */
 .sheet {
   position: relative;
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  background: var(--color-cream);
+  border-radius: 2px;
+  background: var(--tile, var(--color-cream));
 }
 .plot { display: block; width: 100%; height: auto; overflow: visible; }
 
@@ -183,11 +168,8 @@
 .chevron.dim { stroke: rgb(244 244 242 / 34%); }
 .station { fill: var(--color-cream); stroke: var(--color-ink); stroke-width: 1.2; }
 
-.panel {
-  fill: var(--color-paper);
-  stroke: rgb(244 244 242 / 13%);
-  stroke-width: 1;
-}
+/* A window drawn on the sheet: a darker plane, no edge */
+.panel { fill: var(--color-paper); }
 .rule { stroke: rgb(244 244 242 / 10%); stroke-width: 1; }
 .mark line { stroke: var(--color-ink); stroke-width: 1.2; stroke-linecap: round; }
 .port { fill: var(--color-cream); stroke: var(--color-ink); stroke-width: 1.2; }
@@ -269,8 +251,8 @@
 }
 .tag {
   padding: 4px 7px 3px;
-  border: 1px solid rgb(244 244 242 / 55%);
-  background: var(--color-paper);
+  border-radius: 2px;
+  background: var(--raised, #232326);
   color: var(--color-ink);
   font-family: var(--font-mono);
   font-size: 10px;
@@ -356,7 +338,6 @@
 /* Reduced motion: the finished drawing, nothing turning */
 @media (prefers-reduced-motion: reduce) {
   .entry::before,
-  .entry::after,
   .num,
   .icon,
   .draw,
@@ -393,7 +374,7 @@
 }
 
 /* ══ Tiles ══ Latent's outcome cards: a solid tile per entry (the global
-   .tile: #141416, one 1px edge, its own padding), the glyph on top, the
+   .tile: a #18181a plane, no edge, its own padding), the glyph on top, the
    title (S4), the text (S6 in mute), chips at the foot (the global
    .chip). "joined" hangs the tiles from one 2px ink bar. Arrival only, by
    opacity and transform; no hover. The marks palette is the system's
@@ -509,7 +490,7 @@
     transform: scaleX(0);
     transform-origin: left center;
   }
-  /* From the tile's foot (its 1px edge included) to the bar's middle */
+  /* From the tile's foot to the bar's middle */
   .leader {
     top: 100%;
     left: calc(50% - 0.5px);
@@ -532,7 +513,6 @@
     transform: scaleY(0);
     transform-origin: center top;
   }
-  /* The tile's padding box starts 1px inside its 25px left edge */
   .leader {
     top: calc(50% - 0.5px);
     left: -24px;

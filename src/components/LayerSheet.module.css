@@ -1,12 +1,15 @@
 /* The layer sheet: three mounted states on PlatformTabs' dark sheet.
-   Each state is a 16:10 box on a drafting grid, split into BEFORE (grey
-   #6b6b71 plates, 1px lines) and AFTER (ink #f4f4f2 plates, a 2px rail)
-   with one focus mark in the page accent. Flat fills and 1px lines only.
-   Nothing animates but opacity. The marks palette is the system's own,
-   pinned here so it reads the same on any plane. */
+   Each state is a 16:10 field on the bare sheet (no box, no drafting
+   grid), split into BEFORE (grey #6b6b71 plates, 1px lines) and AFTER
+   (ink #f4f4f2 plates, a 2px rail) with one focus mark in the page
+   accent; only an arrowhead stands between the halves. Planes, not
+   frames: the one place a box remains is the escape path's destination,
+   a raised plane with no edge. Nothing animates but opacity. The marks
+   palette is the system's own, pinned here so it reads the same on any
+   plane. */
 
 /* The system's tokens, named once for this module: ink, grey-1/2/3, the
-   sheet and raised planes, the inside rule, mute and soft, on-fill. */
+   sheet and raised planes, mute and soft, on-fill. */
 .sheet,
 .details {
   --k-ink: var(--color-ink);
@@ -15,7 +18,6 @@
   --k-g3: var(--grey-3);
   --k-sheet: var(--sheet);
   --k-raised: var(--raised);
-  --k-line: var(--color-line);
   --k-mute: var(--color-mute);
   --k-on: var(--on-fill);
 }
@@ -34,7 +36,6 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 0 minmax(0, 1fr);
   aspect-ratio: 16 / 10;
-  border: 1px solid var(--k-line);
 }
 .half {
   position: relative;
@@ -49,24 +50,10 @@
   left: 16px;
 }
 
-/* The fold between the halves: a 1px dashed line (3 3) with an arrowhead */
+/* Between the halves: an arrowhead alone, the turn from BEFORE to AFTER */
 .divider {
   position: relative;
   z-index: 1;
-}
-.fold {
-  position: absolute;
-  top: 0;
-  left: -0.5px;
-  width: 1px;
-  height: 100%;
-  overflow: visible;
-}
-.fold line {
-  stroke: var(--k-g3);
-  stroke-width: 1;
-  stroke-dasharray: 3 3;
-  shape-rendering: crispEdges;
 }
 .arrow {
   position: absolute;
@@ -91,12 +78,6 @@
 }
 
 /* ── Marks ── */
-.grid line {
-  stroke: var(--grid);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  shape-rendering: crispEdges;
-}
 .was { color: var(--k-g2); }
 .ink { color: var(--k-ink); }
 .fill { fill: currentColor; }
@@ -248,10 +229,9 @@
   border-radius: 2px;
   background: var(--accent);
 }
-/* The place the escape path leads: a raised plate with a dashed grey-1 edge */
+/* The place the escape path leads: a raised plane, no edge */
 .dest {
   padding: 8px 12px;
-  border: 1px dashed var(--k-g1);
   border-radius: 2px;
   background: var(--k-raised);
   color: var(--k-ink);
@@ -274,7 +254,6 @@
   .box {
     grid-template-columns: minmax(0, 1fr);
     aspect-ratio: auto;
-    border: 0;
   }
   .half {
     display: flex;
@@ -288,7 +267,6 @@
     position: relative;
     inset: auto;
     aspect-ratio: 16 / 9;
-    border: 1px solid var(--k-line);
   }
   .divider {
     justify-self: center;
@@ -301,14 +279,12 @@
 
 /* ── Details: the active layer's Problem and Approach, on the sheet under
    the drawing. A wide sheet sets them in two columns that fall under the
-   drawing's halves (Problem under BEFORE, Approach under AFTER), a 1px
-   rule between them; a narrow one stacks them, the rule across. ── */
+   drawing's halves (Problem under BEFORE, Approach under AFTER); a narrow
+   one stacks them. Space alone parts them, no rule. ── */
 .details {
   display: grid;
   container-type: inline-size;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid var(--k-line);
+  margin-top: 40px;
 }
 .detail {
   grid-area: 1 / 1;
@@ -317,21 +293,11 @@
   min-width: 0;
 }
 .block { min-width: 0; }
-.block + .block {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--k-line);
-}
+.block + .block { margin-top: 24px; }
 @container (min-width: 520px) {
   .detail { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .block { padding-inline: 16px 24px; }
-  .block + .block {
-    margin-top: 0;
-    padding-top: 0;
-    padding-left: 16px;
-    border-top: 0;
-    border-left: 1px solid var(--k-line);
-  }
+  .block + .block { margin-top: 0; }
 }
 /* S7 (.t-label) heads, each with its 8px square: Problem carries
    BEFORE's hollow grey square, Approach AFTER's solid ink one */

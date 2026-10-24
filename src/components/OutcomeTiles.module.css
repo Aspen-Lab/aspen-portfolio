@@ -1,7 +1,8 @@
-/* Solid outcome tiles. The fill and edge come from the global .tile
-   (--tile #141416, one #333336 edge). Every figure is ink (S2); the label
-   is S6 in ink, the text S6 in mute, the tag a quiet tag (S7 in mute).
-   Siblings sit 24px apart, 16px on phones. */
+/* Solid outcome tiles: planes, not frames. The fill comes from the
+   global .tile (--tile, no edge). Every figure is ink (S2); the
+   label is S6 in ink, the text S6 in mute, the tag S7 in mute on a raised
+   plane. Siblings sit 24px apart, 16px on phones: the gap between two
+   planes is what tells them apart. */
 .tiles {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -102,13 +103,12 @@
   margin-top: auto;
   padding-top: 16px;
 }
-/* The quiet tag: one hairline box, S7 in mute */
+/* The quiet tag: a raised plane on the tile, S7 in mute. No edge. */
 .tag {
   display: inline-block;
   padding: 4px 8px;
-  border: 1px solid rgb(244 244 242 / 24%);
   border-radius: 2px;
-  background: transparent;
+  background: var(--raised);
   color: var(--color-mute);
   font-family: var(--font-mono);
   font-size: 12px;
@@ -130,12 +130,14 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--hair);
   border-radius: 2px;
+  background: var(--raised);
   color: var(--color-ink);
   font-size: 15px;
   line-height: 1;
-  transition: transform var(--t-2) var(--ease-arrive);
+  transition:
+    transform var(--t-2) var(--ease-arrive),
+    background-color var(--t-1) var(--ease-arrive);
 }
 
 /* The matrix: one ink square per unit, faded in in reading order once in
@@ -160,31 +162,31 @@
   to { opacity: 1; }
 }
 
-/* A linked tile: an ink edge fades to half over the tile's own and the
-   arrow steps toward the evidence; focus shows the same plus the ring.
-   Press sinks it 1px. Transform and opacity only. */
-.tile[data-link] { transition: transform var(--t-1) var(--ease-arrive); }
-.tile[data-link]::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border: 1px solid var(--color-ink);
-  border-radius: inherit;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--t-1) var(--ease-arrive);
+/* A linked tile: no edge to brighten. The tile lifts a tone, its arrow
+   plane lifts with it and steps toward the evidence; focus shows the same
+   plus the ring. Press sinks it 1px. */
+.tile[data-link] {
+  transition:
+    transform var(--t-1) var(--ease-arrive),
+    background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .tile[data-link]:hover::after { opacity: 0.5; }
-  .tile[data-link]:hover .arrow { transform: translateX(3px); }
+  .tile[data-link]:hover { background: #232326; }
+  .tile[data-link]:hover .arrow {
+    background: #2e2e32;
+    transform: translateX(3px);
+  }
 }
-.tile[data-link]:focus-visible::after { opacity: 0.5; }
-.tile[data-link]:focus-visible .arrow { transform: translateX(3px); }
+.tile[data-link]:focus-visible { background: #232326; }
+.tile[data-link]:focus-visible .arrow {
+  background: #2e2e32;
+  transform: translateX(3px);
+}
 .tile[data-link]:active { transform: translateY(1px); }
 
 @media (prefers-reduced-motion: reduce) {
   .arrow,
-  .tile[data-link] { transition: none; }
+  .tile[data-link] { transition: background-color var(--t-1) var(--ease-arrive); }
   .tile[data-link]:is(:hover, :focus-visible) .arrow,
   .tile[data-link]:active { transform: none; }
   .matrix rect,

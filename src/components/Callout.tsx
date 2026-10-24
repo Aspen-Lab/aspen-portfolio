@@ -4,11 +4,11 @@ import { hold } from "@/lib/hold";
 import { RichText } from "./RichText";
 import styles from "./Callout.module.css";
 
-/* A footnote set as a flat sheet: the cream card and hairline of the
-   charts, a mono kicker in a label column, the note beside it. The
-   variants differ only by the small mark before the kicker (a dot, a
-   square, a diamond, a triangle, the dashed hexagon the charts ring
-   their focus with); no icon bubbles, no tinted fills, no gradients. */
+/* A footnote set as a flat plane: the cream of the charts' sheet with no
+   edge, a mono kicker in a label column, the note beside it. The variants
+   differ only by the small solid mark before the kicker (a dot, a square,
+   a diamond, a triangle, or the dashed hexagon the charts ring their
+   focus with); no icon bubbles, no tinted fills, no gradients. */
 
 type Variant = "info" | "warn" | "tip" | "note" | "insight";
 
@@ -30,9 +30,9 @@ function Mark({ variant }: { variant: Variant }) {
   return (
     <svg viewBox="0 0 12 12" width={12} height={12} aria-hidden className={styles.mark}>
       {variant === "info" && <circle cx={6} cy={6} r={2.6} className={styles.fill} />}
-      {variant === "note" && <rect x={2.5} y={2.5} width={7} height={7} className={styles.line} />}
-      {variant === "tip" && <path d="M6 1.6 L10.4 6 L6 10.4 L1.6 6 Z" className={styles.line} />}
-      {variant === "warn" && <path d="M6 1.8 L10.6 10 L1.4 10 Z" className={styles.line} />}
+      {variant === "note" && <rect x={3} y={3} width={6} height={6} className={styles.fill} />}
+      {variant === "tip" && <path d="M6 2 L10 6 L6 10 L2 6 Z" className={styles.fill} />}
+      {variant === "warn" && <path d="M6 2.2 L10.2 9.6 L1.8 9.6 Z" className={styles.fill} />}
       {variant === "insight" && (
         <>
           <polygon points={HEX} className={styles.dash} />

@@ -1,7 +1,9 @@
 /* Latent's network on a dark sheet (global .paper-stack > .paper): a
    field of 2px dots, a 1px grey ring round the hub, grey spokes out to
    the markets, the markets as 8px ink squares and the hub a 14px square
-   in the page accent, the chart's one accent. Flat fills and 1px lines.
+   in the page accent, the chart's one accent. Flat fills; the only lines
+   are the network's own (ring and spokes), never a rule round or between
+   things.
    The points, hub and labels sit over the drawing in CSS pixels, placed
    from the drawing's own coordinates (--px, --py in a 600 × 360 box that
    is scaled to the field's width and centred, as the SVG's slice is). */
@@ -227,11 +229,12 @@
   .gridDot { r: 1.9px; }
   .labels,
   .hubLabel { display: none; }
+  /* The rows stand apart by space alone, no rule between them */
   .list {
-    display: block;
-    margin: 16px 0 0;
+    display: grid;
+    gap: 20px;
+    margin: 24px 0 0;
     padding: 0;
-    border-top: 1px solid #252528;
     list-style: none;
   }
   .row {
@@ -239,8 +242,6 @@
     grid-template-columns: 8px minmax(0, 1fr) auto;
     align-items: center;
     column-gap: 12px;
-    padding: 16px 0;
-    border-bottom: 1px solid #252528;
   }
   .rowPoint {
     width: 8px;

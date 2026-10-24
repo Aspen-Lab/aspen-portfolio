@@ -39,7 +39,7 @@ function parse(input: string): ReactNode[] {
       out.push(
         <code
           key={key++}
-          className="font-mono text-[0.85em] px-1.5 py-0.5 rounded bg-cream text-ink/90 border border-line/60 whitespace-nowrap"
+          className="font-mono text-[0.85em] px-1.5 py-0.5 rounded-[2px] bg-[color-mix(in_srgb,var(--color-ink)_7%,var(--color-cream))] text-ink/90 whitespace-nowrap"
         >
           {tok.slice(1, -1)}
         </code>,
