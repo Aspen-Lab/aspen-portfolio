@@ -1,0 +1,100 @@
+/* The bar (Aspen, 2026-10-25: 「优化」): three capsules at one height on
+   the ground — availability, the pages, the language — in the one
+   surface grey with round ends. What is chosen, or under the pointer,
+   turns white with black words; nothing else changes tone. */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 18px 0 16px;
+  border-radius: 999px;
+  background: #1c1c1c;
+  color: var(--color-ink);
+  font-size: 15px;
+  white-space: nowrap;
+  transition: background-color 200ms var(--ease-arrive), color 200ms var(--ease-arrive);
+}
+.where { color: var(--color-mute); transition: color 200ms var(--ease-arrive); }
+.dot { position: relative; display: flex; width: 8px; height: 8px; }
+.dot i { position: absolute; inset: 0; border-radius: 50%; background: #3cc65b; }
+.dot i:first-child { animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+@keyframes ping { 75%, 100% { transform: scale(2.2); opacity: 0; } }
+
+/* The pages: one capsule; a white plane slides to the page under the
+   pointer and settles back on the current one. */
+.pages {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #1c1c1c;
+}
+.plane {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 999px;
+  background: #f3f3f3;
+  opacity: 0;
+  pointer-events: none;
+}
+.plane[data-glide="true"] {
+  transition:
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    width 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 200ms ease;
+}
+.page {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: var(--color-mute);
+  font-size: 15px;
+  white-space: nowrap;
+  touch-action: manipulation;
+  transition: color 200ms var(--ease-arrive);
+}
+.page[data-on="true"] { color: #0f0f0f; }
+/* Before the plane is placed (the server's render), the current page
+   carries its own white, so nothing flips when the plane takes over. */
+.pages:not([data-ready="true"]) .page[data-on="true"] { background: #f3f3f3; }
+
+/* The language: one button that names the other one */
+.lang {
+  display: inline-grid;
+  place-items: center;
+  height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: #1c1c1c;
+  color: var(--color-ink);
+  font-size: 15px;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 200ms var(--ease-arrive), color 200ms var(--ease-arrive);
+}
+
+@media (hover: hover) {
+  .status:hover, .lang:hover { background: #f3f3f3; color: #0f0f0f; }
+  .status:hover .where { color: #0f0f0f; }
+}
+.status:focus-visible, .page:focus-visible, .lang:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 3px; }
+
+@media (max-width: 359px) {
+  .page { padding: 0 12px; }
+  .status { padding: 0 14px 0 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .status, .where, .page, .lang { transition: none; }
+  .dot i:first-child { display: none; }
+}

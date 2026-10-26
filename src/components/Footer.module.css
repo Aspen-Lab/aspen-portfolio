@@ -8,16 +8,16 @@
 .inner { padding: 40px 0 20px; }
 .closing { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-bottom: 25px; }
 .headline { margin: 0; font: 300 36px/1.2 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
-.contact { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; flex-shrink: 0; min-height: 44px; padding: 0 16px; border-radius: var(--r-raised); corner-shape: squircle; background: #0f0f0f; font-size: 13px; transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive); }
+.contact { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; flex-shrink: 0; min-height: 44px; padding: 0 16px; border-radius: var(--r-raised); corner-shape: squircle; background: #0f0f0f; font-size: 15px; transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive); }
 .contact svg { transition: transform 140ms ease; }
 .contact:hover { background: #f3f3f3; color: #0f0f0f; }
 .contact:hover svg { transform: translate(2px, -2px); }
 .bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; }
 .identity { display: flex; align-items: center; gap: 14px; }
-.brand { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; font-size: 12px; color: var(--color-mute); }
-.copyright { font-size: 10px; color: var(--color-soft); }
+.brand { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; font-size: 15px; color: var(--color-mute); }
+.copyright { font-size: 15px; color: var(--color-mute); }
 .links { display: flex; align-items: center; flex-wrap: wrap; gap: 22px; }
-.links a, .top { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; color: var(--color-mute); font-size: 11px; text-underline-offset: 4px; transition: color 140ms; }
+.links a, .top { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; color: var(--color-mute); font-size: 15px; text-underline-offset: 4px; transition: color 140ms; }
 .links a:hover, .top:hover, .brand:hover { color: var(--color-ink); }
 .links a:hover { text-decoration: underline; }
 .top { cursor: pointer; }
@@ -28,7 +28,7 @@
   .inner { padding: 32px 0 16px; }
   .closing { flex-direction: column; align-items: flex-start; gap: 12px; padding-bottom: 22px; }
   .headline { max-width: 25ch; font-size: 30px; }
-  .contact { font-size: 12px; }
+  .contact { font-size: 15px; }
   .bottom { gap: 0 24px; }
   .links { gap: 20px; }
   :global(html[lang="zh-CN"]) .headline { font-size: 26px; }

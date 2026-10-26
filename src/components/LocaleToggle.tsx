@@ -9,15 +9,15 @@ const labels: Record<Locale, string> = {
   cn: "中文",
 };
 
-/* Two labels at reading size, kept apart by space alone. The active
-   language is ink; the other is grey and comes up on hover. */
-export function LocaleToggle() {
+/* One button that names the other language (Aspen, 2026-10-25: 「优化」):
+   the page itself says which one is on. The look comes from the bar. */
+export function LocaleToggle({ className }: { className: string }) {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
   const router = useRouter();
+  const next: Locale = locale === "cn" ? "en" : "cn";
 
-  const switchTo = (next: Locale) => {
-    if (next === locale) return;
+  const switchTo = () => {
     const hash = window.location.hash;
     const href = `${pathname}${window.location.search}${hash}`;
     // Translated content changes height; follow its anchor when one is present.
@@ -25,24 +25,14 @@ export function LocaleToggle() {
   };
 
   return (
-    <div role="group" aria-label={locale === "cn" ? "语言" : "Language"} className="flex shrink-0 items-center text-[15px]">
-      {(Object.keys(labels) as Locale[]).map((code, i) => {
-        const active = code === locale;
-        return (
-          <span key={code} className={`flex items-center ${i > 0 ? "ml-2" : ""}`}>
-            <button
-              type="button"
-              onClick={() => switchTo(code)}
-              aria-pressed={active}
-              className={`inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap touch-manipulation transition-colors duration-200 cursor-pointer ${
-                active ? "text-ink" : "text-mute hover:text-ink"
-              }`}
-            >
-              {labels[code]}
-            </button>
-          </span>
-        );
-      })}
-    </div>
+    <button
+      type="button"
+      onClick={switchTo}
+      lang={next === "cn" ? "zh-CN" : "en"}
+      aria-label={next === "cn" ? "切换到中文" : "Switch to English"}
+      className={className}
+    >
+      {labels[next]}
+    </button>
   );
 }

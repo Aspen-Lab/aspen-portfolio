@@ -50,16 +50,10 @@ body {
   font-feature-settings: "ss01", "tnum";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* Flat ink, no wash. Depth comes from the grain and from the hairline
-     sheets laid on top of it — two turbulence layers, one fine and one
-     coarse, so the paper has a tooth instead of a gradient. */
+  /* A flat ground, no grain (2026-10-25): with two greys, the surface
+     plane has to read against the ground itself, and the grain's noise
+     lifted the ground to the plane's own tone. */
   background-color: var(--color-paper);
-  background-image:
-    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.085'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.25' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)' opacity='0.035'/%3E%3C/svg%3E");
-  background-repeat: repeat, repeat;
-  background-size: 180px 180px, 460px 460px;
-  background-attachment: scroll, scroll;
 }
 
 /* The headline role. Everything at display size (the hero statement,
@@ -170,7 +164,7 @@ button {
    hairline, 4px corners. It was a raised keycap (top catch-light, bottom
    shadow, a 14px corner and a 3px hover lift); the site takes no bevels,
    drop shadows or gradient fills now (Aspen, 2026-10-19), so the sheet
-   sits flat on the grain and the hairline is the only edge. Hover and
+   sits flat on the ground and the hairline is the only edge. Hover and
    keyboard focus inside it brighten that hairline a step; nothing moves.
    Hover is gated to real pointers so a tap does not leave it lit. */
 .card-material {
@@ -445,8 +439,8 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   --r-tag: 10px;
   /* planes */
   --slab: #0f0f0f;
-  /* The grain lifts the ground to about #1c1c1c where it shows, so a
-     plane has to sit a clear step above that to read as a plane. */
+  /* Two tones only: planes are the surface grey on the flat ground, and
+     anything set on a plane steps back down to the ground. */
   --tile: #1c1c1c;
   --sheet: #1c1c1c;
   /* Two greys only: what sits on a sheet or tile steps down to the
@@ -562,7 +556,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
     color: var(--color-ink);
   }
 
-  /* ── Tile ── an outcome card: an opaque plane (it covers the grain), a
+  /* ── Tile ── an outcome card: an opaque plane, a
      big figure inside, no edge. */
   .tile {
     padding: 28px 28px 24px;
@@ -694,4 +688,12 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
     .t-subhead { font-size: 20px; }
     .t-body { font-size: 17px; }
   }
+}
+
+/* The nav bar once content passes under it: the ground's own tone,
+   translucent and blurred, no rule under it (Nav.tsx). */
+.bar-lifted {
+  background-color: rgb(15 15 15 / 0.84);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
