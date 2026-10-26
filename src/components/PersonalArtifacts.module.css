@@ -14,11 +14,11 @@
   justify-content: space-between;
   gap: 12px;
   height: 32px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
-.eyebrow { margin: 0; font-size: 11px; color: var(--color-mute); }
-.more { display: inline-flex; min-height: 32px; align-items: center; gap: 5px; color: var(--color-mute); font-size: 11px; transition: color 140ms; }
+.eyebrow { margin: 0; font-size: 13px; color: var(--color-ink); }
+.more { display: inline-flex; min-height: 32px; align-items: center; gap: 5px; color: var(--color-mute); font-size: 13px; transition: color 140ms; }
 .more:hover { color: var(--color-ink); }
 
 .figure { display: grid; grid-template-columns: 156px minmax(0, 1fr); align-items: center; gap: 24px; margin: 0; }

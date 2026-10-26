@@ -75,21 +75,6 @@ const disciplines: Discipline[] = [
   },
 ];
 
-const points = [[50, 12], [82, 30], [82, 68], [50, 86], [18, 68], [18, 30]];
-
-function DisciplineIcon({ index }: { index: number }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      {index === 0 && <><path d="M5 18C5 10 19 14 19 6M5 5h14M5 5v13M19 6v13" /><path d="M3 3h4v4H3zM17 17h4v4h-4z" fill="var(--color-paper)" /><circle cx="19" cy="5" r="2" /><circle cx="5" cy="19" r="2" /></>}
-      {index === 1 && <path d="m7 6-5 6 5 6m10-12 5 6-5 6m-3-14-4 16" />}
-      {index === 2 && <><path d="M3 8h18v13H3zM3 3h8v5M8 21V8" /><circle cx="16" cy="14.5" r="2.5" /><path d="M14 3h7" /></>}
-      {index === 3 && <><rect x="2.5" y="5" width="19" height="14" rx="1.5" /><path d="m3 6 9 7 9-7M3 18l6-6m12 6-6-6" /></>}
-      {index === 4 && <><path d="m12 3 2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2Z" /><path d="m19 2 .8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8Z" fill="var(--color-paper)" /></>}
-      {index === 5 && <><circle cx="10" cy="10" r="6.5" /><path d="m15 15 6 6M7 10h6m-3-3v6" /></>}
-    </svg>
-  );
-}
-
 export function CapabilityRadar() {
   const cn = useLocale() === "cn";
   const tr = (value: Bilingual) => cn ? value.cn : value.en;
@@ -110,68 +95,45 @@ export function CapabilityRadar() {
     refs.current[next]?.focus();
   }
 
+  // Simplified (Aspen, 2026-10-25: 「这里也保持内容 但是设计简化」): the six
+  // areas as a plain list beside the one in view; no radial map or icons.
   return (
     <figure className={styles.figure}>
       <figcaption className={styles.caption}>
-        <span>{cn ? "我的工作范围" : "Areas of ownership"}</span>
-        <span className={styles.count}>06</span>
+        <b>{cn ? "我的工作范围" : "Areas of ownership"}</b>
+        {cn ? "设计 ↔ 代码，同一个实践" : "Design ↔ Code, one practice"}
       </figcaption>
 
-      <div className={styles.map}>
-        <svg className={styles.connections} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-          {points.map(([x, y], i) => (
-            <line key={i} x1={50 + (x - 50) * 0.55} y1={48 + (y - 48) * 0.55}
-              x2={x} y2={y} vectorEffect="non-scaling-stroke"
-              className={styles.spoke} data-active={active === i} />
-          ))}
-        </svg>
-
-        <div className={styles.center} aria-hidden="true">
-          <span className={styles.centerWords}>
-            <span className={styles.centerTitle}>{cn ? "设计" : "Design"}</span>
-            <span className={styles.centerBridge}>↔</span>
-            <span className={styles.centerTitle}>{cn ? "代码" : "Code"}</span>
-          </span>
-          <span className={styles.centerFoot}>{cn ? "同一个实践" : "One practice"}</span>
-        </div>
-
-        <div role="tablist" aria-label={cn ? "工作领域，使用方向键切换" : "Disciplines; use arrow keys to explore"} className={styles.tabs}>
-          {disciplines.map((discipline, i) => (
-            <button
-              key={discipline.key}
-              ref={(element) => { refs.current[i] = element; }}
-              type="button"
-              role="tab"
-              id={`${id}-tab-${i}`}
-              aria-controls={`${id}-evidence`}
-              aria-selected={active === i}
-              aria-label={tr(discipline.label)}
-              tabIndex={active === i ? 0 : -1}
-              onClick={() => setActive(i)}
-              onKeyDown={(event) => navigate(event, i)}
-              className={styles.node}
-              data-position={i === 0 ? "top" : "around"}
-              style={{ left: `${points[i][0]}%`, top: `${points[i][1]}%` }}
-            >
-              <span className={styles.icon}><DisciplineIcon index={i} /></span>
-              <span className={styles.nodeLabel}>{tr(discipline.shortLabel)}</span>
-            </button>
-          ))}
-        </div>
+      <div role="tablist" aria-label={cn ? "工作领域，使用方向键切换" : "Disciplines; use arrow keys to explore"} className={styles.list}>
+        {disciplines.map((discipline, i) => (
+          <button
+            key={discipline.key}
+            ref={(element) => { refs.current[i] = element; }}
+            type="button"
+            role="tab"
+            id={`${id}-tab-${i}`}
+            aria-controls={`${id}-evidence`}
+            aria-selected={active === i}
+            tabIndex={active === i ? 0 : -1}
+            onClick={() => setActive(i)}
+            onPointerEnter={(event) => { if (event.pointerType === "mouse") setActive(i); }}
+            onKeyDown={(event) => navigate(event, i)}
+            className={styles.item}
+          >
+            <span className={styles.index}>{String(i + 1).padStart(2, "0")}</span>
+            {tr(discipline.label)}
+          </button>
+        ))}
       </div>
 
       <div className={styles.evidence} id={`${id}-evidence`} role="tabpanel" aria-labelledby={`${id}-tab-${active}`} tabIndex={0}>
-        <div className={styles.evidenceMeta}>
-          <span>{String(active + 1).padStart(2, "0")} / {tr(current.label)}</span>
-          <span>{cn ? "工作实践" : "IN PRACTICE"}</span>
-        </div>
         <h3 className={styles.evidenceTitle}>{tr(current.scope)}</h3>
         <p className={styles.evidenceBody}>{tr(current.evidence)}</p>
         <p className={styles.outputs}>{tr(current.outputs)}</p>
-        <div className={styles.caseLinks}>
-          <span>{cn ? "相关项目" : "SEE THE WORK"}</span>
-          {current.links.map((link) => <Link key={link.href} href={link.href}>{link.label}<span aria-hidden="true">↗</span></Link>)}
-        </div>
+        <p className={styles.caseLinks}>
+          {cn ? "相关项目" : "See the work"}
+          {current.links.map((link) => <Link key={link.href} href={link.href}>{link.label} ↗</Link>)}
+        </p>
       </div>
     </figure>
   );

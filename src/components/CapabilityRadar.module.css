@@ -1,56 +1,39 @@
-.figure { width: 100%; min-width: 0; color: var(--color-ink); container-type: inline-size; }
-.caption { display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 11px/18px var(--font-sans); color: var(--color-mute); }
-.count { color: var(--color-soft); font: 10px var(--font-mono); }
-.map { position: relative; height: 288px; margin: 20px 0 28px; }
-.connections { position: absolute; inset: 0; height: 100%; width: 100%; overflow: visible; }
-.spoke { stroke: currentColor; stroke-opacity: .13; stroke-width: .75; transition: stroke-opacity 140ms linear; }
-.spoke[data-active="true"] { stroke-opacity: .55; }
-.tabs { position: absolute; inset: 0; }
-.node { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 7px; width: 116px; min-height: 60px; transform: translate(-50%, -18px); background: none; border: 0; padding: 0; cursor: pointer; color: var(--color-mute); outline: none; }
-.node[data-position="top"] { flex-direction: column-reverse; transform: translate(-50%, -43px); }
-/* The chosen discipline's mark stands on a disc, a raised plane; hover
-   lifts a fainter one. No ring. */
-.icon { display: grid; place-items: center; width: 36px; height: 36px; flex: 0 0 36px; border-radius: 50%; transition: color 140ms linear, background-color 160ms linear; }
-.icon svg { width: 20px; height: 20px; }
-.nodeLabel { display: block; font: 11px/16px var(--font-sans); letter-spacing: -.01em; text-align: center; text-wrap: balance; transition: color 140ms linear; }
-.node[aria-selected="true"] { color: var(--color-ink); }
-.node:hover .icon { color: var(--color-ink); background: #1e1e1e; }
-.node[aria-selected="true"] .icon { background: #242424; }
-.node:focus-visible .icon { outline: 1px solid var(--color-ink); outline-offset: 4px; }
-.center { position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; text-align: center; pointer-events: none; white-space: nowrap; }
-.centerWords { display: flex; align-items: center; gap: 8px; }
-.centerTitle { font: 25px/1 var(--font-newsreader), Georgia, serif; letter-spacing: -.035em; }
-.centerBridge { font: 15px/1 var(--font-sans); color: var(--color-soft); }
-.centerFoot { margin-top: 7px; font: 9px/14px var(--font-sans); color: var(--color-soft); }
-.evidence { min-height: 224px; outline: none; }
-.evidence:focus-visible { outline: 1px solid var(--color-soft); outline-offset: 6px; }
-.evidenceMeta { display: flex; justify-content: space-between; gap: 12px; font: 9px/1.4 var(--font-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--color-soft); }
-.evidenceMeta > span:last-child { flex: 0 0 auto; }
-.evidenceTitle { margin-top: 9px; font: 28px/1.15 var(--font-newsreader), Georgia, serif; font-weight: 350; letter-spacing: -.025em; }
-.evidenceBody { margin-top: 10px; max-width: 47ch; font-size: 13px; line-height: 1.65; color: var(--color-mute); }
-.outputs { margin-top: 14px; font: 10px/1.7 var(--font-mono); color: var(--color-soft); }
-.caseLinks { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 16px; margin-top: 13px; font: 10px var(--font-mono); }
-.caseLinks > span { font-size: 9px; letter-spacing: .08em; color: var(--color-soft); }
-.caseLinks a { display: inline-flex; align-items: center; gap: 9px; min-height: 36px; color: var(--color-ink); text-underline-offset: 4px; }
-.caseLinks a:hover { text-decoration: underline; }
-.caseLinks a:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
-:global(html[lang="zh-CN"]) .centerTitle, :global(html[lang="zh-CN"]) .evidenceTitle { font-family: var(--font-display); font-weight: 350; }
-:global(html[lang="zh-CN"]) .centerTitle { font-size: 22px; line-height: 1; }
-:global(html[lang="zh-CN"]) .evidenceTitle { font-size: 25px; }
-
-@container (max-width: 380px) {
-  .map { height: 276px; margin-top: 20px; }
-  .node { width: 86px; }
-  .nodeLabel { font-size: 10px; max-width: 86px; }
-  .centerTitle { font-size: 21px; }
-  .centerWords { gap: 6px; }
-  .centerBridge { font-size: 13px; }
-  .centerFoot { font-size: 8px; }
-  .evidence { min-height: 258px; }
-  .evidenceMeta > span:last-child { display: none; }
-  .evidenceTitle { font-size: 26px; }
+/* Areas of ownership, simplified: a caption, the six areas as a list on
+   the left, the one in view on the right. One face, three sizes, no
+   icons, rules or map; the chosen row is ink, the rest mute. */
+.figure { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px; margin: 0; }
+.caption { grid-column: 1 / -1; font-size: 13px; line-height: 1.55; color: var(--color-mute); }
+.caption b { display: block; font-weight: 400; color: var(--color-ink); }
+.list { grid-column: 1 / span 5; display: flex; flex-direction: column; }
+.item {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  min-height: 52px;
+  padding: 8px 0;
+  font-size: clamp(22px, 1.9vw, 28px);
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-align: left;
+  color: #5c5c5c;
+  cursor: pointer;
+  transition: color 180ms var(--ease-arrive);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .spoke, .icon, .nodeLabel { transition: none; }
+.item[aria-selected="true"] { color: var(--color-ink); }
+@media (hover: hover) { .item:hover { color: var(--color-ink); } }
+.item:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
+.index { width: 24px; flex: none; font-size: 13px; letter-spacing: 0; font-variant-numeric: tabular-nums; color: var(--color-soft); }
+.evidence { grid-column: 7 / span 6; align-self: start; padding-top: 8px; outline: none; }
+.evidenceTitle { font-size: clamp(32px, 3vw, 44px); font-weight: 300; line-height: 1.08; letter-spacing: -0.03em; color: var(--color-ink); }
+.evidenceBody { max-width: 30rem; margin-top: 20px; font-size: 16px; line-height: 1.65; color: var(--color-mute); text-wrap: pretty; }
+.outputs { margin-top: 20px; font-size: 13px; line-height: 1.55; color: var(--color-soft); }
+.caseLinks { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 24px; font-size: 13px; color: var(--color-soft); }
+.caseLinks a { color: var(--color-ink); }
+.caseLinks a:hover { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 767px) {
+  .figure { grid-template-columns: 1fr; }
+  .list, .evidence { grid-column: 1; }
+  .item { min-height: 44px; font-size: 22px; }
 }
+@media (prefers-reduced-motion: reduce) { .item { transition: none; } }
