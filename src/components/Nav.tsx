@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { ArrowUpRight } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleToggle } from "./LocaleToggle";
 import { Logo } from "./Logo";
@@ -14,7 +15,7 @@ type Item = {
 };
 
 /* px the active plane reaches past its label on either side */
-const PLANE_BLEED = 4;
+const PLANE_BLEED = 0;
 
 const ITEMS: Item[] = [
   { key: "work", href: "/#work", match: (p) => p === "/" || p.startsWith("/work") },
@@ -22,17 +23,16 @@ const ITEMS: Item[] = [
   { key: "contact", href: "/contact", match: (p) => p.startsWith("/contact") },
 ];
 
-/* The nav in the site's flat language. The items are mono labels on the
-   paper, and the active one stands on a small plane that glides between
-   them (Aspen, 2026-10-23: 「线框我们用面」 — it used to be held by a
-   registration bracket, four corner marks; a frame, so it became a
-   plane). The plane is one element in the nav, placed on the active
-   label by transform: a page change scrolls the page to the top, and the
-   old shared-layout bracket measured that scroll and rose into place from
-   below; this one only slides sideways. The availability LED has no
-   housing and no glow: one ink dot, one ping. */
+/* The nav in the site's flat language, at reading size (Aspen, 2026-10-25:
+   「顶栏要结合的有交互一些」 「千万不要用小字」). The brand, an availability
+   pill that leads to Contact (it carries what the hero's facts row used
+   to say: available, Bellevue), and the items on a raised plane that
+   follows the pointer and settles back on the current page. The plane is
+   one element placed by transform, so a page change or a hover costs no
+   render; it only slides sideways. */
 export function Nav() {
   const t = useTranslations("Nav");
+  const th = useTranslations("Hero");
   const pathname = usePathname() ?? "/";
   const active = ITEMS.find((item) => item.match(pathname))?.key;
 
@@ -136,27 +136,32 @@ export function Nav() {
 
   return (
     <header
-      className={`sticky top-0 z-40 h-24 sm:h-16 transition-[background-color,backdrop-filter] duration-300 ease-out ${
-        lifted ? "backdrop-blur-md bg-paper/80" : "bg-transparent"
+      className={`sticky top-0 z-40 h-28 sm:h-20 transition-[background-color,backdrop-filter] duration-300 ease-out ${
+        lifted ? "backdrop-blur-md bg-paper/85" : "bg-transparent"
       }`}
     >
       <div className="container-fluid grid h-full grid-rows-[44px_44px] content-center items-center sm:flex sm:justify-between sm:gap-6">
-        <Link
-          href="/"
-          className="group flex min-h-11 items-center gap-3 shrink-0 justify-self-start whitespace-nowrap touch-manipulation font-display text-[17px] min-[381px]:text-[18px] sm:text-[20px] tracking-[-0.01em] text-ink"
-        >
-          <Logo />
-          <span
-            aria-label={t("available")}
-            className="hidden sm:flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-soft"
+        <div className="flex min-w-0 items-center justify-between gap-4 sm:justify-start sm:gap-5">
+          <Link
+            href="/"
+            className="group flex min-h-11 items-center gap-3 shrink-0 whitespace-nowrap touch-manipulation font-display text-[18px] sm:text-[20px] tracking-[-0.01em] text-ink"
           >
-            <span aria-hidden className="relative flex w-1.5 h-1.5">
-              <span className="absolute inset-0 rounded-full bg-ink opacity-40 animate-ping motion-reduce:hidden" />
-              <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
+            <Logo />
+          </Link>
+          {/* Availability: a real control, not a caption. It leads to Contact. */}
+          <Link
+            href="/contact"
+            className="group/status inline-flex h-10 items-center gap-2.5 rounded-full bg-[#1d1d1d] pl-3.5 pr-3 text-[15px] text-ink whitespace-nowrap transition-colors duration-200 hover:bg-[#262626]"
+          >
+            <span aria-hidden className="relative flex h-2 w-2">
+              <span className="absolute inset-0 rounded-full bg-[#3cc65b] opacity-50 animate-ping motion-reduce:hidden" />
+              <span className="relative h-2 w-2 rounded-full bg-[#3cc65b]" />
             </span>
-            <span className="hidden md:inline">{t("available")}</span>
-          </span>
-        </Link>
+            {t("available")}
+            <span className="hidden lg:inline text-mute">· {th("location")}</span>
+            <ArrowUpRight aria-hidden size={15} strokeWidth={1.6} className="text-mute transition-transform duration-200 group-hover/status:translate-x-0.5 group-hover/status:-translate-y-0.5 group-hover/status:text-ink" />
+          </Link>
+        </div>
 
         <div className="flex min-w-0 items-center justify-between gap-2 sm:justify-start sm:gap-6">
           {/* On phones each label carries its own side room, so the plane
@@ -165,7 +170,14 @@ export function Nav() {
               EN / 中文 has the space; only sub-360 screens tighten up. The
               extra 2px on the left answers the trailing letter-spacing, so
               the label sits optically centred on its plane. */}
-          <nav ref={navRef} className="relative flex shrink-0 items-center gap-1 min-[360px]:gap-2 sm:gap-5">
+          <nav
+            ref={navRef}
+            className="relative flex shrink-0 items-center gap-1 sm:gap-2"
+            onPointerLeave={() => place(activeRef.current)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) place(activeRef.current);
+            }}
+          >
             {/* The plane: the label's height and a little more, flat, no
                 edge — the raised tone, so it reads on the grain. Hyundai's
                 light case takes its own cream instead. */}
@@ -173,7 +185,7 @@ export function Nav() {
               ref={planeRef}
               aria-hidden
               data-glide="false"
-              className="pointer-events-none absolute left-0 top-2 bottom-2 rounded-[var(--r-raised)] [corner-shape:squircle] bg-[#242424] opacity-0 data-[glide=true]:transition-[transform,width,opacity] data-[glide=true]:duration-[420ms] data-[glide=true]:ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="pointer-events-none absolute left-0 top-0.5 bottom-0.5 rounded-full bg-[#242424] opacity-0 data-[glide=true]:transition-[transform,width,opacity] data-[glide=true]:duration-[420ms] data-[glide=true]:ease-[cubic-bezier(0.16,1,0.3,1)]"
             />
             {ITEMS.map((item) => {
               const current = item.key === active;
@@ -186,8 +198,12 @@ export function Nav() {
                   href={item.href}
                   aria-current={current ? "page" : undefined}
                   onClick={item.key === "work" ? onWorkClick : undefined}
-                  className={`relative inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap pl-1.5 pr-1 min-[360px]:pl-2.5 min-[360px]:pr-2 sm:pl-1.5 sm:pr-1 touch-manipulation font-mono text-[11px] uppercase tracking-[0.18em] transition-colors duration-200 ${
-                    current ? "text-ink" : "text-soft hover:text-ink"
+                  onPointerEnter={(e) => {
+                    if (e.pointerType === "mouse") place(item.key);
+                  }}
+                  onFocus={() => place(item.key)}
+                  className={`relative inline-flex min-h-11 items-center justify-center whitespace-nowrap px-3 sm:px-3.5 touch-manipulation text-[15px] transition-colors duration-200 ${
+                    current ? "text-ink" : "text-mute hover:text-ink"
                   }`}
                 >
                   {t(item.key)}

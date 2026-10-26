@@ -3,14 +3,25 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { HeroPortrait } from "./HeroPortrait";
 import { HeroEntrance } from "./HeroEntrance";
+import { TrustBadges } from "./TrustBadges";
 import styles from "./Hero.module.css";
 
-/* The home hero as a poster: facts, the two words as the core element
-   with Aspen's face between them, the statement and credits at the foot.
+/* The home hero as a poster: who, the two words with Aspen's face
+   between them, then the statement and the trust badges as real UI.
    See Hero.module.css. */
-const CREDITS = ["TikTok", "Hyundai", "MiraclePlus", "CDC", "Mercor", "Y Combinator", "iF Design Award", "Stanford Medicine", "Georgia Tech"];
-
 const rise = (d: number) => ({ "--d": `${d}s` }) as CSSProperties;
+
+function LeverIcon() {
+  return (
+    <svg viewBox="0 0 30 30" className={styles.leverIcon} aria-hidden>
+      <path d="M15 15 L9.5 25 H20.5 Z" fill="currentColor" />
+      <g className={styles.beam}>
+        <rect x="2" y="11" width="26" height="3" rx="1.5" fill="currentColor" />
+        <rect x="2" y="6" width="6" height="5" rx="1" fill="currentColor" />
+      </g>
+    </svg>
+  );
+}
 
 export function Hero() {
   const t = useTranslations("Hero");
@@ -22,22 +33,13 @@ export function Hero() {
     <section id="hero" className="relative isolate overflow-hidden select-none">
       <HeroEntrance />
       <div className={`container-fluid ${styles.poster}`}>
-        <div className={`hero-fade-up ${styles.facts}`} style={rise(0.5)}>
-          <div className={`col-span-2 md:col-span-4 ${styles.who}`}>
-            <Image src="/about/aspen-avatar.png" alt="" width={34} height={34} priority className={styles.avatar} />
-            <p><b>{t("name")}</b>{cn ? "创始设计工程师" : "Founding Design Engineer"}</p>
-          </div>
-          <p className="col-span-2 md:col-span-4">
-            <b>
-              <a href="https://helloaxel.com" target="_blank" rel="noreferrer">Axel (YC W19)</a>
-            </b>
-            {cn ? "产品设计 · 生产级 React PR" : "Product design · production React PRs"}
-          </p>
-          <p className="hidden md:block md:col-start-10 md:col-span-3 md:text-right">
-            <b>{t("location")}</b>
-            {cn ? "可入职" : "Available"}
-          </p>
-        </div>
+        <p className={`hero-fade-up ${styles.who}`} style={rise(0.5)}>
+          <Image src="/about/aspen-avatar.png" alt="" width={40} height={40} priority className={styles.avatar} />
+          <span>
+            <b>{t("name")}</b>
+            {cn ? <>，<a href="https://helloaxel.com" target="_blank" rel="noreferrer">Axel (YC W19)</a> 创始设计工程师</> : <>, Founding Design Engineer at <a href="https://helloaxel.com" target="_blank" rel="noreferrer">Axel (YC W19)</a></>}
+          </span>
+        </p>
 
         <h1 className={styles.mast} aria-label={`${first} ${cn ? "与" : "and"} ${second}`}>
           <span className={`hero-rise ${styles.word}`} style={rise(0.68)} aria-hidden>{first}</span>
@@ -49,11 +51,11 @@ export function Hero() {
         </h1>
 
         <div className={`hero-fade-up ${styles.foot}`} style={rise(1.1)}>
-          <p className={`col-span-4 md:col-span-5 ${styles.statement}`}>
-            <span className={styles.mark} aria-hidden />
+          <p className={styles.lever}>
+            <LeverIcon />
             {t("headlineLine3a")}{t("headlineLine3Italic")}{t("headlineLine3b")}
           </p>
-          <p className="col-span-4 md:col-start-8 md:col-span-5">{CREDITS.map((c) => c.replace(/ /g, "\u00a0")).join("\u00a0· ")}</p>
+          <TrustBadges label={cn ? "合作与认可" : "Worked with and recognized by"} />
         </div>
       </div>
     </section>

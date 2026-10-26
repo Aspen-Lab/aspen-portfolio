@@ -9,9 +9,8 @@ const labels: Record<Locale, string> = {
   cn: "中文",
 };
 
-/* Two mono labels, kept apart by space alone (no hairline between them:
-   the site draws no rules). The active language is ink; the other is
-   soft and comes up on hover. No track, no cap. */
+/* Two labels at reading size, kept apart by space alone. The active
+   language is ink; the other is grey and comes up on hover. */
 export function LocaleToggle() {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
@@ -26,7 +25,7 @@ export function LocaleToggle() {
   };
 
   return (
-    <div role="group" aria-label={locale === "cn" ? "语言" : "Language"} className="flex shrink-0 items-center font-mono text-[10px] uppercase tracking-[0.18em]">
+    <div role="group" aria-label={locale === "cn" ? "语言" : "Language"} className="flex shrink-0 items-center text-[15px]">
       {(Object.keys(labels) as Locale[]).map((code, i) => {
         const active = code === locale;
         return (
@@ -36,7 +35,7 @@ export function LocaleToggle() {
               onClick={() => switchTo(code)}
               aria-pressed={active}
               className={`inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap touch-manipulation transition-colors duration-200 cursor-pointer ${
-                active ? "text-ink" : "text-soft hover:text-ink"
+                active ? "text-ink" : "text-mute hover:text-ink"
               }`}
             >
               {labels[code]}
