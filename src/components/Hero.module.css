@@ -1,14 +1,14 @@
 /* The home hero as a poster (Aspen, 2026-10-24/25/26): Aspen's motto as
-   a quote beside a leaf portrait, the two words (smaller: 「Design
-   Engineer 标题小一些」) with Aspen's face between them, then the trust
+   a quote, the two words (smaller: 「Design Engineer 标题小一些」) with
+   Aspen's face between them in the logo's aspen leaf, then the trust
    badges as real UI (the "One leverage force" pill is gone). Shorter than the
    screen, the words smaller and more open (「矮一些 间距宽一些」), and
    nothing set small (「千万不要用小字」): 17px is the smallest text here. */
 .poster { position: relative; padding-top: 56px; padding-bottom: 72px; }
 
-/* The motto as a quote: the leaf portrait, then the words in the display
-   face with the opening mark hung outside the text edge, and the name */
-.quote { display: flex; align-items: flex-start; gap: 28px; margin: 0; }
+/* The motto as a quote: the words in the display face with the opening
+   mark hung outside the text edge, then the name */
+.quote { margin: 0; }
 .words {
   max-width: 30ch;
   margin: 0;
@@ -24,12 +24,7 @@
 .phrase { white-space: nowrap; }
 .by { margin-top: 12px; font-size: 17px; line-height: 1.4; color: var(--color-mute); }
 
-/* The leaf portrait: Aspen's face in dots, cut to the logo's aspen leaf
-   on the surface plane, with the leaf's stem in the text grey */
-.leaf { position: relative; width: 96px; height: 96px; flex: none; margin-top: -8px; }
-.defs { position: absolute; width: 0; height: 0; }
-.leafFace { position: absolute; inset: 0; clip-path: url(#aspen-leaf-clip); background: #1c1c1c; }
-.leafStem { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: #8c8c8c; stroke-width: 2.6; stroke-linecap: round; }
+
 
 /* The core element: the two words, set across the frame */
 .mast { position: relative; isolation: isolate; margin: 72px 0 80px; }
@@ -53,31 +48,31 @@
   font-size: clamp(20px, 1.8vw, 26px);
   color: var(--color-mute);
 }
-/* The face: a disc between the words, behind the second */
+/* The face: an aspen leaf between the words, its stem ending just above
+   the second — the logo's outline as a clip on the surface plane, the
+   stem drawn over */
 .disc {
   position: absolute;
-  top: -8%;
-  right: 22%;
+  top: -52%;
+  right: 21%;
   z-index: -1;
-  width: clamp(100px, 12.6vw, 184px);
+  width: clamp(132px, 16vw, 236px);
   aspect-ratio: 1;
-  overflow: hidden;
-  border-radius: 50%;
-  background: #1c1c1c;
 }
-.discCanvas { position: absolute; inset: -6% -10% -14% -2%; opacity: 0.9; }
+.defs { position: absolute; width: 0; height: 0; }
+.leafFace { position: absolute; inset: 0; overflow: hidden; clip-path: url(#aspen-leaf-clip); background: #1c1c1c; }
+.discCanvas { position: absolute; inset: 4% 0 10% 12%; }
+.leafStem { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: #8c8c8c; stroke-width: 1.4; stroke-linecap: round; }
 
 /* The foot: the trust badges */
 .foot { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
 
 @media (max-width: 767px) {
   .poster { padding-top: 32px; padding-bottom: 56px; }
-  .quote { gap: 18px; }
   .words { font-size: 22px; }
-  .leaf { width: 68px; height: 68px; margin-top: -4px; }
-  .mast { margin: calc(32vw + 48px) 0 56px; }
+  .mast { margin: calc(38vw + 48px) 0 56px; }
   .word { font-size: 13vw; }
   .and { top: calc(13vw * 0.28); font-size: 17px; }
-  .disc { top: auto; bottom: calc(100% + 12px); right: 0; z-index: 0; width: 32vw; }
+  .disc { top: auto; bottom: calc(100% + 8px); right: 0; z-index: 0; width: 38vw; }
   .foot { flex-direction: column; align-items: flex-start; }
 }
