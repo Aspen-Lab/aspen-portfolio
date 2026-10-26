@@ -1,58 +1,52 @@
-/* Aspen Origin on the home page: one plane (flat, no edge, G2 corners),
-   the material on the left and the way in on the right. Only the
-   exploded slabs keep Origin's own material (bevels, the recess, compact
-   shadows), because that material is the point; everything around them
-   is the site's flat chrome. */
-.plane {
-  --surface-base: #181818;
-  --surface-inset: #202020;
-  --surface-raised: #242424;
+/* Aspen Origin, flat. Left: the three surfaces nested as flat squares
+   with G2 corners, the 2×2 mark at the centre; no 3D, shadow or
+   gradient. Right: name, line, specimen, button. The hero's 12 columns. */
+.grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 24px;
   align-items: center;
-  overflow: hidden;
-  border-radius: var(--r-plane);
+}
+
+/* ── The art ── */
+.art { grid-column: 1 / span 6; }
+.canvas,
+.inset,
+.raised {
+  display: grid;
+  place-items: center;
   corner-shape: squircle;
-  background: #1e1e1e;
+  transition: padding 520ms var(--ease-arrive);
 }
-
-/* ── The material: Origin's three surfaces, stacked ── */
-.stage { position: relative; height: 380px; perspective: 1100px; }
-.stack {
-  position: absolute;
-  width: 256px;
-  height: 256px;
-  top: 50%;
-  left: 50%;
-  transform-style: preserve-3d;
-  transform: translate(-50%, -42%) rotateX(54deg) rotateZ(-34deg);
-}
-.slab { position: absolute; inset: 0; border-radius: 18px; transform-style: preserve-3d; transition: transform 520ms var(--ease-arrive); }
-.canvasSlab { background: var(--surface-base); box-shadow: 0 1px 0 #111, 0 3px 0 #111, 0 10px 18px #0007, inset 0 1px 0 #ffffff08; }
-.insetSlab { inset: 19px; background: var(--surface-inset); transform: translateZ(38px); box-shadow: 0 2px 0 #131313, 0 5px 0 #131313, 0 12px 15px #0005, inset 0 1px 0 #ffffff0a; }
-.recess { position: absolute; inset: 12px; border-radius: 11px; background: #202020; box-shadow: inset 0 2px 6px #0008, inset 0 -1px 1px #ffffff06; }
-.raisedSlab { inset: 39px; background: var(--surface-raised); transform: translateZ(80px); box-shadow: 0 2px 0 #161616, 0 5px 0 #161616, 0 16px 23px #0005, inset 0 1px 1px #ffffff08; }
-.raisedSignature { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; font: 13px var(--font-sans); letter-spacing: -0.02em; color: #b4b4b4; }
-.sculptedMark { position: absolute; left: 50%; top: 47%; display: grid; grid-template-columns: repeat(2, 27px); gap: 8px; transform: translate(-50%, -50%) translateZ(8px); }
-.sculptedMark i { display: block; height: 27px; border-radius: 7px; background: #c3c3c3; box-shadow: 0 1px 0 #aaa, 0 3px 0 #777, 0 7px 7px #0005, inset 0 1px 0 #fff7; }
-.sculptedMark i:last-child { background: #737373; box-shadow: 0 1px 0 #666, 0 3px 0 #444, 0 7px 7px #0005, inset 0 1px 0 #fff2; }
-
-/* Under a real pointer the stack opens a little: the levels part */
+.canvas { aspect-ratio: 1; max-width: 520px; padding: 12%; border-radius: 48px; background: #1d1d1d; }
+.inset { width: 100%; height: 100%; padding: 15%; border-radius: 36px; background: #252525; }
+.raised { width: 100%; height: 100%; border-radius: 26px; background: #2f2f2f; }
+.mark { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10%; width: 46%; aspect-ratio: 1; }
+.mark i { border-radius: 22%; corner-shape: squircle; background: #d6d6d6; }
+.mark i:last-child { background: #6e6e6e; }
+/* Under the pointer the levels breathe apart a little */
 @media (hover: hover) {
-  .plane:hover .insetSlab { transform: translateZ(52px); }
-  .plane:hover .raisedSlab { transform: translateZ(108px); }
+  .grid:hover .canvas { padding: 10%; }
+  .grid:hover .inset { padding: 17%; }
 }
 
-/* ── The way in: the name, one line, one button ── */
-.copy { display: flex; flex-direction: column; align-items: start; min-width: 0; padding: 48px 56px 48px 24px; }
-.copy h2 { font-size: clamp(40px, 3.6vw, 56px); line-height: 1.05; color: var(--color-ink); }
-.copy p { max-width: 380px; margin-top: 16px; font-size: 16px; line-height: 1.6; color: var(--color-mute); text-wrap: pretty; }
+/* ── The copy ── */
+.copy { grid-column: 8 / span 5; }
+.copy h2 { font-family: var(--font-display); font-weight: 300; font-size: clamp(44px, 4.6vw, 72px); line-height: 1; letter-spacing: -0.04em; color: var(--color-ink); }
+.tagline { max-width: 24rem; margin-top: 20px; font-size: 16px; line-height: 1.6; color: var(--color-mute); text-wrap: pretty; }
+.specimen { display: grid; gap: 10px; margin-top: 40px; font-size: 13px; }
+.specimen li { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 14px; max-width: 300px; }
+.swatch { width: 20px; height: 20px; border-radius: 6px; corner-shape: squircle; box-shadow: none; }
+/* The specimen sits a step up from the ground so Canvas still reads */
+.specimen { padding: 14px 16px; border-radius: var(--r-raised); corner-shape: squircle; background: #141414; max-width: 320px; }
+.swatchName { color: var(--color-ink); }
+.hex { color: var(--color-soft); font-variant-numeric: tabular-nums; }
 .enterLink {
   display: inline-flex;
   align-items: center;
   gap: 24px;
   min-height: 48px;
-  margin-top: 32px;
+  margin-top: 40px;
   padding: 0 18px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
@@ -69,17 +63,12 @@
 .enterLink:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 
 @media (max-width: 767px) {
-  .plane { grid-template-columns: 1fr; }
-  .stage { height: 290px; }
-  .stack { width: 216px; height: 216px; }
-  .insetSlab { inset: 16px; }
-  .raisedSlab { inset: 33px; }
-  .sculptedMark { top: 54%; grid-template-columns: repeat(2, 23px); gap: 7px; }
-  .sculptedMark i { height: 23px; border-radius: 6px; }
-  .copy { padding: 8px 24px 32px; }
-  .copy h2 { font-size: 40px; }
-  .copy p { font-size: 15px; }
+  .grid { grid-template-columns: 1fr; row-gap: 40px; }
+  .art, .copy { grid-column: 1; }
+  .canvas { border-radius: 36px; }
+  .inset { border-radius: 26px; }
+  .raised { border-radius: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .slab, .enterLink, .enterLink svg { transition: none; }
+  .canvas, .inset, .raised, .enterLink, .enterLink svg { transition: none; }
 }
