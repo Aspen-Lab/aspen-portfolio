@@ -10,8 +10,8 @@
   padding: 0 18px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #1d1d1d;
-  color: #bdbdbd;
+  background: #1c1c1c;
+  color: #8c8c8c;
   font-size: 16px;
   line-height: 1;
   white-space: nowrap;
@@ -19,15 +19,14 @@
 }
 .mark { width: 18px; height: 18px; flex: none; fill: currentColor; }
 .markWide { width: 30px; height: 15px; flex: none; fill: currentColor; }
-.logo { width: auto; flex: none; opacity: 0.74; transition: opacity 180ms var(--ease-arrive); }
+.logo { display: block; flex: none; background: currentColor; mask-repeat: no-repeat; mask-position: center; mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; -webkit-mask-size: contain; }
 @media (hover: hover) {
-  .badge:hover { background: #262626; color: var(--color-ink); }
-  .badge:hover .logo { opacity: 1; }
+  .badge:hover { background: #1c1c1c; color: var(--color-ink); }
 }
 @media (max-width: 767px) {
   .rows, .badges { gap: 8px; }
   .badge { height: 44px; padding: 0 14px; font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .badge, .logo { transition: none; }
+  .badge { transition: none; }
 }

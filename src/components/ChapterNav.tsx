@@ -178,7 +178,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
           layoutScroll
           className="container-fluid flex items-center gap-7 overflow-x-auto no-scrollbar py-3.5"
         >
-          <span className={`${labelType} text-soft shrink-0`}>
+          <span className={`${labelType} text-mute shrink-0`}>
             {cn ? "章节" : "Chapters"}
           </span>
           {chapters.map((c, i) => (
@@ -199,7 +199,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
               className={`relative flex items-baseline gap-2 py-1 whitespace-nowrap shrink-0 cursor-pointer motion-reduce:transition-none ${
                 plate
                   ? `text-ink ${active === i ? "opacity-100" : "opacity-45 hover:opacity-75 focus-visible:opacity-75"}`
-                  : `transition-colors duration-200 ${active === i ? "text-ink" : "text-soft hover:text-mute"}`
+                  : `transition-colors duration-200 ${active === i ? "text-ink" : "text-mute hover:text-mute"}`
               }`}
             >
               <span className={`font-mono ${plate ? "text-[12px] tracking-[0.12em]" : cn ? "text-[11px] tracking-[0.06em]" : "text-[10px] uppercase tracking-[0.22em]"} opacity-70 tabular-nums`}>
@@ -239,7 +239,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
         {/* Kept in the flow when hidden, so the rail never shifts between
             modes; on a plate the dots stand alone and the plate hugs them */}
         <p
-          className={`${labelType} text-soft mb-5 text-right pr-1 ${
+          className={`${labelType} text-mute mb-5 text-right pr-1 ${
             dots ? (plate ? "hidden" : "invisible") : ""
           }`}
         >
@@ -300,7 +300,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
                     className={`relative shrink-0 w-1.5 h-1.5 motion-reduce:transition-none z-10 ${
                       plate
                         ? `bg-ink transition-opacity duration-[160ms] ease-(--ease-arrive) ${isActive ? "opacity-100" : "opacity-35 group-hover:opacity-75 group-focus-visible:opacity-75"}`
-                        : `rounded-full transition-colors duration-300 ${isActive ? "bg-ink" : "bg-soft/40 group-hover:bg-mute group-focus-visible:bg-mute"}`
+                        : `rounded-full transition-colors duration-300 ${isActive ? "bg-ink" : "bg-mute group-hover:bg-ink group-focus-visible:bg-ink"}`
                     }`}
                   />
                 </button>

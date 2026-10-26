@@ -2,14 +2,10 @@
 
 import { memo, startTransition, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
-import { useInView } from "motion/react";
-import { useLocale } from "next-intl";
 import type { CatalogueCover } from "./CatalogueIndex";
-import { SideProjectDemo } from "./SideProjectDemo";
 import styles from "./CatalogueMedia.module.css";
 
-/* The pictures behind the catalogue: a card's own preview (phones,
-   tablets, touch screens) and the stacked layers of the desktop plate.
+/* The pictures behind the catalogue: the stacked layers of the plate.
    Once a plate is warm, nothing here mounts, fetches or decodes on
    hover (Aspen: 「hover看图体验很卡」). Covers load while the plate is
    still below the fold and show only once decoded; scenes and the video
@@ -183,16 +179,13 @@ export const StageMedia = memo(function StageMedia({
   active,
   warm,
   inView,
-  replay = 0,
 }: {
   cover: CatalogueCover;
   active: boolean;
   /** The plate is within reach of the viewport. */
   warm: boolean;
   inView: boolean;
-  replay?: number;
 }) {
-  const cn = useLocale() === "cn";
   const visible = usePageVisible();
   const reduce = useReduced();
   const canPlay = useSyncExternalStore(onStageChange, stageNow, no);
@@ -201,11 +194,11 @@ export const StageMedia = memo(function StageMedia({
   const onReady = useCallback(() => setReady(true), []);
 
   // Every cover fetches and decodes as soon as the plate is in reach.
-  // The scene (or the video) of the entry on the plate is built then too,
-  // so it never swaps in where someone can see it; the rest wait for a
-  // still page (whenStill), and one hovered before its turn builds at
-  // once. Once built, it stays.
-  const heavy = !!(cover.demo || cover.video);
+  // The video of the entry on the plate is built then too, so it never
+  // swaps in where someone can see it; the rest wait for a still page
+  // (whenStill), and one hovered before its turn builds at once. Once
+  // built, it stays.
+  const heavy = !!cover.video;
   if (heavy && warm && active && !built) setBuilt(true);
   useEffect(() => {
     if (!heavy || !warm || built) return;
@@ -219,55 +212,12 @@ export const StageMedia = memo(function StageMedia({
       className={styles.media}
       data-stage
       data-ready={ready}
-      data-demo={!!cover.demo}
       data-animate={live}
       data-fit={cover.fit ?? "cover"}
       style={{ backgroundColor: cover.bg ?? "var(--color-paper)" }}
     >
       {warm && <Cover cover={cover} desktop onReady={onReady} />}
-      {built && cover.demo && (
-        <SideProjectDemo key={`${cover.demo}-${replay}`} id={cover.demo} playing={playing} cn={cn} />
-      )}
       {built && cover.video && canPlay && !reduce && <StageVideo src={cover.video} playing={playing} />}
-    </div>
-  );
-});
-
-/** A card's own preview (phones, tablets, touch screens). */
-export const CatalogueMedia = memo(function CatalogueMedia({
-  cover,
-  replay = 0,
-}: {
-  cover: CatalogueCover;
-  replay?: number;
-}) {
-  const cn = useLocale() === "cn";
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: cover.demo ? 0.45 : 0.15 });
-  // Warm the card just before scrolling reaches it. On the desktop these
-  // cards are not displayed, so they never download a second set.
-  const near = useInView(ref, { once: true, margin: "400px 0px" });
-  const visible = usePageVisible();
-  const reduce = useReduced();
-  const [ready, setReady] = useState(false);
-  const onReady = useCallback(() => setReady(true), []);
-  const live = inView && visible && !reduce;
-
-  return (
-    <div
-      ref={ref}
-      className={styles.media}
-      data-ready={ready}
-      data-demo={!!cover.demo}
-      data-animate={live}
-      data-fit={cover.fit ?? "cover"}
-      style={{ backgroundColor: cover.bg ?? "var(--color-paper)" }}
-    >
-      {near && <Cover cover={cover} desktop={false} onReady={onReady} />}
-      {/* Built once in reach, then only started and stopped by the viewport. */}
-      {near && cover.demo && (
-        <SideProjectDemo key={`${cover.demo}-${replay}`} id={cover.demo} playing={live} cn={cn} />
-      )}
     </div>
   );
 });

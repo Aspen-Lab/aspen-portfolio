@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 440px;
   min-width: 0;
   container-type: inline-size;
   color: var(--color-ink);
@@ -17,41 +16,41 @@
   margin-bottom: 16px;
 }
 
-.eyebrow { margin: 0; font-size: 13px; color: var(--color-ink); }
-.more { display: inline-flex; min-height: 32px; align-items: center; gap: 5px; color: var(--color-mute); font-size: 13px; transition: color 140ms; }
-.more:hover { color: var(--color-ink); }
+.eyebrow { margin: 0; font-size: 20px; line-height: 1.3; color: var(--color-ink); }
+.more { display: inline-flex; min-height: 32px; align-items: center; gap: 5px; height: 40px; padding: 0 16px; border-radius: 999px; background: #0f0f0f; color: var(--color-ink); font-size: 15px; transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive); }
+.more:hover { background: #f3f3f3; color: #0f0f0f; }
 
-.figure { display: grid; grid-template-columns: 156px minmax(0, 1fr); align-items: center; gap: 24px; margin: 0; }
+.figure { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); align-items: center; gap: 32px; margin: 24px 0 0; }
 /* Each photograph is a plane with G2 corners. The box takes the photo's
    own ratio (--ratio), held to the frame and set where the contained
    picture used to land (left, centred), so the corners clip the picture
    itself rather than the empty frame around it. */
-.frame { --frame-h: 194px; position: relative; height: var(--frame-h); }
+.frame { --frame-h: 260px; position: relative; height: var(--frame-h); }
 .photograph { position: absolute; top: 50%; left: 0; width: min(100%, var(--frame-h) * var(--ratio)); aspect-ratio: var(--ratio); translate: 0 -50%; overflow: hidden; border-radius: var(--r-plane); corner-shape: squircle; opacity: 0; pointer-events: none; transition: opacity 220ms ease; }
 .photograph[data-visible="true"] { opacity: 1; }
 .image { object-fit: contain; object-position: left center; }
 .caption { min-width: 0; }
 .captionCopy { animation: caption-in 180ms ease both; }
-.title { margin: 0; max-width: 190px; color: var(--color-ink); font: 300 25px/1.12 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
-.caption p { margin: 9px 0 0; max-width: 195px; color: var(--color-mute); font-size: 12px; line-height: 1.7; }
+.title { margin: 0; color: var(--color-ink); font-family: var(--font-display); font-weight: 300; font-size: clamp(30px, 2.6vw, 40px); line-height: 1.1; letter-spacing: -.03em; text-wrap: balance; }
+.caption p { margin: 14px 0 0; max-width: 22rem; color: var(--color-mute); font-size: 17px; line-height: 1.55; }
 
 .panel { order: 1; }
-.selectors { order: 2; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 14px; }
-.selector { position: relative; display: flex; min-width: 0; min-height: 36px; align-items: center; justify-content: center; gap: 7px; color: var(--color-mute); background: transparent; font-size: 11px; cursor: pointer; transition: color 140ms; }
+.selectors { order: 2; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 24px; padding: 4px; border-radius: 999px; background: #0f0f0f; }
+.selector { position: relative; display: flex; min-width: 0; min-height: 44px; align-items: center; justify-content: center; gap: 8px; color: var(--color-mute); background: transparent; font-size: 15px; cursor: pointer; transition: color 140ms; }
 .selector svg { flex: 0 0 auto; }
 .selector:hover, .selector[aria-selected="true"] { color: var(--color-ink); }
 /* The chosen tab stands on a plane that slides between them, as the
    nav's does; no underline. */
-.selectionLine { position: absolute; top: 0; bottom: 0; left: 0; width: 25%; border-radius: var(--r-raised); corner-shape: squircle; background: #242424; transition: transform 180ms cubic-bezier(.2,.8,.2,1); }
+.selectionLine { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(25% - 2px); border-radius: 999px; background: #1c1c1c; transition: transform 420ms var(--ease-arrive); }
 .selector:focus-visible, .more:focus-visible, .panel:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 
-:global(html[lang="zh-CN"]) .title { font-family: var(--font-sans); font-size: 19px; font-weight: 400; line-height: 1.4; }
+:global(html[lang="zh-CN"]) .title { line-height: 1.3; }
 @keyframes caption-in { from { opacity: .25; } to { opacity: 1; } }
 @container (max-width: 360px) {
-  .figure { grid-template-columns: 124px minmax(0, 1fr); gap: 18px; }
-  .frame { --frame-h: 180px; }
-  .title { font-size: 23px; }
-  .caption p { font-size: 11px; }
+  .figure { grid-template-columns: 130px minmax(0, 1fr); gap: 20px; }
+  .frame { --frame-h: 190px; }
+  .title { font-size: 26px; }
+  .caption p { font-size: 16px; }
   .selector { gap: 5px; }
 }
 @media (prefers-reduced-motion: reduce) {

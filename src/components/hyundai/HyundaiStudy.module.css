@@ -34,7 +34,7 @@
   padding: var(--pad);
   border-radius: var(--r-plane, 32px);
   corner-shape: squircle;
-  background: var(--tile, #1e1e1e);
+  background: var(--tile, #1c1c1c);
 }
 @media (min-width: 640px) {
   .env {
@@ -74,7 +74,7 @@
   /* the photos sit in the tile's corners: concentric with it */
   border-radius: max(var(--r-tag, 10px), calc(var(--r-plane, 32px) - var(--pad, 18px)));
   corner-shape: squircle;
-  background: var(--raised, #272727);
+  background: var(--raised, #1c1c1c);
 }
 .pair {
   display: flex;
@@ -136,7 +136,7 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  color: #d1d1d1;
+  color: #f3f3f3;
   text-wrap: pretty;
 }
 /* A 6px square, centred on the first line */
@@ -145,7 +145,7 @@
   width: 6px;
   height: 6px;
   margin-top: calc((1lh - 6px) / 2);
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 
 /* ── The printed scope: three number tiles ── */
@@ -169,7 +169,7 @@
   padding: 16px 8px 14px;
   border-radius: var(--r-plane, 32px);
   corner-shape: squircle;
-  background: var(--tile, #1e1e1e);
+  background: var(--tile, #1c1c1c);
 }
 @media (min-width: 640px) {
   .stat {
@@ -182,7 +182,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  color: #d1d1d1;
+  color: #f3f3f3;
 }
 /* On a phone a tile is ~94px inside: the square moves to the tile's top
    right corner so 'Environments' keeps the full width (its soft hyphen
@@ -204,7 +204,7 @@
   width: 8px;
   height: 8px;
   margin-top: calc((1lh - 8px) / 2);
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 .statSq[data-focus="true"] { background: var(--accent, #f3f3f3); }
 

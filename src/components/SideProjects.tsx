@@ -1,22 +1,21 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { ArrowUpRight } from "lucide-react";
 import { sideProjects } from "@/lib/work";
 import type { Locale } from "@/i18n/routing";
 import { Reveal } from "./Reveal";
 import { Workshop } from "./Workshop";
-import { CatalogueIndex, type CatalogueRow } from "./CatalogueIndex";
-import { demoCaption, isSideDemo } from "./SideProjectDemo";
 import styles from "./SideProjects.module.css";
 
-/* The side projects on the same catalogue as the works, so the two
-   sections are peers (Aspen: 「副业项目那一节也按这个做，并且和作品平级」):
-   one sentence, the rows, the plate, one quiet line under it. The commit
-   calendar stays below as the workshop. */
+/* The side projects as plain UI on the grey planes, no pictures
+   (Aspen, 2026-10-25: 「不要 staging 了 灰色纯 UI 吧」, after the stage of
+   live sites): one sentence, then a card per project — what it is, its
+   name and its line — and the whole card opens the live site. The
+   commit calendar stays below as the workshop. */
 
 /* ─── Intro ───────────────────────────────────────────────────────────
-   One quiet sentence (Aspen, 2026-10-24: 「这个 section 很乱」). The
-   typed terminal command and its replay are gone. */
+   One quiet sentence (Aspen, 2026-10-24: 「这个 section 很乱」). */
 function SideIntro() {
   const t = useTranslations("SideProjects");
   return <p className={styles.intro}>{t("intro")}</p>;
@@ -28,46 +27,45 @@ export function SideProjects() {
   const t = useTranslations("SideProjects");
   const cn = (useLocale() as Locale) === "cn";
   const tr = (b: { en: string; cn: string }) => (cn ? b.cn : b.en);
-
-  const rows: CatalogueRow[] = sideProjects.filter((p) => !p.hidden).map((p) => {
-    const status = t(`status.${p.status}`);
-    const category = tr(p.category);
-    const platforms = p.platforms.map(tr).join(" · ");
-    const host = p.href ? new URL(p.href).hostname.replace(/^www\./, "") : null;
-    const demo = isSideDemo(p.slug) ? p.slug : undefined;
-    return {
-      key: p.slug,
-      href: p.href,
-      external: true,
-      name: p.name,
-      sub: tr(p.tagline),
-      meta: (
-        <>
-          {category}
-          <span className="hidden sm:inline text-soft/55"> · {platforms}</span>
-        </>
-      ),
-      // Most are live: say only what differs (Early, Archive, In progress)
-      right: p.status === "live" ? null : status,
-      cover: p.thumb
-        ? {
-          src: p.thumb,
-          width: 1440,
-          height: 900,
-          alt: demo ? `${p.name} — ${demoCaption(demo, cn)} (${cn ? "功能演示" : "product demo"})` : t("thumbAlt", { name: p.name }),
-          demo,
-        }
-        : undefined,
-      readout: [category, host ?? t("privateBuild")],
-    };
-  });
+  const projects = sideProjects.filter((p) => !p.hidden);
 
   return (
     <section className="container-fluid">
       <SideIntro />
 
       <Reveal amount="some">
-        <CatalogueIndex rows={rows} />
+        <ul className={styles.grid}>
+          {projects.map((p) => {
+            const body = (
+              <>
+                <span className={styles.top}>
+                  <span className={styles.kind}>{tr(p.category)}</span>
+                  {p.href && (
+                    <span className={styles.go} aria-hidden>
+                      <ArrowUpRight size={18} strokeWidth={1.6} />
+                    </span>
+                  )}
+                </span>
+                <span className={styles.name}>{p.name}</span>
+                <span className={styles.line}>{tr(p.tagline)}</span>
+              </>
+            );
+            return (
+              <li key={p.slug}>
+                {p.href ? (
+                  <a href={p.href} target="_blank" rel="noreferrer" className={styles.card}>
+                    {body}
+                  </a>
+                ) : (
+                  <div className={styles.card}>
+                    {body}
+                    <span className={styles.line}>{t("privateBuild")}</span>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </Reveal>
 
       <Workshop />

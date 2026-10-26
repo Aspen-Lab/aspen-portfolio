@@ -1,5 +1,5 @@
 /* The split card in the site's one dark system of planes: the phone on
-   an empty sheet (#191919), the ledger on the slab (#0a0a0a). No edge
+   an empty sheet (#1c1c1c), the ledger on the slab (#0f0f0f). No edge
    round them and none between them: the tones meet. The rows are parted
    by space; the row in view stands on a plane (a pointed-at row lifts a
    tone), and the accent fills only its 8px square. Type is the ramp
@@ -16,7 +16,7 @@
   overflow: hidden;
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: var(--slab, #0a0a0a);
+  background: var(--slab, #0f0f0f);
 }
 /* Below lg the slab's parts take their own rows round the phone */
 .slab { display: contents; }
@@ -28,7 +28,7 @@
   display: grid;
   justify-items: center;
   padding: 28px 12px;
-  background: var(--sheet, #191919);
+  background: var(--sheet, #1c1c1c);
 }
 
 /* The phone's box at its drawn size times the scale (--s, from the
@@ -77,18 +77,19 @@
   border: 0;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--tile, #191919);
+  background: transparent;
   color: var(--color-ink);
   text-align: left;
   transition:
     transform var(--t-1) var(--ease-arrive),
     background-color var(--t-1) var(--ease-arrive);
 }
-/* A pointed-at row lifts a tone; the row in view is raised */
+/* Rows are words on the card's ground tone, as tabs are: the row in
+   view, and the one pointed at, stand on the surface plane */
 @media (hover: hover) {
-  .row:hover { background: #1e1e1e; }
+  .row:hover { background: #1c1c1c; }
 }
-.row[data-on="true"] { background: var(--raised, #242424); }
+.row[data-on="true"] { background: #1c1c1c; }
 .row:active { transform: translateY(1px); }
 .row:focus-visible { outline-offset: 3px; }
 
@@ -104,7 +105,7 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 .sq::after {
   content: "";
@@ -125,7 +126,7 @@
 .text {
   display: none;
   margin-top: 8px;
-  color: var(--color-mute, #a2a2a2);
+  color: var(--color-mute, #8c8c8c);
   text-wrap: pretty;
 }
 .word { white-space: nowrap; }
@@ -149,7 +150,7 @@
 }
 .detailText {
   grid-area: 1 / 1;
-  color: var(--color-body, #d1d1d1);
+  color: var(--color-body, #f3f3f3);
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -176,7 +177,7 @@
   padding: 4px 0;
   border: 0;
   background: none;
-  color: var(--color-mute, #a2a2a2);
+  color: var(--color-mute, #8c8c8c);
 }
 @media (hover: hover) {
   .reset:hover { color: var(--color-ink); }
@@ -226,9 +227,9 @@
     background: transparent;
   }
   @media (hover: hover) {
-    .row:hover { background: #131313; }
+    .row:hover { background: #1c1c1c; }
   }
-  .row[data-on="true"] { background: var(--sheet, #191919); }
+  .row[data-on="true"] { background: var(--sheet, #1c1c1c); }
   .row:focus-visible { outline-offset: -1px; }
   .idx { align-self: start; padding-top: 6px; }
   .title { display: block; }

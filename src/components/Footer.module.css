@@ -4,13 +4,13 @@
    on it. Its one action is a raised plane, not an underline. Hyundai's
    light case gets the light paper's own planes. */
 .footer { margin-top: auto; padding-top: 96px; color: var(--color-ink); scroll-margin-top: 96px; }
-.plane { background: #1e1e1e; }
+.plane { background: #1c1c1c; }
 .inner { padding: 40px 0 20px; }
 .closing { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-bottom: 25px; }
 .headline { margin: 0; font: 300 36px/1.2 var(--font-newsreader), Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
-.contact { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; flex-shrink: 0; min-height: 44px; padding: 0 16px; border-radius: var(--r-raised); corner-shape: squircle; background: #242424; font-size: 13px; transition: background-color 180ms var(--ease-arrive); }
+.contact { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; flex-shrink: 0; min-height: 44px; padding: 0 16px; border-radius: var(--r-raised); corner-shape: squircle; background: #0f0f0f; font-size: 13px; transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive); }
 .contact svg { transition: transform 140ms ease; }
-.contact:hover { background: #2d2d2d; }
+.contact:hover { background: #f3f3f3; color: #0f0f0f; }
 .contact:hover svg { transform: translate(2px, -2px); }
 .bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; }
 .identity { display: flex; align-items: center; gap: 14px; }

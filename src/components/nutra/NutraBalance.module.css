@@ -38,10 +38,13 @@
   white-space: nowrap;
   transition: background-color var(--t-1) var(--ease-arrive);
 }
-/* The pole of a pointed-at trait lifts a tone, as the trait does */
+/* A pointed-at trait's pole keeps its plane and the other pole lets go
+   of its own, as the traits do: two greys leave no lighter tone to lift
+   to */
+.sheet[data-pole] .pole { background: transparent; }
 .sheet[data-pole="serious"] .pole[data-p="serious"],
 .sheet[data-pole="fun"] .pole[data-p="fun"] {
-  background: #2d2d2d;
+  background: var(--raised);
 }
 
 .beam {
@@ -55,13 +58,13 @@
   right: 0;
   top: 50%;
   height: 1px;
-  background: #6d6d6d;
+  background: #8c8c8c;
 }
 .balance {
   position: absolute;
   left: 50%;
   bottom: calc(50% + 22px);
-  color: #a2a2a2;
+  color: #8c8c8c;
   white-space: nowrap;
   transform: translateX(-50%);
 }
@@ -137,12 +140,13 @@
   outline: 1px solid #f3f3f3;
   outline-offset: 3px;
 }
-/* A pointed-at trait: its plane lifts a tone */
+/* A pointed-at trait keeps its plane; the others let go of theirs */
+.sheet[data-trait] .trait { background: transparent; }
 .sheet[data-trait="dark"] .trait[data-t="dark"],
 .sheet[data-trait="type"] .trait[data-t="type"],
 .sheet[data-trait="color"] .trait[data-t="color"],
 .sheet[data-trait="art"] .trait[data-t="art"] {
-  background: #2d2d2d;
+  background: var(--raised);
 }
 .name { color: #f3f3f3; }
 
@@ -154,7 +158,7 @@
 .group[data-p="serious"]::after {
   position: absolute;
   width: 1px;
-  background: #6d6d6d;
+  background: #8c8c8c;
 }
 .seg {
   top: -13px;
@@ -187,7 +191,7 @@
   height: 100%;
   overflow: visible;
 }
-.stub svg[data-k="g"] { color: #6d6d6d; }
+.stub svg[data-k="g"] { color: #8c8c8c; }
 .stub svg[data-k="k"] {
   color: #f3f3f3;
   opacity: 0;
@@ -234,17 +238,17 @@
   display: flex;
   gap: 16px;
 }
-/* The two background tokens are darker than every plane here, and 242728
-   is the raised plane's own tone: they sit on a lighter well, a plane of
-   their own, rather than in a ring */
+/* The two background tokens are darker than every plane here: they sit
+   on a well in the text grey, their codes in black, rather than in a
+   ring */
 .swatches[data-well] {
   gap: 14px;
   padding: 12px 14px 10px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #3c3c3c;
+  background: #8c8c8c;
 }
-.swatches[data-well] .hex { color: #b5b5b5; }
+.swatches[data-well] .hex { color: #0f0f0f; }
 .swatch {
   display: grid;
   justify-items: start;
@@ -266,7 +270,7 @@
 .face {
   display: grid;
   gap: 6px;
-  color: #ffffff;
+  color: #f3f3f3;
 }
 .aa {
   font-size: 34px;
@@ -275,7 +279,7 @@
   letter-spacing: -0.01em;
 }
 .faceName {
-  color: #a2a2a2;
+  color: #8c8c8c;
   font-size: 15px;
   line-height: 1.2;
   white-space: nowrap;

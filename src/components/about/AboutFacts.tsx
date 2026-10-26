@@ -59,7 +59,7 @@ export function AboutFacts({ cn }: { cn: boolean }) {
               onKeyDown={(event) => onKey(event, index)}
               className={styles.tab}
             >
-              <span aria-hidden>0{index + 1}</span>{label}
+              {label}
             </button>
           ))}
         </div>

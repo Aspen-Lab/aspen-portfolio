@@ -258,10 +258,10 @@ const pad = (n: number) => String(n).padStart(2, "0");
 /** An org's mark on a small raised plane: its own artwork where one exists, its initials where not. */
 function OrgMark({ mark }: { mark: Mark }) {
   return (
-    <span className="grid place-items-center w-9 h-9 shrink-0 rounded-[var(--r-raised)] [corner-shape:squircle] bg-[var(--raised)] text-mute transition-colors duration-200 group-hover:text-ink group-hover:bg-[#2d2d2d]">
+    <span className="grid place-items-center w-9 h-9 shrink-0 rounded-[var(--r-raised)] [corner-shape:squircle] bg-[#1c1c1c] text-mute transition-colors duration-200 group-hover:text-ink">
       {mark.kind === "img" && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={mark.src} alt="" aria-hidden style={{ height: mark.h, width: "auto", filter: "brightness(0) invert(0.8)" }} />
+        <img src={mark.src} alt="" aria-hidden style={{ height: mark.h, width: "auto", filter: "brightness(0) invert(0.549)" }} />
       )}
       {mark.kind === "si" && (
         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden>
@@ -306,7 +306,7 @@ export default async function About({
             { id: "about-awards", label: cn ? "奖项与认可" : "Recognition" },
             { id: "about-projects", label: cn ? "过往经历" : "Past work" },
             { id: "about-life", label: cn ? "工作之外" : "Off the clock" },
-          ].map((item, index) => <a href={`#${item.id}`} key={item.id}><span>0{index + 1}</span>{item.label}<ArrowDown size={13} aria-hidden /></a>)}
+          ].map((item) => <a href={`#${item.id}`} key={item.id}>{item.label}<ArrowDown size={13} aria-hidden /></a>)}
         </nav>
       </section>
 
@@ -349,7 +349,7 @@ export default async function About({
                     </p>
                     <p className="mt-1 text-[13.5px] leading-[1.5] text-mute">{tr(e.role)}</p>
                   </div>
-                  <span className="col-start-2 sm:col-start-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-soft whitespace-nowrap shrink-0">
+                  <span className="col-start-2 sm:col-start-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-mute whitespace-nowrap shrink-0">
                     {tr(e.period)}
                   </span>
                 </div>

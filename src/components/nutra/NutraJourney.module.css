@@ -48,7 +48,7 @@
   bottom: 0;
   left: 0;
   width: 20%;
-  background: var(--raised, #242424);
+  background: var(--raised, #1c1c1c);
   transition: transform var(--t-2, 360ms) var(--ease-arrive);
 }
 /* The grid's side padding sits outside the five columns: at the first and
@@ -115,18 +115,18 @@
   .stageName { display: block; }
 }
 
-/* Interactive stages: the one in view reads full on its raised column,
-   the rest step back */
+/* Interactive stages: the one in view reads in ink on its column, the
+   rest rest in the text grey */
 .root[data-stage] .stageNum,
 .root[data-stage] .stageName {
-  opacity: var(--dim, 0.45);
-  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+  color: var(--color-mute);
+  transition: color var(--t-1, 160ms) var(--ease-arrive);
 }
 .root[data-show="0"] .stage[data-k="0"] :is(.stageNum, .stageName),
 .root[data-show="1"] .stage[data-k="1"] :is(.stageNum, .stageName),
 .root[data-show="2"] .stage[data-k="2"] :is(.stageNum, .stageName),
 .root[data-show="3"] .stage[data-k="3"] :is(.stageNum, .stageName),
-.root[data-show="4"] .stage[data-k="4"] :is(.stageNum, .stageName) { opacity: 1; }
+.root[data-show="4"] .stage[data-k="4"] :is(.stageNum, .stageName) { color: #f3f3f3; }
 .stage[data-k]:active { transform: translateY(1px); }
 .grid[data-live] { cursor: pointer; }
 
@@ -199,7 +199,7 @@
   vector-effect: non-scaling-stroke;
 }
 .quiet .poly {
-  stroke: var(--grey-2, #6d6d6d);
+  stroke: var(--grey-2, #8c8c8c);
   stroke-width: 1;
 }
 
@@ -237,7 +237,7 @@
   bottom: 9px;
   width: 1px;
   height: var(--lead);
-  background: rgb(243 243 243 / 55%);
+  background: #8c8c8c;
 }
 .focusTag {
   position: absolute;
@@ -310,8 +310,8 @@
 .goal,
 .afterLead,
 .afterNote { text-wrap: pretty; }
-.action { color: #d1d1d1; }
-.goal { color: #a2a2a2; }
+.action { color: #f3f3f3; }
+.goal { color: #8c8c8c; }
 
 /* ────────────── After: board 036, two lines, one emphasised ────────────── */
 .after {
@@ -334,7 +334,7 @@
 .after .stage {
   cursor: default;
 }
-.after .stageName { color: #d1d1d1; }
+.after .stageName { color: #f3f3f3; }
 
 /* A stage's two names, the revised map's and the first map's, in one
    cell: the view on show prints its own (opacity only) */
@@ -392,7 +392,7 @@
   width: 10px;
   height: 10px;
 }
-.rewardSq { background: var(--grey-2, #6d6d6d); }
+.rewardSq { background: var(--grey-2, #8c8c8c); }
 .rewardFocus {
   background: var(--accent, #f3f3f3);
   transition: opacity var(--t-2, 360ms) var(--ease-arrive);
@@ -403,7 +403,7 @@
   top: 9px;
   width: 1px;
   height: 20px;
-  background: rgb(243 243 243 / 55%);
+  background: #8c8c8c;
 }
 .rewardTag {
   position: absolute;
@@ -431,7 +431,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
 .swatch {
   flex: none;
@@ -441,7 +441,7 @@
 }
 .after[data-view="after"] .legendItem[data-line="before"] .swatch,
 .after[data-view="before"] .legendItem[data-line="after"] .swatch {
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 .after[data-view="after"] .legendItem[data-line="after"],
 .after[data-view="before"] .legendItem[data-line="before"] { color: #f3f3f3; }
@@ -470,7 +470,7 @@
   align-items: baseline;
   gap: 8px;
 }
-.phoneKeyName { color: #d1d1d1; }
+.phoneKeyName { color: #f3f3f3; }
 
 /* The reading */
 .afterRead.afterRead {
@@ -489,7 +489,7 @@
 }
 .afterNote {
   margin: 12px 0 0;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
 
 /* Chinese is held word by word, so no line ends inside a word */

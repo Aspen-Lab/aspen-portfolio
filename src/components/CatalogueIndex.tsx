@@ -1,24 +1,22 @@
 "use client";
 
 import { memo, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { useInView } from "motion/react";
-import { ArrowUpRight } from "lucide-react";
-import { CatalogueMedia, StageMedia } from "./CatalogueMedia";
-import type { SideDemoId } from "./SideProjectDemo";
+import { StageMedia } from "./CatalogueMedia";
 import styles from "./CatalogueIndex.module.css";
 
-/* The catalogue: an index of entries beside one sticky plate.
-   Built for the works, then generalised so the side projects read as
-   their peer — same rows, same plate, same readout, one component
-   (Aspen: 「和作品平级」). On the left every entry is a row with a folio
-   numeral, its name in the display serif, and a mono readout. Nothing is
-   ruled or framed (「线框我们用面」): the rows are kept apart by space, and
-   the entry on the plate stands on a plane of its own, the same tone as
-   the plate. A fine pointer gets one sticky preview. Phones and touch
-   tablets get a preview on every card, with two columns where there is
-   room. */
+/* The catalogue: one wide stage on top and a dock of icons under it
+   (Aspen, 2026-10-25: 「显示区域这么大横向的肯定是上下结构 icon + 选中出文字
+   来点 motion」). Each entry is an icon (its cover as a small squircle);
+   the chosen one opens into a white pill with its name, and the stage
+   crossfades to its cover. It plays through the entries on its own while
+   it is in view: a ring closes around the chosen icon as its turn runs,
+   and the next one takes the stage when the ring closes (an
+   animationend, so a paused ring is a paused catalogue: pointer over
+   it, focus inside, out of view, or reduced motion). */
 
 export type CatalogueCover = {
   src: string;
@@ -32,8 +30,8 @@ export type CatalogueCover = {
   priority?: boolean;
   /** Optional short silent desktop preview. */
   video?: string;
-  demo?: SideDemoId;
 };
+
 
 export type CatalogueRow = {
   key: string;
@@ -43,15 +41,14 @@ export type CatalogueRow = {
   name: string;
   sub?: string | null;
   /** The mono line under the subtitle. */
-  meta: ReactNode;
+  meta?: ReactNode;
   /** The figure on the row's right: a year, a status. */
-  right: ReactNode;
+  right?: ReactNode;
   cover?: CatalogueCover;
   /** Under the plate: left and right halves of one mono line. */
   readout: [ReactNode, ReactNode];
 };
 
-const folio = (i: number) => String(i + 1).padStart(2, "0");
 
 /* Which entry the plate shows (Aspen: 「hover看图体验很卡」). It used to be
    state at the top, so every row the pointer crossed re-rendered every
@@ -106,117 +103,9 @@ const useIsActive = (active: Active, i: number) =>
   useSyncExternalStore(active.subscribe, () => active.get() === i, () => i === 0);
 const useActiveIndex = (active: Active) => useSyncExternalStore(active.subscribe, active.get, () => 0);
 
-function RowShell({
-  row,
-  i,
-  active,
-  className,
-  style,
-  current,
-  ariaLabel,
-  children,
-}: {
-  row: CatalogueRow;
-  i: number;
-  active: Active;
-  className: string;
-  style?: React.CSSProperties;
-  current?: boolean;
-  ariaLabel?: string;
-  children: ReactNode;
-}) {
-  const common = {
-    className,
-    style,
-    onPointerEnter: (event: React.PointerEvent<HTMLElement>) => {
-      if (event.pointerType === "mouse") active.enter(i);
-    },
-    onPointerLeave: () => active.leave(i),
-    onFocus: () => active.set(i),
-    "data-current": current,
-    "aria-label": ariaLabel,
-  };
-  if (!row.href) return <div {...common}>{children}</div>;
-  if (row.external) {
-    return (
-      <a href={row.href} target="_blank" rel="noreferrer" {...common}>
-        {children}
-      </a>
-    );
-  }
-  return (
-    <Link href={row.href} {...common}>
-      {children}
-    </Link>
-  );
-}
-
-/* The row itself: the only part of an entry that changes with the plate. */
-function RowName({ row, i, active }: { row: CatalogueRow; i: number; active: Active }) {
-  const current = useIsActive(active, i);
-  return (
-    <RowShell
-      row={row}
-      i={i}
-      active={active}
-      current={current}
-      className={`${styles.description} ${!row.cover ? styles.withoutCover : ""}`}
-    >
-      <div className={styles.rowContent}>
-        <span className="font-mono text-[10px] tracking-[0.2em] text-soft tabular-nums">
-          {folio(i)}
-        </span>
-        <div className="min-w-0">
-          <h3 className={`type-display text-ink ${styles.name}`}>
-            {row.name}
-          </h3>
-          {row.sub && (
-            <p className={`mt-2 text-[14px] sm:text-[15px] leading-[1.5] text-mute ${styles.sub}`}>
-              {row.sub}
-            </p>
-          )}
-          <p className={`mt-3 font-mono text-[10px] uppercase tracking-[0.12em] text-soft ${styles.meta}`}>
-            {row.meta}
-          </p>
-        </div>
-        <span className={`${styles.status} font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-soft tabular-nums whitespace-nowrap`}>
-          {row.right}
-          {row.href && <ArrowUpRight size={15} strokeWidth={1.25} aria-hidden className={styles.rowArrow} />}
-        </span>
-      </div>
-    </RowShell>
-  );
-}
-
-const Entry = memo(function Entry({ row, i, active, cn }: {
-  row: CatalogueRow;
-  i: number;
-  active: Active;
-  cn: boolean;
-}) {
-  return (
-    <li className={styles.entry}>
-      {row.cover && <div className={styles.inlinePreview}>
-        <RowShell
-          row={row}
-          i={i}
-          active={active}
-          ariaLabel={`${row.name} — ${cn ? "查看项目" : "View project"}`}
-          className={`plate block relative overflow-hidden aspect-[16/10] ${styles.coverLink}`}
-          style={row.cover.bg ? { backgroundColor: row.cover.bg } : undefined}
-        >
-          <CatalogueMedia cover={row.cover} />
-        </RowShell>
-      </div>}
-      <RowName row={row} i={i} active={active} />
-    </li>
-  );
-});
-
 /* One stacked cover. Each layer is its own composited sheet from the
-   start (see the stylesheet), so a swap is only opacity on the
-   compositor: the incoming cover rises over the outgoing one, which holds
-   until it is fully in. */
+   start (see the stylesheet), so a swap is only opacity and a settle on
+   the compositor. */
 const Layer = memo(function Layer({ row, i, active, warm, inView }: {
   row: CatalogueRow;
   i: number;
@@ -232,9 +121,7 @@ const Layer = memo(function Layer({ row, i, active, warm, inView }: {
       aria-hidden
       style={{ backgroundColor: row.cover?.bg ?? "var(--color-paper)" }}
     >
-      {row.cover && (
-        <StageMedia cover={row.cover} active={on} warm={warm} inView={inView} />
-      )}
+      {row.cover && <StageMedia cover={row.cover} active={on} warm={warm} inView={inView} />}
     </div>
   );
 });
@@ -242,72 +129,72 @@ const Layer = memo(function Layer({ row, i, active, warm, inView }: {
 function StageLink({ rows, active, cn }: { rows: CatalogueRow[]; active: Active; cn: boolean }) {
   const current = rows[useActiveIndex(active)] ?? rows[0];
   if (!current.href) return null;
+  const label = `${current.name} — ${cn ? "查看项目" : "View project"}`;
   return current.external ? (
-    <a
-      href={current.href}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={`${current.name} — ${cn ? "访问项目" : "Visit project"}`}
-      className="absolute inset-0 z-10"
-    />
+    <a href={current.href} target="_blank" rel="noreferrer" aria-label={label} className="absolute inset-0 z-10" />
   ) : (
-    <Link
-      href={current.href}
-      aria-label={`${current.name} — ${cn ? "查看项目" : "View project"}`}
-      className="absolute inset-0 z-10"
-    />
+    <Link href={current.href} aria-label={label} className="absolute inset-0 z-10" />
   );
 }
 
-function StageCaption({ rows, active }: {
-  rows: CatalogueRow[];
+/* A dock entry: the icon, and the name that opens beside it when chosen */
+const DockItem = memo(function DockItem({ row, i, active, onTurnEnd }: {
+  row: CatalogueRow;
+  i: number;
   active: Active;
+  onTurnEnd: () => void;
 }) {
+  const on = useIsActive(active, i);
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={on}
+      aria-label={row.name}
+      tabIndex={on ? 0 : -1}
+      className={styles.item}
+      data-on={on}
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") active.enter(i);
+      }}
+      onPointerLeave={() => active.leave(i)}
+      onFocus={() => active.set(i)}
+      onClick={() => active.set(i)}
+    >
+      <span className={styles.icon} style={row.cover?.bg ? { backgroundColor: row.cover.bg } : undefined}>
+        {row.cover ? (
+          <Image src={row.cover.src} alt="" fill sizes="44px" className={styles.iconImage} style={{ objectFit: row.cover.fit === "contain" ? "contain" : "cover" }} />
+        ) : (
+          <span className={styles.initial}>{row.name.slice(0, 1)}</span>
+        )}
+      </span>
+      <span className={styles.label} aria-hidden={!on}>
+        <span>{row.name}</span>
+      </span>
+      {/* Its turn: fills while it is on the stage, then hands over */}
+      {on && (
+        <svg className={styles.turn} viewBox="0 0 56 56" aria-hidden>
+          <circle cx="28" cy="28" r="25" onAnimationEnd={onTurnEnd} />
+        </svg>
+      )}
+    </button>
+  );
+});
+
+function Caption({ rows, active }: { rows: CatalogueRow[]; active: Active }) {
   const index = useActiveIndex(active);
   const current = rows[index] ?? rows[0];
   return (
-    <div aria-hidden className="mt-4 flex items-baseline justify-between gap-5 text-[13px] leading-relaxed text-soft">
-      <span>{current.readout[0]}</span>
-      <span className="text-right text-balance">{current.readout[1]}</span>
-    </div>
-  );
-}
-
-/* The plate. The layers share one box, so one set of observers
-   speaks for all of them: warm (every cover fetched and decoded before
-   the plate arrives), seen (the picture settles), seen well (a scene or
-   a video may play). Hidden on phones, so nothing here ever loads. */
-function Stage({ rows, active, cn }: {
-  rows: CatalogueRow[];
-  active: Active;
-  cn: boolean;
-}) {
-  const plate = useRef<HTMLDivElement>(null);
-  const warm = useInView(plate, { once: true, margin: "400px 0px" });
-  const seen = useInView(plate, { amount: 0.15 });
-  const seenWell = useInView(plate, { amount: 0.45 });
-  return (
-    <aside className={styles.preview}>
-      <div ref={plate} className="group/preview plate relative overflow-hidden aspect-[16/10]">
-        {/* The covers stack in their own context, under the link */}
-        <div className={styles.layers}>
-          {rows.map((row, i) => (
-            <Layer
-              key={row.key}
-              row={row}
-              i={i}
-              active={active}
-              warm={warm}
-              inView={row.cover?.demo ? seenWell : seen}
-            />
-          ))}
-        </div>
-        <StageLink rows={rows} active={active} cn={cn} />
-        {/* A disc of the slab tone, no ring: it reads on a white cover and a night sky alike */}
-        <span aria-hidden className="pointer-events-none absolute right-5 bottom-5 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-[#0a0a0a] text-white opacity-0 transition-opacity duration-200 group-hover/preview:opacity-100 group-focus-within/preview:opacity-100">↗</span>
+    <div className={styles.caption}>
+      <div key={current.key} className={styles.captionCopy}>
+        <p className={styles.sub}>{current.sub ?? current.name}</p>
+        <p className={styles.readout}>
+          {current.readout[0]}
+          <span aria-hidden> · </span>
+          {current.readout[1]}
+        </p>
       </div>
-      <StageCaption rows={rows} active={active} />
-    </aside>
+    </div>
   );
 }
 
@@ -315,19 +202,35 @@ export function CatalogueIndex({ rows }: { rows: CatalogueRow[] }) {
   const cn = useLocale() === "cn";
   const [active] = useState(createActive);
   useEffect(() => active.dispose, [active]);
+  const root = useRef<HTMLDivElement>(null);
+  const plate = useRef<HTMLDivElement>(null);
+  const warm = useInView(plate, { once: true, margin: "400px 0px" });
+  const seen = useInView(plate, { amount: 0.15 });
+  const seenWell = useInView(plate, { amount: 0.45 });
   if (!rows.length) return null;
+  const next = () => active.set((active.get() + 1) % rows.length);
 
   return (
-    <div className={styles.catalogue}>
-      {/* ── The index ── */}
-      <ol className={styles.index}>
-        {rows.map((row, i) => (
-          <Entry key={row.key} row={row} i={i} active={active} cn={cn} />
-        ))}
-      </ol>
+    <div ref={root} className={styles.catalogue} data-inview={seenWell}>
+      {/* ── The stage ── */}
+      <div ref={plate} className={`group/preview ${styles.stage}`}>
+        <div className={styles.layers}>
+          {rows.map((row, i) => (
+            <Layer key={row.key} row={row} i={i} active={active} warm={warm} inView={seen} />
+          ))}
+        </div>
+        <StageLink rows={rows} active={active} cn={cn} />
+      </div>
 
-      {/* ── The plate — the active entry's cover ── */}
-      <Stage rows={rows} active={active} cn={cn} />
+      {/* ── The dock and the chosen entry's words ── */}
+      <div className={styles.bar}>
+        <div className={styles.dock} role="tablist" aria-label={cn ? "选择项目" : "Choose a project"}>
+          {rows.map((row, i) => (
+            <DockItem key={row.key} row={row} i={i} active={active} onTurnEnd={next} />
+          ))}
+        </div>
+        <Caption rows={rows} active={active} />
+      </div>
     </div>
   );
 }

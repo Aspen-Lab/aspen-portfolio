@@ -48,7 +48,7 @@
 .stack { display: grid; }
 .diff {
   grid-area: 1 / 1;
-  color: var(--color-body, #d1d1d1);
+  color: var(--color-body, #f3f3f3);
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
   text-wrap: pretty;
@@ -85,9 +85,9 @@
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .thumb:hover { background-color: #171717; }
+  .thumb:hover { background-color: #1c1c1c; }
 }
-.thumb[data-on="true"] { background-color: var(--tile, #1e1e1e); }
+.thumb[data-on="true"] { background-color: var(--tile, #1c1c1c); }
 .thumb:active .mini { transform: translateY(1px); }
 
 .idx {
@@ -107,7 +107,7 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 .sq::after {
   content: "";
@@ -126,7 +126,7 @@
   overflow: hidden;
   border-radius: var(--r-tag, 10px);
   corner-shape: squircle;
-  background: #000;
+  background: #0f0f0f;
   transition: transform var(--t-1) var(--ease-arrive);
 }
 

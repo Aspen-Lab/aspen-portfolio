@@ -35,7 +35,7 @@ function CardLink({
         </span>
         <span
           aria-hidden
-          className="text-soft text-[18px] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-[1px]"
+          className="text-mute text-[18px] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-[1px]"
         >
           {external ? "↗" : "→"}
         </span>
@@ -45,7 +45,7 @@ function CardLink({
   );
 
   const className =
-    "group block px-6 pt-7 pb-3 hover:bg-cream/30 transition-colors";
+    "group block px-6 pt-7 pb-3 hover:bg-cream transition-colors";
 
   if (external) {
     return (
@@ -81,12 +81,12 @@ export function NowPanel() {
               82
             </span>
             <span
-              className="font-display font-light tracking-[-0.02em] text-soft leading-none"
+              className="font-display font-light tracking-[-0.02em] text-mute leading-none"
               style={{ fontSize: "clamp(20px, 4vw, 26px)" }}
             >
               %
             </span>
-            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-soft">
+            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-mute">
               v1 → v2
             </span>
           </div>
@@ -102,7 +102,7 @@ export function NowPanel() {
               }}
               className="absolute inset-y-0 left-0 bg-ink rounded-full"
             />
-            <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-line/50" />
+            <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-line" />
           </div>
         </div>
       </Card>
@@ -129,7 +129,7 @@ export function NowPanel() {
                 className="absolute -translate-x-1/2 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-paper border border-ink"
                 style={{ left: `${(i / (STAGES - 1)) * 100}%` }}
                 animate={{
-                  backgroundColor: ["#FFFFFF", "#0A0A0A", "#FFFFFF"],
+                  backgroundColor: ["#f3f3f3", "#0f0f0f", "#f3f3f3"],
                   scale: [1, 1.25, 1],
                 }}
                 transition={{
@@ -145,7 +145,7 @@ export function NowPanel() {
               />
             ))}
           </div>
-          <div className="flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-soft tabular-nums">
+          <div className="flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-mute tabular-nums">
             <span>Ingest → output</span>
             <span>v0 MVP</span>
           </div>
@@ -169,7 +169,7 @@ export function NowPanel() {
               70
             </span>
             <span
-              className="font-display font-light text-soft leading-none"
+              className="font-display font-light text-mute leading-none"
               style={{ fontSize: "clamp(22px, 4.4vw, 28px)" }}
             >
               →
@@ -181,12 +181,12 @@ export function NowPanel() {
               90
             </span>
             <span
-              className="font-display font-light tracking-[-0.02em] text-soft leading-none"
+              className="font-display font-light tracking-[-0.02em] text-mute leading-none"
               style={{ fontSize: "clamp(18px, 3.4vw, 22px)" }}
             >
               %
             </span>
-            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-soft whitespace-nowrap">
+            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.2em] text-mute whitespace-nowrap">
               VN KYC
             </span>
           </div>
@@ -202,7 +202,7 @@ export function NowPanel() {
                 delay: 0.5,
               }}
             />
-            <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-line/50" />
+            <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-line" />
           </div>
         </div>
       </Card>

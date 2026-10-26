@@ -3,7 +3,7 @@
    on two back planes, split cards of a render beside a slab, told apart by
    tone alone. No outline, no rule, no gradient, no site accent; a choice
    is shown by a plane lifting a tone or by what steps back. Inside a
-   render the product speaks for itself: its own ground (#1E1E1E, the
+   render the product speaks for itself: its own ground (#1c1c1c, the
    boards'), colours (the --n-* tokens from product.ts), Red Hat Text and
    Helvetica Neue, and radii and outlines as the boards draw them. */
 .root {
@@ -36,23 +36,17 @@
   transition: transform var(--t-1) var(--ease-arrive);
 }
 .tab:active { transform: translateY(1px); }
-.tabNum,
 .tabLabel {
-  opacity: var(--dim);
-  transition: opacity var(--t-1) var(--ease-arrive);
+  color: var(--color-mute);
+  transition: color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .tab:hover .tabNum,
-  .tab:hover .tabLabel { opacity: 0.75; }
+  .tab:hover .tabLabel { color: var(--color-ink); }
 }
-.tab:focus-visible .tabNum,
-.tab:focus-visible .tabLabel { opacity: 0.75; }
-.tab[aria-selected="true"] .tabNum,
-.tab[aria-selected="true"] .tabLabel { opacity: 1; }
-.tabNum { flex: none; }
+.tab:focus-visible .tabLabel { color: var(--color-ink); }
+.tab[aria-selected="true"] .tabLabel { color: var(--color-ink); }
 .tabLabel {
   min-width: 0;
-  color: var(--color-ink);
   white-space: nowrap;
 }
 .fill {
@@ -61,7 +55,7 @@
   z-index: -1;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #242424);
+  background: #1c1c1c;
   opacity: 0;
   transition: opacity var(--t-2) var(--ease-arrive);
 }
@@ -233,9 +227,9 @@
   background: transparent;
   transition: background-color var(--t-1) var(--ease-arrive);
 }
-.disc[aria-checked="true"]::before { background: #2d2d2d; }
+.disc[aria-checked="true"]::before { background: #0f0f0f; }
 @media (hover: hover) {
-  .disc[aria-checked="false"]:hover::before { background: #262626; }
+  .disc[aria-checked="false"]:hover::before { background: #0f0f0f; }
 }
 .dot {
   flex: none;
@@ -311,12 +305,12 @@
 }
 .sep {
   margin: 0 10px;
-  color: #6d6d6d;
+  color: #8c8c8c;
 }
 .readNote {
   max-width: 34ch;
   margin: 16px 0 0;
-  color: #d1d1d1;
+  color: #f3f3f3;
   text-wrap: pretty;
 }
 
@@ -457,7 +451,7 @@
     background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .faceRow[aria-pressed="false"]:hover { background: #131313; }
+  .faceRow[aria-pressed="false"]:hover { background: #1c1c1c; }
 }
 .faceRow[aria-pressed="true"] { background: var(--sheet); }
 .faceRowRows { color: var(--color-mute); }
@@ -550,7 +544,7 @@
   align-items: baseline;
 }
 .useHex { color: #f3f3f3; }
-.useNote { color: #d1d1d1; text-wrap: pretty; }
+.useNote { color: #f3f3f3; text-wrap: pretty; }
 
 /* Stepper (042): done rows green with their values, the current row
    orange on a sliding pill, the rest an open ring */

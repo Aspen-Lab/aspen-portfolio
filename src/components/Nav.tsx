@@ -151,7 +151,7 @@ export function Nav() {
           {/* Availability: a real control, not a caption. It leads to Contact. */}
           <Link
             href="/contact"
-            className="group/status inline-flex h-10 items-center gap-2.5 rounded-full bg-[#1d1d1d] pl-3.5 pr-3 text-[15px] text-ink whitespace-nowrap transition-colors duration-200 hover:bg-[#262626]"
+            className="group/status inline-flex h-10 items-center gap-2.5 rounded-full bg-[#1c1c1c] pl-3.5 pr-3 text-[15px] text-ink whitespace-nowrap transition-colors duration-200 hover:bg-[#1c1c1c]"
           >
             <span aria-hidden className="relative flex h-2 w-2">
               <span className="absolute inset-0 rounded-full bg-[#3cc65b] opacity-50 animate-ping motion-reduce:hidden" />
@@ -185,7 +185,7 @@ export function Nav() {
               ref={planeRef}
               aria-hidden
               data-glide="false"
-              className="pointer-events-none absolute left-0 top-0.5 bottom-0.5 rounded-full bg-[#242424] opacity-0 data-[glide=true]:transition-[transform,width,opacity] data-[glide=true]:duration-[420ms] data-[glide=true]:ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="pointer-events-none absolute left-0 top-0.5 bottom-0.5 rounded-full bg-[#1c1c1c] opacity-0 data-[glide=true]:transition-[transform,width,opacity] data-[glide=true]:duration-[420ms] data-[glide=true]:ease-[cubic-bezier(0.16,1,0.3,1)]"
             />
             {ITEMS.map((item) => {
               const current = item.key === active;

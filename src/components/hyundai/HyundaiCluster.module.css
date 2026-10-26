@@ -67,7 +67,7 @@
   inset: 0;
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
-  background: rgb(243 243 243 / 7%);
+  background: #1c1c1c;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -142,7 +142,7 @@
   padding: 6px 0;
   border: 0;
   background: none;
-  color: var(--color-mute, #a2a2a2);
+  color: var(--color-mute, #8c8c8c);
 }
 .replayIcon { flex: none; }
 @media (hover: hover) {
@@ -165,7 +165,7 @@
   text-wrap: balance;
 }
 .seg button[aria-checked="true"] {
-  background: var(--raised);
+  background: #1c1c1c;
 }
 
 /* ── The rail: a phone's 2 × 2 grid of step tiles ── */
@@ -195,7 +195,7 @@
   border: 0;
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
-  background-color: var(--tile);
+  background-color: transparent;
   color: var(--color-ink);
   text-align: left;
   transition:
@@ -203,7 +203,7 @@
     background-color var(--t-1) var(--ease-arrive);
 }
 .stepBtn:active { transform: translateY(1px); }
-.step[data-current="true"] .stepBtn { background-color: var(--raised); }
+.step[data-current="true"] .stepBtn { background-color: #1c1c1c; }
 
 .node {
   position: relative;
@@ -224,7 +224,7 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 .sq::after {
   content: "";
@@ -237,7 +237,7 @@
 .step[data-current="true"] .sq::after { opacity: 1; }
 
 .stepLabel {
-  color: var(--color-mute, #a2a2a2);
+  color: var(--color-mute, #8c8c8c);
   line-height: 1.35;
 }
 /* a phone's step tiles keep two lines for every label, so the 2 × 2
@@ -274,7 +274,7 @@
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
   background-color: var(--tile);
-  color: var(--color-mute, #a2a2a2);
+  color: var(--color-mute, #8c8c8c);
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.06em;
@@ -283,16 +283,16 @@
     background-color var(--t-1) var(--ease-arrive);
 }
 .gapBtn[aria-disabled="true"] {
-  opacity: 0.4;
+  background-color: transparent;
   cursor: default;
 }
 @media (hover: hover) {
-  .gapBtn:not([aria-disabled="true"]):hover { color: var(--color-ink); background-color: #242424; }
+  .gapBtn:not([aria-disabled="true"]):hover { color: var(--color-ink); background-color: #1c1c1c; }
 }
 .gapBtn[data-on="true"],
 .gapBtn[data-on="true"]:hover {
-  background-color: var(--raised);
-  color: var(--color-ink);
+  background-color: #f3f3f3;
+  color: #0f0f0f;
 }
 .gapBtn:not([aria-disabled="true"]):active .gapNum { transform: translateY(1px); }
 .gapNum { display: block; }
@@ -335,7 +335,7 @@
 .root[data-part="panel"] .partBtn[data-k="panel"],
 .root[data-part="scene"] .partBtn[data-k="scene"],
 .root[data-part="ring"] .partBtn[data-k="ring"],
-.partBtn[aria-pressed="true"] { background-color: var(--tile, #1e1e1e); }
+.partBtn[aria-pressed="true"] { background-color: var(--tile, #1c1c1c); }
 .partIdx {
   display: flex;
   align-items: center;
@@ -347,14 +347,14 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 .partTitle {
   font-size: 18px;
   line-height: 1.3;
 }
 .partLine {
-  color: var(--color-mute, #a2a2a2);
+  color: var(--color-mute, #8c8c8c);
   text-wrap: pretty;
 }
 /* A lit part inks its index and square (never the accent) */
@@ -386,7 +386,7 @@
   grid-template-columns: 30px minmax(0, 1fr);
   align-items: baseline;
   gap: 10px;
-  color: var(--color-body, #d1d1d1);
+  color: var(--color-body, #f3f3f3);
 }
 /* The HMI's own colours (board 22's palette), drawn as the system's
    square marks: the legend sits outside the render */
@@ -466,7 +466,7 @@
     display: block;
     height: 1px;
     overflow: hidden;
-    background: var(--grey-3, #3c3c3c);
+    background: var(--grey-3, #8c8c8c);
     pointer-events: none;
   }
   /* the rule starts after the index */
@@ -474,7 +474,7 @@
   .fill {
     position: absolute;
     inset: 0;
-    background: rgb(243 243 243 / 55%);
+    background: #8c8c8c;
     transform: scaleX(0);
     transform-origin: 0 0;
   }

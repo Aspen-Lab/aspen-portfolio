@@ -34,8 +34,8 @@ export function PageEntrance({ children }: { children: React.ReactNode }) {
             style={{
               height: "1px",
               background:
-                "linear-gradient(90deg, transparent 0%, rgba(243,243,243,0.5) 40%, rgba(243,243,243,0.5) 60%, transparent 100%)",
-              boxShadow: "0 0 14px 5px rgba(243,243,243,0.08)",
+                "linear-gradient(90deg, transparent 0%, #8c8c8c 40%, #8c8c8c 60%, transparent 100%)",
+              boxShadow: "0 0 14px 5px #1c1c1c",
             }}
           />
         )}

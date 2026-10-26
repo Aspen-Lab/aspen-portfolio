@@ -186,8 +186,8 @@ function TypeStudy({ cn }: { cn: boolean }) {
   return (
     <>
       <Plate labels={labels}>
-        <path d={`M${GUIDE} ${capY}H${VW - GUIDE}`} className={cx(styles.guide, styles.metric)} />
-        <path d={`M${GUIDE} ${xY}H${VW - GUIDE}`} className={cx(styles.guide, styles.dashed, styles.metric)} />
+        <path d={`M${GUIDE} ${capY}H${VW - GUIDE}`} className={cx(styles.guide, styles.guideOnCard, styles.metric)} />
+        <path d={`M${GUIDE} ${xY}H${VW - GUIDE}`} className={cx(styles.guide, styles.guideOnCard, styles.dashed, styles.metric)} />
         <path d={`M${GUIDE} ${SPECIMEN.baseline}H${VW - GUIDE}`} className={styles.axis} />
         <text ref={specimen} x={SPECIMEN.x} y={SPECIMEN.baseline} textAnchor="middle" className={styles.specimen} style={{ fontSize: SPECIMEN.size, fontFamily: serif ? "var(--font-newsreader), Georgia, serif" : "var(--font-sans)", letterSpacing: spaced ? "0.16em" : "-0.045em", fontWeight: serif ? 350 : 450 } as CSSProperties}>Aa</text>
         {span && (
@@ -218,14 +218,14 @@ function FocusStudy({ cn }: { cn: boolean }) {
       <Plate>
         <rect x="56" y="10" width="288" height="152" rx="3" className={styles.tile} />
         <rect x={action ? 238 : 66} y={action ? 116 : 24} width={action ? 96 : 228} height={action ? 40 : 32} rx="3" className={styles.focusPlane} />
-        <g className={styles.focusGroup} opacity={action ? .35 : 1}>
+        <g className={styles.focusGroup} data-dim={action || undefined}>
           <circle cx="84" cy="40" r="7" className={styles.symbolFill} />
           <path d="M102 34h104m-104 12h160" className={styles.contentLine} />
           <path d="M76 80h248m-248 14h176" className={styles.guide} />
         </g>
         <path d="M76 138h84" className={styles.guide} />
-        <g className={styles.focusGroup} opacity={action ? 1 : .45}>
-          <rect x="244" y="122" width="84" height="28" rx="2" fill="var(--color-ink)" fillOpacity=".13" />
+        <g className={styles.focusGroup} data-dim={!action || undefined}>
+          <rect x="244" y="122" width="84" height="28" rx="2" className={styles.button} />
           <path d="M270 136h32m-5-5 5 5-5 5" className={styles.brightLine} />
         </g>
         <g key={String(action)}>

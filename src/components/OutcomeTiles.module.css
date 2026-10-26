@@ -70,7 +70,7 @@
   border-radius: var(--r-tag);
   corner-shape: squircle;
   background: #f3f3f3;
-  color: #0a0a0a;
+  color: #0f0f0f;
   font-family: var(--font-mono);
   font-size: 16px;
   letter-spacing: 0.04em;
@@ -140,7 +140,8 @@
   line-height: 1;
   transition:
     transform var(--t-2) var(--ease-arrive),
-    background-color var(--t-1) var(--ease-arrive);
+    background-color var(--t-1) var(--ease-arrive),
+    color var(--t-1) var(--ease-arrive);
 }
 
 /* The matrix: one ink square per unit, faded in in reading order once in
@@ -165,24 +166,24 @@
   to { opacity: 1; }
 }
 
-/* A linked tile: no edge to brighten. The tile lifts a tone, its arrow
-   plane lifts with it and steps toward the evidence; focus shows the same
-   plus the ring. Press sinks it 1px. */
+/* A linked tile: no edge to brighten and no lighter grey to lift to, so
+   its arrow plane turns white and steps toward the evidence; focus shows
+   the same plus the ring. Press sinks it 1px. */
 .tile[data-link] {
   transition:
     transform var(--t-1) var(--ease-arrive),
     background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .tile[data-link]:hover { background: #242424; }
   .tile[data-link]:hover .arrow {
-    background: #2f2f2f;
+    background: #f3f3f3;
+    color: #0f0f0f;
     transform: translateX(3px);
   }
 }
-.tile[data-link]:focus-visible { background: #242424; }
 .tile[data-link]:focus-visible .arrow {
-  background: #2f2f2f;
+  background: #f3f3f3;
+  color: #0f0f0f;
   transform: translateX(3px);
 }
 .tile[data-link]:active { transform: translateY(1px); }

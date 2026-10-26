@@ -3,9 +3,7 @@
    links' own padding so the first label still lines up with the column. */
 .jumpNav { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 56px -14px 0; }
 .jumpNav a { display: flex; align-items: center; gap: 12px; min-height: 44px; padding-inline: 14px; border-radius: var(--r-raised); corner-shape: squircle; font-size: 12px; color: var(--color-mute); transition: color 180ms, background-color 180ms; }
-.jumpNav a:hover { color: var(--color-ink); background: var(--raised); }
-.jumpNav a > span { color: var(--color-soft); font: 9px var(--font-mono); }
-.jumpNav a > svg { opacity: .55; }
+.jumpNav a:hover { color: var(--color-ink); background: #1c1c1c; }
 .jumpNav a:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
 .studyNote { display: flex; align-items: flex-start; gap: 18px; padding: 24px 28px; margin-bottom: 28px; border-radius: var(--r-plane); corner-shape: squircle; background: var(--tile); color: var(--color-mute); }
 .studyNote > svg { margin-top: 2px; flex: none; }

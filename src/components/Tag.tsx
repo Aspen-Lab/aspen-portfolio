@@ -7,10 +7,10 @@ type TagProps = {
 };
 
 const variantClass: Record<Variant, string> = {
-  outline: "border border-line text-soft",
+  outline: "border border-line text-mute",
   filled: "bg-ink text-paper border border-ink",
-  subtle: "border border-line/60 text-mute",
-  ghost: "text-soft",
+  subtle: "border border-line text-mute",
+  ghost: "text-mute",
 };
 
 export function Tag({ children, variant = "outline", className = "" }: TagProps) {

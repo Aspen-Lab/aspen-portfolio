@@ -26,7 +26,7 @@
   padding: 16px;
   border-radius: var(--r-plane, 32px);
   corner-shape: squircle;
-  background: var(--paper, #1e1e1e);
+  background: var(--paper, #1c1c1c);
 }
 /* a phone's card rests on two back sheets, as .paper-stack's */
 .col::before,
@@ -40,12 +40,12 @@
 }
 .col::before {
   z-index: -1;
-  background: var(--paper-back-1, #171717);
+  background: var(--paper-back-1, #1c1c1c);
   transform: translate(3px, 5px);
 }
 .col::after {
   z-index: -2;
-  background: var(--paper-back-2, #0c0c0c);
+  background: var(--paper-back-2, #0f0f0f);
   transform: translate(6px, 11px);
 }
 
@@ -64,7 +64,7 @@
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
 }
-.pain { background: var(--slab, #0a0a0a); }
+.pain { background: var(--slab, #0f0f0f); }
 .voice {
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@
 }
 .insight {
   margin: 20px 0 0;
-  color: #a2a2a2;
+  color: #8c8c8c;
   text-wrap: pretty;
 }
 
@@ -139,7 +139,7 @@
   line-height: 1.35;
   text-wrap: balance;
 }
-/* ── Evidence: the original UI, a product render on #000 ── */
+/* ── Evidence: the original UI, a product render on #0f0f0f ── */
 .evidence {
   margin-top: 28px;
 }
@@ -154,7 +154,7 @@
   padding: 10px;
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
-  background: #000;
+  background: #0f0f0f;
 }
 .screen.flush { padding: 0; }
 .shotLabel { margin: 8px 0 0; }
@@ -194,7 +194,7 @@
 .line,
 .joint {
   position: absolute;
-  background: #3c3c3c;
+  background: #8c8c8c;
 }
 .line {
   top: 0;
@@ -257,12 +257,12 @@
   }
   .stack::before {
     z-index: -1;
-    background: var(--paper-back-1, #171717);
+    background: var(--paper-back-1, #1c1c1c);
     transform: translate(4px, 8px);
   }
   .stack::after {
     z-index: -2;
-    background: var(--paper-back-2, #0c0c0c);
+    background: var(--paper-back-2, #0f0f0f);
     transform: translate(9px, 16px);
   }
   .sheet {
@@ -272,7 +272,7 @@
     padding: 32px;
     border-radius: var(--r-plane, 32px);
     corner-shape: squircle;
-    background: var(--paper, #1e1e1e);
+    background: var(--paper, #1c1c1c);
   }
   .col {
     grid-row: 1 / span 7;

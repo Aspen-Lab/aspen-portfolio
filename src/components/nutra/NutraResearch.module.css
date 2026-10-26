@@ -47,28 +47,22 @@
   }
 }
 .tab:active { transform: translateY(1px); }
-.tabNum,
 .tabLabel {
-  opacity: var(--dim, 0.45);
-  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+  color: var(--color-mute);
+  transition: color var(--t-1, 160ms) var(--ease-arrive);
 }
-.tabNum { flex: none; }
 .tabLabel {
   min-width: 0;
   max-width: 100%;
-  color: #f3f3f3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 @media (hover: hover) {
-  .tab:hover .tabNum,
-  .tab:hover .tabLabel { opacity: 0.75; }
+  .tab:hover .tabLabel { color: var(--color-ink); }
 }
-.tab:focus-visible .tabNum,
-.tab:focus-visible .tabLabel { opacity: 0.75; }
-.tab[data-on="true"] .tabNum,
-.tab[data-on="true"] .tabLabel { opacity: 1; }
+.tab:focus-visible .tabLabel { color: var(--color-ink); }
+.tab[data-on="true"] .tabLabel { color: var(--color-ink); }
 
 /* The tab in view sits on a raised plane that slides under it (the
    chosen thing is raised, as everywhere on the page); the others are
@@ -81,7 +75,7 @@
   width: calc((100% - 2 * var(--gap)) / 3);
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #242424);
+  background: #1c1c1c;
   transform: translateX(calc(var(--tab, 0) * (100% + var(--gap))));
   transition: transform var(--t-2, 360ms) var(--ease-arrive);
 }
@@ -152,7 +146,7 @@
   justify-content: center;
   gap: var(--bg);
   height: 220px;
-  border-bottom: 1px solid var(--axis, rgb(243 243 243 / 24%));
+  border-bottom: 1px solid var(--axis, #1c1c1c);
 }
 @media (min-width: 640px) {
   .plot { height: 300px; }
@@ -170,10 +164,10 @@
   right: 0;
   bottom: 0;
   height: max(2px, calc(var(--h) * 100%));
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
   transform-origin: 50% 100%;
 }
-.col[data-tone="g1"] .barFill { background: var(--grey-1, #a2a2a2); }
+.col[data-tone="g1"] .barFill { background: var(--grey-1, #8c8c8c); }
 .col[data-tone="focus"] .barFill { background: var(--accent, #f3f3f3); }
 
 /* The focus's tag on a 1px leader */
@@ -183,7 +177,7 @@
   bottom: calc(var(--h) * 100% + 6px);
   width: 1px;
   height: 26px;
-  background: rgb(243 243 243 / 55%);
+  background: #8c8c8c;
 }
 .tag {
   position: absolute;
@@ -232,7 +226,7 @@
 .sentence {
   max-width: 34ch;
   margin: 8px 0 0;
-  color: #a2a2a2;
+  color: #8c8c8c;
   text-wrap: pretty;
 }
 :global(html[lang="zh-CN"]) .sentence { max-width: 22em; }
@@ -287,7 +281,7 @@
   right: 0;
   top: 24px;
   height: 1px;
-  background: var(--axis, rgb(243 243 243 / 24%));
+  background: var(--axis, #1c1c1c);
 }
 .tick {
   position: absolute;
@@ -295,7 +289,7 @@
   left: calc(var(--x) * 100%);
   width: 1px;
   height: 5px;
-  background: var(--axis, rgb(243 243 243 / 24%));
+  background: var(--axis, #1c1c1c);
 }
 .tickLabel {
   position: absolute;
@@ -356,7 +350,7 @@
   z-index: 0;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #242424);
+  background: var(--raised, #1c1c1c);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
@@ -366,7 +360,7 @@
   .person.person { padding: 20px 20px 18px; }
 }
 .personAge { font-variant-numeric: tabular-nums; }
-.personStage { color: #a2a2a2; }
+.personStage { color: #8c8c8c; }
 
 /* Pointing at a tile (data-on, written by the component): its square on
    the age line lifts, the others step back, the tile rises a tone */
@@ -444,7 +438,7 @@
 .modelSide[data-side="yes"] {
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: var(--raised, #242424);
+  background: var(--raised, #1c1c1c);
 }
 .modelLabel {
   display: flex;
@@ -456,7 +450,7 @@
   flex: none;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 [data-side="but"] .modelSq { background: var(--accent, #f3f3f3); }
 .points {
@@ -465,7 +459,7 @@
   margin: 16px 0 0;
   padding: 0;
   list-style: none;
-  color: #d1d1d1;
+  color: #f3f3f3;
   text-wrap: pretty;
 }
 .quote {
@@ -494,8 +488,8 @@
   height: 48px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #242424);
-  color: var(--grey-1, #a2a2a2);
+  background: var(--raised, #1c1c1c);
+  color: var(--grey-1, #8c8c8c);
 }
 .personaSlab .chips { margin-top: 24px; }
 .lead {
@@ -538,7 +532,7 @@
   width: 8px;
   height: 8px;
   margin-top: 4px;
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 .row[data-focus="true"] .rowSq { background: var(--accent, #f3f3f3); }
 .rowText {

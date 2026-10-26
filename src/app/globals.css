@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #0F0F0F;
-  --color-cream: #1e1e1e;
-  --color-line: #262626;
-  --color-ink: #F3F3F3;
-  --color-mute: #A2A2A2;
-  --color-soft: #737373;
+  --color-paper: #0f0f0f;
+  --color-cream: #1c1c1c;
+  --color-line: #1c1c1c;
+  --color-ink: #f3f3f3;
+  --color-mute: #8c8c8c;
+  --color-soft: #8c8c8c;
 
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Segoe UI", Roboto, Arial, sans-serif;
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Segoe UI", Roboto, Arial, sans-serif;
@@ -93,10 +93,10 @@ html[lang="zh-CN"] .type-display {
 }
 /* No edge to brighten: the plane itself lifts a tone */
 .plate:hover {
-  background: #242424;
+  background: #1c1c1c;
 }
 .plate:active {
-  background: #272727;
+  background: #1c1c1c;
   transition-duration: 90ms;
 }
 /* The figure sits edge to edge inside the plate. The rule that separates
@@ -119,11 +119,11 @@ html[lang="zh-CN"] .type-display {
 .plate-button {
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #272727;
+  background: #1c1c1c;
   transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
 }
 .plate-button:hover {
-  background: #2f2f2f;
+  background: #1c1c1c;
 }
 
 ::selection {
@@ -181,11 +181,11 @@ button {
 }
 /* Planes, not frames: hover and focus lift the plane a tone */
 .card-material:has(:focus-visible) {
-  background: #242424;
+  background: #1c1c1c;
 }
 @media (hover: hover) {
   .card-material:hover {
-    background: #242424;
+    background: #1c1c1c;
   }
 }
 
@@ -209,7 +209,8 @@ button {
   transform: translate(10px, 10px);
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: #131313;
+  /* two greys leave no darker tone for a back sheet: the sheet stands alone */
+  background: transparent;
   pointer-events: none;
 }
 
@@ -325,23 +326,22 @@ button {
 }
 .notion-root .notion-link {
   color: var(--color-ink);
-  border-bottom: 1px solid rgba(243,243,243,0.2);
+  border-bottom: 1px solid #1c1c1c;
 }
 .notion-root .notion-hr {
   border-color: var(--color-line);
 }
 .notion-root .notion-callout {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: #1c1c1c;
+  border: 1px solid #1c1c1c;
   border-radius: 8px;
 }
 .notion-root .notion-code {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: #1c1c1c;
 }
 .notion-root .notion-collection-header,
 .notion-root .notion-collection-row {
-  border-color: rgba(255,255,255,0.07);
+  border-color: #1c1c1c;
 }
 .notion-root .notion-table-of-contents-item {
   color: var(--color-mute);
@@ -414,7 +414,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
 /* Monochrome focus ring — replaces the UA default everywhere. It follows
    the element's own (G2) corners, so it sets no radius of its own. */
 :focus-visible {
-  outline: 2px solid rgba(243, 243, 243, 0.35);
+  outline: 2px solid #8c8c8c;
   outline-offset: 2px;
 }
 
@@ -444,33 +444,38 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   --r-raised: 16px;
   --r-tag: 10px;
   /* planes */
-  --slab: #0a0a0a;
-  /* The grain lifts the ground to about #191919 where it shows, so a
+  --slab: #0f0f0f;
+  /* The grain lifts the ground to about #1c1c1c where it shows, so a
      plane has to sit a clear step above that to read as a plane. */
-  --tile: #1e1e1e;
-  --sheet: #1e1e1e;
-  --raised: #272727;
+  --tile: #1c1c1c;
+  --sheet: #1c1c1c;
+  /* Two greys only: what sits on a sheet or tile steps down to the
+     ground tone, so planes alternate surface and ground */
+  --raised: #0f0f0f;
   --edge: transparent;
   /* kept aliases: no plane is outlined */
   --slab-line: transparent;
   --tile-line: transparent;
   --paper-edge: transparent;
-  --slab-rule: #262626;
-  --paper: #1e1e1e;
-  /* the two back planes behind every chart sheet, stepping down */
-  --paper-back-1: #171717;
+  --slab-rule: #1c1c1c;
+  --paper: #1c1c1c;
+  /* the back planes behind a chart sheet: two greys leave no tone to
+     step down to, so a sheet stands alone */
+  --paper-back-1: transparent;
   --paper-back-1-edge: transparent;
-  --paper-back-2: #0c0c0c;
+  --paper-back-2: transparent;
   --paper-back-2-edge: transparent;
   /* chart structure and marks */
-  --grid: rgb(243 243 243 / 6%);
-  --axis: rgb(243 243 243 / 24%);
-  --grey-1: #a2a2a2;
-  --grey-2: #6d6d6d;
-  --grey-3: #3c3c3c;
-  --mark: #6d6d6d;
+  /* grid lines are cut into the sheet in the ground tone; the axis is a
+     line in the text grey */
+  --grid: #0f0f0f;
+  --axis: #8c8c8c;
+  --grey-1: #8c8c8c;
+  --grey-2: #8c8c8c;
+  --grey-3: #8c8c8c;
+  --mark: #8c8c8c;
   --tick: #8c8c8c;
-  --on-fill: #0a0a0a;
+  --on-fill: #0f0f0f;
   /* motion: feedback, state, entrance; stagger, rise, dim */
   --t-1: 160ms;
   --t-2: 360ms;
@@ -651,7 +656,7 @@ html.cursor-orb-active, html.cursor-orb-active * { cursor: none !important; }
   }
   .t-body {
     max-width: 40rem;
-    color: #d1d1d1;
+    color: #f3f3f3;
     font-family: var(--font-sans);
     font-size: 18px;
     font-weight: 400;

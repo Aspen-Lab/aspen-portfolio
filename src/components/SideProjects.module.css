@@ -1,18 +1,77 @@
-/* The section's opening line: one sentence in the text face, on the
-   rows' name column so the intro and the rows share one left edge. */
+/* The section's opening line: one sentence in the text face. */
 .intro {
   max-width: 36rem;
   margin: 0 0 28px;
   color: var(--color-mute);
-  font-size: 15px;
-  line-height: 1.65;
+  font-size: 17px;
+  line-height: 1.6;
   text-wrap: pretty;
 }
 
-/* Where the catalogue widens its numeral column, follow it. */
-@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-  .intro { margin-left: calc(2.25rem + 20px); font-size: 16px; }
+@media (min-width: 1024px) {
+  .intro { font-size: 18px; }
 }
-@media (max-width: 1023px), (hover: none), (pointer: coarse) {
-  .intro { margin-left: calc(1.4rem + 12px); }
+
+/* ── The cards: grey planes with G2 corners on the 12 columns, three to
+   a row; words only, at reading size; the arrow is the one control. ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.grid > li { display: flex; min-width: 0; }
+.card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 260px;
+  padding: 28px;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
+  background: #1c1c1c;
+  color: var(--color-ink);
+}
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.kind { font-size: 16px; line-height: 1.4; color: var(--color-mute); }
+.go {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #0f0f0f;
+  color: var(--color-ink);
+  transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
+}
+.go svg { transition: transform 240ms var(--ease-arrive); }
+.name {
+  margin-top: auto;
+  padding-top: 48px;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(28px, 2.4vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+.line { margin-top: 10px; font-size: 17px; line-height: 1.5; color: var(--color-mute); text-wrap: pretty; }
+@media (hover: hover) {
+  .card:hover .go { background: #f3f3f3; color: #0f0f0f; }
+  .card:hover .go svg { transform: translate(2px, -2px); }
+}
+.card:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
+
+@media (max-width: 1023px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .grid { grid-template-columns: 1fr; gap: 12px; }
+  .card { min-height: 0; padding: 24px; }
+  .name { padding-top: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .go, .go svg { transition: none; }
 }

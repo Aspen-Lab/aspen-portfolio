@@ -1,19 +1,19 @@
 /* A local specimen of Aspen Origin's Graphite tokens. Keep these aligned
    with aspen-origin-release/public/design-system/tokens.css. */
 .playground {
-  --ap-color-text: #ededed;
-  --ap-color-muted: #ababab;
-  --ap-color-soft: #878787;
-  --ap-color-action: #d1d1d1;
-  --ap-color-line: #ffffff14;
-  --ap-color-inset: #202020;
-  --ap-color-control: #292929;
-  --ap-color-on-action: #242424;
-  --ap-surface-raised: #242424;
-  --ap-button-secondary-hover: #343434;
-  --ap-button-primary-well: #b9b9b9;
-  --ap-shadow-raised: 0 3px 7px #0005, inset 0 1px 1px #ffffff08;
-  --ap-shadow-inset: inset 0 2px 6px #0008, inset 0 -1px 1px #ffffff06;
+  --ap-color-text: #f3f3f3;
+  --ap-color-muted: #8c8c8c;
+  --ap-color-soft: #8c8c8c;
+  --ap-color-action: #f3f3f3;
+  --ap-color-line: #1c1c1c;
+  --ap-color-inset: #1c1c1c;
+  --ap-color-control: #1c1c1c;
+  --ap-color-on-action: #1c1c1c;
+  --ap-surface-raised: #1c1c1c;
+  --ap-button-secondary-hover: #8c8c8c;
+  --ap-button-primary-well: #8c8c8c;
+  --ap-shadow-raised: 0 3px 7px #0005, inset 0 1px 1px #1c1c1c;
+  --ap-shadow-inset: inset 0 2px 6px #0008, inset 0 -1px 1px #1c1c1c;
   --ap-shadow-button: 0 2px 2px #0002, 0 5px 14px #0001;
   --ap-duration-press: 70ms;
   --ap-duration-feedback: 180ms;
@@ -168,7 +168,7 @@
   border-radius: 14px;
   background: var(--ap-color-action);
   color: var(--ap-color-on-action);
-  box-shadow: var(--ap-shadow-button), inset 0 1px 0 #ffffff20;
+  box-shadow: var(--ap-shadow-button), inset 0 1px 0 #1c1c1c;
   font-size: 13px;
   font-weight: 500;
   letter-spacing: -.015em;

@@ -444,7 +444,7 @@ export const projects: Project[] = [
     coverHeight: 1628,
     coverFit: "contain",
     coverPosition: "50% 100%",
-    coverBg: "#000",
+    coverBg: "#0f0f0f",
     // The selected/next-action red of TikTok's own KYC screens on the
     // cover (the chosen ID radio, "Recommended", the primary button): on
     // this page it is drawn only as each chart's single focus mark, never

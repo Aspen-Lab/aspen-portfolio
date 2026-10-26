@@ -1,6 +1,6 @@
-/* Aspen Origin, flat. Left: the three surfaces nested as flat squares
-   with G2 corners, the 2×2 mark at the centre; no 3D, shadow or
-   gradient. Right: name, line, specimen, button. The hero's 12 columns. */
+/* Aspen Origin, flat. Left: squares nested in the site's two tones,
+   surface and ground in turn, the 2×2 mark at the centre; no 3D, shadow
+   or gradient. Right: name, line, button. The hero's 12 columns. */
 .grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -18,12 +18,12 @@
   corner-shape: squircle;
   transition: padding 520ms var(--ease-arrive);
 }
-.canvas { aspect-ratio: 1; max-width: 520px; padding: 12%; border-radius: 48px; background: #1d1d1d; }
-.inset { width: 100%; height: 100%; padding: 15%; border-radius: 36px; background: #252525; }
-.raised { width: 100%; height: 100%; border-radius: 26px; background: #2f2f2f; }
+.canvas { aspect-ratio: 1; max-width: 520px; padding: 12%; border-radius: 48px; background: #1c1c1c; }
+.inset { width: 100%; height: 100%; padding: 15%; border-radius: 36px; background: #0f0f0f; }
+.raised { width: 100%; height: 100%; border-radius: 26px; background: #1c1c1c; }
 .mark { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10%; width: 46%; aspect-ratio: 1; }
-.mark i { border-radius: 22%; corner-shape: squircle; background: #d6d6d6; }
-.mark i:last-child { background: #6e6e6e; }
+.mark i { border-radius: 22%; corner-shape: squircle; background: #f3f3f3; }
+.mark i:last-child { background: #8c8c8c; }
 /* Under the pointer the levels breathe apart a little */
 @media (hover: hover) {
   .grid:hover .canvas { padding: 10%; }
@@ -33,14 +33,7 @@
 /* ── The copy ── */
 .copy { grid-column: 8 / span 5; }
 .copy h2 { font-family: var(--font-display); font-weight: 300; font-size: clamp(44px, 4.6vw, 72px); line-height: 1; letter-spacing: -0.04em; color: var(--color-ink); }
-.tagline { max-width: 24rem; margin-top: 20px; font-size: 16px; line-height: 1.6; color: var(--color-mute); text-wrap: pretty; }
-.specimen { display: grid; gap: 10px; margin-top: 40px; font-size: 13px; }
-.specimen li { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 14px; max-width: 300px; }
-.swatch { width: 20px; height: 20px; border-radius: 6px; corner-shape: squircle; box-shadow: none; }
-/* The specimen sits a step up from the ground so Canvas still reads */
-.specimen { padding: 14px 16px; border-radius: var(--r-raised); corner-shape: squircle; background: #141414; max-width: 320px; }
-.swatchName { color: var(--color-ink); }
-.hex { color: var(--color-soft); font-variant-numeric: tabular-nums; }
+.tagline { max-width: 24rem; margin-top: 20px; font-size: 17px; line-height: 1.6; color: var(--color-mute); text-wrap: pretty; }
 .enterLink {
   display: inline-flex;
   align-items: center;
@@ -50,14 +43,14 @@
   padding: 0 18px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #2a2a2a;
+  background: #1c1c1c;
   color: var(--color-ink);
-  font-size: 14px;
-  transition: background-color 180ms var(--ease-arrive);
+  font-size: 16px;
+  transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive);
 }
 .enterLink svg { flex-shrink: 0; transition: transform 180ms var(--ease-arrive); }
 @media (hover: hover) {
-  .enterLink:hover { background: #333333; }
+  .enterLink:hover { background: #f3f3f3; color: #0f0f0f; }
   .enterLink:hover svg { transform: translate(2px, -2px); }
 }
 .enterLink:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }

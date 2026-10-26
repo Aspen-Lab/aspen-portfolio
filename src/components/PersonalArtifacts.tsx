@@ -83,7 +83,7 @@ export function PersonalArtifacts() {
         <p className={styles.eyebrow}>{locale === "cn" ? "工作之外" : "Off the clock"}</p>
         <Link href="/about" className={styles.more}>
           {locale === "cn" ? "更多生活切片" : "More little things"}
-          <ArrowUpRight size={13} strokeWidth={1.4} aria-hidden="true" />
+          <ArrowUpRight size={15} strokeWidth={1.6} aria-hidden="true" />
         </Link>
       </div>
 
@@ -105,7 +105,7 @@ export function PersonalArtifacts() {
               onClick={() => select(index)}
               onKeyDown={event => navigate(event, index)}
             >
-              <Icon size={14} strokeWidth={1.4} aria-hidden="true" />
+              <Icon size={16} strokeWidth={1.5} aria-hidden="true" />
               <span>{artifact.label[locale]}</span>
             </button>
           );
@@ -121,7 +121,7 @@ export function PersonalArtifacts() {
                   src={artifact.src}
                   alt={artifact.alt[locale]}
                   fill
-                  sizes="156px"
+                  sizes="220px"
                   className={styles.image}
                   onLoad={() => {
                     ready.current.add(index);

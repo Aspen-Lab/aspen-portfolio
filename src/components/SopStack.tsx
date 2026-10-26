@@ -109,8 +109,8 @@ function Checks({ checks }: { checks: string[] }) {
   );
 }
 
-/* The token ramp: ink, the three greys, and one hollow */
-const SWATCHES = ["ink", "grey1", "grey2", "grey3", "hollow"] as const;
+/* The token ramp: ink, the text grey, the ground, and one hollow */
+const SWATCHES = ["ink", "grey", "ground", "hollow"] as const;
 
 function Delivery({ codes }: { codes: string[] }) {
   return (

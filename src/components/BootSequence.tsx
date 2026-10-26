@@ -73,7 +73,7 @@ export function BootSequence() {
             className="pointer-events-none absolute inset-0"
             style={{
               backgroundImage:
-                "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.011) 2px, rgba(255,255,255,0.011) 3px)",
+                "repeating-linear-gradient(0deg, transparent, transparent 2px, #1c1c1c 2px, #1c1c1c 3px)",
             }}
           />
 
@@ -83,7 +83,7 @@ export function BootSequence() {
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,255,255,0.025) 0%, transparent 70%)",
+                "radial-gradient(ellipse 60% 50% at 50% 50%, #1c1c1c 0%, transparent 70%)",
             }}
           />
 
@@ -99,21 +99,21 @@ export function BootSequence() {
             <span
               key={cls}
               aria-hidden
-              className={`pointer-events-none absolute w-[18px] h-[18px] border-line/45 ${cls}`}
+              className={`pointer-events-none absolute w-[18px] h-[18px] border-line ${cls}`}
             />
           ))}
 
           {/* Top HUD bar */}
-          <div className="flex-none flex items-center justify-between px-7 sm:px-12 py-3 border-b border-line/20">
-            <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-soft/28">
+          <div className="flex-none flex items-center justify-between px-7 sm:px-12 py-3 border-b border-line">
+            <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-mute">
               ASPEN.PORTFOLIO
             </span>
             <span className="flex items-center gap-2">
               <span className="relative flex w-1.5 h-1.5">
-                <span className="absolute inset-0 rounded-full bg-ink/40 animate-ping" />
-                <span className="relative w-1.5 h-1.5 rounded-full bg-ink/55" />
+                <span className="absolute inset-0 rounded-full bg-mute animate-ping" />
+                <span className="relative w-1.5 h-1.5 rounded-full bg-mute" />
               </span>
-              <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-soft/28">
+              <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-mute">
                 INIT
               </span>
             </span>
@@ -121,7 +121,7 @@ export function BootSequence() {
 
           {/* Main area */}
           <div className="flex-1 flex flex-col justify-center px-7 sm:px-12 py-12 min-h-0">
-            <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.45em] text-soft/20 mb-10 leading-none">
+            <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.45em] text-mute mb-10 leading-none">
               NODE: ASPEN_W &nbsp;—&nbsp; オンライン
             </p>
 
@@ -136,17 +136,17 @@ export function BootSequence() {
                       visible ? "opacity-100" : "opacity-0"
                     }`}
                   >
-                    <span className="text-soft/35 shrink-0">&gt;_</span>
-                    <span className={status ? "text-mute/70" : "text-ink/90"}>
+                    <span className="text-mute shrink-0">&gt;_</span>
+                    <span className={status ? "text-mute" : "text-ink"}>
                       {text}
                     </span>
                     {status && visible && (
-                      <span className="ml-auto pl-6 font-mono text-[10px] text-soft/32 tabular-nums">
+                      <span className="ml-auto pl-6 font-mono text-[10px] text-mute tabular-nums">
                         {status}
                       </span>
                     )}
                     {isCursor && (
-                      <span className="ml-0.5 inline-block w-[6px] h-[13px] translate-y-[2px] bg-ink/80 animate-pulse" />
+                      <span className="ml-0.5 inline-block w-[6px] h-[13px] translate-y-[2px] bg-ink animate-pulse" />
                     )}
                   </div>
                 );
@@ -155,19 +155,19 @@ export function BootSequence() {
           </div>
 
           {/* Bottom progress bar */}
-          <div className="flex-none border-t border-line/20">
-            <div className="relative h-[1.5px] bg-line/20 overflow-hidden">
+          <div className="flex-none border-t border-line">
+            <div className="relative h-[1.5px] bg-line overflow-hidden">
               <motion.div
-                className="absolute inset-y-0 left-0 bg-ink/45"
+                className="absolute inset-y-0 left-0 bg-mute"
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               />
             </div>
             <div className="flex items-center justify-between px-7 sm:px-12 py-3">
-              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-soft/22">
+              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-mute">
                 BOOT SEQUENCE
               </span>
-              <span className="font-mono text-[9px] tabular-nums text-soft/22">
+              <span className="font-mono text-[9px] tabular-nums text-mute">
                 {String(progress).padStart(3, "0")}%
               </span>
             </div>

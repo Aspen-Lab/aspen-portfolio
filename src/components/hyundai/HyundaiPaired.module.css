@@ -122,14 +122,14 @@
   grid-row: 3;
   max-width: 56ch;
   justify-self: center;
-  color: #a2a2a2;
+  color: #8c8c8c;
   text-align: center;
   text-wrap: balance;
 }
-.sep { color: #6d6d6d; }
+.sep { color: #8c8c8c; }
 @media (max-width: 767px) {
   .sep { display: none; }
-  .metaSrc { display: block; color: #d1d1d1; }
+  .metaSrc { display: block; color: #f3f3f3; }
   .rung {
     --pc: 47px;
     padding: 14px 0 16px;
@@ -182,7 +182,7 @@
   height: 24px;
   border-radius: var(--r-tag, 10px);
   corner-shape: squircle;
-  background: var(--raised);
+  background: #1c1c1c;
   color: #f3f3f3;
 }
 .stepTitle { color: #f3f3f3; }
@@ -266,7 +266,7 @@
 .moreNum { color: #8c8c8c; }
 .stepLine {
   max-width: 28ch;
-  color: #a2a2a2;
+  color: #8c8c8c;
   text-wrap: pretty;
 }
 

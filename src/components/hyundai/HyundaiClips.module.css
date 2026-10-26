@@ -32,7 +32,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: #000;
+  background: #0f0f0f;
 }
 /* The site's play / pause: a raised plane, an ink glyph; a pointer
    lifts it a tone */
@@ -52,7 +52,7 @@
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .toggle:hover { background-color: #2f2f2f; }
+  .toggle:hover { background-color: #1c1c1c; }
 }
 .toggle:active svg { transform: translateY(1px); }
 
@@ -101,9 +101,9 @@
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .clip:hover { background-color: #171717; }
+  .clip:hover { background-color: #1c1c1c; }
 }
-.clip[data-on="true"] { background-color: var(--tile, #1e1e1e); }
+.clip[data-on="true"] { background-color: var(--tile, #1c1c1c); }
 .thumb {
   position: relative;
   display: block;
@@ -111,7 +111,7 @@
   overflow: hidden;
   border-radius: var(--r-tag, 10px);
   corner-shape: squircle;
-  background: #000;
+  background: #0f0f0f;
   transition: transform var(--t-1) var(--ease-arrive);
 }
 .thumbImg.thumbImg { object-fit: cover; }
@@ -129,7 +129,7 @@
   position: relative;
   width: 8px;
   height: 8px;
-  background: var(--grey-2, #6d6d6d);
+  background: var(--grey-2, #8c8c8c);
 }
 .sq::after {
   content: "";
@@ -141,7 +141,7 @@
 }
 .clip[data-on="true"] .sq::after { opacity: 1; }
 .title {
-  color: var(--color-mute, #a2a2a2);
+  color: var(--color-mute, #8c8c8c);
   line-height: 1.35;
   text-wrap: pretty;
 }

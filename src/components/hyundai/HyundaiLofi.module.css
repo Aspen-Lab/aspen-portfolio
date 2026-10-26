@@ -76,7 +76,6 @@
     padding: 0 12px;
   }
 }
-.band[data-z="info"][data-on] { background: #2f2f2f; }
 .bandSq {
   position: relative;
   flex: none;
@@ -100,7 +99,7 @@
 .bandText {
   display: none;
   min-width: 0;
-  color: #d1d1d1;
+  color: #f3f3f3;
   white-space: nowrap;
 }
 @media (min-width: 640px) {
@@ -117,7 +116,7 @@
   gap: 16px;
   margin-bottom: 8px;
 }
-.names > span { min-width: 0; color: #d1d1d1; }
+.names > span { min-width: 0; color: #f3f3f3; }
 .names > span:last-child {
   max-width: 50%;
   margin-right: -0.12em;
@@ -193,12 +192,12 @@
   inset: 0;
   border-radius: inherit;
   corner-shape: squircle;
-  background: var(--raised);
+  background: #1c1c1c;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .opt:hover .optBox { opacity: 0.5; }
+  .opt:hover .optBox { opacity: 1; }
 }
 .opt[aria-checked="true"] .optBox { opacity: 1; }
 
@@ -222,14 +221,14 @@
 .optText {
   position: relative;
   white-space: nowrap;
-  opacity: 0.62;
-  transition: opacity var(--t-1) var(--ease-arrive);
+  color: var(--color-mute);
+  transition: color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .opt:hover .optText { opacity: 0.85; }
+  .opt:hover .optText { color: #f3f3f3; }
 }
-.opt:focus-visible .optText { opacity: 0.85; }
-.opt[aria-checked="true"] .optText { opacity: 1; }
+.opt:focus-visible .optText,
+.opt[aria-checked="true"] .optText { color: #f3f3f3; }
 .opt:active { transform: translateY(1px); }
 
 /* ── Entrance, once on view ── */

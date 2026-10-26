@@ -591,7 +591,6 @@ const Lifecycle = memo(function Lifecycle({ cn }: { cn: boolean }) {
               </span>
             )}
             <p className={`t-label ${styles.colHead}`}>
-              <span data-code="">{String(c + 1).padStart(2, "0")}</span>
               <span>{w(col.head)}</span>
             </p>
             {c === 2 ? (
@@ -670,12 +669,7 @@ function Hmw({ cn, lit }: { cn: boolean; lit: boolean }) {
           onPointerEnter={(e) => e.pointerType !== "touch" && preview(k)}
           onPointerLeave={(e) => e.pointerType !== "touch" && preview(null)}
         >
-          <span className={styles.tileTop}>
-            <span className="t-label" data-code="">
-              {String(k + 1).padStart(2, "0")}
-            </span>
-            {k === HMW_FOCUS && <span className={styles.focusSq} aria-hidden />}
-          </span>
+          {k === HMW_FOCUS && <span className={styles.focusSq} aria-hidden />}
           <span className={`t-small ${styles.q}`}>{w(it.q)}</span>
           <span className={`t-label ${styles.count}`}>{t.ideas(it.ideas.length)}</span>
         </button>
@@ -752,9 +746,6 @@ export function NutraIdeation() {
             onClick={() => choose(k)}
             onKeyDown={(e) => onKey(e, k)}
           >
-            <span className={`t-label ${styles.tabNum}`} data-code="">
-              {String(k + 1).padStart(2, "0")}
-            </span>
             <span className={`t-small ${styles.tabLabel}`}>{label}</span>
             <span aria-hidden className={styles.fill} />
           </button>

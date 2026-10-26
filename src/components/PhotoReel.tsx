@@ -85,8 +85,8 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
               <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100">
                 {/* The index on a small raised plane, no edge: a solid tone reads
                     over a white mat as well as a night sky. */}
-                <span className="absolute left-[14px] top-[14px] rounded-[var(--r-tag)] [corner-shape:squircle] bg-[#242424] px-[7px] py-[5px] font-mono text-[10px] leading-none uppercase tracking-[0.16em] text-ink tabular-nums">
-                  {pad(i + 1)} <span className="text-soft">/</span> {pad(frames.length)}
+                <span className="absolute left-[14px] top-[14px] rounded-[var(--r-tag)] [corner-shape:squircle] bg-[#1c1c1c] px-[7px] py-[5px] font-mono text-[10px] leading-none uppercase tracking-[0.16em] text-ink tabular-nums">
+                  {pad(i + 1)} <span className="text-mute">/</span> {pad(frames.length)}
                 </span>
               </span>
             </button>
@@ -113,16 +113,16 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
             className="fixed inset-0 z-[90] bg-paper/96 backdrop-blur-[2px] flex flex-col"
             onClick={() => setOpen(null)}
           >
-            <div className="container-fluid flex items-center justify-between h-16 font-mono text-[10px] uppercase tracking-[0.22em] text-soft">
+            <div className="container-fluid flex items-center justify-between h-16 font-mono text-[10px] uppercase tracking-[0.22em] text-mute">
               <span className="tabular-nums">
-                {label} <span className="text-soft/50">·</span> {pad(open + 1)}{" "}
-                <span className="text-soft/50">/</span> {pad(frames.length)}
+                {label} <span className="text-mute">·</span> {pad(open + 1)}{" "}
+                <span className="text-mute">/</span> {pad(frames.length)}
               </span>
               <button
                 type="button"
                 onClick={() => setOpen(null)}
                 aria-label="Close"
-                className="plate-button inline-flex items-center gap-2 px-3 py-1.5 text-soft hover:text-ink cursor-pointer"
+                className="plate-button inline-flex items-center gap-2 px-3 py-1.5 text-mute hover:text-ink cursor-pointer"
               >
                 ESC <X className="w-3.5 h-3.5" strokeWidth={1.75} />
               </button>
@@ -133,7 +133,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                 type="button"
                 onClick={(e) => { e.stopPropagation(); step(-1); }}
                 aria-label="Previous"
-                className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-3 text-soft hover:text-ink cursor-pointer z-10"
+                className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-3 text-mute hover:text-ink cursor-pointer z-10"
               >
                 <ChevronLeft className="w-6 h-6" strokeWidth={1.5} />
               </button>
@@ -141,7 +141,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                 type="button"
                 onClick={(e) => { e.stopPropagation(); step(1); }}
                 aria-label="Next"
-                className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-3 text-soft hover:text-ink cursor-pointer z-10"
+                className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-3 text-mute hover:text-ink cursor-pointer z-10"
               >
                 <ChevronRight className="w-6 h-6" strokeWidth={1.5} />
               </button>

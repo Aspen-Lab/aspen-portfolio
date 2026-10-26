@@ -5,7 +5,7 @@
    gridlines, leaders, the route). No gradients. */
 .panel {
   --focus: var(--accent, var(--color-ink));
-  --dash: rgb(243 243 243 / 55%);
+  --dash: #8c8c8c;
 }
 
 /* ── The selector: six labels on fixed columns, one plane ──
@@ -28,20 +28,19 @@
 .tab {
   position: relative;
   padding: 6px 0 6px 0.18em;
-  color: var(--color-ink);
+  color: var(--color-mute);
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.18em;
   text-align: center;
   font-variant-numeric: tabular-nums;
-  opacity: 0.46;
   cursor: pointer;
   outline: none;
-  transition: opacity 160ms ease;
+  transition: color 160ms ease;
 }
 .tab:hover,
 .tab:focus-visible,
-.tab[aria-pressed="true"] { opacity: 1; }
+.tab[aria-pressed="true"] { color: var(--color-ink); }
 .bracket {
   position: absolute;
   top: 0;
@@ -50,7 +49,7 @@
   width: calc(var(--col) + 20px);
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: #242424;
+  background: #1c1c1c;
   transform: translateX(calc(var(--active, 0) * (var(--col) + var(--gap))));
   pointer-events: none;
 }
@@ -130,7 +129,7 @@
   height: 28px;
   border-radius: var(--r-tag);
   corner-shape: squircle;
-  background: #1e1e1e;
+  background: #1c1c1c;
   color: var(--color-soft);
 }
 .title {
@@ -208,7 +207,7 @@
   padding: 18px 16px 16px;
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: #1e1e1e;
+  background: #1c1c1c;
   container-type: inline-size;
 }
 @media (min-width: 640px) {
@@ -254,11 +253,12 @@
   bottom: 0;
   width: 1px;
   translate: -50% 0;
-  background: rgb(243 243 243 / 6%);
+  /* cut into the sheet in the ground tone; the axis in the text grey */
+  background: #0f0f0f;
 }
 .gridlines > span[data-axis="true"] {
   translate: 0 0;
-  background: rgb(243 243 243 / 22%);
+  background: #8c8c8c;
 }
 
 .row { position: relative; }
@@ -293,7 +293,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  background: rgb(243 243 243 / 30%);
+  background: #8c8c8c;
   transform-origin: left;
 }
 .row[data-focus="true"] .fill[data-split="false"] { background: var(--focus); }
@@ -309,13 +309,13 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background: rgb(243 243 243 / 9%);
+  background: #1c1c1c;
 }
 
 .axis {
   position: relative;
   height: 26px;
-  border-top: 1px solid rgb(243 243 243 / 22%);
+  border-top: 1px solid #8c8c8c;
 }
 .tick {
   position: absolute;
@@ -337,7 +337,7 @@
   left: 50%;
   width: 1px;
   height: 5px;
-  background: rgb(243 243 243 / 22%);
+  background: #8c8c8c;
 }
 .tick[data-edge="start"] { translate: 0 0; }
 .tick[data-edge="start"]::before { left: 0; }
@@ -368,7 +368,7 @@
 }
 .dot {
   fill: var(--focus);
-  stroke: #1e1e1e;
+  stroke: #1c1c1c;
   stroke-width: 2;
 }
 .leader {
@@ -384,7 +384,7 @@
   padding: 5px 8px 4px;
   border-radius: var(--r-tag);
   corner-shape: squircle;
-  background: #2d2d2d;
+  background: var(--raised);
   color: var(--color-ink);
   font-family: var(--font-mono);
   font-size: 10px;
@@ -414,12 +414,12 @@
   right: calc(50% / var(--n));
   left: calc(50% / var(--n));
   height: 1px;
-  background: rgb(243 243 243 / 22%);
+  background: #1c1c1c;
 }
 .lineLit {
   position: absolute;
   inset: 0;
-  background: rgb(243 243 243 / 70%);
+  background: #f3f3f3;
   transform-origin: left;
 }
 .chevron {
@@ -432,7 +432,7 @@
 }
 .chevron path {
   fill: none;
-  stroke: rgb(243 243 243 / 70%);
+  stroke: #f3f3f3;
   stroke-width: 1.2;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -488,7 +488,7 @@
   bottom: 23px;
   left: 11.5px;
   width: 1px;
-  background: rgb(243 243 243 / 22%);
+  background: #8c8c8c;
   transform-origin: top;
 }
 .step {
@@ -577,7 +577,7 @@
 .ten > span {
   aspect-ratio: 1;
   border-radius: 1px;
-  background: rgb(243 243 243 / 52%);
+  background: #8c8c8c;
 }
 /* A narrow sheet: the figure and its label share a line, the tens take
    the full width under them. */

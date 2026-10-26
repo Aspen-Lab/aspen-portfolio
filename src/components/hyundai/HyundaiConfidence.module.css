@@ -94,14 +94,14 @@
   margin-right: 0.22em;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
-.op { color: #a2a2a2; }
-.paren { color: #a2a2a2; }
+.op { color: #8c8c8c; }
+.paren { color: #8c8c8c; }
 .plus {
   margin-left: 0.04em;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
-.dot { color: #6d6d6d; }
-.coefSym { color: #a2a2a2; }
+.dot { color: #8c8c8c; }
+.coefSym { color: #8c8c8c; }
 .frac {
   display: inline-grid;
   justify-items: center;
@@ -122,7 +122,7 @@
   font-size: 15px;
   line-height: 0;
   vertical-align: baseline;
-  color: #d1d1d1;
+  color: #f3f3f3;
 }
 
 /* A term lit: the others step back */
@@ -160,7 +160,7 @@
 .root[data-term="hrv"] .row[data-k="hrv"],
 .root[data-term="hrdiff"] .row[data-k="hrdiff"],
 .root[data-term="ecgvar"] .row[data-k="ecgvar"],
-.root[data-term="t"] .row[data-k="t"] { background-color: var(--raised, #272727); }
+.root[data-term="t"] .row[data-k="t"] { background-color: var(--raised, #1c1c1c); }
 .code {
   position: relative;
   justify-self: start;
@@ -183,7 +183,7 @@
   position: absolute;
   inset: 0;
   background: #f3f3f3;
-  color: #0a0a0a;
+  color: #0f0f0f;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
@@ -193,15 +193,15 @@
 .root[data-term="t"] .row[data-k="t"] .codeLit { opacity: 1; }
 .desc {
   padding-top: 1px;
-  color: #d1d1d1;
+  color: #f3f3f3;
   text-wrap: pretty;
 }
 .coefLine {
   margin: 20px 0 0;
-  color: #d1d1d1;
+  color: #f3f3f3;
 }
 .coefLine .coefSym { font-size: 15px; }
-.coefEq { color: #a2a2a2; }
+.coefEq { color: #8c8c8c; }
 
 /* ══ The pipeline ══ */
 .tree { display: none; margin: auto 0; padding-top: 28px; }
@@ -230,7 +230,7 @@
 }
 
 /* A node: a raised chip in mono, ink; a planned node a quieter plane in
-   grey words; the metric the accent, with #0a0a0a words. On a lit
+   grey words; the metric the accent, with #0f0f0f words. On a lit
    term's path a node fills ink, its words dark. */
 .node {
   position: relative;
@@ -243,7 +243,7 @@
   padding: 7px 8px;
   border-radius: var(--r-tag, 10px);
   corner-shape: squircle;
-  background-color: var(--raised);
+  background-color: #1c1c1c;
   color: #f3f3f3;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -255,20 +255,20 @@
     color var(--t-1) var(--ease-arrive);
 }
 .node[data-p] {
-  background-color: #171717;
+  background-color: #1c1c1c;
   color: #8c8c8c;
 }
 .node[data-accent] {
   padding: 8px 14px;
   background-color: var(--accent);
-  color: #0a0a0a;
+  color: #0f0f0f;
 }
 .root[data-term="hrv"] .node[data-t~="hrv"],
 .root[data-term="hrdiff"] .node[data-t~="hrdiff"],
 .root[data-term="ecgvar"] .node[data-t~="ecgvar"],
 .root[data-term="t"] .node[data-t~="t"] {
   background-color: #f3f3f3;
-  color: #0a0a0a;
+  color: #0f0f0f;
 }
 
 /* A derived term as the ratio it is */
@@ -381,7 +381,7 @@
   fill: var(--grey-2);
   stroke: none;
 }
-.ldot { color: #6d6d6d; }
+.ldot { color: #8c8c8c; }
 .lend {
   display: flex;
   flex-wrap: wrap;

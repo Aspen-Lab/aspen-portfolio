@@ -1,113 +1,128 @@
-/* No rules between the entries (「线框我们用面」): each card is its cover
-   and its words, and the space between two cards is what parts them. */
+/* The catalogue: a wide stage, then a dock of icons and the chosen
+   entry's words. Planes and G2 corners, no rules; text at reading size. */
 .catalogue { min-width: 0; }
-.entry { min-width: 0; }
-.inlinePreview { padding-top: 24px; margin-bottom: 20px; }
-.coverLink { touch-action: manipulation; }
-.description { display: block; padding-bottom: 26px; touch-action: manipulation; }
-.withoutCover { padding-top: 26px; }
-.rowContent {
-  display: grid;
-  grid-template-columns: 1.4rem minmax(0, 1fr) auto;
-  align-items: baseline;
-  column-gap: 12px;
-}
-.name { font-size: 30px; line-height: 1.1; text-wrap: balance; overflow-wrap: anywhere; }
-.meta { line-height: 1.75; text-wrap: pretty; overflow-wrap: anywhere; }
-.status { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
-.rowArrow { color: var(--color-mute); transition: color 180ms ease, opacity 180ms ease, transform 180ms ease; }
-.description:focus-visible .rowArrow { color: var(--color-ink); transform: translate(2px, -2px); }
-.preview { display: none; }
 
-/* The viewfinder's stacked covers. Only the active one shows; the swap is
-   CSS so the server and the first client render carry the same markup
-   whatever the visitor's motion setting.
-   The swap is a cover laid over a cover, not a crossfade through the dark
-   plate: the incoming layer rises to the top and fades in, while the
-   outgoing one stays exactly as it was until the fade is done (its own
-   fade to 0 waits the fade's length, then cuts, unseen, underneath). In a
-   quick sweep the cover being left holds under the next one the same way.
-   will-change keeps every layer a composited sheet even at opacity 0, so
-   the browser paints and rasterises it (decoding its cover) while it
-   waits, and a swap is opacities on the compositor — not a layer
-   promoted, painted and decoded in the first frame of the fade. The
-   stack is isolated, so the active layer's z-index never lifts it over
-   the plate's marks or link. */
-.layers {
-  position: absolute;
-  inset: 0;
-  isolation: isolate;
+/* ── Stage ── */
+.stage {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-plane);
+  corner-shape: squircle;
+  background: #1c1c1c;
 }
+.layers { position: absolute; inset: 0; isolation: isolate; }
 .layer {
   position: absolute;
   inset: 0;
   z-index: 0;
   opacity: 0;
-  transition: opacity 0ms linear 360ms;
-  will-change: opacity;
+  transform: scale(1.03);
+  transition: opacity 0ms linear 520ms, transform 0ms linear 520ms;
+  will-change: opacity, transform;
 }
 .layer[data-active="true"] {
   z-index: 1;
   opacity: 1;
-  transition: opacity 360ms var(--ease-arrive);
+  transform: none;
+  transition: opacity 520ms var(--ease-arrive), transform 1100ms var(--ease-arrive);
 }
 
-/* At tablet widths, keep the picture attached to its project. This also
-   applies to larger touch screens, where hovering is not an available action. */
-@media (min-width: 768px) {
-  .index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; row-gap: 8px; }
-  .inlinePreview { padding-top: 26px; }
-  .description { padding-bottom: 32px; }
-  .name { font-size: 32px; }
+/* ── Bar: the dock on the left, the chosen entry's words on the right ── */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 24px 40px; margin-top: 24px; }
+.dock { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.item {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 56px;
+  padding: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: transparent;
+  color: #0f0f0f;
+  cursor: pointer;
+  transition: background-color 360ms var(--ease-arrive);
 }
-
-/* Shared previews belong to a layout that can actually use hover. The
-   plate is the stage: it takes three fifths of the width, and a row keeps
-   only its name, its line and its year. Role and field are said once, in
-   the readout under the plate (Aspen: 「小字很多 + staging小」).
-   The row on the plate stands on a plane, its top on the plate's top, so
-   the two read as one choice. The plane is a tone over the grain of the
-   ground (#1e1e1e: the tile's tone sits level with the grain and would
-   not read); it reaches 20px past the column on either side, into the
-   gutter and the gap, so the folio and the name keep the page's left
-   edge. It moves with the pointer as a change of tone, never an edge. */
-@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-  .catalogue { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 48px; align-items: start; }
-  .index { display: flex; flex-direction: column; gap: 4px; }
-  .inlinePreview { display: none; }
-  .description {
-    margin-inline: -20px;
-    padding: 32px 20px;
-    border-radius: var(--r-plane);
-    corner-shape: squircle;
-    transition: background-color 180ms var(--ease-arrive);
-  }
-  .description[data-current="true"] { background: #1e1e1e; }
-  .rowContent { grid-template-columns: 2.25rem minmax(0, 1fr) auto; column-gap: 20px; }
-  .name { font-size: 40px; }
-  .sub { font-size: 16px; }
-  .meta { display: none; }
-  .rowArrow { opacity: 0; }
-  .description[data-current="true"] .rowArrow,
-  .description:focus-visible .rowArrow { opacity: 1; color: var(--color-ink); }
-  .preview { display: block; position: sticky; top: 104px; }
-}
-
-@media (min-width: 1280px) and (hover: hover) and (pointer: fine) {
-  .catalogue { gap: 64px; }
-}
-
+.item[data-on="true"] { background: #f3f3f3; }
 @media (hover: hover) {
-  .description:hover .rowArrow { color: var(--color-ink); transform: translate(2px, -2px); }
+  .item[data-on="false"]:hover { background: #1c1c1c; }
+}
+.item:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 3px; }
+.icon {
+  position: relative;
+  display: block;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #1c1c1c;
+  transition: transform 360ms var(--ease-arrive);
+}
+.item[data-on="false"] .icon { transform: scale(0.86); }
+@media (hover: hover) {
+  .item[data-on="false"]:hover .icon { transform: scale(0.94); }
+}
+.iconImage { object-position: 50% 30%; }
+.initial { display: grid; place-items: center; height: 100%; font-size: 18px; color: var(--color-ink); }
+/* The name opens beside the icon: the track grows from nothing */
+.label {
+  display: grid;
+  grid-template-columns: 0fr;
+  opacity: 0;
+  transition: grid-template-columns 520ms var(--ease-arrive), opacity 260ms var(--ease-arrive);
+}
+.label > span { min-width: 0; overflow: hidden; white-space: nowrap; padding: 0; font-size: 17px; line-height: 1; transition: padding 520ms var(--ease-arrive); }
+.item[data-on="true"] .label { grid-template-columns: 1fr; opacity: 1; transition-delay: 0ms, 120ms; }
+.item[data-on="true"] .label > span { padding: 0 14px 0 12px; }
+/* The turn: a black ring closing around the icon while it is on stage */
+.turn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 56px;
+  height: 56px;
+  pointer-events: none;
+  transform: rotate(-90deg);
+}
+.turn circle {
+  fill: none;
+  stroke: #0f0f0f;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 157.08;
+  stroke-dashoffset: 157.08;
+  animation: turn 6000ms linear forwards;
+}
+.catalogue:hover .turn circle,
+.catalogue:focus-within .turn circle,
+.catalogue[data-inview="false"] .turn circle { animation-play-state: paused; }
+@keyframes turn { to { stroke-dashoffset: 0; } }
+
+/* The words: the chosen entry's line and facts */
+.caption { display: flex; align-items: center; gap: 24px; min-width: 0; }
+.captionCopy { min-width: 0; text-align: right; animation: caption-in 520ms var(--ease-arrive) both; }
+.sub { font-size: 18px; line-height: 1.4; color: var(--color-ink); text-wrap: balance; }
+.readout { margin-top: 4px; font-size: 16px; line-height: 1.4; color: var(--color-mute); }
+@keyframes caption-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 1023px) {
+  .bar { flex-direction: column; align-items: stretch; }
+  .dock { overflow-x: auto; scrollbar-width: none; margin: 0 -4px; padding: 0 4px; }
+  .dock::-webkit-scrollbar { display: none; }
+  .captionCopy { text-align: left; }
+}
+@media (max-width: 639px) {
+  .stage { aspect-ratio: 4 / 3; }
+  .caption { flex-direction: column; align-items: flex-start; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .layer,
-  .layer[data-active="true"],
-  .description { transition: none; }
-  /* The demos do not play (CatalogueMedia), so there is nothing to replay. */
-  .replay { display: none; }
-  .rowArrow { transition: none; }
-  .description:hover .rowArrow,
-  .description:focus-visible .rowArrow { transform: none; }
+  .layer, .layer[data-active="true"], .item, .icon, .label, .label > span { transition: none; }
+  .layer { transform: none; }
+  /* No autoplay: the turn does not run, so nothing hands over */
+  .turn { display: none; }
+  .captionCopy { animation: none; }
 }

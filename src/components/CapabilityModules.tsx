@@ -10,12 +10,12 @@ import {
 
 // ───── Module 01 · Design ─────
 const palette = [
-  { name: "ink", hex: "#0A0A0A", lightLabel: false },
-  { name: "mute", hex: "#525252", lightLabel: false },
-  { name: "soft", hex: "#A3A3A3", lightLabel: true },
-  { name: "line", hex: "#EAEAEA", lightLabel: true },
-  { name: "cream", hex: "#F5F5F5", lightLabel: true },
-  { name: "paper", hex: "#FFFFFF", lightLabel: true },
+  { name: "ink", hex: "#0f0f0f", lightLabel: false },
+  { name: "mute", hex: "#8c8c8c", lightLabel: false },
+  { name: "soft", hex: "#8c8c8c", lightLabel: true },
+  { name: "line", hex: "#f3f3f3", lightLabel: true },
+  { name: "cream", hex: "#f3f3f3", lightLabel: true },
+  { name: "paper", hex: "#f3f3f3", lightLabel: true },
 ];
 
 function DesignModule() {
@@ -26,7 +26,7 @@ function DesignModule() {
   return (
     <div className="card-material p-7 flex flex-col gap-6 h-full">
       <div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft mb-3">
+        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute mb-3">
           Module 01
         </p>
         <h3 className="font-display text-[32px] tracking-[-0.015em] text-ink leading-[1.05]">
@@ -48,7 +48,7 @@ function DesignModule() {
               onFocus={() => setActive(c.name)}
               animate={{ flex: active === c.name ? 2.6 : 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 26 }}
-              className="h-16 rounded-md border border-line/70 cursor-pointer overflow-hidden focus:outline-none focus:ring-2 focus:ring-ink/40"
+              className="h-16 rounded-md border border-line cursor-pointer overflow-hidden focus:outline-none focus:ring-2 focus:ring-mute"
               style={{ backgroundColor: c.hex }}
               aria-label={`${c.name} swatch — ${c.hex}`}
             />
@@ -56,7 +56,7 @@ function DesignModule() {
         </div>
         <div className="flex items-baseline justify-between font-mono text-[10.5px] uppercase tracking-[0.2em] tabular-nums">
           <span className="text-ink">{current.name}</span>
-          <span className="text-soft">{current.hex}</span>
+          <span className="text-mute">{current.hex}</span>
         </div>
       </div>
     </div>
@@ -68,7 +68,7 @@ function EngineerModule() {
   return (
     <div className="card-material p-7 flex flex-col gap-6 h-full">
       <div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft mb-3">
+        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute mb-3">
           Module 02
         </p>
         <h3 className="font-display text-[32px] tracking-[-0.015em] text-ink leading-[1.05]">
@@ -80,39 +80,39 @@ function EngineerModule() {
       </div>
 
       <div className="mt-auto">
-        <div className="bg-cream/60 rounded-md border border-line/70 px-4 py-3.5 font-mono text-[11px] leading-[1.85] tabular-nums">
+        <div className="bg-cream rounded-md border border-line px-4 py-3.5 font-mono text-[11px] leading-[1.85] tabular-nums">
           <div className="flex items-start gap-3">
-            <span className="text-soft/60 select-none shrink-0">1</span>
+            <span className="text-mute select-none shrink-0">1</span>
             <span>
-              <span className="text-soft">{"{% if "}</span>
+              <span className="text-mute">{"{% if "}</span>
               <span className="text-ink">trigger.user_name</span>
-              <span className="text-soft">{" != blank %}"}</span>
+              <span className="text-mute">{" != blank %}"}</span>
             </span>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-soft/60 select-none shrink-0">2</span>
+            <span className="text-mute select-none shrink-0">2</span>
             <span>
               <span className="text-ink">{"  Hi "}</span>
-              <span className="text-soft">{"{{ "}</span>
+              <span className="text-mute">{"{{ "}</span>
               <span className="text-ink">trigger.user_name</span>
-              <span className="text-soft">{" }}"}</span>
+              <span className="text-mute">{" }}"}</span>
               <span className="text-ink">,</span>
             </span>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-soft/60 select-none shrink-0">3</span>
-            <span className="text-soft">{"{% else %}"}</span>
+            <span className="text-mute select-none shrink-0">3</span>
+            <span className="text-mute">{"{% else %}"}</span>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-soft/60 select-none shrink-0">4</span>
+            <span className="text-mute select-none shrink-0">4</span>
             <span className="text-ink">{"  Welcome,"}</span>
           </div>
           <div className="flex items-start gap-3">
-            <span className="text-soft/60 select-none shrink-0">5</span>
-            <span className="text-soft">{"{% endif %}"}</span>
+            <span className="text-mute select-none shrink-0">5</span>
+            <span className="text-mute">{"{% endif %}"}</span>
           </div>
         </div>
-        <p className="mt-3 font-mono text-[10.5px] uppercase tracking-[0.2em] text-soft">
+        <p className="mt-3 font-mono text-[10.5px] uppercase tracking-[0.2em] text-mute">
           no-fake-defaults · Liquid · Customer.io
         </p>
       </div>
@@ -138,7 +138,7 @@ function ShipModule() {
   return (
     <div className="card-material p-7 flex flex-col gap-6 h-full">
       <div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft mb-3">
+        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute mb-3">
           Module 03
         </p>
         <h3 className="font-display text-[32px] tracking-[-0.015em] text-ink leading-[1.05]">
@@ -150,7 +150,7 @@ function ShipModule() {
       </div>
 
       <div className="mt-auto">
-        <ul className="bg-cream/60 rounded-md border border-line/70 px-4 py-3 divide-y divide-line/50">
+        <ul className="bg-cream rounded-md border border-line px-4 py-3 divide-y divide-line/50">
           {deploys.map((d) => (
             <li
               key={d.branch}
@@ -166,20 +166,20 @@ function ShipModule() {
                       ? "bg-ink"
                       : d.status === "shipped"
                         ? "bg-mute"
-                        : "bg-soft/60"
+                        : "bg-mute"
                   }`}
                 />
               </span>
               <span className="font-mono text-[11px] text-ink truncate flex-1 tabular-nums">
                 {d.branch}
               </span>
-              <span className="font-mono text-[10px] text-soft uppercase tracking-tight tabular-nums shrink-0">
+              <span className="font-mono text-[10px] text-mute uppercase tracking-tight tabular-nums shrink-0">
                 {d.ago}
               </span>
             </li>
           ))}
         </ul>
-        <p className="mt-3 font-mono text-[10.5px] uppercase tracking-[0.2em] text-soft">
+        <p className="mt-3 font-mono text-[10.5px] uppercase tracking-[0.2em] text-mute">
           Vercel · git · 1–3 day branches
         </p>
       </div>
@@ -259,7 +259,7 @@ function DesktopCarousel() {
             <span
               key={i}
               className={`h-[2px] rounded-full transition-all duration-500 ease-out ${
-                activeIdx === i ? "w-10 bg-ink" : "w-2 bg-soft/40"
+                activeIdx === i ? "w-10 bg-ink" : "w-2 bg-mute"
               }`}
             />
           ))}

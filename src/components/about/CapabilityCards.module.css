@@ -17,9 +17,8 @@
 .controls { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 5px; min-height: 44px; }
 .choice { min-width: 64px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 7px 13px; border-radius: var(--r-raised); corner-shape: squircle; color: var(--color-mute); background: transparent; font: 11px/1.2 var(--font-mono); cursor: pointer; transition: color 180ms, background-color 180ms; }
 .choice > span { font-size: 12px; line-height: 1; }
-.choice:hover { color: var(--color-ink); background: #1e1e1e; }
+.choice:hover { color: var(--color-ink); }
 .choice[aria-pressed="true"] { color: var(--color-ink); background: var(--raised); }
-.choice[aria-pressed="true"]:hover { background: #2d2d2d; }
 .choice:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
 
 /* The abstract UI is planes, never outlines: a raised tile, and a lighter
@@ -27,11 +26,13 @@
    carry information (metrics, progress, a scanpath) and stay one device
    pixel however far the plate is scaled. */
 .tile { fill: var(--raised); transition: width 360ms, height 360ms; }
-.tileLift { fill: #2d2d2d; opacity: 0; transition: width 360ms, height 360ms; }
-.guide { fill: none; stroke: var(--color-soft); stroke-width: 1; stroke-opacity: .3; vector-effect: non-scaling-stroke; }
-.axis { fill: none; stroke: rgb(243 243 243 / 22%); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.contentLine { fill: none; stroke: var(--color-mute); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; opacity: .75; vector-effect: non-scaling-stroke; }
-.leader { fill: none; stroke: rgb(243 243 243 / 55%); stroke-width: 1; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
+.tileLift { fill: #1c1c1c; opacity: 0; transition: width 360ms, height 360ms; }
+/* guides on a tile are cut in the surface tone; on the card, in the ground tone */
+.guide { fill: none; stroke: #1c1c1c; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.guideOnCard { stroke: #0f0f0f; }
+.axis { fill: none; stroke: #8c8c8c; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.contentLine { fill: none; stroke: var(--color-mute); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.leader { fill: none; stroke: #8c8c8c; stroke-width: 1; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
 .symbolFill { fill: var(--color-mute); }
 .brightLine { fill: none; stroke: var(--color-ink); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
 .layoutTile, .layoutSymbol { transition: transform 360ms cubic-bezier(.2,.8,.2,1); }
@@ -40,8 +41,14 @@
 /* The body sets ss01; the specimen draws each face's default glyphs, the
    ones TypeStudy's measuring canvas sees, so guides and bracket meet the ink. */
 .specimen { fill: var(--color-ink); font-feature-settings: normal; transition: letter-spacing 300ms; }
-.focusGroup { transition: opacity 300ms; }
-.focusPlane { fill: #2f2f2f; transition: x 340ms, y 340ms, width 340ms, height 340ms; }
+.focusGroup :is(.symbolFill, .contentLine, .brightLine, .button) { transition: fill 300ms, stroke 300ms; }
+.button { fill: #1c1c1c; }
+/* The group the eye is not on steps down: its marks to the surface tone,
+   the action's arrow to the text grey */
+.focusGroup[data-dim] .symbolFill { fill: #1c1c1c; }
+.focusGroup[data-dim] .contentLine { stroke: #1c1c1c; }
+.focusGroup[data-dim] .brightLine { stroke: #8c8c8c; }
+.focusPlane { fill: #1c1c1c; transition: x 340ms, y 340ms, width 340ms, height 340ms; }
 .focusLeader { fill: none; stroke: var(--color-mute); stroke-width: 1; vector-effect: non-scaling-stroke; }
 
 /* Pinned labels: the point given in pin() is the label's anchor. */

@@ -1,6 +1,6 @@
 /* The layer sheet: three mounted states on PlatformTabs' dark sheet.
    Each state is a 16:10 field on the bare sheet (no box, no drafting
-   grid), split into BEFORE (grey #6d6d6d plates, 1px lines) and AFTER
+   grid), split into BEFORE (grey #8c8c8c plates, 1px lines) and AFTER
    (ink #f3f3f3 plates, a 2px rail) with one focus mark in the page
    accent; only an arrowhead stands between the halves. Planes, not
    frames: the one place a box remains is the escape path's destination,

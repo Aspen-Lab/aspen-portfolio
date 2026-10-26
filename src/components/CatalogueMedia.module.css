@@ -28,14 +28,11 @@
   transform: scale(1) translateY(0);
 }
 
-/* Under a scene the cover is only a fallback, so it does not settle. */
-.media[data-demo="true"] .image { transform: none; }
-
 /* On the plate the settling cover is its own sheet from the start: it is
    rasterised once, when it arrives, and a hover only moves it. Without
    this the browser promotes it as the transition starts and repaints it
    when it ends — a raster on every hover. */
-.media[data-stage]:not([data-demo="true"]) .image { will-change: transform; }
+.media[data-stage] .image { will-change: transform; }
 
 .video {
   position: absolute;

@@ -435,9 +435,6 @@ export function EmailRender() {
               onClick={() => choose(k === 1)}
               onKeyDown={key}
             >
-              <span className={`t-label ${styles.tabNum}`} data-code="">
-                {String(k + 1).padStart(2, "0")}
-              </span>
               <span className={`t-small ${styles.tabLabel}`}>{label}</span>
               <span aria-hidden className={styles.fill} data-k={k} onAnimationEnd={k === 1 ? filled : undefined} />
             </button>

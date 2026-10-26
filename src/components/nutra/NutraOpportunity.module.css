@@ -89,13 +89,13 @@
   width: 28px;
   height: 28px;
   border-radius: 2px;
-  background: var(--raised, #242424);
-  color: #a2a2a2;
+  background: var(--raised, #1c1c1c);
+  color: #8c8c8c;
   letter-spacing: 0.04em;
 }
 .row[data-chosen] .index {
   background: var(--accent, #f3f3f3);
-  color: #0a0a0a;
+  color: #0f0f0f;
 }
 
 .problem { grid-area: problem; min-width: 0; }
@@ -112,7 +112,7 @@
   letter-spacing: -0.01em;
   text-wrap: balance;
 }
-.problemTitle { color: #d1d1d1; }
+.problemTitle { color: #f3f3f3; }
 .directionTitle { color: #f3f3f3; }
 @media (max-width: 639px) {
   .problemTitle,
@@ -124,8 +124,8 @@
   max-width: 34rem;
   text-wrap: pretty;
 }
-.problemText { color: #a2a2a2; }
-.directionText { color: #d1d1d1; }
+.problemText { color: #8c8c8c; }
+.directionText { color: #f3f3f3; }
 
 /* ── The connector: 1px grey with a 6px head, problem → direction. Row
    02's is ink and carries the boxed tag. Across from 1024px, down on a
@@ -135,7 +135,7 @@
   position: relative;
   height: 48px;
   margin: 8px 0;
-  --c: #6d6d6d;
+  --c: #8c8c8c;
 }
 .row[data-chosen] .link { --c: #f3f3f3; }
 .line {

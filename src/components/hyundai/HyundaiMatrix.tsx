@@ -193,7 +193,7 @@ function ChipMark({ chip, y }: { chip: Chip; y: number }) {
 /* The set speed: "55" and "mph" (a blank badge over it, its text
    illegible on the board) over a rule */
 function SetSpeed({ tone, y }: { tone: "blue" | "white"; y: number }) {
-  const c = tone === "blue" ? BLUE : "#FBFBFB";
+  const c = tone === "blue" ? BLUE : "#f3f3f3";
   return (
     <svg
       className={styles.abs}

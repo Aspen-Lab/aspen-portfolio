@@ -10,7 +10,7 @@
 .frame {
   /* The picture is dark-native: its markers keep the dark tokens
      wherever the frame sits */
-  --color-cream: var(--tile, #1e1e1e);
+  --color-cream: var(--tile, #1c1c1c);
   --color-ink: #f3f3f3;
   position: relative;
   overflow: hidden;
@@ -41,7 +41,7 @@
   padding-left: 0.12em;
   border-radius: var(--r-tag);
   corner-shape: squircle;
-  background: var(--raised, #272727);
+  background: var(--raised, #1c1c1c);
   color: #f3f3f3;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -61,7 +61,7 @@
   border-radius: inherit;
   corner-shape: squircle;
   background: #f3f3f3;
-  color: #0a0a0a;
+  color: #0f0f0f;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
@@ -115,7 +115,7 @@
     transform var(--t-1, 160ms) var(--ease-arrive);
 }
 .note:active { transform: translateY(1px); }
-.note[data-on="true"] { background: var(--tile, #1e1e1e); }
+.note[data-on="true"] { background: var(--tile, #1c1c1c); }
 .note[data-dim="true"] { opacity: var(--dim, 0.45); }
 
 /* The number in soft grey; lit, an ink copy fades in over it */
@@ -163,7 +163,7 @@
    comes within 12px of the slab's foot (8px at the sides), so its corner
    is the slab's minus 12px: concentric, never larger. */
 .joined .note { border-radius: calc(var(--r-plane) - 12px); }
-.joined .note[data-on="true"] { background: var(--tile, #1e1e1e); }
+.joined .note[data-on="true"] { background: var(--tile, #1c1c1c); }
 .slab { display: block; }
 .slab .caption {
   display: block;

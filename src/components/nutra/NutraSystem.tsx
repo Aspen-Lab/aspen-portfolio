@@ -877,9 +877,6 @@ export function NutraSystem() {
             onClick={() => choose(i)}
             onKeyDown={(e) => rove(e, tab, labels.length, (k) => choose(k, true))}
           >
-            <span className={`t-label ${styles.tabNum}`} data-code="">
-              {String(i + 1).padStart(2, "0")}
-            </span>
             <span className={`t-small ${styles.tabLabel}`}>{label}</span>
             <span aria-hidden className={styles.fill} />
           </button>

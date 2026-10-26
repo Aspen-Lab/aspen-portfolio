@@ -18,11 +18,11 @@
 .day i { transition: transform 120ms ease; }
 .day[data-selected="true"] i { transform: scale(1.25); }
 .day:focus-visible::after { content: ""; position: absolute; inset: -1px; border: 1px solid var(--color-ink); pointer-events: none; }
-.activity [data-level="0"] { background: #2a2a2a; }
-.activity [data-level="1"] { background: #424242; }
-.activity [data-level="2"] { background: #6d6d6d; }
-.activity [data-level="3"] { background: #a8a8a8; }
-.activity [data-level="4"] { background: #e5e5e5; }
+.activity [data-level="0"] { background: #1c1c1c; }
+.activity [data-level="1"] { background: #8c8c8c; }
+.activity [data-level="2"] { background: #8c8c8c; }
+.activity [data-level="3"] { background: #8c8c8c; }
+.activity [data-level="4"] { background: #f3f3f3; }
 .readout { display: flex; align-items: center; justify-content: space-between; gap: 6px; height: 22px; padding-top: 5px; white-space: nowrap; color: var(--color-soft); font: 9px/14px var(--font-sans); font-variant-numeric: tabular-nums; }
 .readout[data-active="true"] { color: var(--color-mute); }
 .readout strong { color: var(--color-ink); font-weight: 400; }
@@ -38,3 +38,22 @@
 .provenance { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; color: var(--color-soft); font: 9px/14px var(--font-sans); }
 @media (prefers-reduced-motion: reduce) { .day i { transition: none; } }
 @media (max-width: 359px) { .body { gap: 18px; } .total { gap: 7px; } .summary { gap: 8px; } .total > span { font-size: 9px; } }
+
+/* ── The workshop card ── */
+.card { display: flex; flex-direction: column; height: 100%; }
+.cardHead { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.cardHead h3 { font-size: 20px; font-weight: 400; color: var(--color-ink); }
+.cardPill { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 999px; background: #0f0f0f; color: var(--color-ink); font-size: 15px; white-space: nowrap; transition: background-color 180ms var(--ease-arrive), color 180ms var(--ease-arrive); }
+.cardPill:hover { background: #f3f3f3; color: #0f0f0f; }
+.cardTotal { margin-top: auto; padding-top: 32px; font-family: var(--font-display); font-weight: 300; font-size: clamp(56px, 5.2vw, 80px); line-height: 1; letter-spacing: -0.03em; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+.cardLine { margin-top: 10px; font-size: 17px; line-height: 1.4; color: var(--color-mute); font-variant-numeric: tabular-nums; }
+.cardGrid { display: grid; grid-template-rows: repeat(7, auto); grid-auto-flow: column; gap: 4px; margin-top: 24px; }
+.cardGrid i, .cardGrid span { display: block; aspect-ratio: 1; border-radius: 3px; }
+.cardGrid i { transition: transform 160ms var(--ease-arrive); }
+.cardGrid i[data-on="true"] { transform: scale(1.3); }
+.card [data-level="0"] { background: #1c1c1c; }
+.card [data-level="1"] { background: #8c8c8c; }
+.card [data-level="2"] { background: #8c8c8c; }
+.card [data-level="3"] { background: #8c8c8c; }
+.card [data-level="4"] { background: #f3f3f3; }
+@media (prefers-reduced-motion: reduce) { .cardGrid i { transition: none; } }

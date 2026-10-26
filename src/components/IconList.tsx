@@ -96,9 +96,8 @@ function Entry({
     <li ref={root} className={styles.item} data-in={inView} style={{ ["--i" as string]: index }}>
       {Plot && <Plot cn={cn} />}
       <div className={styles.entry}>
-        {/* The list already counts; the number and glyph are for the eye */}
+        {/* The glyph is for the eye */}
         <div aria-hidden className={styles.head}>
-          <span className={styles.num}>{String(index + 1).padStart(2, "0")}</span>
           {item.icon && (
             <span className={styles.icon}>
               <Icon name={item.icon} size={15} strokeWidth={1.4} />

@@ -56,10 +56,10 @@ export function WorkLine() {
     >
       {/* Header row */}
       <div className="flex items-end justify-between mb-6 sm:mb-8 pr-2">
-        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft">
+        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute">
           Track
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-soft tabular-nums">
+        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute tabular-nums">
           2022 — Now
         </span>
       </div>
@@ -112,17 +112,17 @@ export function WorkLine() {
                       : { right: 0 }
                 }
               >
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft tabular-nums">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-mute tabular-nums">
                   {s.year}
                 </p>
                 <p
                   className={`font-display text-[15px] leading-[1.15] tracking-[-0.005em] mt-1 whitespace-nowrap ${
-                    s.active ? "text-ink" : "text-ink/85"
+                    s.active ? "text-ink" : "text-ink"
                   }`}
                 >
                   {s.name}
                 </p>
-                <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-soft mt-0.5 whitespace-nowrap">
+                <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-mute mt-0.5 whitespace-nowrap">
                   {s.tag}
                 </p>
               </div>
@@ -159,18 +159,18 @@ export function WorkLine() {
               {s.active ? <ActiveDot /> : <IdleDot small />}
             </span>
             <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-soft tabular-nums">
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-mute tabular-nums">
                 {s.year}
               </span>
               <span
                 className={`font-display text-[16px] leading-[1.2] tracking-[-0.005em] ${
-                  s.active ? "text-ink" : "text-ink/85"
+                  s.active ? "text-ink" : "text-ink"
                 }`}
               >
                 {s.name}
               </span>
             </div>
-            <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-soft mt-1">
+            <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-mute mt-1">
               {s.tag}
             </p>
           </li>

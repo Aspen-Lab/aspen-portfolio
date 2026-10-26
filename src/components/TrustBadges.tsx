@@ -48,21 +48,23 @@ function IfMark() {
   );
 }
 
-function Logo({ src, h }: { src: string; h: number }) {
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt="" aria-hidden className={styles.logo} style={{ height: h }} />;
+/* A logo file drawn in the badge's own colour: the file is the mask, the
+   badge's text colour the fill, so it greys and lifts with the name. */
+function Logo({ src, h, ratio }: { src: string; h: number; ratio: number }) {
+  const mask = `url(${src})`;
+  return <span aria-hidden className={styles.logo} style={{ height: h, width: Math.round(h * ratio), maskImage: mask, WebkitMaskImage: mask }} />;
 }
 
 const BADGES: { name: string; mark?: ReactNode; label?: string }[] = [
   { name: "TikTok", mark: <Si d={siTiktok.path} /> },
-  { name: "Hyundai", mark: <Logo src="/logos/hyundai.svg" h={13} />, label: "" },
+  { name: "Hyundai", mark: <Logo src="/logos/hyundai.svg" h={13} ratio={1000 / 128.62} />, label: "" },
   { name: "MiraclePlus", mark: <MiraclePlus /> },
   { name: "CDC" },
   { name: "Mercor" },
   { name: "Y Combinator", mark: <Si d={siYcombinator.path} /> },
   { name: "iF Design Award", mark: <IfMark /> },
-  { name: "Stanford Medicine", mark: <Logo src="/logos/stanford.svg" h={15} />, label: "Medicine" },
-  { name: "Georgia Tech", mark: <Logo src="/logos/georgiatech.svg" h={18} /> },
+  { name: "Stanford Medicine", mark: <Logo src="/logos/stanford.svg" h={15} ratio={640 / 134.115} />, label: "Medicine" },
+  { name: "Georgia Tech", mark: <Logo src="/logos/georgiatech.svg" h={18} ratio={152 / 132} /> },
 ];
 
 /* Two rows: the companies, then the programs, awards and schools */

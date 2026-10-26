@@ -13,7 +13,7 @@ export default async function NotFound() {
   return (
     <section className="container-fluid pt-24 pb-32 sm:pt-36 sm:pb-44">
       <Reveal>
-        <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-soft">
+        <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-mute">
           {t("eyebrow")}
         </p>
       </Reveal>
@@ -43,11 +43,11 @@ export default async function NotFound() {
           <Link href="/" className="link link-rev text-ink">
             {t("backHome")}
           </Link>
-          <span className="text-line">·</span>
+          <span className="text-mute">·</span>
           <Link href="/#work" className="link link-rev hover:text-ink">
             {t("seeWork")}
           </Link>
-          <span className="text-line">·</span>
+          <span className="text-mute">·</span>
           <a
             href="mailto:xiaoyangw.design@gmail.com"
             className="link link-rev hover:text-ink"

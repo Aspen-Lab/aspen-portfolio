@@ -1,12 +1,12 @@
 /* Latent's plotted sheet as planes, not frames: a flat plane, a second
    plane offset under it, a faint measuring grid, mono ticks, flat columns
    and one accent. No edge round any plane, no gradient fills anywhere.
-   Every light line is data (grid, axis, links, the earlier level) and is
-   the ink token mixed down, so the same plot reads on the dark page and
-   on paper. */
+   Every light line is data (grid, axis, links, the earlier level): the
+   grid is cut into the sheet in the ground tone, the rest are the one
+   text grey. */
 .figure {
   --accent-ink: var(--accent, var(--color-ink));
-  --hair: color-mix(in srgb, var(--color-ink) 55%, transparent);
+  --hair: #8c8c8c;
   /* When the focus marks land: after the last column has risen */
   --land: calc(1000ms + var(--n) * 90ms);
   width: 100%;
@@ -27,8 +27,8 @@
   transform: translate(10px, 10px);
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  /* a step below the sheet: the cream mixed toward the page */
-  background: color-mix(in srgb, var(--color-cream) 50%, var(--color-paper));
+  /* two greys leave no tone between the sheet and the page: no back sheet */
+  background: transparent;
 }
 .sheet {
   position: relative;
@@ -90,8 +90,8 @@
 }
 
 .plot { display: block; width: 100%; height: auto; overflow: visible; }
-.grid { stroke: color-mix(in srgb, var(--color-ink) 6%, transparent); stroke-width: 1; }
-.axis { stroke: color-mix(in srgb, var(--color-ink) 22%, transparent); stroke-width: 1; }
+.grid { stroke: #0f0f0f; stroke-width: 1; }
+.axis { stroke: #8c8c8c; stroke-width: 1; }
 
 .col {
   transform-box: fill-box;
@@ -103,20 +103,20 @@
 }
 .col[data-dim="true"] { opacity: 0.4; }
 .figure[data-lit="true"] .col { transform: none; }
+/* Every column but the focus in the text grey, the focus in the accent:
+   no ramp of fades */
 .bar {
-  fill: var(--color-ink);
-  opacity: var(--o);
+  fill: #8c8c8c;
 }
 .col[data-focus="true"] .bar { fill: var(--accent-ink); }
 .cap {
   stroke: var(--color-ink);
   stroke-width: 1;
-  opacity: calc(var(--o) + 0.34);
 }
 
 /* Funnel steps joined top to top */
 .link {
-  stroke: color-mix(in srgb, var(--color-ink) 30%, transparent);
+  stroke: #8c8c8c;
   stroke-width: 1;
   stroke-dasharray: 2 4;
   opacity: 0;
@@ -136,7 +136,7 @@
   stroke-dasharray: 3 4;
   transition: stroke 220ms ease;
 }
-.hexOn { stroke: #0a0a0a; }
+.hexOn { stroke: #0f0f0f; }
 .leader {
   stroke: var(--hair);
   stroke-width: 1;
@@ -156,7 +156,7 @@
 .figure .mark[data-dim="true"] .hex:not(.hexOn),
 .figure .mark[data-dim="true"] .leader,
 .figure .mark[data-dim="true"] .was:not(.wasOn) {
-  stroke: color-mix(in srgb, var(--color-ink) 22%, transparent);
+  stroke: #8c8c8c;
 }
 
 /* The earlier level on the focus (v1 under v2): a dashed rule across the
@@ -170,7 +170,7 @@
   transform-origin: 0 50%;
   transition: stroke 220ms ease;
 }
-.wasOn { stroke: #0a0a0a; }
+.wasOn { stroke: #0f0f0f; }
 .figure[data-lit="true"] .was {
   animation: drawX 640ms var(--ease-arrive) calc(var(--land) + 120ms) backwards;
 }
@@ -214,7 +214,7 @@
   padding: 5px 8px 4px;
   border-radius: var(--r-tag);
   corner-shape: squircle;
-  background: color-mix(in srgb, var(--color-ink) 5%, var(--color-cream));
+  background: var(--raised);
   color: var(--color-ink);
   font-size: 12px;
   letter-spacing: 0.12em;
@@ -258,7 +258,7 @@
   width: 20px;
   height: 20px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-ink) 10%, var(--color-cream));
+  background: var(--raised);
   color: var(--color-ink);
   font-family: var(--font-mono);
   font-size: 11.5px;
@@ -323,7 +323,7 @@
   right: var(--gutter);
   bottom: 0;
   height: 1px;
-  background: color-mix(in srgb, var(--color-ink) 22%, transparent);
+  background: #8c8c8c;
 }
 .rgrid {
   position: absolute;
@@ -331,9 +331,9 @@
   bottom: 0;
   left: calc((100% - var(--gutter)) * var(--t));
   width: 1px;
-  background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+  background: #0f0f0f;
 }
-.rgrid[data-axis="true"] { background: color-mix(in srgb, var(--color-ink) 22%, transparent); }
+.rgrid[data-axis="true"] { background: #8c8c8c; }
 
 .row { position: relative; }
 .row + .row { margin-top: 16px; }
@@ -361,8 +361,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: calc((100% - var(--gutter)) * var(--v));
-  background: var(--color-ink);
-  opacity: var(--o);
+  background: #8c8c8c;
   transform-origin: left center;
   transform: scaleX(0);
   transition: transform 1100ms var(--ease-arrive) calc(120ms + var(--i) * 90ms);
@@ -389,7 +388,7 @@
   left: calc((100% - var(--gutter)) * var(--w));
   width: 1px;
   translate: -50% 0;
-  border-left: 1px dashed #0a0a0a;
+  border-left: 1px dashed #0f0f0f;
   opacity: 0;
 }
 .rowWas[data-over="true"] { border-left-color: var(--hair); }
@@ -538,8 +537,8 @@
    like every other split card. No outline round them, no rule between
    and no back sheets (a lighter back sheet behind the slab would read as
    an edge): the change of tone is the seam.
-   One dark system: the marks are ink #f3f3f3 and the greys #6d6d6d and
-   #3c3c3c, the lines --grid and --axis, and the page accent fills the one
+   One dark system: the marks are ink #f3f3f3 and the text grey #8c8c8c,
+   the lines --grid and --axis, and the page accent fills the one
    focus column and nothing else. Every motion is opacity or transform. */
 .splitStack { min-width: 0; }
 
@@ -651,9 +650,9 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: rgb(243 243 243 / 6%);
+  background: #0f0f0f;
 }
-.sGline[data-base="true"] { background: rgb(243 243 243 / 24%); }
+.sGline[data-base="true"] { background: #8c8c8c; }
 
 .sTick {
   position: absolute;
@@ -686,7 +685,7 @@
   overflow: visible;
 }
 .sLink line {
-  stroke: #3c3c3c;
+  stroke: #8c8c8c;
   stroke-width: 1;
   stroke-dasharray: 3 3;
 }
@@ -697,7 +696,7 @@
   left: calc(var(--slot) * (var(--i) + 0.5) - var(--bw) / 2);
   width: var(--bw);
   height: calc(var(--v) * 100%);
-  background: #6d6d6d;
+  background: #8c8c8c;
   transform-origin: 50% 100%;
 }
 .sBar[data-focus="true"] { background: var(--accent, #f3f3f3); }
@@ -748,7 +747,7 @@
 }
 .sName {
   padding: 0 4px;
-  color: #a2a2a2;
+  color: #8c8c8c;
   font-size: 15px;
   line-height: 1.5;
   text-align: center;
@@ -790,9 +789,9 @@
   bottom: 0;
   left: calc((100% - var(--gutter)) * var(--t));
   width: 1px;
-  background: rgb(243 243 243 / 6%);
+  background: #0f0f0f;
 }
-.sRgrid[data-base="true"] { background: rgb(243 243 243 / 24%); }
+.sRgrid[data-base="true"] { background: #8c8c8c; }
 
 .sRow {
   position: relative;
@@ -807,7 +806,7 @@
 .sRow + .sRow { margin-top: 8px; }
 .sRowName {
   padding-left: 8px;
-  color: #a2a2a2;
+  color: #8c8c8c;
   font-size: 15px;
   line-height: 1.5;
 }
@@ -826,7 +825,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: calc((100% - var(--gutter)) * var(--v));
-  background: #6d6d6d;
+  background: #8c8c8c;
   transform-origin: 0 50%;
 }
 .sRowBar[data-focus="true"] { background: var(--accent, #f3f3f3); }
@@ -966,7 +965,7 @@
 .roCaption {
   max-width: 36ch;
   margin-top: 8px;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
 
 .slabNotes {
@@ -986,7 +985,7 @@
 }
 .slabNoteText {
   max-width: 36ch;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
 
 /* ── Pointing at a step: the other grey marks and their words fade.

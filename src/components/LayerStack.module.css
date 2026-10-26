@@ -51,8 +51,8 @@
 }
 .ledger[data-lit="true"] .row { opacity: 1; transform: none; }
 
-/* The row in view of the pointer lifts a tone */
-.row:hover { background: color-mix(in srgb, var(--color-ink) 3%, var(--color-cream)); }
+/* The row under the pointer steps down to the ground tone */
+.row:hover { background: #0f0f0f; }
 
 .name {
   display: flex;
@@ -116,7 +116,7 @@
     margin-bottom: 1px;
     overflow: visible;
     fill: none;
-    stroke: rgb(243 243 243 / 55%);
+    stroke: #8c8c8c;
     stroke-width: 1;
     clip-path: inset(0 100% 0 0);
     transition: clip-path 600ms var(--ease-arrive);

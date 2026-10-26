@@ -1,5 +1,5 @@
 /* Board 21 on the chart sheet: the composition tree beside a 5 × 3
-   matrix of mini renders (#000 planes, no edge, G2 corners). The tree's
+   matrix of mini renders (#0f0f0f planes, no edge, G2 corners). The tree's
    joins are grey-2, a path lit in ink; the focused feature's square is
    the one accent mark, and its row lifts onto a raised plane (no ring).
    Inside a render the board's own colours (product.ts BOARD21). */
@@ -48,7 +48,7 @@
      (four label lines on a phone), so a pick never moves the cells */
   min-height: calc(4lh + 12px);
   margin: 14px 0 22px;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
 @media (min-width: 640px) {
   .phoneConds { min-height: calc(2lh + 4px); }
@@ -56,7 +56,7 @@
 .head {
   grid-row: 3;
   margin-bottom: 10px;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
 .head[data-c="0"] { grid-column: 1; }
 .head[data-c="1"] { grid-column: 2; }
@@ -132,7 +132,7 @@
   top: 16px;
   width: 8px;
   height: 8px;
-  background: var(--grey-3, #3c3c3c);
+  background: var(--grey-3, #8c8c8c);
 }
 .sq i {
   position: absolute;
@@ -143,21 +143,17 @@
 .sq i[data-k="ink"] { background: #f3f3f3; }
 .sq i[data-k="accent"] { background: var(--accent); }
 .name {
-  color: #f3f3f3;
+  color: var(--color-mute);
   white-space: nowrap;
-  opacity: 0.62;
-  transition: opacity var(--t-1) var(--ease-arrive);
+  transition: color var(--t-1) var(--ease-arrive);
 }
 .own,
 .cond,
 .join { display: none; }
 
 @media (max-width: 1023px) {
-  @media (hover: hover) {
-    .item:hover { background-color: #242424; }
-  }
   .item[aria-selected="true"],
-  .item[aria-selected="true"]:hover { background-color: var(--raised, #272727); }
+  .item[aria-selected="true"]:hover { background-color: var(--raised, #1c1c1c); }
 }
 
 /* (wide) a row of the tree: no chip, the square in the gutter the joins
@@ -175,7 +171,7 @@
   .own,
   .cond {
     display: block;
-    color: #a2a2a2;
+    color: #8c8c8c;
   }
   .own { margin-top: 8px; }
   /* each condition holds two 16px lines (one in Chinese), so the joins
@@ -214,7 +210,7 @@
     /* 24px inside the sheet's edges (40 less 16): concentric with it */
     border-radius: max(var(--r-tag, 10px), calc(var(--r-plane, 32px) - 24px));
     corner-shape: squircle;
-    background: var(--raised, #272727);
+    background: var(--raised, #1c1c1c);
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--t-1) var(--ease-arrive);
@@ -267,7 +263,7 @@
   height: 1px;
   background: currentColor;
 }
-.join i[data-k="grey"] { color: #6d6d6d; }
+.join i[data-k="grey"] { color: #8c8c8c; }
 .join i[data-k="ink"] {
   color: #f3f3f3;
   opacity: 0;
@@ -294,11 +290,20 @@
 .root[data-feature="hda"] .band[data-f="hda"] {
   opacity: 1;
 }
+.root[data-feature="lk"] .item[data-f="lk"] .name,
+.root[data-feature="lf"] .item[data-f="lf"] .name,
+.root[data-feature="fd"] .item[data-f="fd"] .name,
+.root[data-feature="scc"] .item[data-f="scc"] .name,
+.root[data-feature="hda"] .item[data-f="hda"] .name,
+.root[data-feature="scc"] .item[data-dep~="scc"] .name,
+.root[data-feature="hda"] .item[data-dep~="hda"] .name {
+  color: #f3f3f3;
+}
 @media (hover: hover) {
-  .item:hover .name { opacity: 1; }
+  .item:hover .name { color: #f3f3f3; }
 }
 
-/* ── A cell ── the render (a #000 plane, no edge) and its foot; a state
+/* ── A cell ── the render (a #0f0f0f plane, no edge) and its foot; a state
    the board does not draw is an empty place with a dash */
 .cell { position: relative; }
 .render {
@@ -306,7 +311,7 @@
   overflow: hidden;
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
-  background: #000;
+  background: #0f0f0f;
 }
 .stage { border-radius: inherit; }
 .empty {
@@ -314,7 +319,7 @@
   place-items: center;
   aspect-ratio: 280 / 164;
 }
-.empty > span { color: #6d6d6d; }
+.empty > span { color: #8c8c8c; }
 @media (max-width: 639px) {
   .empty { aspect-ratio: 170 / 164; }
 }
@@ -345,7 +350,7 @@
 }
 .caption {
   min-width: 0;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
 @media (min-width: 1024px) {
   .caption { white-space: nowrap; }
@@ -374,7 +379,7 @@
   position: relative;
   width: 8px;
   height: 8px;
-  background: var(--grey-3, #3c3c3c);
+  background: var(--grey-3, #8c8c8c);
   transition: background-color var(--t-1) var(--ease-arrive);
 }
 .pageSq::after {
@@ -387,14 +392,14 @@
 }
 .page[aria-checked="true"] .pageSq::after { opacity: 1; }
 @media (hover: hover) {
-  .page:hover .pageSq { background-color: var(--grey-2, #6d6d6d); }
+  .page:hover .pageSq { background-color: var(--grey-2, #8c8c8c); }
 }
 
 /* ── Inside a render (design px on the 280 × 176 canvas) ── */
 .canvas {
   position: absolute;
   inset: 0;
-  color: #fbfbfb;
+  color: #f3f3f3;
   font-feature-settings: normal;
   font-variant-numeric: normal;
   letter-spacing: normal;

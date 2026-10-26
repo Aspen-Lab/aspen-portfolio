@@ -19,8 +19,8 @@ import styles from "./NutraBalance.module.css";
    never outlined.
 
    Pointing at, tapping or focusing a trait writes data-trait / data-pole
-   on the sheet; CSS fades its rail and its arrow to ink and lifts the
-   trait's plane and its pole's a tone.
+   on the sheet; CSS fades its rail and its arrow to ink, and the trait
+   and its pole keep their planes while the others let go of theirs.
    A tap keeps its trait lit until another is tapped. The four traits are
    one listbox with one tab stop (arrow keys move; the lit trait is the
    selected option). Wide,

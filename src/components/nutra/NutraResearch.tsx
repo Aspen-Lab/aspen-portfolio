@@ -196,7 +196,6 @@ const TICKS = [20, 30, 40, 50, 60];
    and 26 */
 const UPPER = new Set([22, 27]);
 
-const pad = (n: number) => String(n).padStart(2, "0");
 
 /* The mono label face has no star of its own: the ★ is set in the sans */
 const starred = (text: string, w: string) =>
@@ -294,9 +293,6 @@ export function NutraResearch() {
             onClick={() => choose(k)}
             onKeyDown={key}
           >
-            <span className={`t-label ${styles.tabNum}`} data-code="">
-              {pad(k + 1)}
-            </span>
             <span className={`t-small ${styles.tabLabel}`}>{hold(label, w)}</span>
           </button>
         ))}

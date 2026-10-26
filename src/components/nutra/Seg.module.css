@@ -1,9 +1,10 @@
-/* ── Segmented switch ── a plane for the track and one raised plane, the
-   thumb, that slides under the chosen option (transform only). No edge
-   on either: the chosen option is told by the tone it sits on. Options
-   are S6 in ink; the one not chosen rests at --dim, hover lifts it to
-   .75. The track is a raised thing (G2); the thumb and the options sit
-   3px inside it, so their corners are the track's less those 3px. */
+/* ── Segmented switch ── a track in the ground tone and one plane in the
+   surface tone, the thumb, that slides under the chosen option
+   (transform only). No edge on either: the chosen option is told by the
+   tone it sits on. Options are S6; the ones not chosen rest in the text
+   grey, hover and the chosen one are ink. The track is a raised thing
+   (G2); the thumb and the options sit 3px inside it, so their corners
+   are the track's less those 3px. */
 .seg {
   position: relative;
   display: inline-grid;
@@ -13,9 +14,9 @@
   padding: 3px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  /* a well a step below whatever it sits on (ground or sheet): the
-     raised thumb reads on both */
-  background: rgb(0 0 0 / 28%);
+  /* the ground tone: a well on a sheet; on the ground the thumb alone
+     carries the shape */
+  background: #0f0f0f;
 }
 .thumb {
   position: absolute;
@@ -25,7 +26,7 @@
   width: calc((100% - 6px) / var(--n, 2));
   border-radius: calc(var(--r-raised) - 3px);
   corner-shape: squircle;
-  background: var(--raised, #242424);
+  background: #1c1c1c;
   transform: translateX(calc(var(--i, 0) * 100%));
   transition: transform var(--t-2) var(--ease-arrive);
   pointer-events: none;
@@ -50,14 +51,14 @@
 }
 .optionText {
   display: block;
-  opacity: var(--dim);
-  transition: opacity var(--t-1) var(--ease-arrive);
+  color: var(--color-mute);
+  transition: color var(--t-1) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .option:hover .optionText { opacity: 0.75; }
+  .option:hover .optionText { color: #f3f3f3; }
 }
-.option:focus-visible .optionText { opacity: 0.75; }
-.option[aria-checked="true"] .optionText { opacity: 1; }
+.option:focus-visible .optionText,
+.option[aria-checked="true"] .optionText { color: #f3f3f3; }
 .option:active { transform: translateY(1px); }
 
 @media (prefers-reduced-motion: reduce) {

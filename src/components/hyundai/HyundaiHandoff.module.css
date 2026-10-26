@@ -19,7 +19,7 @@
   overflow: hidden;
   border-radius: var(--r-plane, 32px);
   corner-shape: squircle;
-  background: var(--slab, #0a0a0a);
+  background: var(--slab, #0f0f0f);
 }
 /* Below the split the slab's parts take their own rows round the stage */
 .slab { display: contents; }
@@ -32,7 +32,7 @@
   align-content: center;
   margin-top: 20px;
   padding: 28px 16px;
-  background: var(--sheet, #1e1e1e);
+  background: var(--sheet, #1c1c1c);
 }
 
 /* The screen and its notes share one box: the notes are placed in % of
@@ -164,7 +164,7 @@
 }
 .cause { color: #f3f3f3; }
 .cue {
-  color: #a2a2a2;
+  color: #8c8c8c;
   text-wrap: balance;
 }
 
@@ -176,7 +176,7 @@
   align-self: center;
   width: 12px;
   height: 12px;
-  background: var(--grey-3, #3c3c3c);
+  background: var(--grey-3, #8c8c8c);
 }
 .check::after {
   content: "";

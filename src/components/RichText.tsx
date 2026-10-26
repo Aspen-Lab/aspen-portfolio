@@ -39,7 +39,7 @@ function parse(input: string): ReactNode[] {
       out.push(
         <code
           key={key++}
-          className="font-mono text-[0.85em] px-1.5 py-0.5 rounded-[var(--r-tag)] [corner-shape:squircle] bg-[color-mix(in_srgb,var(--color-ink)_7%,var(--color-cream))] text-ink/90 whitespace-nowrap"
+          className="font-mono text-[0.85em] px-1.5 py-0.5 rounded-[var(--r-tag)] [corner-shape:squircle] bg-[#1c1c1c] text-ink whitespace-nowrap"
         >
           {tok.slice(1, -1)}
         </code>,
@@ -60,7 +60,7 @@ function parse(input: string): ReactNode[] {
           >
             {label}
             {external && (
-              <span aria-hidden className="ml-0.5 text-soft">
+              <span aria-hidden className="ml-0.5 text-mute">
                 ↗
               </span>
             )}

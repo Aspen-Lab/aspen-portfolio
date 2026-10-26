@@ -51,10 +51,7 @@ export function SelectedWork() {
         : undefined,
       readout: [
         category,
-        <>
-          {role}
-          <span className="text-soft/55"> · {when}</span>
-        </>,
+        `${role} · ${when}`,
       ],
     };
   });

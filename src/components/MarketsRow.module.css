@@ -34,11 +34,11 @@
   height: 100%;
 }
 
-.gridDot { fill: #3c3c3c; }
+.gridDot { fill: #8c8c8c; }
 
 .ring {
   fill: none;
-  stroke: #3c3c3c;
+  stroke: #8c8c8c;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -51,7 +51,7 @@
   vector-effect: non-scaling-stroke;
 }
 .spoke {
-  stroke: #6d6d6d;
+  stroke: #8c8c8c;
   stroke-width: 1;
   transform-box: fill-box;
   transform-origin: 0 50%;
@@ -135,7 +135,7 @@
   font-weight: 400;
   line-height: 1.5;
 }
-.reg { color: #a2a2a2; }
+.reg { color: #8c8c8c; }
 :is(.reg, .hubLabel, .legend):lang(zh) { line-height: 1.65; }
 
 .scope {
@@ -148,7 +148,7 @@
   box-sizing: border-box;
   width: 8px;
   height: 8px;
-  border: 1px solid #6d6d6d;
+  border: 1px solid #8c8c8c;
 }
 .sq[data-on="true"] {
   border-color: #f3f3f3;
@@ -173,7 +173,7 @@
   flex-wrap: wrap;
   gap: 8px 24px;
   margin: 24px 0 0;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
 .legendItem {
   display: inline-flex;
@@ -190,7 +190,7 @@
   box-sizing: border-box;
   width: 8px;
   height: 8px;
-  border: 1px solid #3c3c3c;
+  border: 1px solid #8c8c8c;
 }
 .legendSq[data-on="true"] {
   border-color: #f3f3f3;

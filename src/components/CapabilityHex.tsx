@@ -235,7 +235,7 @@ export function CapabilityHex({ axes }: { axes: CapabilityAxis[] }) {
               aria-pressed={isPinned}
               animate={{ opacity: dimmed ? 0.35 : 1 }}
               transition={{ duration: 0.25 }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-center cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 rounded-sm px-2 py-1"
+              className="absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-center cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-mute focus-visible:ring-offset-2 rounded-sm px-2 py-1"
               style={{ left: `${xPct}%`, top: `${yPct}%` }}
             >
               <span className="block font-mono uppercase tracking-[0.18em] text-[11px] sm:text-[12px] md:text-[13px] lg:text-[14px] font-medium text-ink">
@@ -243,7 +243,7 @@ export function CapabilityHex({ axes }: { axes: CapabilityAxis[] }) {
               </span>
               <span
                 className={`block font-mono tabular-nums text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] mt-0.5 ${
-                  isOverflow ? "text-ink" : "text-soft"
+                  isOverflow ? "text-ink" : "text-mute"
                 }`}
               >
                 · {ax.value}
@@ -275,7 +275,7 @@ export function CapabilityHex({ axes }: { axes: CapabilityAxis[] }) {
                   {activeAxis.label}
                   {pinned === activeAxis.key && (
                     <span
-                      className="ml-2 text-soft font-normal tracking-normal"
+                      className="ml-2 text-mute font-normal tracking-normal"
                       aria-hidden
                     >
                       · pinned
@@ -284,13 +284,13 @@ export function CapabilityHex({ axes }: { axes: CapabilityAxis[] }) {
                 </p>
                 <p className="font-mono text-[12px] tabular-nums">
                   <span className="text-ink">{activeAxis.value}</span>
-                  <span className="text-soft/60"> / 100</span>
+                  <span className="text-mute"> / 100</span>
                   {activeAxis.value > 100 && (
                     <span className="ml-3 text-ink">▲ off-chart</span>
                   )}
                 </p>
               </div>
-              <p className="text-[14px] sm:text-[14.5px] text-ink/85 leading-[1.55]">
+              <p className="text-[14px] sm:text-[14.5px] text-ink leading-[1.55]">
                 {activeAxis.hint}
               </p>
             </motion.aside>
@@ -303,7 +303,7 @@ export function CapabilityHex({ axes }: { axes: CapabilityAxis[] }) {
               transition={{ duration: 0.3 }}
               className="px-6 py-5 text-center"
             >
-              <p className="font-mono text-[10.5px] sm:text-[11px] uppercase tracking-[0.22em] text-soft">
+              <p className="font-mono text-[10.5px] sm:text-[11px] uppercase tracking-[0.22em] text-mute">
                 Tap or hover an axis · see the receipts
               </p>
             </motion.div>

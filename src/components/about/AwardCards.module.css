@@ -39,19 +39,20 @@
 
 .visualCaption > span:last-child { color: var(--color-mute); font-variant-numeric: tabular-nums; }
 .artwork { display: block; width: 100%; height: 100%; overflow: visible; }
-/* 1-bit paints · each tone is a pixel pattern (see Patterns), never a grey. */
+/* 1-bit paints · each tone is a pixel pattern (see Patterns), never a grey;
+   the outlines are the one text grey, never a faded ink. */
 .pixel { fill: var(--color-ink); }
 .pixelGround { fill: var(--tile); }
 .shadow { fill: var(--p-faint); }
-.paperLight { fill: var(--p-light); stroke: var(--color-ink); stroke-opacity: .55; stroke-width: .6; }
-.paperMid { fill: var(--p-mid); stroke: var(--color-ink); stroke-opacity: .45; stroke-width: .6; }
-.paperDark { fill: var(--p-dark); stroke: var(--color-ink); stroke-opacity: .35; stroke-width: .6; }
-.edge { fill: none; stroke: var(--color-ink); stroke-opacity: .6; stroke-width: .6; }
+.paperLight { fill: var(--p-light); stroke: #8c8c8c; stroke-width: .6; }
+.paperMid { fill: var(--p-mid); stroke: #8c8c8c; stroke-width: .6; }
+.paperDark { fill: var(--p-dark); stroke: #8c8c8c; stroke-width: .6; }
+.edge { fill: none; stroke: #8c8c8c; stroke-width: .6; }
 .band, .bandThin, .bandDark { fill: none; stroke-width: 12px; }
 .band { stroke: var(--p-light); }
 .bandThin { stroke: var(--p-mid); stroke-width: 8px; }
 .bandDark { stroke: var(--p-dark); }
-.core { fill: var(--p-light); stroke: var(--color-ink); stroke-opacity: .6; stroke-width: .6; }
+.core { fill: var(--p-light); stroke: #8c8c8c; stroke-width: .6; }
 .coreHighlight { fill: var(--color-ink); }
 .frameLight, .frameDark { fill: none; stroke-width: 5; }
 .frameLight { stroke: var(--p-light); }
@@ -59,7 +60,7 @@
 .ribbonBack, .ribbonFront, .ribbonEdge { fill: none; stroke-linecap: butt; }
 .ribbonBack { stroke: var(--p-dark); stroke-width: 21px; }
 .ribbonFront { stroke: var(--p-light); stroke-width: 18px; }
-.ribbonEdge { stroke: var(--color-ink); stroke-opacity: .4; stroke-width: .8px; }
+.ribbonEdge { stroke: #8c8c8c; stroke-width: .8px; }
 
 .sculpture {
   transform-origin: 200px 128px;

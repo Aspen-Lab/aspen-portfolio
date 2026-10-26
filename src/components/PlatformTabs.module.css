@@ -34,15 +34,15 @@
   .sheet { padding: 40px; }
 }
 
-/* ── Tabs ── an S7 number and kicker, an S4 title, the rows set apart by
-   space alone. The selected row's lower edge carries the 2px ink fill,
-   its one mark (and autoplay's progress). Inactive rows rest at .45,
-   hover lifts them to .75, the selected row is full. Focus shows what
+/* ── Tabs ── an S7 kicker, an S4 title, the rows set apart by space
+   alone. The selected row's lower edge carries the 2px ink fill, its one
+   mark (and autoplay's progress). Inactive titles rest in the text grey;
+   hover and the selected row are ink. Focus shows what
    hover shows, plus the ring. */
 .tab {
   position: relative;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: baseline;
   width: 100%;
   padding: 20px 0 24px;
@@ -55,22 +55,14 @@
 }
 .tab:first-child { padding-top: 0; }
 .tab:active { transform: translateY(1px); }
-.num,
-.words {
-  opacity: 0.45;
-  transition: opacity var(--t-1) var(--ease-arrive);
-}
+.title { transition: color var(--t-1) var(--ease-arrive); }
+.tab[aria-selected="false"] .title { color: var(--color-mute); }
 @media (hover: hover) {
-  .tab:hover .num,
-  .tab:hover .words { opacity: 0.75; }
+  .tab:hover .title { color: var(--color-ink); }
 }
-.tab:focus-visible .num,
-.tab:focus-visible .words { opacity: 0.75; }
-.tab[aria-selected="true"] .num,
-.tab[aria-selected="true"] .words { opacity: 1; }
+.tab:focus-visible .title { color: var(--color-ink); }
 
 /* S7 */
-.num,
 .kicker {
   color: var(--color-soft);
   font-family: var(--font-mono);
@@ -168,9 +160,9 @@
       background-color var(--t-1) var(--ease-arrive);
   }
   @media (hover: hover) {
-    .root[data-count="4"] .tab:hover { background: #242424; }
+    .root[data-count="4"] .tab:hover { background: #1c1c1c; }
   }
-  .root[data-count="4"] .tab:focus-visible { background: #242424; }
+  .root[data-count="4"] .tab:focus-visible { background: #1c1c1c; }
 }
 
 /* ── The sheet contract ── a caller's panels and marks, keyed by tab k:
@@ -208,8 +200,8 @@
   transition: opacity var(--t-2) var(--ease-arrive);
 }
 .root :global([data-pt-dim]) {
-  opacity: 0.45;
-  transition: opacity var(--t-2) var(--ease-arrive);
+  color: var(--color-mute);
+  transition: color var(--t-2) var(--ease-arrive);
 }
 .root:global([data-active="0"]) :global(:is([data-pt-lit="0"], [data-pt-dim="0"])),
 .root:global([data-active="1"]) :global(:is([data-pt-lit="1"], [data-pt-dim="1"])),
@@ -217,6 +209,12 @@
 .root:global([data-active="3"]) :global(:is([data-pt-lit="3"], [data-pt-dim="3"])),
 .root:global([data-active="4"]) :global(:is([data-pt-lit="4"], [data-pt-dim="4"])),
 .root:global([data-active="5"]) :global(:is([data-pt-lit="5"], [data-pt-dim="5"])) { opacity: 1; }
+.root:global([data-active="0"]) :global([data-pt-dim="0"]),
+.root:global([data-active="1"]) :global([data-pt-dim="1"]),
+.root:global([data-active="2"]) :global([data-pt-dim="2"]),
+.root:global([data-active="3"]) :global([data-pt-dim="3"]),
+.root:global([data-active="4"]) :global([data-pt-dim="4"]),
+.root:global([data-active="5"]) :global([data-pt-dim="5"]) { color: var(--color-ink); }
 
 /* Reduced motion: no autoplay, no rise, no press; swaps keep a 160ms
    opacity fade */

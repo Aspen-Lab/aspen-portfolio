@@ -18,26 +18,20 @@ export function SectionHead({
   /** An optional glyph beside the title — the About page's heads carry one. */
   icon?: React.ReactNode;
 }) {
+  // The folio numeral and the count are gone (Aspen, 2026-10-25: 「这些小数字
+  // 没意义」); the props stay so the call sites read the same.
+  void folio;
+  void meta;
   return (
-    <header className="flex items-end justify-between gap-6 pt-5 mb-10 sm:mb-14">
-      <div className="flex items-baseline gap-4 sm:gap-6">
-        <span className="font-mono text-[10px] tracking-[0.2em] text-soft tabular-nums">
-          {folio}
-        </span>
-        <h2 className="type-display text-[30px] sm:text-[36px] leading-[1.05] text-ink flex items-center gap-4">
-          {icon && (
-            <span aria-hidden className="text-soft [&>svg]:w-6 [&>svg]:h-6 sm:[&>svg]:w-7 sm:[&>svg]:h-7 translate-y-[1px]">
-              {icon}
-            </span>
-          )}
-          {title}
-        </h2>
-      </div>
-      {meta && (
-        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.18em] text-soft tabular-nums">
-          {meta}
-        </span>
-      )}
+    <header className="pt-5 mb-10 sm:mb-14">
+      <h2 className="type-display text-[32px] sm:text-[40px] leading-[1.05] text-ink flex items-center gap-4">
+        {icon && (
+          <span aria-hidden className="text-mute [&>svg]:w-6 [&>svg]:h-6 sm:[&>svg]:w-7 sm:[&>svg]:h-7 translate-y-[1px]">
+            {icon}
+          </span>
+        )}
+        {title}
+      </h2>
     </header>
   );
 }

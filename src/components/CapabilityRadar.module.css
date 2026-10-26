@@ -16,7 +16,7 @@
   line-height: 1.2;
   letter-spacing: -0.02em;
   text-align: left;
-  color: #5c5c5c;
+  color: #8c8c8c;
   cursor: pointer;
   transition: color 180ms var(--ease-arrive);
 }

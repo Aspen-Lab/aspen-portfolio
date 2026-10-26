@@ -22,11 +22,10 @@
 .inspect { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding-inline: 2px; font: 10px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--color-mute); cursor: pointer; transition: color 180ms; }
 .inspect:hover, .inspect[aria-pressed="true"] { color: var(--color-ink); }
 .inspect:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 4px; }
-.switch { position: relative; width: 24px; height: 13px; border-radius: 999px; background: var(--raised); transition: background-color 200ms; }
+.switch { position: relative; width: 24px; height: 13px; border-radius: 999px; background: #1c1c1c; transition: background-color 200ms; }
 .switch > span { position: absolute; top: 3px; left: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--color-mute); transition: transform 220ms var(--ease-arrive), background-color 200ms; }
-.inspect:hover .switch { background: #2d2d2d; }
 .inspect[aria-pressed="true"] .switch { background: var(--sel); }
-.inspect[aria-pressed="true"] .switch > span { transform: translateX(11px); background: #fff; }
+.inspect[aria-pressed="true"] .switch > span { transform: translateX(11px); background: #f3f3f3; }
 
 /* ── Frame ── a plane on the ground: no edge, no shadow. It isolates so the
    selection plane can sit under the type and still over the frame. */
@@ -61,7 +60,7 @@
    where there is room). */
 .selection { position: absolute; border-radius: 1px; transition: left 440ms var(--ease-arrive), top 440ms var(--ease-arrive), width 440ms var(--ease-arrive), height 440ms var(--ease-arrive); }
 .under .selection { background: color-mix(in srgb, var(--sel) 24%, var(--tile)); }
-.specTag, .sizeTag, .redTag { position: absolute; padding: 3px 6px; border-radius: var(--r-tag); corner-shape: squircle; color: #fff; font: 500 10px/1.2 var(--font-mono); letter-spacing: .03em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.specTag, .sizeTag, .redTag { position: absolute; padding: 3px 6px; border-radius: var(--r-tag); corner-shape: squircle; color: #f3f3f3; font: 500 10px/1.2 var(--font-mono); letter-spacing: .03em; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .specTag { bottom: calc(100% + 6px); left: 0; background: var(--sel); }
 .sizeTag { top: 50%; left: calc(100% + 12px); transform: translateY(-50%); background: var(--sel); }
 .sizeTag[data-place="below"] { top: calc(100% + 9px); left: 50%; transform: translateX(-50%); }
@@ -85,7 +84,7 @@
 /* Line three · a collaborator, still exploring. */
 .cursor { position: absolute; top: .44em; left: calc(100% + .14em); display: flex; align-items: flex-start; gap: 1px; font-style: normal; pointer-events: none; animation: drift 7.5s ease-in-out infinite; }
 .cursor > svg { width: 16px; height: 16px; fill: var(--peer); }
-.cursor > span { margin-top: 13px; padding: 4px 8px; border-radius: 2px var(--r-tag) var(--r-tag) var(--r-tag); corner-shape: squircle; background: var(--peer); color: #fff; font: 500 11px/1 var(--font-sans); letter-spacing: 0; }
+.cursor > span { margin-top: 13px; padding: 4px 8px; border-radius: 2px var(--r-tag) var(--r-tag) var(--r-tag); corner-shape: squircle; background: var(--peer); color: #f3f3f3; font: 500 11px/1 var(--font-sans); letter-spacing: 0; }
 @keyframes drift {
   0%, 100% { transform: translate(0, 0); }
   30% { transform: translate(22px, -12px); }
@@ -125,17 +124,17 @@
 .track > li:first-child { grid-column: 1; grid-row: 1; }
 .track > li:last-child { grid-column: 3; grid-row: 1; }
 .stop { display: grid; grid-template-columns: 23px auto; gap: 12px; }
-.node { display: grid; place-items: center; width: 23px; height: 23px; border-radius: 50%; background: var(--raised); color: var(--color-mute); }
+.node { display: grid; place-items: center; width: 23px; height: 23px; border-radius: 50%; background: #1c1c1c; color: var(--color-mute); }
 .nodeNow { background: var(--color-ink); color: var(--slab); }
 .stopTitle { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 23px; font-size: 14px; line-height: 1.45; color: var(--color-ink); }
 .stopMeta { margin-top: 3px; font-size: 12px; line-height: 1.6; color: var(--color-mute); }
-.badge { padding: 2px 6px; border-radius: var(--r-tag); corner-shape: squircle; background: var(--raised); font: 9px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--color-mute); }
-.badgeNow { background: #2d2d2d; color: var(--color-ink); }
+.badge { padding: 2px 6px; border-radius: var(--r-tag); corner-shape: squircle; background: #1c1c1c; font: 9px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--color-mute); }
+.badgeNow { background: #f3f3f3; color: #0f0f0f; }
 
 /* The way on: a raised plane, no underline; it lifts a tone on hover. */
-.explore { display: inline-flex; align-items: center; gap: 16px; min-height: 44px; margin-top: 24px; padding-inline: 16px; border-radius: var(--r-raised); corner-shape: squircle; background: var(--raised); color: var(--color-ink); font-size: 12px; transition: background-color 180ms; }
+.explore { display: inline-flex; align-items: center; gap: 16px; min-height: 44px; margin-top: 24px; padding-inline: 16px; border-radius: var(--r-raised); corner-shape: squircle; background: #1c1c1c; color: var(--color-ink); font-size: 12px; transition: background-color 180ms; }
 .explore svg { transition: transform 180ms; }
-.explore:hover { background: #2d2d2d; }
+.explore:hover { background: #f3f3f3; color: #0f0f0f; }
 .explore:hover svg { transform: translateY(3px); }
 .explore:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 5px; }
 

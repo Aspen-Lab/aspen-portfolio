@@ -59,7 +59,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #d1d1d1;
+  color: #f3f3f3;
 }
 .key {
   flex: none;
@@ -157,7 +157,7 @@
   inset: 2px -10px;
   border-radius: var(--r-raised, 16px);
   corner-shape: squircle;
-  background: rgb(243 243 243 / 3.5%);
+  background: #1c1c1c;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
   pointer-events: none;
@@ -183,13 +183,14 @@
   z-index: -1;
   border-radius: var(--r-tag, 10px);
   corner-shape: squircle;
-  background: var(--raised, #272727);
+  /* on the card's ground tone, so the chosen label sits on the surface */
+  background: #1c1c1c;
   opacity: 0;
   transition: opacity var(--t-1) var(--ease-arrive);
 }
 .row[aria-checked="true"] .rowLabel { color: #f3f3f3; }
 .row[aria-checked="true"] .rowLabel::before { opacity: 1; }
-.row[data-static] .rowLabel { color: #a2a2a2; }
+.row[data-static] .rowLabel { color: #8c8c8c; }
 
 .bars {
   position: relative;
@@ -246,7 +247,7 @@
   position: absolute;
   top: 50%;
   translate: 0 -50%;
-  color: #d1d1d1;
+  color: #f3f3f3;
   line-height: 16px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -260,13 +261,13 @@
 /* under a row's hover plane the value's knock-out takes the plane's tone */
 @media (hover: hover) {
   .row:not([data-static]):hover .val {
-    background-color: color-mix(in srgb, var(--sheet, #1e1e1e) 96.5%, #f3f3f3);
+    background-color: #1c1c1c;
   }
 }
 .track[data-ui="green"] .val { color: #f3f3f3; }
 .none {
   left: 8px;
-  color: #6d6d6d;
+  color: #8c8c8c;
 }
 
 /* By task: Green UI's mean, ruled across the three tasks */
@@ -360,13 +361,13 @@
 }
 .taskVal {
   margin: 0;
-  color: #d1d1d1;
+  color: #f3f3f3;
   font-variant-numeric: tabular-nums;
 }
-.taskVal[data-none] { color: #6d6d6d; }
+.taskVal[data-none] { color: #8c8c8c; }
 .eq {
   margin: 8px 0 0;
-  color: #a2a2a2;
+  color: #8c8c8c;
   font-variant-numeric: tabular-nums;
 }
 .eqSum { white-space: nowrap; }
@@ -377,7 +378,7 @@
 }
 .note {
   margin: 24px 0 0;
-  color: #a2a2a2;
+  color: #8c8c8c;
   text-wrap: pretty;
 }
 .shown {

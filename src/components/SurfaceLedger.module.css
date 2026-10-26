@@ -6,12 +6,12 @@
    plane, the night a flat fill, the mountains and the moon a dot
    pattern. The type comes from the ramp (.t-small, .t-label). */
 .sheet {
-  --night: #0a0a0a;
+  --night: #0f0f0f;
   position: relative;
   padding: 20px;
   border-radius: var(--r-plane);
   corner-shape: squircle;
-  background: var(--sheet, #191919);
+  background: var(--sheet, #1c1c1c);
 }
 
 /* ── Phone: one row per surface, the frame on the left ── */
@@ -68,8 +68,8 @@
   width: 12px;
   height: 12px;
 }
-.sq[data-fill="true"] { background: var(--grey-2, #6d6d6d); }
-.sq[data-fill="false"] { border: 1.5px solid var(--grey-2, #6d6d6d); }
+.sq[data-fill="true"] { background: var(--grey-2, #8c8c8c); }
+.sq[data-fill="false"] { border: 1.5px solid var(--grey-2, #8c8c8c); }
 .tech { color: var(--color-ink); }
 
 /* ── From 640px: the ledger. A lane column, then four surfaces ── */
@@ -153,45 +153,47 @@
   from { opacity: 0; }
 }
 
-/* ── Inside the frames (frame units): product drawings in the system's
-   greys; the pixel art keeps its own opacities ── */
+/* ── Inside the frames (frame units): product drawings in the site's two
+   tones (screens and fields in the ground tone, panels and chrome in the
+   surface, lines and bars in the text grey); the pixel art keeps its own
+   opacities ── */
 .night { fill: var(--night); }
-.mail { fill: #151515; }
-.chrome { fill: #1f1f1f; }
+.mail { fill: #0f0f0f; }
+.chrome { fill: #1c1c1c; }
 .edge {
   fill: none;
-  stroke: rgb(243 243 243 / 30%);
+  stroke: #8c8c8c;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 .inner {
   fill: none;
-  stroke: rgb(243 243 243 / 12%);
+  stroke: #1c1c1c;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 .bezel {
   fill: none;
-  stroke: rgb(243 243 243 / 7%);
+  stroke: #1c1c1c;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
-.island { fill: #000; stroke: rgb(243 243 243 / 10%); stroke-width: 0.6; }
+.island { fill: #000; stroke: #1c1c1c; stroke-width: 0.6; }
 .panel {
-  fill: #1f1f1f;
-  stroke: rgb(243 243 243 / 12%);
+  fill: #1c1c1c;
+  stroke: #1c1c1c;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 .rule {
-  stroke: rgb(243 243 243 / 11%);
+  stroke: #1c1c1c;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 .t1 { fill: #f3f3f3; }
-.t2 { fill: #a2a2a2; }
-.t3 { fill: #6d6d6d; }
-.t4 { fill: #3c3c3c; }
+.t2 { fill: #8c8c8c; }
+.t3 { fill: #8c8c8c; }
+.t4 { fill: #0f0f0f; }
 .hole { fill: var(--night); }
 .stroke {
   fill: none;
@@ -215,7 +217,7 @@
 }
 .route {
   fill: none;
-  stroke: rgb(243 243 243 / 50%);
+  stroke: #8c8c8c;
   stroke-width: 1.15;
   stroke-linecap: round;
   stroke-dasharray: 0.01 2.6;
@@ -228,15 +230,15 @@
 .near { opacity: 0.36; }
 .snow { opacity: 0.6; }
 .ground { fill: var(--night); }
-.moon { fill: rgb(243 243 243 / 85%); }
-.cloud { fill: rgb(243 243 243 / 26%); }
-.star { fill: rgb(243 243 243 / 45%); }
-.bright { fill: rgb(243 243 243 / 62%); }
+.moon { fill: #f3f3f3; }
+.cloud { fill: #1c1c1c; }
+.star { fill: #8c8c8c; }
+.bright { fill: #8c8c8c; }
 
 /* The sign: a raised plate, lit dots in ink. No accent in the frames. */
 .plate {
-  fill: #1f1f1f;
-  stroke: rgb(243 243 243 / 30%);
+  fill: #1c1c1c;
+  stroke: #8c8c8c;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -247,7 +249,7 @@
    ledger, always whole. No box round the stage, no rules in the ledger:
    space and the drawings' own planes hold it. */
 .board {
-  --night: #0a0a0a;
+  --night: #0f0f0f;
   --label: 48px;
   --fh: 190px;
   --tagrow: 40px;
@@ -290,7 +292,8 @@
 @media (min-width: 640px) {
   .ledger { margin-top: 24px; }
 }
-/* The column names rest at .45 and light with their tab (data-pt-dim).
+/* The column names rest in the text grey and turn ink with their tab
+   (data-pt-dim).
    On a phone (no tech words) the column is a centred lattice; from 640px
    every column hangs off one left edge: name, both squares, the word. */
 .colName {
@@ -341,8 +344,8 @@
   }
   .lsq { grid-column: 1; }
 }
-.lsq[data-fill="true"] { background: var(--grey-2, #6d6d6d); }
-.lsq[data-fill="false"] { border: 1.5px solid var(--grey-2, #6d6d6d); }
+.lsq[data-fill="true"] { background: var(--grey-2, #8c8c8c); }
+.lsq[data-fill="false"] { border: 1.5px solid var(--grey-2, #8c8c8c); }
 /* The lit copy, shown by the tab in view (opacity only): ink in the
    design lane, the accent in the code lane, the chart's one focus mark */
 .lit {
@@ -418,7 +421,7 @@
   }
   .hex { left: 6px; }
 }
-.hex polygon { fill: var(--raised, #242424); }
+.hex polygon { fill: var(--raised, #1c1c1c); }
 
 /* Once, at a third in view: the surface fades in, the squares fade on
    lane by lane, the signs come on last. Opacity only, done by 1200ms. */

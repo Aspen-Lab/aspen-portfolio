@@ -440,7 +440,7 @@ export default async function CaseStudy({
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-soft">
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-mute">
                 cover · drop your hero shot here
               </span>
             </div>
@@ -500,7 +500,6 @@ export default async function CaseStudy({
           const prevChapter = i > 0 ? sections[i - 1].chapter : undefined;
           const isFirstInChapter = s.chapter && s.chapter !== prevChapter;
           const chapterIndex = s.chapter ? chapters.indexOf(s.chapter) : -1;
-          const sectionNumber = String(i + 1).padStart(2, "0");
 
           return (
             <div key={`${s.heading}-${i}`}>
@@ -530,14 +529,6 @@ export default async function CaseStudy({
                   }
                 >
                   <header className={editorial ? "mb-6 max-w-3xl" : "mb-10 max-w-3xl"}>
-                    {/* With chapter dividers, a second count is only more small print. */}
-                    {chapters.length <= 1 && (
-                      <p
-                        className={`font-mono ${editorial ? "text-[12px]" : "text-[11px]"} uppercase tracking-[0.2em] text-soft tabular-nums mb-4`}
-                      >
-                        {sectionNumber}
-                      </p>
-                    )}
                     <h2
                       className="font-display font-light leading-[1.05] tracking-[-0.02em] text-ink text-balance"
                       style={{ fontSize: "clamp(28px, 3.6vw, 44px)" }}
@@ -553,8 +544,8 @@ export default async function CaseStudy({
                   <RichText
                     className={
                       editorial
-                        ? `text-[18px] leading-[1.65] text-ink/85 max-w-[40rem] ${cn ? KEEP_WORDS : "text-pretty"}`
-                        : "text-[17px] leading-[1.7] text-ink/85 max-w-2xl"
+                        ? `text-[18px] leading-[1.65] text-ink max-w-[40rem] ${cn ? KEEP_WORDS : "text-pretty"}`
+                        : "text-[17px] leading-[1.7] text-ink max-w-2xl"
                     }
                   >
                     {s.body}
@@ -753,7 +744,7 @@ export default async function CaseStudy({
                       </a>
                       <figcaption className="mt-3 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[13px] leading-relaxed text-mute">
                         <span>{figure.caption ?? figure.alt}</span>
-                        <span className="text-soft">
+                        <span className="text-mute">
                           {cn ? "点击图片查看原图 ↗" : "Open image at full size ↗"}
                         </span>
                       </figcaption>
@@ -941,7 +932,6 @@ function BandedCase({
     const intro = (
       <>
         <header className="max-w-3xl">
-          {chapters.length <= 1 && <p className={styles.sectionNum}>{pad(i + 1)}</p>}
           <h2 className={styles.h2}>
             {/* Headings may carry `code` too — never print backticks */}
             {MARKUP.test(s.heading) ? (

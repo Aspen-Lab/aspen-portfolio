@@ -44,23 +44,17 @@
 .tab:active { transform: translateY(1px); }
 /* The words fade, not the tab, so the underline filling under the next
    tab reads at full strength */
-.tabNum,
 .tabLabel {
-  opacity: var(--dim, 0.45);
-  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+  color: var(--color-mute);
+  transition: color var(--t-1, 160ms) var(--ease-arrive);
 }
 @media (hover: hover) {
-  .tab:hover .tabNum,
-  .tab:hover .tabLabel { opacity: 0.75; }
+  .tab:hover .tabLabel { color: var(--color-ink); }
 }
-.tab:focus-visible .tabNum,
-.tab:focus-visible .tabLabel { opacity: 0.75; }
-.tab[data-on="true"] .tabNum,
-.tab[data-on="true"] .tabLabel { opacity: 1; }
-.tabNum { flex: none; }
+.tab:focus-visible .tabLabel { color: var(--color-ink); }
+.tab[data-on="true"] .tabLabel { color: var(--color-ink); }
 .tabLabel {
   min-width: 0;
-  color: var(--color-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -128,7 +122,7 @@
    syntax's own greys. */
 .code {
   --syn-ink: #f3f3f3;
-  --syn-mute: #a2a2a2;
+  --syn-mute: #8c8c8c;
   --syn-soft: #8c8c8c;
   display: grid;
   align-content: center;
@@ -164,22 +158,21 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: var(--tile, #151515);
+  background: var(--tile, #1c1c1c);
   opacity: 0;
   transition: opacity var(--t-2, 360ms) var(--ease-arrive);
 }
 .sheet[data-state="missing"] .row[data-focus="true"]::before { opacity: 1; }
 
-/* Ink at 28% reads as the faint grey; the focus line's number lights */
+/* The line numbers rest in the text grey; the focus line's number lights */
 .num {
-  color: var(--syn-ink);
-  opacity: 0.28;
+  color: var(--syn-mute);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
   user-select: none;
-  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+  transition: color var(--t-1, 160ms) var(--ease-arrive);
 }
-.sheet[data-state="missing"] .row[data-focus="true"] .num { opacity: 1; }
+.sheet[data-state="missing"] .row[data-focus="true"] .num { color: var(--syn-ink); }
 
 .src {
   min-width: 0;
@@ -213,7 +206,7 @@
 .src [data-k="t"],
 .src [data-k="f"] { color: var(--syn-mute); }
 .src [data-k="v"] { color: var(--syn-ink); }
-.src [data-k="s"] { color: rgb(243 243 243 / 78%); }
+.src [data-k="s"] { color: #f3f3f3; }
 
 /* The variable that went missing steps back under a wavy rule: it dims,
    and a copy of the name, drawn as only its underline, fades in over it. */
@@ -239,7 +232,7 @@
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
 .sheet[data-state="missing"] .src [data-k="miss"],
-.sheet[data-state="missing"] .src [data-k="city"] { opacity: var(--dim, 0.45); }
+.sheet[data-state="missing"] .src [data-k="city"] { color: var(--syn-mute); }
 .sheet[data-state="missing"] .src [data-k="miss"]::after { opacity: 1; }
 
 /* ── The fallback: the one accent on the sheet ── */
@@ -249,7 +242,6 @@
   text-indent: 0;
   line-height: 1.45;
   white-space: nowrap;
-  opacity: var(--dim, 0.45);
   transition:
     opacity var(--t-1, 160ms) var(--ease-arrive),
     transform var(--t-2, 360ms) var(--ease-arrive);
@@ -275,13 +267,14 @@
   border-radius: var(--r-tag);
   corner-shape: squircle;
   background: var(--accent);
-  color: #0a0a0a;
+  color: #0f0f0f;
   white-space: pre;
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
-.fallback [data-k] { transition: opacity var(--t-1, 160ms) var(--ease-arrive); }
+/* at rest the fallback reads in the text grey, not a faded ink */
+.fallback [data-k] { color: var(--syn-mute); transition: opacity var(--t-1, 160ms) var(--ease-arrive); }
 .sheet[data-state="missing"] .lit { opacity: 1; }
 .sheet[data-state="missing"] .fallback [data-k] { opacity: 0; }
 
@@ -300,9 +293,9 @@
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
 .ring { z-index: -1; }
-.hex { fill: var(--raised, #242424); }
+.hex { fill: var(--raised, #1c1c1c); }
 .leader {
-  stroke: var(--grey-1, #a2a2a2);
+  stroke: var(--grey-1, #8c8c8c);
   stroke-width: 1.5;
   stroke-dasharray: 3 3;
 }
@@ -312,7 +305,7 @@
 .sheet .tag {
   position: absolute;
   left: 50%;
-  background: var(--tile, #191919);
+  background: var(--tile, #1c1c1c);
   pointer-events: none;
   user-select: none;
   opacity: 0;
@@ -327,7 +320,7 @@
 
 /* ── The message: Axel's card, a product render on the sheet ── */
 .mail {
-  --trip: var(--raised, #1f1f1f);
+  --trip: #1c1c1c;
   position: relative;
   display: grid;
   justify-items: start;
@@ -335,7 +328,7 @@
   max-width: 380px;
   padding: 24px 20px;
   border-radius: 14px;
-  background: var(--slab, #0a0a0a);
+  background: var(--slab, #0f0f0f);
   color: var(--color-ink);
 }
 @media (min-width: 640px) { .mail { padding: 24px; } }
@@ -428,7 +421,7 @@
   right: 0;
   bottom: -4px;
   height: 3px;
-  background: rgb(243 243 243 / 60%);
+  background: #8c8c8c;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
@@ -470,7 +463,7 @@
   overflow: visible;
 }
 .dots line {
-  stroke: rgb(243 243 243 / 30%);
+  stroke: #8c8c8c;
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-dasharray: 0.1 7;
@@ -493,7 +486,7 @@
   padding: 11px 20px;
   border-radius: 999px;
   background: var(--color-ink);
-  color: #0a0a0a;
+  color: #0f0f0f;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.2;

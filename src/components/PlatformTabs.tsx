@@ -142,7 +142,6 @@ export function PlatformTabs({ intro, tabs, sheet, details, dwell = 5000, autopl
               onClick={() => choose(i)}
               onKeyDown={(e) => onKey(e, i)}
             >
-              <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
               <span className={styles.words}>
                 <span className={styles.kicker}>{tab.kicker}</span>
                 <span className={styles.title}>{hold(tab.title, styles.word)}</span>

@@ -86,8 +86,8 @@
   text-align: left;
 }
 .nameText {
-  opacity: 0.62;
-  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+  color: var(--color-mute);
+  transition: color var(--t-1, 160ms) var(--ease-arrive);
 }
 /* The rank: a raised square mark with its number */
 .rank {
@@ -99,7 +99,7 @@
   height: var(--sq);
   border-radius: var(--r-tag, 10px);
   corner-shape: squircle;
-  background: var(--raised, #272727);
+  background: var(--raised, #1c1c1c);
   color: #f3f3f3;
   letter-spacing: 0;
 }
@@ -114,7 +114,7 @@
   border-radius: inherit;
   corner-shape: squircle;
   background: #f3f3f3;
-  color: #0a0a0a;
+  color: #0f0f0f;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
 }
@@ -137,7 +137,7 @@
   transition: opacity var(--t-2, 360ms) var(--ease-arrive);
 }
 .lineGrey {
-  stroke: var(--grey-2, #6d6d6d);
+  stroke: var(--grey-2, #8c8c8c);
   stroke-width: 1px;
 }
 .lineInk {
@@ -156,7 +156,7 @@
 .root:not([data-dim]) .line[data-k="sit"] .lineAcc {
   opacity: 1;
 }
-.root:not([data-dim]) .name:is([data-k="sit"], [data-k="aud"]) .nameText { opacity: 1; }
+.root:not([data-dim]) .name:is([data-k="sit"], [data-k="aud"]) .nameText { color: #f3f3f3; }
 .root:not([data-dim]) .name:is([data-k="sit"], [data-k="aud"]) .rank::after { opacity: 1; }
 
 /* ── Lit: that line in the accent, the rest dimmed; Situational Stress
@@ -166,7 +166,7 @@
 .root[data-dim] .line[data-k="sit"] .lineInk {
   opacity: 1;
 }
-.root[data-dim] .nameText { opacity: var(--dim, 0.45); }
+.root[data-dim] .nameText { color: var(--color-mute); }
 
 .root[data-dim="att"] .line[data-k="att"],
 .root[data-dim="vis"] .line[data-k="vis"],
@@ -198,7 +198,7 @@
 .root[data-dim="tmp"] .name[data-k="tmp"] .nameText,
 .root[data-dim="int"] .name[data-k="int"] .nameText,
 .root[data-dim="sit"] .name[data-k="sit"] .nameText {
-  opacity: 1;
+  color: #f3f3f3;
 }
 .root[data-dim="att"] .name[data-k="att"] .rank::after,
 .root[data-dim="vis"] .name[data-k="vis"] .rank::after,
@@ -212,7 +212,7 @@
 .takeaway {
   max-width: 46ch;
   margin: 32px 0 0;
-  color: #d1d1d1;
+  color: #f3f3f3;
   text-wrap: pretty;
 }
 :global(html[lang="zh-CN"]) .takeaway { max-width: 30em; }
@@ -256,7 +256,7 @@
 .survey { margin: 12px 0 0; }
 .nasa {
   margin: 4px 0 0;
-  color: #a2a2a2;
+  color: #8c8c8c;
 }
 
 .part { margin-top: 40px; }
@@ -271,7 +271,7 @@
   grid-area: 1 / 1;
   display: block;
   margin: 0;
-  color: #d1d1d1;
+  color: #f3f3f3;
   opacity: 0;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
   text-wrap: pretty;
@@ -301,17 +301,17 @@
   align-items: flex-end;
   justify-content: space-between;
   height: 16px;
-  border-bottom: 1px solid var(--axis, rgb(243 243 243 / 24%));
+  border-bottom: 1px solid var(--axis, #1c1c1c);
 }
 .ticks i {
   width: 1px;
   height: 5px;
-  background: var(--axis, rgb(243 243 243 / 24%));
+  background: var(--axis, #1c1c1c);
 }
 .ticks i[data-h="m"] { height: 9px; }
 .ticks i[data-h="l"] {
   height: 15px;
-  background: var(--grey-1, #a2a2a2);
+  background: var(--grey-1, #8c8c8c);
 }
 .ends {
   display: flex;
@@ -344,7 +344,8 @@
 /* A pair: a raised square; lit, its ink fill fades on over it */
 .cell {
   position: relative;
-  background: var(--raised, #272727);
+  /* the grid sits on the ground tone: its cells take the surface */
+  background: #1c1c1c;
 }
 .cell::after {
   content: "";
@@ -376,9 +377,8 @@
   display: flex;
   align-items: baseline;
   gap: 12px;
-  color: #f3f3f3;
-  opacity: 0.55;
-  transition: opacity var(--t-1, 160ms) var(--ease-arrive);
+  color: var(--color-mute);
+  transition: color var(--t-1, 160ms) var(--ease-arrive);
 }
 .keyNum {
   flex: none;
@@ -392,12 +392,12 @@
 .root[data-dim="tmp"] .keyItem[data-k="tmp"],
 .root[data-dim="int"] .keyItem[data-k="int"],
 .root[data-dim="sit"] .keyItem[data-k="sit"] {
-  opacity: 1;
+  color: #f3f3f3;
 }
 
 .instruction {
   margin: 16px 0 0;
-  color: #a2a2a2;
+  color: #8c8c8c;
   text-wrap: pretty;
 }
 

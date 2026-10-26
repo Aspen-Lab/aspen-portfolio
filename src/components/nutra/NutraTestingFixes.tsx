@@ -967,9 +967,6 @@ export function NutraTestingFixes() {
             className={styles.tab}
             onClick={() => choose(i)}
             onKeyDown={(e) => onKey(e, i)}>
-            <span className={`t-label ${styles.tabNum}`} data-code="">
-              {String(i + 1).padStart(2, "0")}
-            </span>
             <span className={`t-small ${styles.tabLabel}`}>{label}</span>
             <span aria-hidden className={styles.tabFill} />
           </button>

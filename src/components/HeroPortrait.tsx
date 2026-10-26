@@ -90,7 +90,7 @@ export function HeroPortrait({ className }: { className: string }) {
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, size.w, size.h);
-      ctx.fillStyle = "rgb(243 243 243)";
+      ctx.fillStyle = "#f3f3f3";
       ctx.beginPath();
       for (const c of cells) {
         const u = developed ? 1 : Math.min(1, Math.max(0, (t - c.d) / (DEVELOP_MS - 520)));

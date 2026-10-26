@@ -120,7 +120,6 @@ export function CapabilityRadar() {
             onKeyDown={(event) => navigate(event, i)}
             className={styles.item}
           >
-            <span className={styles.index}>{String(i + 1).padStart(2, "0")}</span>
             {tr(discipline.label)}
           </button>
         ))}

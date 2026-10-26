@@ -86,8 +86,8 @@
   height: 48px;
   border-radius: var(--r-raised);
   corner-shape: squircle;
-  background: var(--raised, #242424);
-  color: #a2a2a2;
+  background: #1c1c1c;
+  color: #8c8c8c;
   font-family: var(--font-sans);
   font-size: 30px;
   font-weight: 300;
@@ -103,13 +103,13 @@
 }
 .letter[data-front="true"] {
   background: var(--accent, #f3f3f3);
-  color: #0a0a0a;
+  color: #0f0f0f;
 }
 
 .names { min-width: 0; }
 .label { margin: 0; }
 .title { margin: 6px 0 0; }
-[data-side="A"] .title { color: #a2a2a2; }
+[data-side="A"] .title { color: #8c8c8c; }
 
 .rows {
   display: grid;
@@ -125,9 +125,9 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  color: #d1d1d1;
+  color: #f3f3f3;
 }
-[data-side="A"] .row { color: #a2a2a2; }
+[data-side="A"] .row { color: #8c8c8c; }
 /* A 6px square, centred on the first line */
 .sq {
   flex: none;
@@ -136,7 +136,7 @@
   margin-top: calc((1lh - 6px) / 2);
   background: #f3f3f3;
 }
-[data-side="A"] .sq { background: #6d6d6d; }
+[data-side="A"] .sq { background: #8c8c8c; }
 
 /* The foot, held off by space: who the group is served by */
 .tag {
