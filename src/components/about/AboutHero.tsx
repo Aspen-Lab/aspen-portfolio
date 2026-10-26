@@ -60,8 +60,8 @@ export function AboutHero({ cn }: { cn: boolean }) {
     ? ["设计有章法，", "代码能落地，", "好奇不设限。"]
     : ["Design with intent.", "Build with care.", "Stay curious."];
   const faces = cn
-    ? ["Switzer Light", "Switzer Light", "Switzer Light Italic"]
-    : ["Switzer Light", "Switzer Light", "Switzer Light Italic"];
+    ? ["PingFang SC Light", "PingFang SC Light", "PingFang SC Light"]
+    : ["SF Pro Light", "SF Pro Light", "SF Pro Light Italic"];
   const box = boxes[active];
   const pad = 6;
   const selection = box && { left: box.x - pad, top: box.y - 2, width: box.w + pad * 2, height: box.h + 4 };

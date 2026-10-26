@@ -8,16 +8,17 @@
   --color-mute: #A2A2A2;
   --color-soft: #737373;
 
-  --font-display: var(--font-switzer), "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-sans: var(--font-switzer), "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Segoe UI", Roboto, Arial, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", "Menlo", "Cascadia Code", monospace;
 }
 
 /* One family: the names the site used for its old faces now point at
-   Switzer, so every stylesheet written against them follows. */
+   the system font, so every stylesheet written against them follows. */
 :root {
-  --font-newsreader: var(--font-switzer);
-  --font-geist-sans: var(--font-switzer);
+  --font-switzer: var(--font-sans);
+  --font-newsreader: var(--font-display);
+  --font-geist-sans: var(--font-sans);
 }
 
 html,
@@ -62,10 +63,10 @@ body {
 }
 
 /* The headline role. Everything at display size (the hero statement,
-   section titles, case-study titles) is Switzer at 300 with tight
+   section titles, case-study titles) is SF Pro at 300 with tight
    tracking; the text is the same family at its regular weight. Weight
    and tracking live here so the call sites only say what size and
-   colour they want. Switzer has no CJK: Chinese headlines fall back to
+   colour they want. For Chinese the same stack resolves to PingFang SC,
    the system grotesk at the same light, slightly looser setting. */
 .type-display {
   font-family: var(--font-display);

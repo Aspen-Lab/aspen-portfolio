@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { GeistMono } from "geist/font/mono";
-import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
@@ -15,21 +14,10 @@ import type { Locale } from "@/i18n/routing";
 import { SITE_URL, homeCopy, htmlLang, pageMeta } from "@/lib/seo";
 import "../globals.css";
 
-/* One family (Aspen, 2026-10-24: 「更好的字体」, chose D · Switzer): Switzer,
-   a Swiss neo-grotesk from the Indian Type Foundry's Fontshare (ITF Free
-   Font License: free for commercial use, self-hosted here). It sets the
-   headlines light and tight and the text at its regular weight; Geist
-   Mono stays only for code and small structural labels. Chinese falls
-   back to the system grotesk (PingFang SC on Apple). It replaced
-   Newsreader (headlines) and Geist (text). */
-const switzer = localFont({
-  src: [
-    { path: "../fonts/Switzer-Variable.woff2", weight: "100 900", style: "normal" },
-    { path: "../fonts/Switzer-VariableItalic.woff2", weight: "100 900", style: "italic" },
-  ],
-  display: "swap",
-  variable: "--font-switzer",
-});
+/* The text and display face is the Apple system font (SF Pro, with
+   PingFang SC for Chinese), set in globals.css; Switzer was dropped
+   (Aspen, 2026-10-25: 「我真的很讨厌这个字体」). Geist Mono stays for code
+   and small structural labels. */
 
 // Home copy doubles as the fallback for pages without their own (the
 // 404); every real page overrides title, canonical and share card.
@@ -64,7 +52,7 @@ export default async function LocaleLayout({
 
   // The site is one bilingual experience; html lang reflects the active route.
   return (
-    <html lang={htmlLang(locale)} className={`${switzer.variable} ${GeistMono.variable}`}>
+    <html lang={htmlLang(locale)} className={GeistMono.variable}>
       <body className="min-h-screen flex flex-col bg-paper text-ink antialiased">
         <a href="#main-content" className="skip-link">
           {locale === "cn" ? "跳到正文" : "Skip to content"}

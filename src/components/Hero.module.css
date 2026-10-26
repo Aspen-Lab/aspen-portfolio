@@ -3,7 +3,7 @@
    12-column frame: a row of facts at the top, the two words set very
    large across the measure as the core element, Aspen's halftone face in
    a disc caught between them, and the statement and credits at the foot.
-   Switzer only, three sizes, neutral greys. */
+   One system face, three sizes, neutral greys. */
 .poster {
   position: relative;
   display: grid;
@@ -36,7 +36,7 @@
   font-weight: 300;
   font-size: clamp(64px, 15.4vw, 236px);
   line-height: 0.86;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.045em;
   color: var(--color-ink);
   white-space: nowrap;
 }

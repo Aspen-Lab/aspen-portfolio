@@ -2,7 +2,7 @@
    above by space, its parts from each other by space, and the one block
    that has to read as a unit — Axel's figures — stands on a plane. */
 /* The workshop on the hero's 12-column frame: facts in 13px (ink over
-   mute), one statement, then blocks set apart by space only. Switzer at
+   mute), one statement, then blocks set apart by space only. One face at
    three sizes; no mono kickers, icons, planes or italic. */
 .workshop { margin-top: 144px; scroll-margin-top: 110px; }
 .facts { display: flex; justify-content: space-between; gap: 24px; font-size: 13px; line-height: 1.55; color: var(--color-mute); }
