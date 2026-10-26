@@ -6,27 +6,16 @@ import { HeroEntrance } from "./HeroEntrance";
 import { TrustBadges } from "./TrustBadges";
 import styles from "./Hero.module.css";
 
-/* The home hero as a poster: who, the two words with Aspen's face
-   between them, then the statement and the trust badges as real UI.
-   See Hero.module.css. */
+/* The home hero as a poster: Aspen's motto beside the avatar, the two
+   words with Aspen's face between them, then the trust badges as real
+   UI. See Hero.module.css. */
 const rise = (d: number) => ({ "--d": `${d}s` }) as CSSProperties;
-
-function LeverIcon() {
-  return (
-    <svg viewBox="0 0 30 30" className={styles.leverIcon} aria-hidden>
-      <path d="M15 15 L9.5 25 H20.5 Z" fill="currentColor" />
-      <g className={styles.beam}>
-        <rect x="2" y="11" width="26" height="3" rx="1.5" fill="currentColor" />
-        <rect x="2" y="6" width="6" height="5" rx="1" fill="currentColor" />
-      </g>
-    </svg>
-  );
-}
 
 export function Hero() {
   const t = useTranslations("Hero");
   const [first, second] = t("headlineLine2").split("❤️").map((w) => w.trim());
   const cn = t("location") !== "Bellevue, WA";
+  const motto = t("motto").split("|");
 
   return (
     // select-none: the hero is display, not copy — Aspen: 「这些文字是不能选中的」
@@ -35,9 +24,11 @@ export function Hero() {
       <div className={`container-fluid ${styles.poster}`}>
         <p className={`hero-fade-up ${styles.who}`} style={rise(0.5)}>
           <Image src="/about/aspen-avatar.png" alt="" width={40} height={40} priority className={styles.avatar} />
+          {/* Aspen's motto (2026-10-26: 「one liner 改成我的 moto」). A "|" in
+              the message marks where a line may break (Chinese has no
+              spaces, so it would otherwise split 注意力 down the middle). */}
           <span>
-            <b>{t("name")}</b>
-            {cn ? <>，<a href="https://helloaxel.com" target="_blank" rel="noreferrer">Axel (YC W19)</a> 创始设计工程师</> : <>, Founding Design Engineer at <a href="https://helloaxel.com" target="_blank" rel="noreferrer">Axel (YC W19)</a></>}
+            {motto.length > 1 ? motto.map((part) => <span key={part} className={styles.phrase}>{part}</span>) : motto[0]}
           </span>
         </p>
 
@@ -51,10 +42,6 @@ export function Hero() {
         </h1>
 
         <div className={`hero-fade-up ${styles.foot}`} style={rise(1.1)}>
-          <p className={styles.lever}>
-            <LeverIcon />
-            {t("headlineLine3a")}{t("headlineLine3Italic")}{t("headlineLine3b")}
-          </p>
           <TrustBadges label={cn ? "合作与认可" : "Worked with and recognized by"} />
         </div>
       </div>

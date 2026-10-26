@@ -1,15 +1,14 @@
-/* The home hero as a poster (Aspen, 2026-10-24/25): one simple line of
-   who, the two words as the core element with Aspen's face between them,
-   then the statement and the trust badges as real UI. Shorter than the
+/* The home hero as a poster (Aspen, 2026-10-24/25/26): Aspen's motto
+   in one line beside the avatar, the two words as the core element with
+   Aspen's face between them, then the trust badges as real UI (the
+   "One leverage force" pill is gone: 「不用按钮 这个直接拿掉吧」). Shorter than the
    screen, the words smaller and more open (「矮一些 间距宽一些」), and
    nothing set small (「千万不要用小字」): 17px is the smallest text here. */
 .poster { position: relative; padding-top: 56px; padding-bottom: 72px; }
 
-/* Who: one line at reading size */
-.who { display: flex; align-items: center; gap: 14px; font-size: 18px; line-height: 1.4; color: var(--color-mute); }
-.who b { font-weight: 400; color: var(--color-ink); }
-.who a { color: var(--color-ink); }
-.who a:hover { text-decoration: underline; text-underline-offset: 5px; }
+/* The motto: one line at reading size, in ink */
+.who { display: flex; align-items: center; gap: 14px; font-size: 18px; line-height: 1.4; color: var(--color-ink); text-wrap: balance; }
+.phrase { white-space: nowrap; }
 .avatar { width: 40px; height: 40px; flex: none; border-radius: 50%; object-fit: cover; }
 
 /* The core element: the two words, set across the frame */
@@ -48,29 +47,8 @@
 }
 .discCanvas { position: absolute; inset: -6% -10% -14% -2%; opacity: 0.9; }
 
-/* The foot: the statement as a real control, then the badges */
+/* The foot: the trust badges */
 .foot { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
-
-/* "One leverage force": a raised pill with a lever that tips under the
-   pointer and settles level when it leaves */
-.lever {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  height: 56px;
-  padding: 0 22px 0 18px;
-  border-radius: 999px;
-  background: #f3f3f3;
-  color: #0f0f0f;
-  font-size: 18px;
-  line-height: 1;
-  white-space: nowrap;
-}
-.leverIcon { width: 30px; height: 30px; flex: none; }
-.beam { transform-origin: 15px 13px; transition: transform 520ms var(--ease-arrive); }
-@media (hover: hover) {
-  .lever:hover .beam { transform: rotate(-14deg); }
-}
 
 @media (max-width: 767px) {
   .poster { padding-top: 32px; padding-bottom: 56px; }
@@ -80,7 +58,4 @@
   .and { top: calc(17vw * 0.28); font-size: 18px; }
   .disc { top: auto; bottom: calc(100% + 12px); right: 0; z-index: 0; width: 40vw; }
   .foot { flex-direction: column; align-items: flex-start; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .beam { transition: none; }
 }
