@@ -22,8 +22,8 @@ const ITEMS: Item[] = [
 
 /* The nav in the site's flat language, at reading size (Aspen, 2026-10-25:
    「顶栏要结合的有交互一些」 「千万不要用小字」 「优化」). The brand, then
-   three capsules at one height: availability (it leads to Contact and
-   carries what the hero's facts row used to say: available, Bellevue),
+   three capsules at one height: the address (Bellevue, with a sketch of
+   the map and a live pin; it leads to Contact),
    the pages, and the language. In the pages capsule a white plane follows
    the pointer and settles back on the current page; the page under it
    turns black. The plane is one element placed by transform and the
@@ -151,14 +151,19 @@ export function Nav() {
           >
             <Logo />
           </Link>
-          {/* Availability: a real control, not a caption. It leads to Contact. */}
-          <Link href="/contact" className={styles.status}>
-            <span aria-hidden className={styles.dot}>
-              <i />
-              <i />
+          {/* Where Aspen is, as an address with a sketch of a map (2026-10-26:
+              「这里变成一个地址 地图简笔」): a street grid, one main road and a
+              live pin. It leads to Contact. */}
+          <Link href="/contact" className={styles.status} aria-label={`${th("location")} · ${t("available")}`}>
+            <span aria-hidden className={styles.map}>
+              <svg viewBox="0 0 32 32" focusable="false">
+                <path className={styles.street} d="M0 8.5 H32 M0 25 H32 M7.5 0 V32 M25.5 0 V32" />
+                <path className={styles.road} d="M0 21 C9 19.5 19 13.5 32 7" />
+                <circle className={styles.ping} cx="16" cy="21.5" r="2.4" />
+                <path className={styles.pin} d="M16 22.5 C16 22.5 10.6 17 10.6 12.6 A5.4 5.4 0 1 1 21.4 12.6 C21.4 17 16 22.5 16 22.5 Z M16 10.4 A2.2 2.2 0 1 0 16 14.8 A2.2 2.2 0 1 0 16 10.4 Z" />
+              </svg>
             </span>
-            {t("available")}
-            <span className={`hidden lg:inline ${styles.where}`}>{th("location")}</span>
+            {th("location")}
           </Link>
         </div>
 

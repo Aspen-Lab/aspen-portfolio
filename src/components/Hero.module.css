@@ -1,15 +1,35 @@
-/* The home hero as a poster (Aspen, 2026-10-24/25/26): Aspen's motto
-   in one line beside the avatar, the two words as the core element with
-   Aspen's face between them, then the trust badges as real UI (the
-   "One leverage force" pill is gone: 「不用按钮 这个直接拿掉吧」). Shorter than the
+/* The home hero as a poster (Aspen, 2026-10-24/25/26): Aspen's motto as
+   a quote beside a leaf portrait, the two words (smaller: 「Design
+   Engineer 标题小一些」) with Aspen's face between them, then the trust
+   badges as real UI (the "One leverage force" pill is gone). Shorter than the
    screen, the words smaller and more open (「矮一些 间距宽一些」), and
    nothing set small (「千万不要用小字」): 17px is the smallest text here. */
 .poster { position: relative; padding-top: 56px; padding-bottom: 72px; }
 
-/* The motto: one line at reading size, in ink */
-.who { display: flex; align-items: center; gap: 14px; font-size: 18px; line-height: 1.4; color: var(--color-ink); text-wrap: balance; }
+/* The motto as a quote: the leaf portrait, then the words in the display
+   face with the opening mark hung outside the text edge, and the name */
+.quote { display: flex; align-items: flex-start; gap: 28px; margin: 0; }
+.words {
+  max-width: 30ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(24px, 2.1vw, 32px);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+.open { display: inline-block; width: 0.42em; margin-left: -0.42em; }
 .phrase { white-space: nowrap; }
-.avatar { width: 40px; height: 40px; flex: none; border-radius: 50%; object-fit: cover; }
+.by { margin-top: 12px; font-size: 17px; line-height: 1.4; color: var(--color-mute); }
+
+/* The leaf portrait: Aspen's face in dots, cut to the logo's aspen leaf
+   on the surface plane, with the leaf's stem in the text grey */
+.leaf { position: relative; width: 96px; height: 96px; flex: none; margin-top: -8px; }
+.defs { position: absolute; width: 0; height: 0; }
+.leafFace { position: absolute; inset: 0; clip-path: url(#aspen-leaf-clip); background: #1c1c1c; }
+.leafStem { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: #8c8c8c; stroke-width: 2.6; stroke-linecap: round; }
 
 /* The core element: the two words, set across the frame */
 .mast { position: relative; isolation: isolate; margin: 72px 0 80px; }
@@ -17,7 +37,7 @@
   display: block;
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(56px, 10.6vw, 164px);
+  font-size: clamp(48px, 7.4vw, 116px);
   line-height: 0.98;
   letter-spacing: -0.02em;
   color: var(--color-ink);
@@ -27,10 +47,10 @@
 .and {
   position: absolute;
   right: 0.2%;
-  top: calc(clamp(56px, 10.6vw, 164px) * 0.3);
+  top: calc(clamp(48px, 7.4vw, 116px) * 0.3);
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(22px, 2.2vw, 32px);
+  font-size: clamp(20px, 1.8vw, 26px);
   color: var(--color-mute);
 }
 /* The face: a disc between the words, behind the second */
@@ -39,7 +59,7 @@
   top: -8%;
   right: 22%;
   z-index: -1;
-  width: clamp(120px, 18vw, 260px);
+  width: clamp(100px, 12.6vw, 184px);
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: 50%;
@@ -52,10 +72,12 @@
 
 @media (max-width: 767px) {
   .poster { padding-top: 32px; padding-bottom: 56px; }
-  .who { align-items: flex-start; font-size: 17px; }
-  .mast { margin: calc(40vw + 56px) 0 56px; }
-  .word { font-size: 17vw; }
-  .and { top: calc(17vw * 0.28); font-size: 18px; }
-  .disc { top: auto; bottom: calc(100% + 12px); right: 0; z-index: 0; width: 40vw; }
+  .quote { gap: 18px; }
+  .words { font-size: 22px; }
+  .leaf { width: 68px; height: 68px; margin-top: -4px; }
+  .mast { margin: calc(32vw + 48px) 0 56px; }
+  .word { font-size: 13vw; }
+  .and { top: calc(13vw * 0.28); font-size: 17px; }
+  .disc { top: auto; bottom: calc(100% + 12px); right: 0; z-index: 0; width: 32vw; }
   .foot { flex-direction: column; align-items: flex-start; }
 }

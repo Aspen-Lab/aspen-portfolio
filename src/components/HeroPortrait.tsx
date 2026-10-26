@@ -16,8 +16,9 @@ const BLACK = 0.04;
 const WHITE = 0.66;
 const DEVELOP_MS = 1400;
 
-/** The composition sets the box with `className`; the canvas fills it. */
-export function HeroPortrait({ className }: { className: string }) {
+/** The composition sets the box with `className`; the canvas fills it.
+    `pitch` sets the dot spacing in CSS px (small portraits need a finer one). */
+export function HeroPortrait({ className, pitch: pitchSet }: { className: string; pitch?: number }) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
 
@@ -50,7 +51,7 @@ export function HeroPortrait({ className }: { className: string }) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       // About 150 cells across the face on a desktop, fewer on a phone
-      const pitch = Math.max(4.5, Math.min(7, w / 150));
+      const pitch = pitchSet ?? Math.max(4.5, Math.min(7, w / 150));
       const cols = Math.floor(w / pitch);
       const rows = Math.floor(h / pitch);
       const off = document.createElement("canvas");
@@ -131,7 +132,7 @@ export function HeroPortrait({ className }: { className: string }) {
       resize.disconnect();
       image.onload = null;
     };
-  }, []);
+  }, [pitchSet]);
 
   return (
     <div ref={host} aria-hidden className={className}>

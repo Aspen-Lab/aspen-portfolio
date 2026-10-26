@@ -8,7 +8,7 @@
   align-items: center;
   gap: 10px;
   height: 44px;
-  padding: 0 18px 0 16px;
+  padding: 0 18px 0 6px;
   border-radius: 999px;
   background: #1c1c1c;
   color: var(--color-ink);
@@ -16,11 +16,15 @@
   white-space: nowrap;
   transition: background-color 200ms var(--ease-arrive), color 200ms var(--ease-arrive);
 }
-.where { color: var(--color-mute); transition: color 200ms var(--ease-arrive); }
-.dot { position: relative; display: flex; width: 8px; height: 8px; }
-.dot i { position: absolute; inset: 0; border-radius: 50%; background: #3cc65b; }
-.dot i:first-child { animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
-@keyframes ping { 75%, 100% { transform: scale(2.2); opacity: 0; } }
+/* The map: a small ground-tone tile in the capsule — side streets in the
+   surface grey, the main road in the text grey, a live pin */
+.map { display: block; width: 32px; height: 32px; flex: none; overflow: hidden; border-radius: 10px; corner-shape: squircle; background: #0f0f0f; }
+.map svg { display: block; width: 100%; height: 100%; }
+.street { fill: none; stroke: #1c1c1c; stroke-width: 2.2; }
+.road { fill: none; stroke: #8c8c8c; stroke-width: 1.6; stroke-linecap: round; }
+.pin { fill: #3cc65b; fill-rule: evenodd; }
+.ping { fill: #3cc65b; transform-box: fill-box; transform-origin: center; animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite; }
+@keyframes ping { 75%, 100% { transform: scale(2.4); opacity: 0; } }
 
 /* The pages: one capsule; a white plane slides to the page under the
    pointer and settles back on the current one. */
@@ -86,15 +90,14 @@
 
 @media (hover: hover) {
   .status:hover, .lang:hover { background: #f3f3f3; color: #0f0f0f; }
-  .status:hover .where { color: #0f0f0f; }
 }
 .status:focus-visible, .page:focus-visible, .lang:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 3px; }
 
 @media (max-width: 359px) {
   .page { padding: 0 12px; }
-  .status { padding: 0 14px 0 12px; }
+  .status { padding: 0 14px 0 6px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .status, .where, .page, .lang { transition: none; }
-  .dot i:first-child { display: none; }
+  .status, .page, .lang { transition: none; }
+  .ping { display: none; }
 }
