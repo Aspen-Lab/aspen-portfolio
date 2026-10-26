@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import styles from "./HeroPortrait.module.css";
 
 /* The hero's background: Aspen's portrait as a halftone, one ink dot per
    cell, its radius set by the photo's light (Aspen, 2026-10-23: 「来个我的
@@ -17,7 +16,8 @@ const BLACK = 0.04;
 const WHITE = 0.66;
 const DEVELOP_MS = 1400;
 
-export function HeroPortrait() {
+/** The composition sets the box with `className`; the canvas fills it. */
+export function HeroPortrait({ className }: { className: string }) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
 
@@ -134,8 +134,8 @@ export function HeroPortrait() {
   }, []);
 
   return (
-    <div ref={host} aria-hidden className={styles.portrait}>
-      <canvas ref={canvas} className={styles.canvas} />
+    <div ref={host} aria-hidden className={className}>
+      <canvas ref={canvas} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
     </div>
   );
 }

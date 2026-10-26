@@ -1,0 +1,79 @@
+/* The home hero as a poster (Aspen, 2026-10-24/25: 「没有架构没有原研哉那样
+   的核心元素」, 「更好的平面设计 字体 + 我的头像 + 视觉元素」). A strict
+   12-column frame: a row of facts at the top, the two words set very
+   large across the measure as the core element, Aspen's halftone face in
+   a disc caught between them, and the statement and credits at the foot.
+   Switzer only, three sizes, neutral greys. */
+.poster {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: calc(100svh - 64px - 58px);
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+/* Facts: three columns of two lines, ink over mute */
+.facts,
+.foot {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 24px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-mute);
+}
+.facts b,
+.foot b { display: block; font-weight: 400; color: var(--color-ink); }
+.who { display: flex; gap: 12px; align-items: flex-start; }
+.avatar { width: 34px; height: 34px; flex: none; border-radius: 50%; object-fit: cover; }
+
+/* The core element: the two words, set across the frame */
+.mast { position: relative; isolation: isolate; align-self: center; margin: 32px 0; }
+.word {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(64px, 15.4vw, 236px);
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+.second { text-align: right; margin-right: -0.04em; }
+.and {
+  position: absolute;
+  right: 0.3%;
+  top: calc(clamp(64px, 15.4vw, 236px) * 0.42);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(20px, 2.2vw, 32px);
+  letter-spacing: -0.03em;
+  color: var(--color-mute);
+}
+/* The face: a disc between the words, behind the second */
+.disc {
+  position: absolute;
+  top: -14%;
+  right: 16%;
+  z-index: -1;
+  width: clamp(130px, 24vw, 340px);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #161616;
+}
+.discCanvas { position: absolute; inset: -6% -10% -14% -2%; opacity: 0.9; }
+
+.foot { align-items: end; }
+.statement { display: flex; align-items: center; gap: 12px; font-size: 20px; line-height: 1.3; letter-spacing: -0.02em; color: var(--color-ink); }
+.mark { width: 8px; height: 8px; flex: none; background: var(--color-ink); }
+
+@media (max-width: 767px) {
+  .facts,
+  .foot { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 16px; row-gap: 16px; }
+  .mast { margin-top: 64px; }
+  .word { font-size: 19vw; }
+  .and { top: calc(19vw * 0.4); font-size: 16px; }
+  .disc { top: auto; bottom: calc(100% + 8px); right: 0; z-index: 0; width: 46vw; }
+}
