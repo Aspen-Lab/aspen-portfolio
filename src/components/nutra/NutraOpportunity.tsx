@@ -8,12 +8,14 @@ import { roveFocus, roveKeys, roveSync } from "./rove";
 import styles from "./NutraOpportunity.module.css";
 
 /* Research turned into direction (boards 017 and 018, verbatim). The two
-   boards number their cards 01–03 and pair them one to one, so they are
-   drawn as one sheet of three rows: the problem on the left, a connector,
-   the direction on the right. Row 02 (low engagement → gamification) is
-   the direction the case follows: its index square is the page accent,
-   its connector is ink and carries a boxed 'Chosen' tag. That square is
-   the figure's single focus; everything else is ink and grey.
+   boards pair their cards one to one, so they are drawn as one sheet of
+   three rows: the problem on the left, a connector, the direction on the
+   right. Each row leads with a small square mark (the boards' 01–03 are
+   not printed: the rows pair them). The second row (low engagement →
+   gamification) is the direction the case follows: its square is the
+   page accent, its connector is ink and carries a boxed 'Chosen' tag.
+   That square is the figure's single focus; everything else is ink and
+   grey.
 
    Hover, keyboard focus or a tap on a row writes data-row on the root and
    CSS dims the other two rows; nothing re-renders. A second tap on the
@@ -180,9 +182,7 @@ export function NutraOpportunity() {
                   onBlur={onBlur(i)}
                 >
                   <div className={styles.rowIn}>
-                    <span className={`t-label ${styles.index}`} data-code="">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
+                    <span aria-hidden className={styles.index} />
 
                     <div className={styles.problem}>
                       <span className="sr-only">{t.problem}: </span>

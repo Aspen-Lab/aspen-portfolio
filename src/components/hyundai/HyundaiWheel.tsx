@@ -254,11 +254,9 @@ export function HyundaiWheel() {
         {say(head)}
       </p>
       <ol className={styles.list} aria-labelledby={id}>
+        {/* No index numeral before each line: the numbers only counted them */}
         {items.map((item, i) => (
           <li key={i} className={styles.li} style={{ "--i": from + i } as CSSProperties}>
-            <span className={`t-label ${styles.num}`} data-code="">
-              {i + 1}
-            </span>
             <span className={`t-small ${styles.text}`}>{line(item)}</span>
           </li>
         ))}

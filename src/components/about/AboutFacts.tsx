@@ -43,7 +43,7 @@ export function AboutFacts({ cn }: { cn: boolean }) {
   return (
     <div className={styles.facts}>
       <div className={styles.head}>
-        <span className={styles.title}>ASPEN / {cn ? "随身笔记" : "FIELD NOTES"}</span>
+        <span className={styles.title}>{cn ? "随身笔记" : "Field notes"}</span>
         <div className={styles.tabs} role="tablist" aria-label={cn ? "认识 Aspen" : "Meet Aspen"}>
           {[cn ? "工作中的我" : "At work", cn ? "工作之外" : "Off the clock"].map((label, index) => (
             <button
@@ -68,7 +68,7 @@ export function AboutFacts({ cn }: { cn: boolean }) {
         <dl key={personal ? "life" : "work"} className={styles.cells} style={{ "--cols": facts.length } as CSSProperties}>
           {facts.map(({ icon: Icon, label, value }) => (
             <div key={label}>
-              <dt><Icon size={13} strokeWidth={1.5} aria-hidden />{label}</dt>
+              <dt><Icon size={16} strokeWidth={1.5} aria-hidden />{label}</dt>
               <dd>{value}</dd>
             </div>
           ))}

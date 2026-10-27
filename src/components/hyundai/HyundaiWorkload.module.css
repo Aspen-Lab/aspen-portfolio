@@ -47,10 +47,7 @@
 .head {
   max-width: 50%;
 }
-.headR {
-  margin-right: -0.12em;
-  text-align: right;
-}
+.headR { text-align: right; }
 
 .chart {
   --row: 56px;
@@ -318,7 +315,6 @@
   justify-content: space-between;
   margin-top: 8px;
 }
-.ends > :last-child { margin-right: -0.12em; }
 
 /* Part 2: the upper triangle of the 6 × 6 pairs, then its key */
 .pairs {
@@ -338,7 +334,6 @@
 .axisNum {
   display: grid;
   place-items: center;
-  margin-right: -0.12em;
   letter-spacing: 0;
 }
 /* A pair: a raised square; lit, its ink fill fades on over it */

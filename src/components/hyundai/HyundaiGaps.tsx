@@ -162,7 +162,6 @@ function Column({
   const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
   const w = (text: string) => hold(text, styles.word);
-  const idx = String(i + 1).padStart(2, "0");
   return (
     <section
       ref={ref}
@@ -171,16 +170,13 @@ function Column({
       data-i={i}
       data-rove={i}
       role="group"
-      aria-label={`${idx} ${gap.title}`}
+      aria-label={gap.title}
       tabIndex={i === 0 ? 0 : -1}
       style={{ "--i": i } as CSSProperties}
       {...handlers}
     >
-      {/* the pain point (boards 11–13) */}
+      {/* the pain point (boards 11–13); no index numeral over it */}
       <div className={`${styles.block} ${styles.pain}`}>
-        <p className={`t-label ${styles.idx}`} data-code="">
-          {idx}
-        </p>
         <h3 className={`t-subhead ${styles.title}`}>{w(gap.title)}</h3>
         <p className={`t-small ${styles.effect}`}>
           <span aria-hidden>→ </span>

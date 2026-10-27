@@ -119,7 +119,6 @@
 .names > span { min-width: 0; color: #f3f3f3; }
 .names > span:last-child {
   max-width: 50%;
-  margin-right: -0.12em;
   text-align: right;
 }
 @media (min-width: 640px) {

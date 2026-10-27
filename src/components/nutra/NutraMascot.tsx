@@ -273,11 +273,9 @@ export function NutraMascot() {
             </div>
           </div>
           <ol className={styles.keys}>
-            {t.keywords.map((word, i) => (
+            {t.keywords.map((word) => (
               <li key={word} className={styles.key}>
-                <span className={`t-label ${styles.keyIndex}`} data-code="">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+                {/* the keyword alone: no index numeral before it */}
                 <span className={`t-subhead ${styles.keyWord}`}>{w(word)}</span>
               </li>
             ))}

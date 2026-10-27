@@ -241,7 +241,8 @@
 }
 
 /* A pin: a numbered square, a filled plane with no edge; ink fills it
-   when its label (or the pin) is pointed at or focused */
+   when its label (or the pin) is pointed at or focused. Its digit is
+   15px, as is its legend's (an annotation, not the product's type) */
 .pin,
 .legendNum {
   position: relative;
@@ -253,7 +254,7 @@
   background: #1c1c1c;
   color: #8c8c8c;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0;

@@ -25,14 +25,13 @@ export default async function Contact({ params }: { params: Promise<{ locale: Lo
   const links = socials.filter((social) => social.href && social.platform !== "Email");
 
   return (
+    /* No small print (Aspen, 2026-10-25: 「千万不要用小字，特别讨厌」): the
+       mono masthead and the two mono kickers are gone — the nav names the
+       page and the letter names Aspen — and every other line is 15px or
+       more. */
     <article className={`container-fluid ${styles.page}`}>
-      <div className={styles.masthead}>
-        <span>03 <span aria-hidden>/</span> {cn ? "联系" : "CONTACT"}</span>
-        <span>{cn ? "一段新对话的起点" : "THE START OF A CONVERSATION"}</span>
-      </div>
       <section className={styles.hero} aria-labelledby="contact-title">
         <Reveal className={styles.statement}>
-          <p className={styles.eyebrow}><span aria-hidden />{cn ? "ASPEN W. · 创始设计工程师" : "ASPEN W. · FOUNDING DESIGN ENGINEER"}</p>
           <h1 id="contact-title" className={`type-display ${styles.headline}`}>
             {cn ? "好想法，" : "Good things"}<br />
             {cn ? "从一句你好" : "start with"}<br />
@@ -43,14 +42,14 @@ export default async function Contact({ params }: { params: Promise<{ locale: Lo
           </p>
           <div className={styles.signature}>
             <span>Aspen W.</span>
-            <p><MapPin size={13} strokeWidth={1.5} aria-hidden />Bellevue, Washington</p>
+            <p><MapPin size={16} strokeWidth={1.5} aria-hidden />Bellevue, Washington</p>
           </div>
         </Reveal>
         <Reveal delay={0.12} className={styles.note}><ContactNote cn={cn} email={contactInfo.email} /></Reveal>
       </section>
       <section className={styles.connections} aria-labelledby="contact-elsewhere">
         <div className={styles.sectionHead}>
-          <div><span className={styles.eyebrow}>{cn ? "不止在收件箱" : "BEYOND THE INBOX"}</span><h2 id="contact-elsewhere" className="type-display">{cn ? "也在这些地方。" : "Elsewhere, too."}</h2></div>
+          <h2 id="contact-elsewhere" className="type-display">{cn ? "也在这些地方。" : "Elsewhere, too."}</h2>
           <ArrowDownRight size={30} strokeWidth={1} aria-hidden />
         </div>
         <ContactChannels cn={cn} items={links} />

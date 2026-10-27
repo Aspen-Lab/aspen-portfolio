@@ -81,7 +81,7 @@ export function ContactNote({ cn, email }: ContactNoteProps) {
       <div className={styles.paper}>
         <div className={styles.letterhead}>
           <div>
-            <p className={styles.kicker}>{cn ? "写给" : "A NOTE TO"}</p>
+            <p className={styles.kicker}>{cn ? "写给" : "A note to"}</p>
             <h2 className={styles.name} id={id + "-name"}>Aspen.</h2>
             <p className={styles.role}>{cn ? "创始设计工程师" : "Founding Design Engineer"}</p>
           </div>
@@ -89,14 +89,14 @@ export function ContactNote({ cn, email }: ContactNoteProps) {
         </div>
 
         <div className={styles.addressBlock}>
-          <p className={styles.addressLabel}>{cn ? "邮箱" : "EMAIL ADDRESS"}</p>
+          <p className={styles.addressLabel}>{cn ? "邮箱" : "Email address"}</p>
           <a ref={addressRef} href={mailto} className={styles.address}>{at > 0 ? <>{email.slice(0, at)}<wbr />{email.slice(at)}</> : email}</a>
           <div className={styles.copyRow}>
             <p className={styles.feedback} role="status" aria-live="polite" aria-atomic="true">{feedback}</p>
             <button type="button" className={styles.copy} onClick={copyAddress} disabled={copying} aria-label={(cn ? "复制地址：" : "Copy address: ") + email}>
               {copyStatus === "copied"
-                ? <svg viewBox="0 0 18 18" width="14" height="14" fill="none" aria-hidden="true"><path d="m3 9 4 4 8-8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                : <svg viewBox="0 0 18 18" width="14" height="14" fill="none" aria-hidden="true"><path d="M6.5 3H14v9H6.5zM4 6H2.5v9H10v-1.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                ? <svg viewBox="0 0 18 18" width="16" height="16" fill="none" aria-hidden="true"><path d="m3 9 4 4 8-8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                : <svg viewBox="0 0 18 18" width="16" height="16" fill="none" aria-hidden="true"><path d="M6.5 3H14v9H6.5zM4 6H2.5v9H10v-1.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" /></svg>}
               <span>{cn ? "复制地址" : "Copy address"}</span>
             </button>
           </div>

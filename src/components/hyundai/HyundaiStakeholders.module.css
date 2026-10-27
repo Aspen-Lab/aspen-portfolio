@@ -93,7 +93,6 @@
 }
 .axisWord[data-at="hiInf"] { top: 0; }
 .axisWord[data-at="loInf"] { bottom: 0; }
-.axisWord[data-at="hiImp"] { margin-right: -0.12em; }
 
 /* A chip, centred on its board position in the field */
 .spot {

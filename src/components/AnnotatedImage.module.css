@@ -26,9 +26,10 @@
   cursor: help;
 }
 
-/* Numbered markers: a still 28px raised plane, digits in ink. Lit, an ink
-   square with dark digits fades in over it, so the change is an opacity,
-   not a repaint; they never pulse or grow. */
+/* Numbered markers: a still 28px raised plane, digits in ink, 15px like
+   the note numbers they match (mono, no tracking). Lit, an ink square
+   with dark digits fades in over it, so the change is an opacity, not a
+   repaint; they never pulse or grow. */
 .marker {
   position: absolute;
   z-index: 3;
@@ -37,16 +38,13 @@
   width: 28px;
   height: 28px;
   margin: -14px 0 0 -14px;
-  /* the label's tracking trails the last digit: even it out */
-  padding-left: 0.12em;
   border-radius: var(--r-tag);
   corner-shape: squircle;
   background: var(--raised, #1c1c1c);
   color: #f3f3f3;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1;
-  letter-spacing: 0.12em;
   font-variant-numeric: tabular-nums;
   cursor: help;
   transition: opacity var(--t-1, 160ms) var(--ease-arrive);
@@ -57,7 +55,6 @@
   inset: 0;
   display: grid;
   place-items: center;
-  padding-left: 0.12em;
   border-radius: inherit;
   corner-shape: squircle;
   background: #f3f3f3;

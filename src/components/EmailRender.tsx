@@ -5,7 +5,7 @@ import { useInView } from "motion/react";
 import { useLocale } from "next-intl";
 import styles from "./EmailRender.module.css";
 
-/* A render check in two blocks under two of Latent's numbered tabs. Left,
+/* A render check in two blocks under two of Latent's tabs. Left,
    a short Liquid template on a slab; right, what it sends, laid on the
    dark chart sheet like a print proof: Axel's card, the wordmark beside
    a pixel moon (the night sky from helloaxel.com), a headline, the

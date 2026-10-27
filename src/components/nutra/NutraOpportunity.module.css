@@ -1,6 +1,6 @@
 /* Problem → direction on one chart sheet (global .paper-stack > .paper).
-   Three rows held apart by space, no rules; each index a small raised
-   plane, the accent filling only row 02's. The only lines are the
+   Three rows held apart by space, no rules; each led by an 8px square
+   mark, the accent filling only the chosen row's. The only lines are the
    connectors (problem → direction). Flat fills, no gradient. Type from
    the ramp: S4 titles, S6 sentences, S7 labels. */
 .root {
@@ -80,23 +80,22 @@
   .rowIn { grid-template-areas: "idx problem link direction"; }
 }
 
-/* The index: a 28px raised square; row 02's is solid accent */
+/* The mark: an 8px square in the text grey, centred in the row's 28px
+   band; the chosen row's is solid accent */
 .index {
   grid-area: idx;
   display: grid;
   place-items: center;
-  box-sizing: border-box;
   width: 28px;
   height: 28px;
-  border-radius: 2px;
-  background: var(--raised, #1c1c1c);
-  color: #8c8c8c;
-  letter-spacing: 0.04em;
 }
-.row[data-chosen] .index {
-  background: var(--accent, #f3f3f3);
-  color: #0f0f0f;
+.index::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: #8c8c8c;
 }
+.row[data-chosen] .index::before { background: var(--accent, #f3f3f3); }
 
 .problem { grid-area: problem; min-width: 0; }
 .direction { grid-area: direction; min-width: 0; }

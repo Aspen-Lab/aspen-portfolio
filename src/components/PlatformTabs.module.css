@@ -1,8 +1,8 @@
-/* Latent's platform section: text and numbered tabs on the left, the
+/* Latent's platform section: text and tabs on the left, the
    sheet stack on the right at lg; below lg the tabs sit between the text
    and the sheet (2×2 tiles for four, rows for three), then the details.
    One dark system: the sheet is --sheet on the global stack, the tabs are
-   S7 numbers and kickers over S4 titles, the fill is ink. No rules: the
+   S7 kickers over S4 titles, the fill is ink. No rules: the
    tabs are set apart by space (rows) or are planes (tiles). */
 .root {
   display: grid;
@@ -62,15 +62,14 @@
 }
 .tab:focus-visible .title { color: var(--color-ink); }
 
-/* S7 */
+/* S7, the label (globals.css .t-label): 15px sans as written, no mono
+   caps, no tracking */
 .kicker {
   color: var(--color-soft);
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-size: 15px;
   font-weight: 400;
-  line-height: 1.35;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  line-height: 1.4;
   font-variant-numeric: tabular-nums;
 }
 .words {
@@ -92,12 +91,6 @@
   .title { font-size: 20px; }
 }
 .word { white-space: nowrap; }
-:global(html[lang="zh-CN"]) .kicker {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
 
 .bar {
   position: absolute;

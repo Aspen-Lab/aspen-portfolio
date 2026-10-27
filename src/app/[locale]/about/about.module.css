@@ -2,14 +2,16 @@
    plane that only appears under the pointer. The row is pulled out by the
    links' own padding so the first label still lines up with the column. */
 .jumpNav { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 56px -14px 0; }
-.jumpNav a { display: flex; align-items: center; gap: 12px; min-height: 44px; padding-inline: 14px; border-radius: var(--r-raised); corner-shape: squircle; font-size: 12px; color: var(--color-mute); transition: color 180ms, background-color 180ms; }
+.jumpNav a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding-inline: 14px; border-radius: var(--r-raised); corner-shape: squircle; font-size: 15px; color: var(--color-mute); transition: color 180ms, background-color 180ms; }
 .jumpNav a:hover { color: var(--color-ink); background: #1c1c1c; }
 .jumpNav a:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
-.studyNote { display: flex; align-items: flex-start; gap: 18px; padding: 24px 28px; margin-bottom: 28px; border-radius: var(--r-plane); corner-shape: squircle; background: var(--tile); color: var(--color-mute); }
-.studyNote > svg { margin-top: 2px; flex: none; }
-.studyNote p { max-width: 100ch; font-size: 12px; line-height: 1.8; }
-.studyNote .noteTitle { margin-bottom: 6px; color: var(--color-ink); font-size: 14px; }
-.sectionNote { max-width: 85ch; margin-bottom: 27px; color: var(--color-mute); font-size: 13px; line-height: 1.8; }
+/* The one statement for the page's abstract studies, at reading size: it
+   replaces the small labels every card used to wear. */
+.studyNote { display: flex; align-items: flex-start; gap: 18px; padding: 26px 28px; margin-bottom: 28px; border-radius: var(--r-plane); corner-shape: squircle; background: var(--tile); color: var(--color-mute); }
+.studyNote > svg { margin-top: 3px; flex: none; }
+.studyNote p { max-width: 68ch; font-size: 17px; line-height: 1.6; text-wrap: pretty; }
+.studyNote .noteTitle { margin-bottom: 6px; color: var(--color-ink); }
+.sectionNote { max-width: 68ch; margin-bottom: 28px; color: var(--color-mute); font-size: 17px; line-height: 1.6; text-wrap: pretty; }
 @media (max-width: 1023px) {
   .jumpNav { margin-top: 40px; }
 }

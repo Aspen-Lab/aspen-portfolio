@@ -290,12 +290,13 @@ export function PastWorkCards({ cn, items }: { cn: boolean; items: ReadonlyArray
           const Study = studyFor(item.client, index);
           return (
             <article key={`${item.client}-${item.period}`} className={styles.card}>
+              {/* The line above the grid says these are independent studies,
+                  once, at reading size; the cards no longer repeat it in
+                  small type. */}
               <div className={styles.stage}>
-                <p className={styles.studyLabel}><span className={styles.labelDot} aria-hidden="true" />{cn ? "独立视觉练习" : "Independent visual study"}</p>
                 <svg key={String(alternate)} className={styles.drawing} viewBox="0 0 360 240" fill="none" aria-hidden="true" focusable="false">
                   <Study alternate={alternate} />
                 </svg>
-                <p className={styles.disclaimer}>{cn ? "非项目界面" : "Not a project screen"}</p>
               </div>
               <div className={styles.caption}>
                 <p className={styles.period}>{item.period}</p>

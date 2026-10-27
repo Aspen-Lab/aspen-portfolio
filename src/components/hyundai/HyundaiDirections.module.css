@@ -90,16 +90,13 @@
 .thumb[data-on="true"] { background-color: var(--tile, #1c1c1c); }
 .thumb:active .mini { transform: translateY(1px); }
 
+/* The square's row keeps the label line's height (15px × 1.4) it had
+   when an index numeral stood beside it */
 .idx {
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: var(--color-soft, #8c8c8c);
+  height: 21px;
 }
-@media (hover: hover) {
-  .thumb:hover .idx { color: var(--color-ink); }
-}
-.thumb[data-on="true"] .idx { color: var(--color-ink); }
 
 /* The square: grey at rest; the accent copy fades in on the chosen one */
 .sq {

@@ -317,9 +317,16 @@ function Count({ n, label }: { n: number; label: string }) {
 }
 
 /* The role as src/lib/axel.ts draws it: one chain from problem to
-   production, the same stages and wording as the case study. */
+   production, the same stages and wording as the case study. The case
+   study's own chain was cut in the Axel story round (51a7063), which left
+   this sheet empty; until it returns there, the sheet keeps the stages
+   it had. */
 const roleSpan = (p: Project) => p.sections?.find((s) => s.span)?.span;
-const ROLE = { en: roleSpan(axelProject), cn: roleSpan(axelProjectCn) };
+const ROLE_KEPT = {
+  en: { stages: ["Explore", "Design", "Build", "Test", "Ship"], total: "One role, problem to production" },
+  cn: { stages: ["探索", "设计", "实现", "测试", "上线"], total: "一个岗位，从问题到上线" },
+};
+const ROLE = { en: roleSpan(axelProject) ?? ROLE_KEPT.en, cn: roleSpan(axelProjectCn) ?? ROLE_KEPT.cn };
 
 function Widget({ index, cn }: { index: number; cn: boolean }) {
   switch (index) {
@@ -387,7 +394,6 @@ function Widget({ index, cn }: { index: number; cn: boolean }) {
           <ol className={styles.awards}>
             {AWARDS.map((a, i) => (
               <li key={a.name} className={styles.award} style={v({ "--i": i })}>
-                <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
                 <span className={styles.awardName}>{a.name}</span>
                 <span className={styles.awardFor}>{a.project}</span>
               </li>
@@ -445,16 +451,9 @@ function Widget({ index, cn }: { index: number; cn: boolean }) {
    and `inert` on its root. */
 
 const Entry = memo(function Entry({ combo, index, cn, on }: { combo: Combo; index: number; cn: boolean; on: boolean }) {
-  const Icon = ICONS[index];
   return (
     <div id={`combo-${combo.index}`} className={styles.entry} data-on={on} inert={!on}>
       <div className={styles.copy}>
-        <div className={styles.label}>
-          <span className={styles.icon}>
-            <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
-          </span>
-          <span className={styles.title}>{combo.title}</span>
-        </div>
         <p className={`type-display ${styles.proof}`}>{combo.proof}</p>
         <p className={styles.body}>{combo.body}</p>
       </div>
@@ -490,30 +489,29 @@ export function Moat({ inPage = false }: { inPage?: boolean }) {
         </p>
       </Reveal>
 
-      {/* Numbered selector — six mono labels on the paper; the active one
-          stands on a small plane that glides between them (it was a
-          registration bracket; 「线框我们用面」). The labels sit on fixed
-          columns, so the plane's place is a plain translate off one custom
-          property; hover is CSS alone. An entry is chosen by click, tap or
-          keyboard, never by passing over it. */}
+      {/* The selector — six named pills, each with its mark (it was six bare
+          numerals, 01–06: Aspen, 2026-10-25: 「这些小数字没意义」). The
+          chosen one is the white plane with black words, as in the nav; an
+          entry is chosen by click, tap or keyboard, never by passing over
+          it. */}
       <Reveal delay={0.05}>
-        <div className="overflow-x-auto no-scrollbar mb-10 -mx-3 px-3 py-1">
-          <div className={styles.tabs} style={v({ "--active": active })}>
-            <span aria-hidden className={styles.bracket} />
-            {localizedCombos.map((c, i) => (
+        <div className={`${styles.tabs} mb-10`}>
+          {localizedCombos.map((c, i) => {
+            const Icon = ICONS[i];
+            return (
               <button
                 key={c.index}
                 type="button"
                 aria-pressed={active === i}
                 aria-controls={`combo-${c.index}`}
-                aria-label={`${c.index} · ${c.title}`}
                 onClick={() => setActive(i)}
                 className={styles.tab}
               >
-                {c.index}
+                <Icon width={16} height={16} strokeWidth={1.5} aria-hidden />
+                {c.title}
               </button>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </Reveal>
 

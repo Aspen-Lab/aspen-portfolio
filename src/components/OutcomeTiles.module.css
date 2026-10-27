@@ -73,7 +73,6 @@
   color: #0f0f0f;
   font-family: var(--font-mono);
   font-size: 16px;
-  letter-spacing: 0.04em;
 }
 @media (max-width: 639px) {
   .code { width: 44px; height: 44px; }
@@ -104,27 +103,20 @@
   margin-top: auto;
   padding-top: 16px;
 }
-/* The quiet tag: a raised plane on the tile, S7 in mute. No edge. */
+/* The quiet tag: a raised plane on the tile, S7 in mute (15px sans as
+   written, no mono caps, no tracking). No edge. */
 .tag {
   display: inline-block;
-  padding: 4px 8px;
+  padding: 4px 9px;
   border-radius: var(--r-tag);
   corner-shape: squircle;
   background: var(--raised);
   color: var(--color-mute);
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-size: 15px;
   font-weight: 400;
   line-height: 1.35;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   white-space: nowrap;
-}
-:global(html[lang="zh-CN"]) .tag {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: none;
 }
 .arrow {
   display: grid;

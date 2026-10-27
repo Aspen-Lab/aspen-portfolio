@@ -5,32 +5,32 @@
 .note { --letter-paper: #f3f3f3; --letter-well: #f3f3f3; --letter-well-hover: #f3f3f3; --letter-ink: #0f0f0f; --letter-muted: #8c8c8c; position: relative; width: 100%; min-width: 0; color: var(--letter-ink); container-type: inline-size; }
 .paper { position: relative; padding: 38px 40px 30px; border-radius: var(--r-plane); corner-shape: squircle; background: var(--letter-paper); }
 .letterhead { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; padding-bottom: 20px; }
-.kicker { color: var(--letter-muted); font: 9px/1.5 var(--font-mono); letter-spacing: .16em; }
+.kicker { color: var(--letter-muted); font-size: 15px; line-height: 1.4; }
 .name { margin-top: 9px; color: var(--letter-ink); font: 53px/.95 var(--font-newsreader), Georgia, serif; font-weight: 350; letter-spacing: -.045em; }
-.role { margin-top: 10px; font-size: 11px; line-height: 1.6; color: var(--letter-muted); }
+.role { margin-top: 12px; font-size: 15px; line-height: 1.5; color: var(--letter-muted); }
 .seal { flex: 0 0 53px; display: grid; place-items: center; width: 53px; height: 53px; margin-top: 3px; color: #8c8c8c; border-radius: 50%; background: var(--letter-well); transform: rotate(-7deg); }
 .addressBlock { padding-top: 26px; }
-.addressLabel { font: 9px/1.5 var(--font-mono); letter-spacing: .14em; color: var(--letter-muted); }
+.addressLabel { font-size: 15px; line-height: 1.4; color: var(--letter-muted); }
 .address { display: block; width: fit-content; max-width: 100%; min-height: 44px; margin-top: 9px; padding: 3px 0; font: 29px/1.2 var(--font-newsreader), Georgia, serif; letter-spacing: -.035em; color: var(--letter-ink); overflow-wrap: anywhere; text-decoration: none; user-select: all; -webkit-user-select: all; text-underline-offset: 5px; }
 .address:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 .copyRow { display: flex; align-items: center; justify-content: space-between; gap: 13px; margin-top: 1px; }
-.feedback { min-height: 16px; font: 10px/1.6 var(--font-sans); color: var(--letter-muted); overflow-wrap: anywhere; }
-.copy { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 8px 0 8px 8px; color: var(--letter-muted); background: none; border: 0; font: 10px var(--font-mono); cursor: pointer; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.feedback { min-height: 22px; font-size: 15px; line-height: 1.45; color: var(--letter-muted); overflow-wrap: anywhere; }
+.copy { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 0 8px 8px; color: var(--letter-muted); background: none; border: 0; font-size: 15px; cursor: pointer; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .copy:hover { color: var(--letter-ink); text-decoration: underline; }
 .copy:disabled { cursor: wait; }
 .topicBlock { padding-top: 22px; }
-.topicLabel { font: 13px/1.6 var(--font-sans); color: var(--letter-ink); }
+.topicLabel { font-size: 16px; line-height: 1.5; color: var(--letter-ink); }
 .topics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 12px; }
-.topic { display: flex; align-items: center; justify-content: center; min-height: 44px; min-width: 0; padding: 8px 6px; border-radius: var(--r-raised); corner-shape: squircle; color: var(--letter-muted); background: var(--letter-well); font: 10px/1.35 var(--font-mono); cursor: pointer; transition: color 180ms, background-color 180ms; }
+.topic { display: flex; align-items: center; justify-content: center; min-height: 44px; min-width: 0; padding: 8px 6px; border-radius: var(--r-raised); corner-shape: squircle; color: var(--letter-muted); background: var(--letter-well); font-size: 15px; line-height: 1.3; text-align: center; cursor: pointer; transition: color 180ms, background-color 180ms; }
 .topic:hover { color: var(--letter-ink); background: var(--letter-well-hover); }
 .topic[aria-pressed="true"] { color: #f3f3f3; background: var(--letter-ink); }
-.invitation { min-height: 65px; margin-top: 17px; color: var(--letter-muted); font-size: 13px; line-height: 1.75; text-wrap: pretty; }
+.invitation { min-height: 82px; margin-top: 18px; color: var(--letter-muted); font-size: 17px; line-height: 1.6; text-wrap: pretty; }
 .invitationText { display: block; animation: invitation-in 240ms ease-out both; }
-.write { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 54px; margin-top: 16px; padding: 13px 18px; border-radius: var(--r-raised); corner-shape: squircle; background: var(--letter-ink); color: #f3f3f3; font-size: 13px; text-decoration: none; transition: background-color 180ms; }
+.write { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 54px; margin-top: 16px; padding: 13px 18px; border-radius: var(--r-raised); corner-shape: squircle; background: var(--letter-ink); color: #f3f3f3; font-size: 16px; text-decoration: none; transition: background-color 180ms; }
 .write svg { flex: none; transition: transform 180ms; }
 .write:hover { background: #1c1c1c; }
 .write:hover svg { transform: translateX(3px); }
-.deliveryNote { margin-top: 12px; text-align: center; font: 9px/1.6 var(--font-mono); color: var(--letter-muted); }
+.deliveryNote { margin-top: 12px; text-align: center; font-size: 15px; line-height: 1.5; color: var(--letter-muted); }
 .paper :focus-visible { outline: 2px solid var(--letter-ink); outline-offset: 4px; }
 .address::selection { background: #0f0f0f; color: #f3f3f3; }
 @keyframes invitation-in { from { opacity: .35; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
@@ -39,21 +39,19 @@
   .paper { padding: 27px 25px 24px; }
   .name { font-size: 47px; }
   .address { font-size: 27px; }
-  .role { font-size: 10px; }
   .seal { flex-basis: 47px; width: 47px; height: 47px; }
-  .invitation { min-height: 70px; font-size: 12px; }
-  .feedback { font-size: 9px; }
+  .invitation { min-height: 82px; }
 }
 
 @container (max-width: 300px) {
   .paper { padding: 24px 20px 23px; }
   .letterhead { gap: 15px; }
   .address { font-size: 25px; }
-  .topic { padding-inline: 3px; font-size: 9px; }
+  .topics { grid-template-columns: minmax(0, 1fr); }
   .copyRow { gap: 8px; align-items: flex-start; }
   .feedback { align-self: center; }
-  .copy { padding-left: 0; font-size: 9px; }
-  .invitation { min-height: 80px; }
+  .copy { padding-left: 0; }
+  .invitation { min-height: 109px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

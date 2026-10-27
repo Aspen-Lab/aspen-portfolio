@@ -34,15 +34,13 @@
   .doc { padding: 40px; }
 }
 
-/* S7: 'SOP · 01' is a Latin code in both languages */
+/* S7, the label (globals.css .t-label): 'SOP', 15px sans as written */
 .head {
   color: #8c8c8c;
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-size: 15px;
   font-weight: 400;
-  line-height: 1.35;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  line-height: 1.4;
   font-variant-numeric: tabular-nums;
 }
 /* S4 */

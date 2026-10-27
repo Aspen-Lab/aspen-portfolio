@@ -93,11 +93,12 @@
 .row:active { transform: translateY(1px); }
 .row:focus-visible { outline-offset: 3px; }
 
+/* The square's row keeps the label line's height (15px × 1.4) it had
+   when an index numeral stood beside it */
 .idx {
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: var(--color-soft, #8c8c8c);
+  height: 21px;
 }
 /* The square: grey at rest; the accent copy fades in on the row in view */
 .sq {
@@ -135,11 +136,7 @@
 :global(html[lang="zh-CN"]) .note { line-break: strict; }
 
 /* Every row reads at full ink; the row in view is marked by its plane
-   and its accent square. A pointer on a row inks its index. */
-@media (hover: hover) {
-  .row:hover .idx { color: var(--color-ink); }
-}
-.row[data-on="true"] .idx { color: var(--color-ink); }
+   and its accent square. */
 
 /* Below lg: the line of the row in view, under the phone (cross-fade in
    one cell, so the block keeps the height of the longest line) */
@@ -221,7 +218,7 @@
     padding: 40px 0 0;
   }
   .row {
-    grid-template-columns: 52px minmax(0, 1fr);
+    grid-template-columns: 24px minmax(0, 1fr);
     gap: 0;
     padding: 20px 16px 22px;
     background: transparent;

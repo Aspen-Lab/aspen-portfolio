@@ -581,41 +581,25 @@
   .split > .splitSlab { padding: 40px; }
 }
 
-/* ── S7: the one label style ── */
+/* ── S7: the one label style (globals.css .t-label) ── 15px sans as
+   written, the text grey, no mono caps, no tracking, in both locales */
 .sTick,
 .sRticks,
-.slabKicker {
+.slabKicker,
+.sWasLabel,
+.sRowWasLabel {
   color: #8c8c8c;
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-size: 15px;
   font-weight: 400;
-  line-height: 1.35;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  line-height: 1.4;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.slabKicker:lang(zh) {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
-/* Latin codes inside Chinese keep the mono label; version tokens keep
-   their case ("v1") */
-.sCode {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-}
-.sVer,
-.sWasLabel,
-.sRowWasLabel {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
+/* A label's version tokens ("v1") and Latin codes ("KYC") are set as the
+   words round them */
+.sCode,
+.sVer { font: inherit; }
 
 /* ── Tablet and up: the plot ── */
 .sPlot,
@@ -658,8 +642,6 @@
   position: absolute;
   top: calc((1 - var(--t)) * 100% + 0.5px);
   right: calc(100% + 12px);
-  /* the tracking after the last figure would push it off the rule */
-  margin-right: -0.12em;
   translate: 0 -50%;
 }
 
@@ -868,7 +850,7 @@
 
 .sRticks {
   position: relative;
-  height: 16px;
+  height: 21px;
   margin-top: 8px;
 }
 .sRticks > span {
@@ -890,7 +872,7 @@
   flex: none;
   width: 6px;
   height: 6px;
-  margin-top: calc((1.35em - 6px) / 2);
+  margin-top: calc((1.4em - 6px) / 2);
   background: #f3f3f3;
 }
 .slabBody { margin-top: 32px; }

@@ -13,7 +13,7 @@ export default async function NotFound() {
   return (
     <section className="container-fluid pt-24 pb-32 sm:pt-36 sm:pb-44">
       <Reveal>
-        <p className="font-mono uppercase tracking-[0.2em] text-[11px] text-mute">
+        <p className="text-[15px] text-mute">
           {t("eyebrow")}
         </p>
       </Reveal>
@@ -39,7 +39,7 @@ export default async function NotFound() {
       </Reveal>
 
       <Reveal delay={0.18}>
-        <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px] text-mute">
+        <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 text-[16px] text-mute">
           <Link href="/" className="link link-rev text-ink">
             {t("backHome")}
           </Link>

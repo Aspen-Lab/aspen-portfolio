@@ -146,11 +146,10 @@ function AwardCard({ item, index, cn }: { item: AwardItem; index: number; cn: bo
 
   return (
     <li className={styles.card} data-alternate={alternate}>
+      {/* No small "abstract study · 01" kicker on each card: the section
+          note says it once, at reading size. The view switch is a round
+          icon button, as on the home page's cards. */}
       <div className={styles.visual}>
-        <div className={styles.visualCaption}>
-          <span>{cn ? "抽象视觉" : "Abstract study"}</span>
-          <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-        </div>
         <svg id={visualId} viewBox="0 0 400 240" className={styles.artwork} style={paints} aria-hidden="true" focusable="false">
           <Patterns id={patternId} />
           <g className={styles.sculpture}>
@@ -165,8 +164,7 @@ function AwardCard({ item, index, cn }: { item: AwardItem; index: number; cn: bo
           aria-label={cn ? `切换 ${item.title} 卡片的抽象图形视角` : `Change the abstract view on ${item.title}`}
           onClick={() => setAlternate((value) => !value)}
         >
-          <Rotate3D size={14} strokeWidth={1.4} aria-hidden="true" />
-          <span>{cn ? "视角" : "View"} {alternate ? "02" : "01"}</span>
+          <Rotate3D size={18} strokeWidth={1.5} aria-hidden="true" />
         </button>
       </div>
       <div className={styles.copy}>

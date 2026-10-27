@@ -1,5 +1,8 @@
 .section { min-width: 0; }
-.intro { max-width: 660px; color: var(--color-mute); font-size: 15px; line-height: 1.8; }
+/* No small text (Aspen, 2026-10-25: 「千万不要用小字，特别讨厌」): the lines of
+   copy are 17–18px, every label and control 15–16px. */
+.intro { max-width: 660px; color: var(--color-mute); font-size: 17px; line-height: 1.6; text-wrap: pretty; }
+@media (min-width: 1024px) { .intro { font-size: 18px; } }
 .layout { display: grid; grid-template-columns: minmax(190px, 23%) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: start; margin-top: 32px; }
 .layout > * { min-width: 0; }
 /* The disciplines: no rules between them and no bar beside the chosen
@@ -7,82 +10,80 @@
    the one under the pointer on a plane a tone lower. (Both sit above the
    grain's own tone, or they would not read.) */
 .tabs { display: flex; flex-direction: column; gap: 2px; }
-.tab { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 57px; border-radius: var(--r-raised); corner-shape: squircle; padding: 11px 10px; color: var(--color-mute); text-align: left; cursor: pointer; transition: color 140ms, background-color 160ms; outline: none; }
+.tab { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; border-radius: var(--r-raised); corner-shape: squircle; padding: 12px 12px; color: var(--color-mute); text-align: left; cursor: pointer; transition: color 140ms, background-color 160ms; outline: none; }
 .tab:hover, .tab[aria-selected="true"] { color: var(--color-ink); }
 .tab:hover { background: #1c1c1c; }
 .tab[aria-selected="true"] { background: #1c1c1c; }
 .tab:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 3px; }
 .categoryIcon { flex: 0 0 28px; display: grid; place-items: center; width: 28px; height: 28px; }
-.tabCopy { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.tabName { font-size: 12px; line-height: 1.5; }
-.tabCaption { font-size: 10px; line-height: 1.3; color: var(--color-soft); }
-.browseHint { max-width: 180px; margin-top: 17px; font-size: 11px; line-height: 1.7; color: var(--color-soft); }
+.tabCopy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tabName { font-size: 16px; line-height: 1.4; }
+.tabCaption { font-size: 15px; line-height: 1.4; color: var(--color-soft); }
+.browseHint { margin-top: 18px; font-size: 15px; line-height: 1.5; color: var(--color-soft); text-wrap: balance; }
 .panel { position: relative; min-width: 0; padding: 0; outline: none; }
 .panel:focus-visible { outline: 1px solid var(--color-soft); outline-offset: 7px; }
 .panelHeading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 46px; margin-bottom: 16px; }
 .title { font-size: 38px; line-height: 1.15; letter-spacing: -.035em; }
-.caption { flex-shrink: 0; font-size: 10px; color: var(--color-soft); }
+.caption { flex-shrink: 0; font-size: 15px; color: var(--color-soft); }
 .figure { margin: 0; min-width: 0; }
 .sceneViewport { min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: #8c8c8c transparent; border-radius: 4px; }
 .sceneViewport:focus-visible { outline: 1px solid var(--color-soft); outline-offset: 4px; }
 .scene { width: 100%; max-width: 640px; margin-inline: auto; aspect-ratio: 640 / 260; animation: scene-in 160ms ease both; }
 .scene > svg { display: block; width: 100%; height: 100%; }
 .scrollHint { display: none; }
-.sceneFooter { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 40px; margin: 10px 0 12px; color: var(--color-mute); font-size: 11px; line-height: 1.6; }
-.replay { display: flex; align-items: center; gap: 6px; min-height: 40px; padding-left: 8px; font-size: 10px; color: var(--color-mute); cursor: pointer; flex-shrink: 0; }
+.sceneFooter { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 44px; margin: 12px 0 12px; color: var(--color-mute); font-size: 15px; line-height: 1.5; }
+.replay { display: flex; align-items: center; gap: 8px; min-height: 44px; padding-left: 8px; font-size: 15px; color: var(--color-mute); cursor: pointer; flex-shrink: 0; }
 .replay:hover { color: var(--color-ink); }
 .replay:focus-visible, .caseLink:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 /* The tools: four entries kept apart by space, not ruled */
-.tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 22px; margin-top: 8px; }
-.tool { display: flex; align-items: center; gap: 10px; min-height: 60px; padding: 11px 0; }
+.tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 28px; margin-top: 12px; }
+.tool { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 12px 0; }
 .toolIcon { display: flex; width: 36px; flex-shrink: 0; color: #8c8c8c; }
-.toolCopy { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.toolCopy > span { font-size: 11px; line-height: 1.5; color: var(--color-ink); }
-.toolCopy small { font-size: 10px; line-height: 1.5; color: var(--color-mute); }
-.evidence { display: flex; justify-content: space-between; gap: 18px; align-items: center; min-height: 70px; margin-top: 18px; }
-.evidenceLabel { font-size: 10px; color: var(--color-soft); }
-.note { margin-top: 6px; font-size: 11px; line-height: 1.7; color: var(--color-mute); max-width: 53ch; }
-.caseLink { flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px; min-height: 40px; font-size: 11px; color: var(--color-ink); text-underline-offset: 4px; }
+.toolCopy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.toolCopy > span { font-size: 16px; line-height: 1.4; color: var(--color-ink); }
+.toolCopy small { font-size: 15px; line-height: 1.45; color: var(--color-mute); }
+.evidence { display: flex; justify-content: space-between; gap: 24px; align-items: center; min-height: 70px; margin-top: 24px; }
+.evidenceLabel { font-size: 15px; line-height: 1.4; color: var(--color-soft); }
+.note { margin-top: 6px; font-size: 17px; line-height: 1.6; color: var(--color-mute); max-width: 48ch; text-wrap: pretty; }
+.caseLink { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; color: var(--color-ink); text-underline-offset: 4px; }
 .caseLink:hover { text-decoration: underline; }
 .spectrum { margin-top: 72px; }
-.spectrumHeading { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; color: var(--color-soft); }
-.spectrumTrack { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 28px; max-width: 780px; margin-top: 20px; }
+.spectrumHeading { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; color: var(--color-soft); }
+.spectrumTrack { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 28px; max-width: 880px; margin-top: 20px; }
 /* Each stage stands on its own plane, which opens from the left as the
    row comes in (it was a hairline under the word, drawn the same way). */
-.spectrumItem { position: relative; isolation: isolate; display: flex; align-items: center; gap: 10px; padding: 12px 12px; font-size: 11px; color: var(--color-mute); }
+.spectrumItem { position: relative; isolation: isolate; display: flex; align-items: center; gap: 10px; padding: 12px 14px; font-size: 15px; color: var(--color-mute); }
 .spectrumItem > svg { flex-shrink: 0; }
 .spectrumLine { position: absolute; inset: 0; z-index: -1; border-radius: var(--r-raised); corner-shape: squircle; background: #1c1c1c; transform-origin: left; }
 .spectrumArrow { position: absolute; right: -20px; color: var(--color-soft); }
-.spectrumNote { margin-top: 17px; color: var(--color-mute); font-size: 12px; line-height: 1.7; max-width: 68ch; }
+.spectrumNote { margin-top: 20px; color: var(--color-mute); font-size: 17px; line-height: 1.6; max-width: 60ch; text-wrap: pretty; }
 :global(html[lang="zh-CN"]) .title { font: 400 29px/1.3 var(--font-sans); letter-spacing: -.025em; }
 @keyframes scene-in { from { opacity: .65; } to { opacity: 1; } }
 @media (max-width: 1023px) {
   .layout { grid-template-columns: minmax(0, 1fr); gap: 26px; margin-top: 28px; }
   .tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px 8px; }
-  .tab { min-height: 50px; padding: 10px 8px; gap: 8px; }
-  .tabName { font-size: 11px; }
+  .tab { min-height: 52px; padding: 10px 10px; gap: 10px; }
   .tabCaption { display: none; }
   .categoryIcon { width: 24px; flex-basis: 24px; }
-  .browseHint { max-width: none; margin-top: 10px; }
+  .browseHint { margin-top: 12px; }
 }
 @media (max-width: 600px) {
-  .intro { font-size: 14px; }
   .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 8px; }
-  .tab { min-height: 46px; }
-  .tabName { font-size: 11px; }
+  .tab { min-height: 48px; }
+  .tabName { font-size: 15px; }
   .panelHeading { min-height: 38px; margin-bottom: 12px; }
   .title { font-size: 33px; }
   .scene { min-width: 520px; }
-  .scrollHint { display: block; margin-top: 9px; color: var(--color-soft); font-size: 10px; }
+  .scrollHint { display: block; margin-top: 10px; color: var(--color-soft); font-size: 15px; }
   .sceneFooter { margin: 6px 0 10px; }
-  .tools { gap: 0 15px; }
+  .tools { gap: 0 16px; }
   .tool { align-items: start; flex-direction: column; gap: 8px; padding: 12px 0; min-height: 0; }
-  .toolCopy small { font-size: 10px; }
   .evidence { align-items: start; flex-direction: column; gap: 4px; }
-  .spectrumTrack { gap: 12px; }
-  .spectrumItem { flex-direction: column; gap: 9px; padding: 12px 4px; font-size: 10px; text-align: center; }
-  .spectrumArrow { right: -11px; top: 19px; width: 9px; }
-  .spectrumHeading { font-size: 10px; }
+  /* Five stages at 15px do not fit across a phone: they stack, and the
+     arrows turn to point down between them */
+  .spectrumTrack { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .spectrumItem { padding: 12px 14px; }
+  .spectrumArrow { right: auto; left: 19px; top: calc(100% + 2px); rotate: 90deg; }
 }
 @media (prefers-reduced-motion: reduce) {
   .tab { transition: none; }

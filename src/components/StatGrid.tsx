@@ -46,9 +46,6 @@ export function StatGrid({ items, cols }: Props) {
     >
       {items.map((s, i) => (
         <li key={s.label} className={styles.entry} style={{ ["--i" as string]: i } as CSSProperties}>
-          <span aria-hidden className={styles.num}>
-            {String(i + 1).padStart(2, "0")}
-          </span>
           {s.icon && (
             <span aria-hidden className={styles.icon}>
               <Icon name={s.icon} size={16} />

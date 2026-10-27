@@ -5,7 +5,7 @@ import { RichText } from "./RichText";
 import styles from "./Callout.module.css";
 
 /* A footnote set as a flat plane: the cream of the charts' sheet with no
-   edge, a mono kicker in a label column, the note beside it. The variants
+   edge, a label (S7) in a label column, the note beside it. The variants
    differ only by the small solid mark before the kicker (a dot, a square,
    a diamond, a triangle, or the dashed hexagon the charts ring their
    focus with); no icon bubbles, no tinted fills, no gradients. */

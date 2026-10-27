@@ -95,7 +95,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
     schedule();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
-    // Label widths change once the mono face arrives
+    // Label widths change once the web fonts arrive
     document.fonts?.ready.then(() => live && schedule());
     return () => {
       live = false;
@@ -142,15 +142,10 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
 
   const hidden = past || before;
   const RailPlate = plate ? "div" : Fragment;
-  /* Hanzi in the mono role at 10px with wide tracking turn to specks: the
-     Chinese labels are set in the sans at 12px, closed up; numbers stay mono. */
-  const labelType = plate
-    ? cn
-      ? "font-sans text-[13px] tracking-[0.04em]"
-      : "font-mono text-[12px] uppercase tracking-[0.12em]"
-    : cn
-      ? "font-sans text-[12px] tracking-[0.04em]"
-      : "font-mono text-[10px] uppercase tracking-[0.22em]";
+  /* The labels are the S7 label (globals.css .t-label): 15px sans as
+     written, no mono caps, no tracking, in both locales. The chapters carry
+     no index numerals (Aspen: 「这些小数字没意义」). */
+  const labelType = "font-sans text-[15px]";
   /* Plate mode (banded pages): the indicator glides on --ease-arrive over
      360ms, no spring */
   const glide = reduceMotion
@@ -190,22 +185,19 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
               type="button"
               onClick={() => handleJump(i)}
               aria-current={active === i ? "true" : undefined}
-              /* Plate mode fades the chip by opacity; inline, because the
-                 global `a, button` colour transition (unlayered) outranks
-                 Tailwind's transition utilities. The same 160ms fade under
-                 reduced motion (a plain opacity fade is allowed there), so
-                 the server and client render the same style. */
-              style={plate ? { transition: "opacity 160ms cubic-bezier(0.16, 1, 0.3, 1)" } : undefined}
+              /* Plate mode: the text grey, ink when lit or pointed at (two
+                 greys, no opacity). Inline, because the global `a, button`
+                 colour transition (unlayered) outranks Tailwind's
+                 transition utilities; the same 160ms under reduced motion,
+                 so the server and client render the same style. */
+              style={plate ? { transition: "color 160ms cubic-bezier(0.16, 1, 0.3, 1)" } : undefined}
               className={`relative flex items-baseline gap-2 py-1 whitespace-nowrap shrink-0 cursor-pointer motion-reduce:transition-none ${
                 plate
-                  ? `text-ink ${active === i ? "opacity-100" : "opacity-45 hover:opacity-75 focus-visible:opacity-75"}`
+                  ? active === i ? "text-ink" : "text-mute hover:text-ink focus-visible:text-ink"
                   : `transition-colors duration-200 ${active === i ? "text-ink" : "text-mute hover:text-mute"}`
               }`}
             >
-              <span className={`font-mono ${plate ? "text-[12px] tracking-[0.12em]" : cn ? "text-[11px] tracking-[0.06em]" : "text-[10px] uppercase tracking-[0.22em]"} opacity-70 tabular-nums`}>
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className={plate ? "font-sans text-[15px]" : "font-display text-[14px] tracking-[-0.005em]"}>
+              <span className={plate ? "font-sans text-[15px]" : "font-display text-[15px] tracking-[-0.005em]"}>
                 {c}
               </span>
               {active === i && (
@@ -282,9 +274,6 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
                       }}
                       className={`block ${labelType} whitespace-nowrap leading-none`}
                     >
-                      <span className={`opacity-55 mr-2 tabular-nums${cn ? (plate ? " font-mono text-[12px] tracking-[0.12em]" : " font-mono text-[11px]") : ""}`}>
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
                       {c}
                     </span>
                   </span>
@@ -299,7 +288,7 @@ export function ChapterNav({ chapters, plate = false }: ChapterNavProps) {
                     }}
                     className={`relative shrink-0 w-1.5 h-1.5 motion-reduce:transition-none z-10 ${
                       plate
-                        ? `bg-ink transition-opacity duration-[160ms] ease-(--ease-arrive) ${isActive ? "opacity-100" : "opacity-35 group-hover:opacity-75 group-focus-visible:opacity-75"}`
+                        ? `transition-colors duration-[160ms] ease-(--ease-arrive) ${isActive ? "bg-ink" : "bg-mute group-hover:bg-ink group-focus-visible:bg-ink"}`
                         : `rounded-full transition-colors duration-300 ${isActive ? "bg-ink" : "bg-mute group-hover:bg-ink group-focus-visible:bg-ink"}`
                     }`}
                   />

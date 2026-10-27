@@ -440,7 +440,7 @@ export default async function CaseStudy({
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-mute">
+              <span className="text-[15px] text-mute">
                 cover · drop your hero shot here
               </span>
             </div>
@@ -505,10 +505,8 @@ export default async function CaseStudy({
             <div key={`${s.heading}-${i}`}>
               {isFirstInChapter && (
                 <Reveal>
+                  {/* The chapter's title alone: no index numeral before it */}
                   <div data-chapter={chapterIndex} className={styles.chapter}>
-                    <span className={styles.chapterNum}>
-                      {cn ? "章节" : "Chapter"} {String(chapterIndex + 1).padStart(2, "0")}
-                    </span>
                     <span className={styles.chapterTitle}>{s.chapter}</span>
                   </div>
                 </Reveal>
@@ -620,9 +618,9 @@ export default async function CaseStudy({
                       <LayerStack layers={s.layers} />
                     </div>
                   )}
-                  {/* A ledger: numbered rows under a mono header. Phones get
-                      the rows as stacked sheets (only one form is ever
-                      displayed, so assistive tech reads it once). */}
+                  {/* A ledger: rows under a header row, no index numerals.
+                      Phones get the rows as stacked sheets (only one form
+                      is ever displayed, so assistive tech reads it once). */}
                   {s.table && (
                     <div className="mt-12">
                       <table className={styles.table}>
@@ -639,18 +637,7 @@ export default async function CaseStudy({
                           {s.table.rows.map((row, ri) => (
                             <tr key={ri}>
                               {row.map((cell, ci) => (
-                                <td key={ci}>
-                                  {ci === 0 ? (
-                                    <span className={styles.entry}>
-                                      <span aria-hidden className={styles.rowNum}>
-                                        {String(ri + 1).padStart(2, "0")}
-                                      </span>
-                                      <span>{cell}</span>
-                                    </span>
-                                  ) : (
-                                    cell
-                                  )}
-                                </td>
+                                <td key={ci}>{cell}</td>
                               ))}
                             </tr>
                           ))}
@@ -660,9 +647,6 @@ export default async function CaseStudy({
                         {s.table.rows.map((row, ri) => (
                           <li key={ri} className={styles.card}>
                             <p className={styles.cardHead}>
-                              <span aria-hidden className={styles.rowNum}>
-                                {String(ri + 1).padStart(2, "0")}
-                              </span>
                               <span className={styles.cardTitle}>{row[0]}</span>
                             </p>
                             <dl className={styles.cardFields}>
@@ -742,7 +726,7 @@ export default async function CaseStudy({
                           className="block h-auto w-full"
                         />
                       </a>
-                      <figcaption className="mt-3 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[13px] leading-relaxed text-mute">
+                      <figcaption className="mt-3 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[15px] leading-relaxed text-mute">
                         <span>{figure.caption ?? figure.alt}</span>
                         <span className="text-mute">
                           {cn ? "点击图片查看原图 ↗" : "Open image at full size ↗"}
@@ -767,7 +751,7 @@ export default async function CaseStudy({
                           {cn ? "观看演示视频" : "Watch the prototype video"}
                         </a>
                       </video>
-                      <figcaption className="mt-3 text-[13px] leading-relaxed text-mute">
+                      <figcaption className="mt-3 text-[15px] leading-relaxed text-mute">
                         {video.title}
                       </figcaption>
                     </figure>
@@ -1141,8 +1125,8 @@ function BandedCase({
       <>
         {isFirstInChapter && (
           <Reveal {...ARRIVE}>
+            {/* The chapter's title alone: no index numeral before it */}
             <div data-chapter={chapterIndex} className={`${styles.chapter} ${styles.bandChapter}`}>
-              <span className={styles.chapterNum}>{pad(chapterIndex + 1)}</span>
               <span className={styles.chapterTitle}>{cn && s.chapter ? heldWords(s.chapter) : s.chapter}</span>
             </div>
           </Reveal>

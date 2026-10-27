@@ -153,7 +153,7 @@ export function TechStack() {
               <figcaption className={styles.sceneFooter}>
                 <span>{SCENE_CAPTIONS[kind][cn ? "cn" : "en"]}</span>
                 {/* Always rendered (the server cannot know the motion setting); CSS hides it for reduced motion */}
-                {<button className={styles.replay} type="button" onClick={() => setReplay((value) => value + 1)} aria-label={cn ? `重播${name}演示` : `Replay ${name} demo`}><RotateCcw size={13} aria-hidden /><span>{cn ? "重播" : "Replay"}</span></button>}
+                {<button className={styles.replay} type="button" onClick={() => setReplay((value) => value + 1)} aria-label={cn ? `重播${name}演示` : `Replay ${name} demo`}><RotateCcw size={15} aria-hidden /><span>{cn ? "重播" : "Replay"}</span></button>}
               </figcaption>
             </figure>
 
@@ -167,7 +167,7 @@ export function TechStack() {
             </ul>
             {cat.note && <div className={styles.evidence}>
               <div><p className={styles.evidenceLabel}>{t("whereItLives")}</p><p className={styles.note}>{cat.note}</p></div>
-              {cat.link && <a href={cat.link.href} target="_blank" rel="noreferrer" className={styles.caseLink}>{cat.link.label}<ArrowUpRight size={14} aria-hidden /></a>}
+              {cat.link && <a href={cat.link.href} target="_blank" rel="noreferrer" className={styles.caseLink}>{cat.link.label}<ArrowUpRight size={16} aria-hidden /></a>}
             </div>}
           </div>
         </Reveal>

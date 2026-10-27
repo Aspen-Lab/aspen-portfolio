@@ -164,13 +164,13 @@
   margin: 0;
   white-space: nowrap;
 }
+/* The angle, at the label's 15px (mono figures, no tracking) */
 .readout {
   min-width: 4ch;
   color: #f3f3f3;
   text-align: right;
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  font-size: 15px;
   font-variant-numeric: tabular-nums;
 }
 @media (min-width: 640px) {
@@ -293,10 +293,9 @@
 }
 .li {
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: baseline;
 }
-.num { color: #8c8c8c; }
 .text { color: #8c8c8c; }
 .text strong {
   color: #f3f3f3;

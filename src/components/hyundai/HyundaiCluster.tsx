@@ -659,9 +659,9 @@ export function HyundaiCluster() {
                   onBlur={() => light(null)}
                   onClick={() => dispatch({ type: "pin", part: p })}
                 >
-                  <span className={`t-label ${styles.partIdx}`} data-code="">
+                  {/* the part's mark alone: no index numeral beside it */}
+                  <span className={styles.partIdx}>
                     <span aria-hidden className={styles.partSq} />
-                    {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className={`t-subhead ${styles.partTitle}`}>{say(t.parts[p].title)}</span>
                   <span className={`t-small ${styles.partLine}`}>{say(t.parts[p].line)}</span>

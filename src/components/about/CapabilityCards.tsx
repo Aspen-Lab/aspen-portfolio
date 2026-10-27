@@ -12,9 +12,9 @@ const cx = (...names: Array<string | false | undefined>) => names.filter(Boolean
 const at = (index: number) => ({ "--i": index }) as CSSProperties;
 
 /* Every study draws on one 400 × 170 plate that fills the card's stage, so
-   the four sit at one size and the art scales with the card. The mono
-   labels are HTML pinned over the drawing in % (MorphChart's overlay), so
-   they ride the art but keep their own 10px at every width instead of
+   the four sit at one size and the art scales with the card. The labels
+   are HTML pinned over the drawing in % (MorphChart's overlay), so they
+   ride the art but keep their own 15px at every width instead of
    shrinking with it. */
 const VW = 400;
 const VH = 170;
@@ -178,7 +178,9 @@ function TypeStudy({ cn }: { cn: boolean }) {
   const labels = (
     <>
       <span className={styles.metricLabel} style={pin(GUIDE, capY)}>{cn ? "大写高度" : "Cap height"}</span>
-      <span className={styles.metricLabel} style={pin(GUIDE, xY)}>{cn ? "x 字高" : "x-height"}</span>
+      {/* x-height reads from the line's right end, so on a small phone it
+          never stacks on the cap-height label just above it */}
+      <span className={cx(styles.metricLabel, styles.metricLabelEnd)} style={pin(VW - GUIDE, xY)}>{cn ? "x 字高" : "x-height"}</span>
       <span className={styles.metricLabel} style={pin(GUIDE, SPECIMEN.baseline)}>{cn ? "基线" : "Baseline"}</span>
       {span && <span key={face + String(spaced)} className={cx(styles.readout, styles.appear)} style={pin(span.x + span.w / 2, SPECIMEN.bracket)}>W {Math.round(span.w)}</span>}
     </>
@@ -271,10 +273,12 @@ export function CapabilityCards({ cn, items }: CapabilityCardsProps) {
   return (
     <div className={styles.root}>
       <div ref={grid} className={styles.grid}>
-        {items.map((item, index) => (
+        {/* The cards no longer wear a small "abstract UI · personal study"
+            kicker and a number each: the note above them says it once, at
+            reading size. */}
+        {items.map((item) => (
           <article key={item.icon} className={styles.card} aria-labelledby={id + "-" + item.icon}>
             <div className={styles.study}>
-              <p className={styles.studyLabel}><span>{cn ? "抽象 UI · 个人练习" : "Abstract UI · personal study"}</span><span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></p>
               <Study kind={item.icon} cn={cn} />
             </div>
             <div className={styles.copy}>

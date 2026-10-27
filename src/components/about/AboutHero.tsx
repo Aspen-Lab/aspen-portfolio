@@ -72,8 +72,8 @@ export function AboutHero({ cn }: { cn: boolean }) {
         <div className={styles.canvas} data-inspect={inspect ? "on" : "off"} data-active={active}>
           <div className={styles.bar}>
             <p className={styles.frameName}>
-              <Hash size={11} strokeWidth={1.75} aria-hidden />
-              ASPEN W. <span>/</span> {cn ? "创始设计工程师" : "FOUNDING DESIGN ENGINEER"}
+              <Hash size={15} strokeWidth={1.75} aria-hidden />
+              Aspen W. <span className={styles.frameRole}><span>/</span> {cn ? "创始设计工程师" : "Founding Design Engineer"}</span>
             </p>
             <div className={styles.barEnd}>
               {frameSize && <span className={`${styles.frameSize} ${styles.anno}`} aria-hidden>{frameSize}</span>}
@@ -138,10 +138,6 @@ export function AboutHero({ cn }: { cn: boolean }) {
       <div className={styles.story}>
         <Reveal delay={0.04}>
           <figure className={styles.portrait}>
-            <figcaption className={styles.portraitBar}>
-              <span>portrait.png</span>
-              <span>1-bit · Atkinson</span>
-            </figcaption>
             <DitherPortrait
               src="/about/aspen-avatar.png"
               label={cn ? "Aspen 的肖像，以点阵抖动呈现" : "Portrait of Aspen, set as a 1-bit dither"}
@@ -162,10 +158,10 @@ export function AboutHero({ cn }: { cn: boolean }) {
 
           <div>
             <div className={styles.decision}>
-              <p className={styles.decisionHead}>{cn ? "决定记录" : "DECISION LOG"}</p>
+              <p className={styles.decisionHead}>{cn ? "决定记录" : "Decision log"}</p>
               <ol className={styles.track} data-date="2025.12">
                 <li className={styles.stop}>
-                  <span className={styles.node} aria-hidden><Pause size={11} strokeWidth={2} /></span>
+                  <span className={styles.node} aria-hidden><Pause size={13} strokeWidth={2} /></span>
                   <div>
                     <p className={styles.stopTitle}>
                       {cn ? "心理学 · Georgia Tech" : "Psychology · Georgia Tech"}
@@ -175,7 +171,7 @@ export function AboutHero({ cn }: { cn: boolean }) {
                   </div>
                 </li>
                 <li className={styles.stop}>
-                  <span className={`${styles.node} ${styles.nodeNow}`} aria-hidden><ArrowRight size={11} strokeWidth={2} /></span>
+                  <span className={`${styles.node} ${styles.nodeNow}`} aria-hidden><ArrowRight size={13} strokeWidth={2} /></span>
                   <div>
                     <p className={styles.stopTitle}>
                       Axel · YC{"\u00A0"}W19
@@ -188,7 +184,7 @@ export function AboutHero({ cn }: { cn: boolean }) {
             </div>
             <a href="#about-capabilities" className={styles.explore}>
               {cn ? "认识我的不同面" : "A few sides of me"}
-              <ArrowDown size={15} aria-hidden />
+              <ArrowDown size={16} aria-hidden />
             </a>
           </div>
         </Reveal>

@@ -390,7 +390,7 @@
   white-space: nowrap;
 }
 /* Wide: the four keywords are four rows that share the slab's remaining
-   height, index beside word, so the slab stands as tall as the sheet */
+   height, so the slab stands as tall as the sheet */
 @media (min-width: 1024px) {
   .keys {
     flex: 1;
@@ -399,7 +399,7 @@
   }
   .key,
   .key:nth-last-child(-n + 2) {
-    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: center;
     align-content: center;
     gap: 0 16px;

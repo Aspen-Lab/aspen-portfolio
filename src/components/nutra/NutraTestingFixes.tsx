@@ -19,7 +19,7 @@ import { NUTRA, nutraFont } from "./product";
 import { Seg } from "./Seg";
 import styles from "./NutraTestingFixes.module.css";
 
-/* Three cases from the usability tests, under three numbered tabs. Each
+/* Three cases from the usability tests, under three tabs. Each
    is a split card on the sheet stack:
 
      BEFORE  what testers struggled with: the tested screen redrawn as a
@@ -203,15 +203,14 @@ function Quotes({ label, items, start }: { label: string; items: string[]; start
   );
 }
 
+/** What the fix changed: lines alone, no index numeral before them (no
+    pin on the drawing answers to one) */
 function Wins({ items, start }: { items: string[]; start: number }) {
   return (
     <ol className={styles.rows}>
       {items.map((text, i) => (
         <li key={text} className={styles.item} style={k(start + i)}>
-          <span className={styles.row} data-plain="">
-            <span className={`t-label ${styles.winIdx}`} data-code="">
-              {String(i + 1).padStart(2, "0")}
-            </span>
+          <span className={`${styles.row} ${styles.win}`}>
             <span className={`t-small ${styles.rowText}`}>{keep(text)}</span>
           </span>
         </li>

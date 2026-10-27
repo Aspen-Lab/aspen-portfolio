@@ -40,7 +40,6 @@ export function LayerStack({ layers }: { layers: Layer[] }) {
         {layers.map((layer, i) => (
           <li key={layer.label} className={styles.row} style={{ ["--i" as string]: i } as CSSProperties}>
             <p className={styles.name}>
-              <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
               <span className={styles.label}>{layer.label}</span>
             </p>
             <div className={styles.cell}>

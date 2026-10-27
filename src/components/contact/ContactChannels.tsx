@@ -35,7 +35,7 @@ function ChannelMark({ platform }: { platform: string }) {
 export function ContactChannels({ cn, items }: { cn: boolean; items: ReadonlyArray<ContactChannel> }) {
   return (
     <ul className={styles.channels}>
-      {items.map((item, index) => {
+      {items.map((item) => {
         const platform = item.platform.toLowerCase();
         const description = descriptions[platform];
         return (
@@ -44,7 +44,6 @@ export function ContactChannels({ cn, items }: { cn: boolean; items: ReadonlyArr
               <div className={styles.topline}>
                 <ChannelMark platform={platform} />
                 <span className={styles.direction} aria-hidden="true">
-                  <span className={styles.folio}>{String(index + 1).padStart(2, "0")}</span>
                   <ArrowUpRight className={styles.arrow} size={20} strokeWidth={1.35} />
                 </span>
               </div>

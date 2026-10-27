@@ -99,7 +99,7 @@ function progress(caption?: string): [number, number] | null {
    no-break space, so the sign stays at the end of the line before. */
 const tidy = (s: string) => s.replace(/ ([—+·×])/g, " $1");
 
-/* A version token (v1, v2) keeps its case inside an uppercase label */
+/* A version token (v1, v2) in a span of its own, as written */
 function versioned(text: string): ReactNode {
   const parts = text.split(/\b(v\d+)\b/);
   return parts.map((p, i) =>

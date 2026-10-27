@@ -111,8 +111,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* From 768px the stages print their names, so the index numerals go:
+   below it they stay, as the key to the names printed under the band */
 @media (min-width: 768px) {
   .stageName { display: block; }
+  .stageNum { display: none; }
 }
 
 /* Interactive stages: the one in view reads in ink on its column, the

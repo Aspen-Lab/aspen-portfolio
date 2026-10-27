@@ -144,8 +144,9 @@ function Doc({ item, n, uid, drawing }: { item: Item; n: number; uid: string; dr
   return (
     <article ref={ref} className={`paper-stack ${styles.stack}`} data-lit={lit} aria-labelledby={`${uid}-t${n}`}>
       <div className={`paper ${styles.doc}`}>
+        {/* The document's kind alone: no index numeral after it */}
         <p className={styles.head} aria-hidden>
-          SOP · {String(n + 1).padStart(2, "0")}
+          SOP
         </p>
         <h3 id={`${uid}-t${n}`} className={styles.title}>
           {item.label}

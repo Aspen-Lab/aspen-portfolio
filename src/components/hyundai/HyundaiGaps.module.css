@@ -71,8 +71,7 @@
 }
 
 /* ── The pain point ── */
-.idx { margin: 0; }
-.title { margin: 12px 0 0; }
+.title { margin: 0; }
 .effect {
   margin: 8px 0 0;
   color: #f3f3f3;

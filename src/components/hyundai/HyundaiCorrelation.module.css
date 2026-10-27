@@ -107,8 +107,9 @@
 }
 .measure .r { color: #8c8c8c; }
 
-/* r with its subscript: the variable in the serif italic at 15px, its
-   measure in the sans at 12px, dropped a little below the baseline */
+/* r with its subscript: the variable in the serif italic at 20px, its
+   measure in the sans at 15px (nothing under 15px), dropped a little
+   below the baseline: the subscript's capitals stand as tall as the r */
 .r {
   font-family: var(--font-sans);
   font-size: 15px;
@@ -117,7 +118,7 @@
 }
 .v {
   font-family: var(--font-newsreader), Georgia, serif;
-  font-size: 15px;
+  font-size: 20px;
   font-style: italic;
   font-weight: 400;
 }
@@ -125,8 +126,7 @@
   position: relative;
   top: 0.22em;
   margin-left: 1px;
-  font-size: 12px;
-  letter-spacing: 0.02em;
+  font-size: 15px;
 }
 
 /* 2. The connectors and the averaging node */
@@ -204,9 +204,16 @@
   color: #8c8c8c;
 }
 .den { padding-top: 8px; }
-@media (max-width: 389px) {
+/* A phone: the sum closes up round its pluses so the fraction (its
+   subscripts at 15px) fits the node */
+@media (max-width: 479px) {
+  .node { padding: 14px 10px; }
   .plus { margin: 0 0.18em; }
   .formula { gap: 8px; }
+}
+@media (max-width: 369px) {
+  .node { padding: 14px 6px; }
+  .plus { margin: 0 0.08em; }
 }
 
 /* 3. The 0–1 line */
@@ -261,9 +268,7 @@
   position: absolute;
   top: 12px;
   left: 0;
-  margin-right: -0.12em;
   transform: translateX(-50%);
-  letter-spacing: 0.04em;
 }
 /* A phone keeps 0, 0.5 and 1: the quarters would crowd the elbows */
 @media (max-width: 639px) {
@@ -310,10 +315,7 @@
 .pLabel[data-p="3"] {
   left: calc(var(--x) * 100% + 20px);
 }
-.pValue {
-  color: #f3f3f3;
-  letter-spacing: 0.04em;
-}
+.pValue { color: #f3f3f3; }
 .pName {
   white-space: nowrap;
 }

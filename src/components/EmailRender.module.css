@@ -3,9 +3,10 @@
    rule, no crop mark: the tabs are set apart by space, the blocks by
    their tone. Grey tones for the syntax; the one accent is the fallback
    token, a solid focus chip on a raised plane, in the Missing value
-   state only. Flat fills; no gradient. The code listing and the mock
-   email are product renders: they keep their own type, their own rule
-   and their pixel-art opacities. */
+   state only. Flat fills; no gradient. The mock email is a product
+   render: it keeps its own type, its own rule and its pixel-art
+   opacities. The code listing is the figure's own reading: 15px mono,
+   its line numbers too (Aspen: 「千万不要用小字」). */
 .sheet {
   position: relative;
   margin: 0;
@@ -17,7 +18,7 @@
   color: var(--color-mute);
 }
 
-/* ── The tabs: 01 Event data / 02 Missing value ── */
+/* ── The tabs: Event data / Missing value ── */
 .tabs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -118,8 +119,8 @@
 @media (min-width: 640px) { .proof.proof { padding: 40px 32px; } }
 @media (min-width: 1024px) { .proof.proof { padding: 40px; } }
 
-/* The template, a product render: Geist Mono 14px on a 28px line, in the
-   syntax's own greys. */
+/* The template: Geist Mono 15px on a 30px line, in the syntax's own
+   greys. */
 .code {
   --syn-ink: #f3f3f3;
   --syn-mute: #8c8c8c;
@@ -130,7 +131,7 @@
   margin: 0;
   padding: 24px 0;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 2;
   color: var(--syn-mute);
 }
@@ -167,7 +168,7 @@
 /* The line numbers rest in the text grey; the focus line's number lights */
 .num {
   color: var(--syn-mute);
-  font-size: 12px;
+  font-size: 15px;
   font-variant-numeric: tabular-nums;
   user-select: none;
   transition: color var(--t-1, 160ms) var(--ease-arrive);

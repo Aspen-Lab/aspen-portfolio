@@ -1,6 +1,7 @@
-/* A numbered ledger of planes: one plane per row, 8px apart, no rule
-   between them; mono numbers, the problem in the muted voice and the
-   approach in ink. Flat; no gradients. */
+/* A ledger of planes: one plane per row, 8px apart, no rule between
+   them, no index numerals; the problem in the muted voice and the
+   approach in ink. Labels are S7 (15px sans as written). Flat; no
+   gradients. */
 .ledger { --cols: minmax(0, 0.64fr) minmax(0, 1fr) 40px minmax(0, 1fr); }
 
 /* Column heads, once, over the ledger — from a tablet up */
@@ -12,10 +13,8 @@
     column-gap: 24px;
     padding: 0 28px 12px;
     color: var(--color-soft);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    font-family: var(--font-sans);
+    font-size: 15px;
   }
 }
 
@@ -59,15 +58,6 @@
   align-items: baseline;
   gap: 14px;
 }
-.num {
-  color: var(--color-soft);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  font-variant-numeric: tabular-nums;
-  transition: color 220ms ease;
-}
-.row:hover .num { color: var(--color-ink); }
 .label {
   color: var(--color-ink);
   font-size: 28px;
@@ -81,10 +71,8 @@
 .kicker {
   margin-bottom: 6px;
   color: var(--color-soft);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-size: 15px;
 }
 @media (min-width: 768px) {
   .kicker {
@@ -129,7 +117,6 @@
 /* Reduced motion: every row in place from the first paint */
 @media (prefers-reduced-motion: reduce) {
   .row { transition: background-color 160ms var(--ease-arrive); }
-  .num,
   .leader { transition: none; }
   .row { opacity: 1; transform: none; }
   .leader { clip-path: inset(0 0 0 0); }

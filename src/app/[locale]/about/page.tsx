@@ -89,7 +89,7 @@ const CAPABILITIES: ReadonlyArray<{ name: Bi; tag: Bi; desc: Bi; icon: CapIcon }
 
 type Mark = { kind: "img"; src: string; h: number } | { kind: "si"; path: string } | { kind: "text"; text: string };
 
-const TRAJECTORY: ReadonlyArray<{ org: string; role: Bi; period: Bi; mark: Mark; badge?: Bi }> = [
+const TRAJECTORY: ReadonlyArray<{ org: string; role: Bi; period: Bi; mark: Mark }> = [
   {
     org: "Axel · Gordian (YC W19)",
     role: { en: "Founding Design Engineer · Full-time", cn: "创始设计工程师 · 全职" },
@@ -101,7 +101,6 @@ const TRAJECTORY: ReadonlyArray<{ org: string; role: Bi; period: Bi; mark: Mark;
     role: { en: "BS Psychology · paused to join Axel full-time", cn: "心理学学士 · 为全职加入 Axel 暂停" },
     period: { en: "2023 — Paused", cn: "2023 — 暂停" },
     mark: { kind: "img", src: "/logos/georgiatech.svg", h: 15 },
-    badge: { en: "Paused", cn: "暂停" },
   },
   {
     org: "TikTok · PIPO UED",
@@ -258,18 +257,18 @@ const pad = (n: number) => String(n).padStart(2, "0");
 /** An org's mark on a small raised plane: its own artwork where one exists, its initials where not. */
 function OrgMark({ mark }: { mark: Mark }) {
   return (
-    <span className="grid place-items-center w-9 h-9 shrink-0 rounded-[var(--r-raised)] [corner-shape:squircle] bg-[#1c1c1c] text-mute transition-colors duration-200 group-hover:text-ink">
+    <span className="grid place-items-center w-11 h-11 shrink-0 rounded-[var(--r-raised)] [corner-shape:squircle] bg-[#1c1c1c] text-mute transition-colors duration-200 group-hover:text-ink">
       {mark.kind === "img" && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={mark.src} alt="" aria-hidden style={{ height: mark.h, width: "auto", filter: "brightness(0) invert(0.549)" }} />
+        <img src={mark.src} alt="" aria-hidden className="max-w-[34px]" style={{ height: Math.round(mark.h * 1.25), width: "auto", filter: "brightness(0) invert(0.549)" }} />
       )}
       {mark.kind === "si" && (
-        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden>
+        <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" fill="currentColor" aria-hidden>
           <path d={mark.path} />
         </svg>
       )}
       {mark.kind === "text" && (
-        <span className="font-mono text-[9px] tracking-[0.12em]">{mark.text}</span>
+        <span className="text-[15px] leading-none">{mark.text}</span>
       )}
     </span>
   );
@@ -306,7 +305,7 @@ export default async function About({
             { id: "about-awards", label: cn ? "奖项与认可" : "Recognition" },
             { id: "about-projects", label: cn ? "过往经历" : "Past work" },
             { id: "about-life", label: cn ? "工作之外" : "Off the clock" },
-          ].map((item) => <a href={`#${item.id}`} key={item.id}>{item.label}<ArrowDown size={13} aria-hidden /></a>)}
+          ].map((item) => <a href={`#${item.id}`} key={item.id}>{item.label}<ArrowDown size={16} aria-hidden /></a>)}
         </nav>
       </section>
 
@@ -331,25 +330,23 @@ export default async function About({
           {TRAJECTORY.map((e, i) => (
             <li key={e.org}>
               <Reveal delay={i * 0.04}>
-                <div className="group grid grid-cols-[36px_minmax(0,1fr)] sm:grid-cols-[36px_minmax(0,1fr)_auto] items-center gap-x-4 sm:gap-x-6 gap-y-2 py-[22px]">
+                {/* No small print: the org at 17px, the role and the dates at 15px
+                    in the text grey; the "Paused" badge is gone, the dates
+                    and the role already say it. */}
+                <div className="group grid grid-cols-[44px_minmax(0,1fr)] sm:grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-x-4 sm:gap-x-6 gap-y-1 py-[20px]">
                   <OrgMark mark={e.mark} />
                   <div className="min-w-0 flex-1">
-                    <p className="flex items-center gap-3 text-[15px] sm:text-[16px] text-ink tracking-[-0.005em]">
+                    <p className="flex items-center gap-3 text-[17px] leading-[1.4] text-ink tracking-[-0.005em]">
                       {e.org}
                       {i === 0 && (
                         <span aria-hidden className="relative flex w-1.5 h-1.5">
                           <span className="relative w-1.5 h-1.5 rounded-full bg-ink" />
                         </span>
                       )}
-                      {e.badge && (
-                        <span className="px-1.5 py-0.5 rounded-[var(--r-tag)] [corner-shape:squircle] bg-[var(--raised)] font-mono text-[9px] uppercase tracking-[0.12em] text-mute">
-                          {tr(e.badge)}
-                        </span>
-                      )}
                     </p>
-                    <p className="mt-1 text-[13.5px] leading-[1.5] text-mute">{tr(e.role)}</p>
+                    <p className="mt-1 text-[15px] leading-[1.5] text-mute">{tr(e.role)}</p>
                   </div>
-                  <span className="col-start-2 sm:col-start-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-mute whitespace-nowrap shrink-0">
+                  <span className="col-start-2 sm:col-start-3 text-[15px] leading-[1.5] text-mute tabular-nums whitespace-nowrap shrink-0">
                     {tr(e.period)}
                   </span>
                 </div>

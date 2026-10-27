@@ -276,8 +276,8 @@
   background-color: var(--tile);
   color: var(--color-mute, #8c8c8c);
   font-family: var(--font-mono);
-  font-size: 13px;
-  letter-spacing: 0.06em;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
   transition:
     opacity var(--t-2) var(--ease-arrive),
     background-color var(--t-1) var(--ease-arrive);
@@ -336,12 +336,13 @@
 .root[data-part="scene"] .partBtn[data-k="scene"],
 .root[data-part="ring"] .partBtn[data-k="ring"],
 .partBtn[aria-pressed="true"] { background-color: var(--tile, #1c1c1c); }
+/* The square's row keeps the label line's height (15px × 1.4) it had
+   when an index numeral stood beside it */
 .partIdx {
   display: flex;
   align-items: center;
-  gap: 10px;
+  height: 21px;
   margin-bottom: 4px;
-  color: var(--color-soft, #8c8c8c);
 }
 .partSq {
   flex: none;
@@ -357,11 +358,7 @@
   color: var(--color-mute, #8c8c8c);
   text-wrap: pretty;
 }
-/* A lit part inks its index and square (never the accent) */
-.root[data-part="panel"] .partBtn[data-k="panel"] .partIdx,
-.root[data-part="scene"] .partBtn[data-k="scene"] .partIdx,
-.root[data-part="ring"] .partBtn[data-k="ring"] .partIdx,
-.partBtn[aria-pressed="true"] .partIdx { color: var(--color-ink); }
+/* A lit part inks its square (never the accent) */
 .root[data-part="panel"] .partBtn[data-k="panel"] .partSq,
 .root[data-part="scene"] .partBtn[data-k="scene"] .partSq,
 .root[data-part="ring"] .partBtn[data-k="ring"] .partSq,

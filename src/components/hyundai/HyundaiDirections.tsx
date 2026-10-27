@@ -190,9 +190,9 @@ export function HyundaiDirections() {
                 style={{ "--i": i } as CSSProperties}
                 onClick={() => setSel(d)}
               >
-                <span className={`t-label ${styles.idx}`} data-code="">
+                {/* the chosen mark alone: no index numeral beside it */}
+                <span className={styles.idx}>
                   <span aria-hidden className={styles.sq} />
-                  {String(i + 1).padStart(2, "0")}
                 </span>
                 <Mini d={d} />
                 <span className={styles.words}>

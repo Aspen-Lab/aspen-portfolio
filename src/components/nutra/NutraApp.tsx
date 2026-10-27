@@ -108,9 +108,9 @@ export function NutraApp() {
                     aria-current={on ? "true" : undefined}
                     onClick={() => dispatch({ type: "ledger", row: i })}
                   >
-                    <span className={`t-label ${styles.idx}`} data-code="">
+                    {/* the row's square alone: no index numeral beside it */}
+                    <span className={styles.idx}>
                       <span aria-hidden className={styles.sq} />
-                      {String(i + 1).padStart(2, "0")}
                     </span>
                     <span className={styles.words}>
                       <span className={`t-subhead ${styles.title}`}>{hold(r.title, styles.word)}</span>

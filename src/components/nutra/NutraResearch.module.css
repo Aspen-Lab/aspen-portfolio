@@ -195,7 +195,6 @@
 .xlabel {
   flex: none;
   width: var(--bw);
-  margin-right: -0.12em;
   text-align: center;
 }
 .xlabel[data-focus="true"] { color: #f3f3f3; }
@@ -203,7 +202,7 @@
 .star {
   margin-left: 1px;
   font-family: var(--font-sans);
-  font-size: 12px;
+  font-size: inherit;
   letter-spacing: 0;
 }
 
@@ -295,7 +294,6 @@
   position: absolute;
   top: 9px;
   left: 0;
-  margin-right: -0.12em;
   transform: translateX(-50%);
 }
 .age {
@@ -381,7 +379,6 @@
   position: absolute;
   top: -10px;
   left: calc(var(--x) * 100%);
-  margin-right: -0.12em;
   color: #f3f3f3;
   opacity: 0;
   transform: translate(-50%, 2px);

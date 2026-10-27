@@ -1,5 +1,5 @@
-/* An outcome ledger: one plane per entry (no edge, no rule over it),
-   mono entry numbers, the figures large and light. Flat; no gradients. */
+/* An outcome ledger: one plane per entry (no edge, no rule over it), the
+   figures large and light, no index numerals. Flat; no gradients. */
 .ledger {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -40,19 +40,6 @@
   }
 }
 
-.num {
-  grid-area: num;
-  color: var(--color-soft);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 16px;
-  letter-spacing: 0.16em;
-  font-variant-numeric: tabular-nums;
-  transition: color 300ms ease;
-  transition-delay: calc(120ms + var(--i) * 160ms);
-}
-.ledger[data-lit="true"] .num { color: var(--color-ink); }
-
 .icon {
   grid-area: icon;
   justify-self: end;
@@ -87,20 +74,16 @@
 
 .label {
   color: var(--color-ink);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   line-height: 1.4;
 }
 .hint {
   margin-top: 4px;
   color: var(--color-mute);
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.5;
   text-wrap: pretty;
 }
 
-/* Reduced motion: the finished ledger from the first paint (set here, not
-   from JS, so the server's markup already matches) */
-@media (prefers-reduced-motion: reduce) {
-  .num { transition: none; color: var(--color-ink); }
-}
+

@@ -15,7 +15,7 @@ import { hold } from "@/lib/hold";
 import styles from "./PlatformTabs.module.css";
 
 /* Latent's tabbed "Platform" chart (latenthealth.com): the section's text
-   and a numbered tab list on the left, one paper sheet on two back sheets
+   and a tab list on the left, one paper sheet on two back sheets
    on the right, the sheet changing its whole state with the tab.
 
    Every state of the sheet stays mounted. A switch writes only
@@ -26,7 +26,7 @@ import styles from "./PlatformTabs.module.css";
    Autoplay (only for sheets that are pure drawing; a caller passes
    autoplay={false} otherwise) is the active tab's own progress fill: a
    CSS scaleX over --dwell whose animationend advances the tab. It plays
-   01 → last once and rests on the last; it runs only while half the
+   first → last once and rests on the last; it runs only while half the
    sheet is in view, pauses under the pointer or keyboard focus, and the
    first choice a reader makes, or a touch anywhere inside, ends it for
    good. Reduced motion: no autoplay, 160ms fades, the active fill full. */

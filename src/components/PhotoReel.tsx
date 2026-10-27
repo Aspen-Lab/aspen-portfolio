@@ -82,16 +82,11 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                 className="block w-full h-auto transition-transform duration-[900ms] group-hover:scale-[1.02]"
                 style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
               />
-              <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100">
-                {/* The index on a small raised plane, no edge: a solid tone reads
-                    over a white mat as well as a night sky. */}
-                <span className="absolute left-[14px] top-[14px] rounded-[var(--r-tag)] [corner-shape:squircle] bg-[#1c1c1c] px-[7px] py-[5px] font-mono text-[10px] leading-none uppercase tracking-[0.16em] text-ink tabular-nums">
-                  {pad(i + 1)} <span className="text-mute">/</span> {pad(frames.length)}
-                </span>
-              </span>
             </button>
+            {/* No small index tag on the photo (it was "01 / 08" in 10px mono);
+                the caption is the one line under it, at 15px. */}
             {f.caption && (
-              <figcaption className="mt-3 text-[13.5px] sm:text-[14px] leading-[1.5] tracking-[-0.005em] text-mute text-pretty transition-colors duration-300 group-hover:text-ink">
+              <figcaption className="mt-3 text-[15px] leading-[1.5] tracking-[-0.005em] text-mute text-pretty transition-colors duration-300 group-hover:text-ink">
                 {f.caption}
               </figcaption>
             )}
@@ -113,18 +108,17 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
             className="fixed inset-0 z-[90] bg-paper/96 backdrop-blur-[2px] flex flex-col"
             onClick={() => setOpen(null)}
           >
-            <div className="container-fluid flex items-center justify-between h-16 font-mono text-[10px] uppercase tracking-[0.22em] text-mute">
+            <div className="container-fluid flex items-center justify-between h-16 text-[15px] text-mute">
               <span className="tabular-nums">
-                {label} <span className="text-mute">·</span> {pad(open + 1)}{" "}
-                <span className="text-mute">/</span> {pad(frames.length)}
+                {label} <span className="text-mute">·</span> {open + 1} / {frames.length}
               </span>
               <button
                 type="button"
                 onClick={() => setOpen(null)}
                 aria-label="Close"
-                className="plate-button inline-flex items-center gap-2 px-3 py-1.5 text-mute hover:text-ink cursor-pointer"
+                className="plate-button inline-flex items-center gap-2 min-h-11 px-4 text-mute hover:text-ink cursor-pointer"
               >
-                ESC <X className="w-3.5 h-3.5" strokeWidth={1.75} />
+                Esc <X className="w-4 h-4" strokeWidth={1.75} />
               </button>
             </div>
 
@@ -169,7 +163,7 @@ export function PhotoReel({ frames, label }: { frames: Frame[]; label: string })
                     </div>
                   </div>
                   {current.caption && (
-                    <figcaption className="mt-1 max-w-[56ch] px-4 text-center text-[14.5px] sm:text-[15px] leading-[1.5] tracking-[-0.005em] text-mute text-pretty">
+                    <figcaption className="mt-1 max-w-[56ch] px-4 text-center text-[17px] leading-[1.5] tracking-[-0.005em] text-mute text-pretty">
                       {current.caption}
                     </figcaption>
                   )}

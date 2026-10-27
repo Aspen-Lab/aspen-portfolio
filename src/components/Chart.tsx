@@ -540,8 +540,8 @@ function tidy(text: string) {
     .replace(/ ([+—–→·])/g, " $1");
 }
 
-/** A label's runs: version tokens keep their case ("v1"), and inside
-    Chinese the Latin codes keep the mono face ("KYC"). */
+/** A label's runs: version tokens ("v1") and, inside Chinese, Latin codes
+    ("KYC") in spans of their own; they are set as the words round them. */
 function labelRuns(text: string, cn: boolean) {
   const runs = text.split(cn ? /(\bv\d+\b|\b[A-Z][A-Z0-9]+\b)/ : /(\bv\d+\b)/);
   return runs.map((part, k) =>

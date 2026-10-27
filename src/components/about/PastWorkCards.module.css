@@ -24,7 +24,7 @@
 .context {
   margin: 0;
   color: var(--color-mute);
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.6;
 }
 
@@ -42,7 +42,7 @@
   background: #1c1c1c;
   color: var(--color-ink);
   font: inherit;
-  font-size: 13px;
+  font-size: 15px;
   transition: background-color 180ms ease, color 180ms ease;
 }
 
@@ -70,42 +70,12 @@
   position: relative;
   overflow: hidden;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
   aspect-ratio: 1.22;
-  padding: 19px 20px 16px;
+  padding: 20px;
   border-radius: var(--r-plane);
   corner-shape: squircle;
   background: var(--study-bg);
-}
-
-.studyLabel,
-.disclaimer {
-  position: relative;
-  z-index: 1;
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.6;
-  letter-spacing: 0.015em;
-}
-
-.studyLabel {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-mute);
-}
-
-.labelDot {
-  flex: none;
-  width: 4px;
-  height: 4px;
-  background: var(--color-mute);
-}
-
-.disclaimer {
-  color: var(--color-mute);
-  text-align: right;
 }
 
 .drawing {
@@ -167,12 +137,11 @@
 }
 
 .period {
-  margin: 0 0 9px;
+  margin: 0 0 8px;
   color: var(--color-mute);
-  font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 15px;
   line-height: 1.5;
-  letter-spacing: 0.035em;
+  font-variant-numeric: tabular-nums;
 }
 
 .client {
@@ -188,8 +157,8 @@
 .role {
   margin: 10px 0 0;
   color: var(--color-mute);
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
@@ -280,7 +249,7 @@
 
 @media (max-width: 599px) {
   .toolbar { align-items: flex-start; gap: 16px; }
-  .context { max-width: 24ch; font-size: 13px; }
+  .context { max-width: 24ch; }
   .remix { min-width: 96px; padding-inline: 12px; }
   .grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
   .stage { aspect-ratio: 1.3; }

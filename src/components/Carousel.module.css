@@ -14,12 +14,12 @@
   margin-bottom: 14px;
 }
 
+/* The slide count (data, not an index): mono figures at 15px, no tracking */
 .count {
   flex: none;
   color: var(--color-soft);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
+  font-size: 15px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }

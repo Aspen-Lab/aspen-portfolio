@@ -312,7 +312,7 @@ export function NutraJourney() {
                   id={`${uid}-stage-${k}`}
                   aria-selected={stage === k}
                   aria-controls={`${uid}-readout`}
-                  aria-label={`${pad(k + 1)} ${s.name}`}
+                  aria-label={s.name}
                   tabIndex={stage === k ? 0 : -1}
                   className={styles.stage}
                   data-k={k}
