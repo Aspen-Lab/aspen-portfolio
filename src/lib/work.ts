@@ -882,7 +882,15 @@ type Bilingual = { en: string; cn: string };
    claim below, except Metroidvania (carried over from the old copy; no
    public build to check), was checked against the live site and repo on
    2026-09-17 — keep it that way: a card is a public statement.
-   Thumbnails are 16:10 captures of the live site in public/side/. */
+   Each card's picture is a hero shot from the product's own UI (Aspen,
+   2026-11-22: 「每个私人项目都去看一下产品UI 重做一下 heroshot」, then of
+   whole screens: 「不够简单」): ONE thing from the product — a card, an
+   object, a mark, a map — on that product's own ground, with room around
+   it. Not a whole screen, not the marketing page shrunk to fit, never a
+   redrawn demo. Captured from the live product at 3–4x and saved
+   1600 × 1000; public/side/2026-11-23-simple/ was shot on 2026-11-23, and what
+   each one shows is noted at its thumb. A new capture goes in a new
+   folder, never over an old file: image caches key on the URL. */
 export type SideProject = {
   slug: string;
   name: string;
@@ -900,12 +908,58 @@ export type SideProject = {
   href?: string;
   /** Secondary links shown on the card (repo, downloads, docs) */
   links?: { label: Bilingual; href: string }[];
+  /** The card's picture: the live product's first screen (Peer: its briefing). */
   thumb?: string;
   /** Kept in the data, left off the page (Aspen, 2026-09-21: 「lumen和小游戏拿掉」). */
   hidden?: boolean;
 };
 
 export const sideProjects: SideProject[] = [
+  // First on the page (Aspen, 2026-11-09: 「把inphase 抬上」). Checked that day against the public pitch
+  // (inphase-pitch.vercel.app, whose own headline the tagline is, in both languages) and the public demo it
+  // links. The working app sits behind a Vercel login, and inphase.vercel.app is someone else's site: link the demo.
+  {
+    slug: "inphase",
+    name: "InPhase",
+    tier: "product",
+    status: "early",
+    category: { en: "AI recruiting", cn: "AI 招聘" },
+    tagline: {
+      en: "The AI-native headhunter for companies.",
+      cn: "为企业打造 AI 原生猎头",
+    },
+    blurb: {
+      en: "Send one job brief; Juno, an AI voice agent, calls candidates in dormant talent pools one by one to learn what they actually want and get their consent. A human recruiter reviews every candidate before a company sees them. The public demo is an interactive design prototype: fictional data, scripted calls.",
+      cn: "只需一份职位简报，AI 助手 Juno 就会深入沉睡的人才库，逐一语音致电候选人，了解真实意向并取得同意；每位候选人都经过人工顾问审核，才会推荐给企业。公开演示是交互设计原型：数据为虚构，通话为脚本模拟。",
+    },
+    platforms: [{ en: "Web · design prototype", cn: "网页 · 交互设计原型" }],
+    tech: ["Vanilla JS", "Canvas 2D", "Web Audio", "Web Speech"],
+    href: "https://inphase-phi.vercel.app/app/",
+    // The voice card of a live call, alone: Juno, the particle voice, the candidate (on the panel's own ground)
+    thumb: "/side/2026-11-23-simple/inphase.jpg",
+  },
+  // Second (Aspen, 2026-11-09: 「再放上bakerry」). Copy from bakerry.ai's own title and description, checked that
+  // day. A platform, never a shop: its brand rule (no "store", "e-commerce" or "buy" on the card).
+  {
+    slug: "bakerry",
+    name: "Bakerry",
+    tier: "product",
+    status: "live",
+    category: { en: "Design platform", cn: "设计平台" },
+    tagline: {
+      en: "Describe an idea, get it made with a designer’s taste.",
+      cn: "说出一个想法，带着设计师的品味把它做出来",
+    },
+    blurb: {
+      en: "A taste engine: describe an idea, shape it with a real designer’s taste, and get it made, from phone cases and keychains to totes and T-shirts.",
+      cn: "一台品味引擎：说出一个想法，借真实设计师的品味把它塑形，再把它做出来——从手机壳、钥匙扣到帆布袋和 T 恤。",
+    },
+    platforms: [{ en: "Web", cn: "网页" }],
+    tech: ["React", "TypeScript", "Three.js"],
+    href: "https://bakerry.ai",
+    // The studio's 3D case wearing a finished design (Be Silly) on its turntable; the stage's controls faded out
+    thumb: "/side/2026-11-23-simple/bakerry.jpg",
+  },
   {
     slug: "peer",
     name: "Peer",
@@ -924,7 +978,8 @@ export const sideProjects: SideProject[] = [
     tech: ["Next.js", "Supabase", "Gemini API", "Tailwind"],
     href: "https://peer.homes",
     links: [{ label: { en: "GitHub · MIT", cn: "GitHub · MIT" }, href: "https://github.com/Aspen-Lab/peer" }],
-    thumb: "/side/peer.jpg",
+    // One paper from a briefing: its keyword plate, source and title (on the card's own ground)
+    thumb: "/side/2026-11-23-simple/peer.jpg",
   },
   {
     slug: "pado",
@@ -953,7 +1008,8 @@ export const sideProjects: SideProject[] = [
         href: "https://github.com/Aspen-Lab/pado-releases/releases/latest",
       },
     ],
-    thumb: "/side/pado.jpg",
+    // One phone with the app's home: the cat, her name, today's line (the landing page's front phone)
+    thumb: "/side/2026-11-23-simple/pado.jpg",
   },
   {
     slug: "aspenplay",
@@ -978,10 +1034,13 @@ export const sideProjects: SideProject[] = [
         href: "https://www.aspenplay.dev/design-system",
       },
     ],
-    thumb: "/side/aspenplay.jpg",
+    // The pixel world alone: the island, the house and the cast on the night sky (/welcome)
+    thumb: "/side/2026-11-23-simple/aspenplay.jpg",
   },
   {
     slug: "cardflow",
+    // Left off the page (Aspen, 2026-11-09: 「card flow 拿掉」)
+    hidden: true,
     name: "CardFlow",
     tier: "build",
     status: "live",
@@ -998,7 +1057,7 @@ export const sideProjects: SideProject[] = [
     tech: ["Next.js", "TypeScript", "TipTap", "Tailwind"],
     href: "https://cardflow-chi.vercel.app",
     links: [{ label: { en: "GitHub", cn: "GitHub" }, href: "https://github.com/Aspen-Lab/cardflow" }],
-    thumb: "/side/cardflow.jpg",
+    thumb: "/side/2026-11/cardflow.jpg",
   },
   {
     slug: "skyler",
@@ -1018,7 +1077,8 @@ export const sideProjects: SideProject[] = [
     tech: ["HTML", "CSS", "Vanilla JS"],
     href: "https://www.secal72.com",
     links: [{ label: { en: "GitHub", cn: "GitHub" }, href: "https://github.com/Aspen-Lab/skyler-portfolio" }],
-    thumb: "/side/skyler.jpg",
+    // The masthead's SECAL72 wordmark alone on the site's dotted ground
+    thumb: "/side/2026-11-23-simple/skyler.jpg",
   },
   {
     slug: "lumen",
@@ -1058,8 +1118,8 @@ export const sideProjects: SideProject[] = [
     platforms: [{ en: "Web · Chinese UI", cn: "网页 · 中文界面" }],
     tech: ["D3.js", "TopoJSON", "Single HTML"],
     href: "https://typhoon-rho.vercel.app",
-    // New file name, not a re-used one: image caches key on the URL
-    thumb: "/side/typhoon-map.jpg",
+    // The map alone on day 12: the storm's track crossing the flight's route
+    thumb: "/side/2026-11-23-simple/typhoon.jpg",
   },
   {
     slug: "metroidvania",

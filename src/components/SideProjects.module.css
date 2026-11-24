@@ -12,11 +12,11 @@
   .intro { font-size: 18px; }
 }
 
-/* ── The cards: grey planes with G2 corners on the 12 columns, three to
-   a row; words only, at reading size; the arrow is the one control. ── */
+/* ── The cards: grey planes with G2 corners, two to a row so each picture
+   is a real stage; words at reading size; the arrow is the one control. ── */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 .grid > li { display: flex; min-width: 0; }
@@ -25,13 +25,31 @@
   flex: 1;
   flex-direction: column;
   min-width: 0;
-  min-height: 260px;
-  padding: 28px;
+  padding: 12px;
   border-radius: var(--r-plane);
   corner-shape: squircle;
   background: #1c1c1c;
   color: var(--color-ink);
 }
+
+/* The picture: the live product's first screen (a 16:10 capture), set into
+   the plane with corners concentric to the card's. The black behind it shows
+   only until the image has loaded. */
+.shot {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: calc(var(--r-plane) - 12px);
+  corner-shape: squircle;
+  background: #0f0f0f;
+}
+.shotImage {
+  object-fit: cover;
+  transition: transform 360ms var(--ease-arrive);
+}
+
+.meta { display: flex; flex: 1; flex-direction: column; padding: 20px 16px 16px; }
 .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .kind { font-size: 16px; line-height: 1.4; color: var(--color-mute); }
 .go {
@@ -47,8 +65,7 @@
 }
 .go svg { transition: transform 240ms var(--ease-arrive); }
 .name {
-  margin-top: auto;
-  padding-top: 48px;
+  margin-top: 14px;
   font-family: var(--font-display);
   font-weight: 300;
   font-size: clamp(28px, 2.4vw, 36px);
@@ -59,19 +76,29 @@
 }
 .line { margin-top: 10px; font-size: 17px; line-height: 1.5; color: var(--color-mute); text-wrap: pretty; }
 @media (hover: hover) {
+  .card:hover .shotImage { transform: scale(1.02); }
   .card:hover .go { background: #f3f3f3; color: #0f0f0f; }
   .card:hover .go svg { transform: translate(2px, -2px); }
 }
 .card:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 
-@media (max-width: 1023px) {
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* The first card when the count is odd: the whole row, the picture on the
+   left at its own 16:10, the words on the right — what it is and the arrow at
+   the top, the name and its line at the foot. */
+@media (min-width: 768px) {
+  .wide { grid-column: 1 / -1; }
+  .wide .card { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+  .wide .meta { padding: 16px 16px 16px 28px; }
+  .wide .name { margin-top: auto; }
 }
-@media (max-width: 639px) {
+
+@media (max-width: 767px) {
   .grid { grid-template-columns: 1fr; gap: 12px; }
-  .card { min-height: 0; padding: 24px; }
-  .name { padding-top: 40px; }
+  .card { padding: 10px; }
+  .shot { border-radius: calc(var(--r-plane) - 10px); }
+  .meta { padding: 18px 14px 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .go, .go svg { transition: none; }
+  .go, .go svg, .shotImage { transition: none; }
+  .card:hover .shotImage { transform: none; }
 }
