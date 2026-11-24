@@ -28,7 +28,9 @@
 .figure { margin: 0; min-width: 0; }
 .sceneViewport { min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: #8c8c8c transparent; border-radius: 4px; }
 .sceneViewport:focus-visible { outline: 1px solid var(--color-soft); outline-offset: 4px; }
-.scene { width: 100%; max-width: 640px; margin-inline: auto; aspect-ratio: 640 / 260; animation: scene-in 160ms ease both; }
+/* The scene always draws at 1:1 (640 × 260), so its 15px labels stay
+   15px: a narrower panel scrolls it sideways instead of shrinking it. */
+.scene { width: 640px; max-width: none; margin-inline: auto; aspect-ratio: 640 / 260; animation: scene-in 160ms ease both; }
 .scene > svg { display: block; width: 100%; height: 100%; }
 .scrollHint { display: none; }
 .sceneFooter { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 44px; margin: 12px 0 12px; color: var(--color-mute); font-size: 15px; line-height: 1.5; }
@@ -73,8 +75,6 @@
   .tabName { font-size: 15px; }
   .panelHeading { min-height: 38px; margin-bottom: 12px; }
   .title { font-size: 33px; }
-  .scene { min-width: 520px; }
-  .scrollHint { display: block; margin-top: 10px; color: var(--color-soft); font-size: 15px; }
   .sceneFooter { margin: 6px 0 10px; }
   .tools { gap: 0 16px; }
   .tool { align-items: start; flex-direction: column; gap: 8px; padding: 12px 0; min-height: 0; }
@@ -84,6 +84,10 @@
   .spectrumTrack { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .spectrumItem { padding: 12px 14px; }
   .spectrumArrow { right: auto; left: 19px; top: calc(100% + 2px); rotate: 90deg; }
+}
+/* The 640px scene is wider than the panel below about 700px: say so */
+@media (max-width: 700px) {
+  .scrollHint { display: block; margin-top: 10px; color: var(--color-soft); font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .tab { transition: none; }

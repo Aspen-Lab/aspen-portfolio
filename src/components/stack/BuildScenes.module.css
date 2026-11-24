@@ -1,23 +1,34 @@
-.scene { display: block; width: 100%; height: auto; overflow: visible; filter: grayscale(1); color: #dddddd; font-family: var(--font-sans); }
-.surface { fill: #181818; stroke: #3c3c3c; stroke-width: 1; }
-.rule { fill: none; stroke: #3b3b3b; stroke-width: 1; }
-.glyph { fill: none; stroke: #909090; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
-.connection { stroke: #434343; stroke-width: 1; }
-.packet { stroke: #dedfd2; stroke-width: 1.5; stroke-dasharray: 16 120; stroke-dashoffset: -100; opacity: 0; }
-.filename { font: 10px var(--font-mono); fill: #b4b5a8; }
-.micro { font: 8px var(--font-mono); letter-spacing: .5px; fill: #717171; }
-.tiny { font: 7px var(--font-mono); letter-spacing: .5px; fill: #717171; }
-.code { font: 10px var(--font-mono); fill: #898d7e; }
-.codeBright { font: 10px var(--font-mono); fill: #d2d3c5; }
-.lineNumber { font: 8px var(--font-mono); fill: #555555; text-anchor: middle; }
-.dimFill { fill: #525252; }
-.placeholder { stroke: #6e7263; stroke-width: 2; }
-.serif { font: 25px var(--font-newsreader), Georgia, serif; letter-spacing: -.4px; fill: #e7e5da; }
-.buttonText { font: 11px var(--font-sans); fill: #282828; }
-.paperMicro { font: 7px var(--font-mono); letter-spacing: .8px; fill: #7b7b7b; }
-.emailGreeting { font: 16px var(--font-newsreader), Georgia, serif; letter-spacing: -.4px; fill: #242424; }
-.emailButton { font: 9px var(--font-sans); fill: #efede2; }
-.stageCheck { fill: none; stroke: #a6ac96; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 15; stroke-dashoffset: 0; }
+.scene { display: block; width: 100%; height: auto; overflow: visible; color: #f3f3f3; font-family: var(--font-sans); }
+/* Two greys and planes, as on the rest of the site (Aspen: 「灰色永远不超过
+   2」, 「线框我们用面」): panels are surface-grey planes with no outline, a
+   rule inside one is cut in the ground tone, quiet words and marks are the
+   text grey, the rest ink. The rendered results (the card, the email) sit
+   on white like the contact letter. The scene draws at 1:1
+   (TechStack.module.css keeps it 640 wide), so these are rendered sizes:
+   15px and up. Code and file names in mono, notes and names in the text
+   face. */
+.surface { fill: #1c1c1c; }
+.rule { fill: none; stroke: #0f0f0f; stroke-width: 1; }
+.glyph { fill: none; stroke: #8c8c8c; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+.connection { stroke: #1c1c1c; stroke-width: 1.5; }
+.packet { stroke: #f3f3f3; stroke-width: 1.5; stroke-dasharray: 16 120; stroke-dashoffset: -100; opacity: 0; }
+.filename { font: 15px var(--font-mono); fill: #8c8c8c; }
+.name { font: 15px var(--font-sans); fill: #f3f3f3; }
+.micro { font: 15px var(--font-sans); fill: #8c8c8c; }
+.code { font: 15px var(--font-mono); fill: #8c8c8c; }
+.codeBright { font: 15px var(--font-mono); fill: #f3f3f3; }
+.lineNumber { font: 15px var(--font-mono); fill: #8c8c8c; text-anchor: middle; }
+.dimFill { fill: #8c8c8c; }
+.placeholder { stroke: #8c8c8c; stroke-width: 2; }
+.placeholderQuiet { stroke: #0f0f0f; stroke-width: 2; }
+.serif { font: 25px var(--font-newsreader), Georgia, serif; letter-spacing: -.4px; fill: #f3f3f3; }
+.buttonText { font: 15px var(--font-sans); fill: #0f0f0f; }
+.paperMicro { font: 15px var(--font-sans); fill: #8c8c8c; }
+.emailGreeting { font: 17px var(--font-newsreader), Georgia, serif; letter-spacing: -.4px; fill: #0f0f0f; }
+.emailButton { font: 15px var(--font-sans); fill: #f3f3f3; }
+.stageCheck { fill: none; stroke: #8c8c8c; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 15; stroke-dashoffset: 0; }
+/* The line the preview comes from: a band in the ground tone */
+.codeHighlight, .templateHighlight { fill: #0f0f0f; }
 
 .scene[data-playing="true"] .input { animation: settle 360ms cubic-bezier(.2,.8,.2,1) both; }
 .scene[data-playing="true"] .packet { animation: transmit 550ms var(--delay, 0ms) ease-in-out both; }
@@ -34,7 +45,7 @@
 @keyframes settle { from { opacity: .4; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes arrive { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes transmit { 0% { stroke-dashoffset: 20; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { stroke-dashoffset: -100; opacity: 0; } }
-@keyframes highlight { 0%, 100% { opacity: .04; } 40%, 65% { opacity: .16; } }
+@keyframes highlight { 0%, 30% { opacity: 0; } 100% { opacity: 1; } }
 @keyframes check { from { stroke-dashoffset: 15; } to { stroke-dashoffset: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
