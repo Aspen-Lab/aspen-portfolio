@@ -1,22 +1,10 @@
 import { LEAF_LEFT, LEAF_RIGHT, LEAF_STEM } from "@/lib/aspenLeaf";
 
-/* The old mark's dot rows (an "A", five by six on a 4-unit pitch), kept
-   for the footer dot lab. */
-
-export const ASPEN_MARK_ROWS = [
-  [0, 1, 1, 1, 0],
-  [1, 0, 0, 0, 1],
-  [1, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 1],
-  [1, 0, 0, 0, 1],
-] as const;
-
 /* The mark (Aspen, 2026-10-26: 「Aspen Lab logo 是一个高级科技感的杨树叶」):
    a quaking aspen's leaf, round with a short drawn-out tip, cut along
    its midrib into a lit half in ink and a shade half in the text grey,
    on a thin stem. One outline, shared with the hero's leaf portrait
-   (lib/aspenLeaf). The dot "A" rows above stay for the footer dot lab. */
+   (lib/aspenLeaf). */
 export function AspenMark({ size = 18, className = "" }: { size?: number; className?: string }) {
   return (
     <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden className={className}>
